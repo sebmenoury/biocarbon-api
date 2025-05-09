@@ -42,7 +42,6 @@ def add_usage():
 
     return jsonify({"message": "Usage ajouté avec succès ✅", "ID_Usage": id_usage}), 201
 
-
 @bp_uc_usages.route("/api/uc/usages", methods=["GET"])
 def get_usages():
     sheet = get_worksheet(SHEET_NAME, UC_USAGES_SHEET)
