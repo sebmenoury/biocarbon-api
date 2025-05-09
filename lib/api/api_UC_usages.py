@@ -81,7 +81,7 @@ def update_usage(id_usage):
 @bp_uc_usages.route("/api/uc/usages/<id_usage>", methods=["DELETE"])
 def delete_usage(id_usage):
     try:
-        sheet = get_worksheet(UC_USAGES_SHEET)
+        sheet = get_worksheet(SHEET_NAME, UC_USAGES_SHEET)
         records = sheet.get_all_records()
 
         for idx, row in enumerate(records, start=2):  # start=2 pour ignorer l'entête
