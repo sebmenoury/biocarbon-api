@@ -80,12 +80,16 @@ def update_usage(id_usage):
 
 @bp_uc_usages.route("/api/uc/usages/<id_usage>", methods=["DELETE"])
 def delete_usage(id_usage):
-    sheet = get_worksheet(SHEET_NAME, UC_USAGES_SHEET)
-    records = sheet.get_all_records()
+    try:
+        sheet = get_worksheet(UC_USAGES_SHEET)
+        records = sheet.get_all_records()
 
-    for idx, row in enumerate(records, start=2):
-        if row["ID_Usage"] == id_usage:
-            sheet.delete_row(idx)
-            return jsonify({"message": f"Usage {id_usage} supprimé ✅"})
-    
-    return jsonify({"error": f"Usage {id_usage} non trouvé"}), 404
+        for idx, row in enumerate(records, start=2):
+            if row.get("ID_Usage") == id_usage:
+                sheet.delete_row(idx)
+                return jsonify({"message": f"Usage {id_usage} supprimé ✅"})
+
+        return jsonify({"error": f"Usage {id_usage} non trouvé"}), 404
+
+    except Exception as e:
+        return jsonify({"error": f"Erreur serveur : {str(e)}"}), 500
