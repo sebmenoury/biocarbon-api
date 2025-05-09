@@ -1,0 +1,23 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "Flutter Run Chrome",
+        "type": "shell",
+        "command": "..\\..\\flutter\\bin\\flutter.bat",
+        "args": [
+          "run",
+          "-d",
+          "chrome"
+        ],
+        "group": "build",
+        "presentation": {
+          "echo": true,
+          "reveal": "always",
+          "focus": false,
+          "panel": "shared"
+        },
+        "problemMatcher": []
+      }
+    ]
+  }

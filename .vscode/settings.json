@@ -1,0 +1,4 @@
+{
+  "flutter.flutterPath": "..\\..\\flutter\\bin\\flutter.bat",
+  "python.analysis.extraPaths": ["./lib"]
+}
