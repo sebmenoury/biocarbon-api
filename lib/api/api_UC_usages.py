@@ -84,9 +84,9 @@ def delete_usage(id_usage):
         sheet = get_worksheet(UC_USAGES_SHEET)
         records = sheet.get_all_records()
 
-        for idx, row in enumerate(records, start=2):
+        for idx, row in enumerate(records, start=2):  # start=2 pour ignorer l'entête
             if row.get("ID_Usage") == id_usage:
-                sheet.delete_row(idx)
+                sheet.delete_rows(idx)
                 return jsonify({"message": f"Usage {id_usage} supprimé ✅"})
 
         return jsonify({"error": f"Usage {id_usage} non trouvé"}), 404
