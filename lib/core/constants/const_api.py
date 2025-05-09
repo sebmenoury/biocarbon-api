@@ -1,4 +1,7 @@
 # lib/const.py
+
+SHEET_NAME = "Biocarbon Données"
+
 REF_TYPE_CATEGORIES_SHEET = "Ref-TypeCategorie"
 REF_EQUIPEMENTS_SHEET = "Ref-Equipements"
 REF_USAGES_SHEET = "Ref-Usages"
