@@ -9,6 +9,11 @@ from api.api_ref_usages import bp_ref_usages
 app = Flask(__name__)
 app.register_blueprint(bp_ref_usages)
 
+# ✅ Route simple pour test à la racine
+@app.route("/")
+def home():
+    return "✅ API Biocarbon est en ligne !"
+
 print("✅ ROUTES DISPONIBLES :")
 print(app.url_map)
 
