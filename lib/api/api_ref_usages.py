@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify
 from google_client import get_worksheet
-from core.constants.const import REF_USAGES_SHEET
+from lib.core.constants.const import REF_USAGES_SHEET  # ✅ Corrigé
 
 bp_ref_usages = Blueprint("ref_usages", __name__)
 
