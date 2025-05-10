@@ -40,7 +40,7 @@ class ApiService {
 
     for (final item in allData) {
       final String typeCategorie = item['Type_Categorie'] ?? 'Inconnu';
-      final double emission = (item['Emission_Calculee'] ?? 0).toDouble();
+      final emission = (item['Emission_Calculee'] ?? 0).toDouble();
 
       if (!result.containsKey(typeCategorie)) {
         result[typeCategorie] = {"total": 0};
