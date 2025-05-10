@@ -1,8 +1,10 @@
-// lib/screens/mes_donnees_screen.dart
 import 'package:flutter/material.dart';
-import '../../ui/widgets/graph_card.dart';
+import '../../ui/layout/base_screen.dart';
+import '../../ui/layout/custom_card.dart';
+import '../../ui/widgets/dashboard_gauge.dart';
 import '../../ui/widgets/category_list_card.dart';
-import '../../data/services/api_service.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class MesDonneesScreen extends StatefulWidget {
   const MesDonneesScreen({super.key});
@@ -11,67 +13,132 @@ class MesDonneesScreen extends StatefulWidget {
   State<MesDonneesScreen> createState() => _MesDonneesScreenState();
 }
 
+enum DataViewType { tous, equipements, usages }
+
 class _MesDonneesScreenState extends State<MesDonneesScreen> {
-  late Future<Map<String, Map<String, double>>> dataFuture;
+  DataViewType _selectedView = DataViewType.tous;
+  double totalEmission = 0;
+  Map<String, Map<String, double>> emissionsByCategory = {};
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    dataFuture = fetchEmissionData();
+    _loadData();
   }
 
-  double calculateTotal(Map<String, Map<String, double>> data) {
-    return data.values.expand((s) => s.values).fold(0.0, (prev, e) => prev + e);
+  Future<void> _loadData() async {
+    setState(() => isLoading = true);
+
+    final equipementsUri = Uri.parse(
+      'https://biocarbon-api.onrender.com/api/uc/equipements',
+    );
+    final usagesUri = Uri.parse(
+      'https://biocarbon-api.onrender.com/api/uc/usages',
+    );
+
+    final equipRes = await http.get(equipementsUri);
+    final usageRes = await http.get(usagesUri);
+
+    if (equipRes.statusCode == 200 && usageRes.statusCode == 200) {
+      final List<dynamic> allEquipements = jsonDecode(equipRes.body);
+      final List<dynamic> allUsages = jsonDecode(usageRes.body);
+
+      List<dynamic> data;
+      switch (_selectedView) {
+        case DataViewType.equipements:
+          data = allEquipements;
+          break;
+        case DataViewType.usages:
+          data = allUsages;
+          break;
+        default:
+          data = [...allEquipements, ...allUsages];
+      }
+
+      totalEmission = 0;
+      emissionsByCategory = {};
+
+      for (var item in data) {
+        double emission =
+            double.tryParse(item['Emission_Estimee'].toString()) ?? 0;
+        String cat = item['Type_Categorie'] ?? 'Inconnu';
+        String sousCat = item['Sous_Categorie'] ?? 'Autre';
+
+        totalEmission += emission;
+        emissionsByCategory.putIfAbsent(cat, () => {});
+        emissionsByCategory[cat]!.update(
+          sousCat,
+          (v) => v + emission,
+          ifAbsent: () => emission,
+        );
+      }
+    }
+
+    setState(() => isLoading = false);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: SizedBox(
-        width: 390,
-        child: Scaffold(
-          appBar: AppBar(
-            title: const Text("Mes Données", style: TextStyle(fontSize: 14)),
-          ),
-          body: FutureBuilder(
-            future: dataFuture,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                final data = snapshot.data!;
-                final typeCategories =
-                    data.keys.toList()..sort((a, b) {
-                      final sumA = data[a]!.values.fold(0.0, (p, v) => p + v);
-                      final sumB = data[b]!.values.fold(0.0, (p, v) => p + v);
-                      return sumB.compareTo(sumA);
-                    });
-                final total = calculateTotal(data);
+    return BaseScreen(
+      title: "Mes données",
+      children: [
+        _buildTypeSelector(),
+        if (isLoading)
+          const Center(child: CircularProgressIndicator())
+        else ...[
+          CustomCard(child: DashboardGauge(valeur: totalEmission)),
+          const SizedBox(height: 8),
+          CustomCard(child: CategoryListCard(data: emissionsByCategory)),
+        ],
+      ],
+    );
+  }
 
-                return Column(
-                  children: [
-                    const SizedBox(height: 10),
-                    Text(
-                      "Total : ${total.toStringAsFixed(2)} tCO₂e/an",
-                      style: const TextStyle(fontSize: 15),
+  Widget _buildTypeSelector() {
+    return CustomCard(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children:
+            DataViewType.values.map((type) {
+              final label =
+                  {
+                    DataViewType.tous: "Tous",
+                    DataViewType.equipements: "Équipements",
+                    DataViewType.usages: "Usages",
+                  }[type]!;
+
+              final isSelected = _selectedView == type;
+
+              return GestureDetector(
+                onTap: () async {
+                  setState(() => _selectedView = type);
+                  await _loadData();
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color:
+                        isSelected ? Colors.blue.shade100 : Colors.transparent,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: isSelected ? Colors.blue : Colors.grey.shade300,
                     ),
-                    GraphCard(data: data),
-                    const Divider(height: 1, thickness: 1),
-                    Expanded(
-                      child: CategoryListCard(
-                        data: data,
-                        typeCategories: typeCategories,
-                        total: total,
-                      ),
+                  ),
+                  child: Text(
+                    label,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: isSelected ? Colors.blue[800] : Colors.grey[700],
                     ),
-                  ],
-                );
-              } else if (snapshot.hasError) {
-                return Center(child: Text("Erreur : ${snapshot.error}"));
-              } else {
-                return const Center(child: CircularProgressIndicator());
-              }
-            },
-          ),
-        ),
+                  ),
+                ),
+              );
+            }).toList(),
       ),
     );
   }
