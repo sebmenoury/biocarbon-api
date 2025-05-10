@@ -9,6 +9,5 @@ REF_ALIMENTATION_SHEET = "Ref-Alimentation"
 REF_AEROPORTS_SHEET = "Ref-Aeroports"
 
 UC_INDIVIDU_SHEET = "UC-Individu"
-UC_USAGES_SHEET = "UC-Usages"
-UC_EQUIPEMENTS_SHEET = "UC-Equipements"
+UC_ACTIVITES_SHEET = "UC-Activites"
 UC_SYNTHESE_SHEET = "UC-Synthese_Annuelle"
