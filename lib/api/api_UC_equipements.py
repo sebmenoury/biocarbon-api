@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from lib.google_client import get_worksheet
+from google_client import get_worksheet
 from lib.core.constants.const_api import SHEET_NAME, UC_EQUIPEMENTS_SHEET
 import datetime
 import uuid
