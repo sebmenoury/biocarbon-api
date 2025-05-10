@@ -67,7 +67,7 @@ class ApiService {
         result[typeCategorie] = {"total": 0};
       }
       result[typeCategorie]!["total"] =
-          result[typeCategorie]!["total"]! + emission;
+          result[typeCategorie]!["total"]! + emission / 1000;
     }
 
     return result;
