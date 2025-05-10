@@ -13,7 +13,7 @@ def add_usage():
     required_fields = [
         "Code_Individu", "Type_Temps", "Valeur_Temps", "Date_Enregistrement",
         "Type_Categorie", "Sous_Categorie", "Nom_Usage", "Quantite",
-        "Distance_km", "Unite", "Facteur_Emission", "Emission_Calculee"
+        "Distance_km", "Unite", "Facteur_Emission", "Emission_Calculee", "Type_Objet"
     ]
 
     if not all(field in data for field in required_fields):
@@ -37,7 +37,8 @@ def add_usage():
         data["Distance_km"],
         data["Unite"],
         data["Facteur_Emission"],
-        data["Emission_Calculee"]
+        data["Emission_Calculee"],
+        data["Type_Objet"],
     ])
 
     return jsonify({"message": "Usage ajouté avec succès ✅", "ID_Usage": id_usage}), 201
