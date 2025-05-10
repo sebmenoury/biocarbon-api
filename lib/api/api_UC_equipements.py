@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from lib.google_client import get_worksheet
 from lib.core.constants.const_api import SHEET_NAME, UC_EQUIPEMENTS_SHEET
 import datetime
+import uuid
 
 bp_uc_equipements = Blueprint("uc_equipements", __name__)
 
