@@ -4,6 +4,7 @@ import sys, os
 sys.path.append(os.path.abspath("lib"))
 
 from flask import Flask
+from flask_cors import CORS  # ✅ ajout CORS
 from lib.api.api_ref_usages import bp_ref_usages
 from lib.api.api_ref_alimentation import bp_ref_alimentation
 from lib.api.api_ref_aeroports import bp_ref_aeroports
@@ -16,6 +17,7 @@ from lib.api.api_UC_equipements import bp_uc_equipements
 
 
 app = Flask(__name__)
+CORS(app)  # ✅ active les CORS sur toutes les routes
 
 @app.route("/")
 def home():
