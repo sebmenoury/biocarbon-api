@@ -14,11 +14,18 @@ class ProjectionScreen extends StatefulWidget {
 
 class _ProjectionScreenState extends State<ProjectionScreen> {
   late Future<Map<String, Map<String, double>>> dataFuture;
+  String filtre = "Tous"; // "Tous", "Equipements", "Usages"
+  final String codeIndividu = "BASILE";
+  final String valeurTemps = "2025";
 
   @override
   void initState() {
     super.initState();
-    dataFuture = ApiService.getEmissionsByType("Tous");
+    dataFuture = ApiService.getEmissionsByTypeAndYearAndUser(
+      filtre,
+      codeIndividu,
+      valeurTemps,
+    );
   }
 
   double calculateTotal(Map<String, Map<String, double>> data) {

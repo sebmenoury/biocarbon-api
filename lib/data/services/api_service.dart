@@ -4,8 +4,15 @@ import 'package:http/http.dart' as http;
 class ApiService {
   static const String baseUrl = "https://biocarbon-api.onrender.com";
 
-  static Future<List<Map<String, dynamic>>> getUCUsages() async {
-    final response = await http.get(Uri.parse("$baseUrl/api/uc/usages"));
+  static Future<List<Map<String, dynamic>>> getUCUsages(
+    String codeIndividu,
+    String valeurTemps,
+  ) async {
+    final response = await http.get(
+      Uri.parse(
+        "$baseUrl/api/uc/usages?code_individu=$codeIndividu&valeur_temps=$valeurTemps",
+      ),
+    );
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(response.body);
       return data.cast<Map<String, dynamic>>();
@@ -14,8 +21,15 @@ class ApiService {
     }
   }
 
-  static Future<List<Map<String, dynamic>>> getUCEquipements() async {
-    final response = await http.get(Uri.parse("$baseUrl/api/uc/equipements"));
+  static Future<List<Map<String, dynamic>>> getUCEquipements(
+    String codeIndividu,
+    String valeurTemps,
+  ) async {
+    final response = await http.get(
+      Uri.parse(
+        "$baseUrl/api/uc/equipements?code_individu=$codeIndividu&valeur_temps=$valeurTemps",
+      ),
+    );
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(response.body);
       return data.cast<Map<String, dynamic>>();
@@ -24,31 +38,38 @@ class ApiService {
     }
   }
 
-  static Future<Map<String, Map<String, double>>> getEmissionsByType(
+  static Future<Map<String, Map<String, double>>>
+  getEmissionsByTypeAndYearAndUser(
     String filtre,
+    String codeIndividu,
+    String valeurTemps,
   ) async {
-    final usages = await getUCUsages();
-    final equipements = await getUCEquipements();
+    List<Map<String, dynamic>> usages = [];
+    List<Map<String, dynamic>> equipements = [];
 
-    final records = switch (filtre) {
-      "Equipements" => equipements,
-      "Usages" => usages,
-      _ => [...usages, ...equipements],
-    };
-
-    final Map<String, Map<String, double>> emissions = {};
-
-    for (final record in records) {
-      final categorie = record["Type_Categorie"] ?? "Autres";
-      final sousCategorie = record["Sous_Categorie"] ?? "Inconnu";
-      final emission =
-          double.tryParse(record["Emission_Calculee"]?.toString() ?? "0") ?? 0;
-
-      emissions.putIfAbsent(categorie, () => {});
-      emissions[categorie]![sousCategorie] =
-          (emissions[categorie]![sousCategorie] ?? 0) + emission / 1000;
+    if (filtre == 'Usages' || filtre == 'Tous') {
+      usages = await getUCUsages(codeIndividu, valeurTemps);
+    }
+    if (filtre == 'Equipements' || filtre == 'Tous') {
+      equipements = await getUCEquipements(codeIndividu, valeurTemps);
     }
 
-    return emissions;
+    final List<Map<String, dynamic>> allData = [...usages, ...equipements];
+    final Map<String, Map<String, double>> result = {};
+
+    for (final item in allData) {
+      final String typeCategorie = item['Type_Categorie'] ?? 'Inconnu';
+      final double emission =
+          (item['Emission_Estimee'] ?? item['Emission_Calculee'] ?? 0)
+              .toDouble();
+
+      if (!result.containsKey(typeCategorie)) {
+        result[typeCategorie] = {"total": 0};
+      }
+      result[typeCategorie]!["total"] =
+          result[typeCategorie]!["total"]! + emission;
+    }
+
+    return result;
   }
 }

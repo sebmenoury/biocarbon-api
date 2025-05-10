@@ -14,18 +14,29 @@ class MesDonneesScreen extends StatefulWidget {
 
 class _MesDonneesScreenState extends State<MesDonneesScreen> {
   String filtre = "Tous"; // "Tous", "Equipements", "Usages"
+  final String codeIndividu = "BASILE";
+  final String valeurTemps = "2025";
+
   late Future<Map<String, Map<String, double>>> dataFuture;
 
   @override
   void initState() {
     super.initState();
-    dataFuture = ApiService.getEmissionsByType(filtre);
+    dataFuture = ApiService.getEmissionsByTypeAndYearAndUser(
+      filtre,
+      codeIndividu,
+      valeurTemps,
+    );
   }
 
   void majFiltre(String nouveau) {
     setState(() {
       filtre = nouveau;
-      dataFuture = ApiService.getEmissionsByType(filtre);
+      dataFuture = ApiService.getEmissionsByTypeAndYearAndUser(
+        filtre,
+        codeIndividu,
+        valeurTemps,
+      );
     });
   }
 
@@ -53,14 +64,11 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color:
-                            isSelected
-                                ? Colors.blue.shade100
-                                : Colors.transparent,
+                        color: isSelected ? Colors.indigo : Colors.transparent,
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
                           color:
-                              isSelected ? Colors.blue : Colors.grey.shade300,
+                              isSelected ? Colors.indigo : Colors.grey.shade300,
                         ),
                       ),
                       child: Text(
@@ -69,7 +77,7 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
                           fontSize: 12,
                           fontWeight:
                               isSelected ? FontWeight.bold : FontWeight.normal,
-                          color: isSelected ? Colors.blue[900] : Colors.black87,
+                          color: isSelected ? Colors.white : Colors.black87,
                         ),
                       ),
                     ),
@@ -104,7 +112,7 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
                       DashboardGauge(valeur: total),
                       const SizedBox(height: 8),
                       Text(
-                        "${filtre.toUpperCase()} — ${total.toStringAsFixed(2)} tCO₂e/an",
+                        "$filtre — $total tCO₂e/an",
                         style: const TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.w500,

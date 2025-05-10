@@ -20,7 +20,7 @@ class App extends StatelessWidget {
         useMaterial3: true,
         navigationBarTheme: const NavigationBarThemeData(
           labelTextStyle: MaterialStatePropertyAll(
-            TextStyle(fontSize: 9), // 👈 3 pt de moins
+            TextStyle(fontSize: 10), // 👈 2 pt de moins
           ),
           iconTheme: MaterialStatePropertyAll(
             IconThemeData(size: 18), // 👈 plus petit que 24
