@@ -46,7 +46,7 @@ class ApiService {
 
       emissions.putIfAbsent(categorie, () => {});
       emissions[categorie]![sousCategorie] =
-          (emissions[categorie]![sousCategorie] ?? 0) + emission;
+          (emissions[categorie]![sousCategorie] ?? 0) + emission / 1000;
     }
 
     return emissions;
