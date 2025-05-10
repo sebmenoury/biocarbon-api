@@ -101,7 +101,7 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   child: Column(
                     children: [
-                      DashboardGauge(valeur: total * 1000), // converti en kg
+                      DashboardGauge(valeur: total),
                       const SizedBox(height: 8),
                       Text(
                         "${filtre.toUpperCase()} — ${total.toStringAsFixed(2)} tCO₂e/an",
