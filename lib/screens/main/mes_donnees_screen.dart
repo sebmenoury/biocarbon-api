@@ -102,6 +102,8 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
                   return sumB.compareTo(sumA);
                 });
             final total = totalEmissions(data);
+            final double totalTonne =
+                total / 1000; // total_tonne est également un double
 
             return Column(
               children: [
@@ -112,7 +114,7 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
                       DashboardGauge(valeur: total),
                       const SizedBox(height: 8),
                       Text(
-                        "$filtre — $total tCO₂e/an",
+                        "$filtre — $totalTonne tCO₂e/an",
                         style: const TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.w500,
@@ -125,7 +127,7 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
                   child: CategoryListCard(
                     data: data,
                     typeCategories: typeCategories,
-                    total: total,
+                    total: totalTonne,
                   ),
                 ),
               ],
