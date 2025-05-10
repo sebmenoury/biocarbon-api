@@ -1,23 +1,54 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-Future<Map<String, Map<String, double>>> fetchEmissionData() async {
-  final url = Uri.parse(
-    "http://127.0.0.1:5000/synthese?individu=BASILE&annee=2025",
-  );
-  final response = await http.get(url);
-  if (response.statusCode == 200) {
-    final List<dynamic> data = json.decode(response.body);
-    final Map<String, Map<String, double>> grouped = {};
-    for (var item in data) {
-      final type = item["Type_Categorie"];
-      final sous = item["Sous_Categorie"];
-      final value = (item["Emissions_CO2_kg"] as num).toDouble() / 1000;
-      grouped[type] ??= {};
-      grouped[type]![sous] = value;
+class ApiService {
+  static const String baseUrl = "https://biocarbon-api.onrender.com";
+
+  static Future<List<Map<String, dynamic>>> getUCUsages() async {
+    final response = await http.get(Uri.parse("$baseUrl/api/uc/usages"));
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body);
+      return data.cast<Map<String, dynamic>>();
+    } else {
+      throw Exception("Erreur lors du chargement des usages");
     }
-    return grouped;
-  } else {
-    throw Exception("Erreur API");
+  }
+
+  static Future<List<Map<String, dynamic>>> getUCEquipements() async {
+    final response = await http.get(Uri.parse("$baseUrl/api/uc/equipements"));
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body);
+      return data.cast<Map<String, dynamic>>();
+    } else {
+      throw Exception("Erreur lors du chargement des équipements");
+    }
+  }
+
+  static Future<Map<String, Map<String, double>>> getEmissionsByType(
+    String filtre,
+  ) async {
+    final usages = await getUCUsages();
+    final equipements = await getUCEquipements();
+
+    final records = switch (filtre) {
+      "Equipements" => equipements,
+      "Usages" => usages,
+      _ => [...usages, ...equipements],
+    };
+
+    final Map<String, Map<String, double>> emissions = {};
+
+    for (final record in records) {
+      final categorie = record["Type_Categorie"] ?? "Autres";
+      final sousCategorie = record["Sous_Categorie"] ?? "Inconnu";
+      final emission =
+          double.tryParse(record["Emission_Calculee"]?.toString() ?? "0") ?? 0;
+
+      emissions.putIfAbsent(categorie, () => {});
+      emissions[categorie]![sousCategorie] =
+          (emissions[categorie]![sousCategorie] ?? 0) + emission;
+    }
+
+    return emissions;
   }
 }

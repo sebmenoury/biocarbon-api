@@ -3,8 +3,7 @@ import '../../ui/layout/base_screen.dart';
 import '../../ui/layout/custom_card.dart';
 import '../../ui/widgets/dashboard_gauge.dart';
 import '../../ui/widgets/category_list_card.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:carbone_web/data/services/api_service.dart';
 
 class MesDonneesScreen extends StatefulWidget {
   const MesDonneesScreen({super.key});
@@ -13,133 +12,119 @@ class MesDonneesScreen extends StatefulWidget {
   State<MesDonneesScreen> createState() => _MesDonneesScreenState();
 }
 
-enum DataViewType { tous, equipements, usages }
-
 class _MesDonneesScreenState extends State<MesDonneesScreen> {
-  DataViewType _selectedView = DataViewType.tous;
-  double totalEmission = 0;
-  Map<String, Map<String, double>> emissionsByCategory = {};
-  bool isLoading = true;
+  String filtre = "Tous"; // "Tous", "Equipements", "Usages"
+  late Future<Map<String, Map<String, double>>> dataFuture;
 
   @override
   void initState() {
     super.initState();
-    _loadData();
+    dataFuture = ApiService.getEmissionsByType(filtre);
   }
 
-  Future<void> _loadData() async {
-    setState(() => isLoading = true);
+  void majFiltre(String nouveau) {
+    setState(() {
+      filtre = nouveau;
+      dataFuture = ApiService.getEmissionsByType(filtre);
+    });
+  }
 
-    final equipementsUri = Uri.parse(
-      'https://biocarbon-api.onrender.com/api/uc/equipements',
-    );
-    final usagesUri = Uri.parse(
-      'https://biocarbon-api.onrender.com/api/uc/usages',
-    );
-
-    final equipRes = await http.get(equipementsUri);
-    final usageRes = await http.get(usagesUri);
-
-    if (equipRes.statusCode == 200 && usageRes.statusCode == 200) {
-      final List<dynamic> allEquipements = jsonDecode(equipRes.body);
-      final List<dynamic> allUsages = jsonDecode(usageRes.body);
-
-      List<dynamic> data;
-      switch (_selectedView) {
-        case DataViewType.equipements:
-          data = allEquipements;
-          break;
-        case DataViewType.usages:
-          data = allUsages;
-          break;
-        default:
-          data = [...allEquipements, ...allUsages];
-      }
-
-      totalEmission = 0;
-      emissionsByCategory = {};
-
-      for (var item in data) {
-        double emission =
-            double.tryParse(item['Emission_Estimee'].toString()) ?? 0;
-        String cat = item['Type_Categorie'] ?? 'Inconnu';
-        String sousCat = item['Sous_Categorie'] ?? 'Autre';
-
-        totalEmission += emission;
-        emissionsByCategory.putIfAbsent(cat, () => {});
-        emissionsByCategory[cat]!.update(
-          sousCat,
-          (v) => v + emission,
-          ifAbsent: () => emission,
-        );
-      }
-    }
-
-    setState(() => isLoading = false);
+  double totalEmissions(Map<String, Map<String, double>> data) {
+    return data.values.expand((s) => s.values).fold(0.0, (acc, e) => acc + e);
   }
 
   @override
   Widget build(BuildContext context) {
     return BaseScreen(
-      title: "Mes données",
+      title: "Mes Données",
       children: [
-        _buildTypeSelector(),
-        if (isLoading)
-          const Center(child: CircularProgressIndicator())
-        else ...[
-          CustomCard(child: DashboardGauge(valeur: totalEmission)),
-          const SizedBox(height: 8),
-          CustomCard(child: CategoryListCard(data: emissionsByCategory)),
-        ],
-      ],
-    );
-  }
-
-  Widget _buildTypeSelector() {
-    return CustomCard(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children:
-            DataViewType.values.map((type) {
-              final label =
-                  {
-                    DataViewType.tous: "Tous",
-                    DataViewType.equipements: "Équipements",
-                    DataViewType.usages: "Usages",
-                  }[type]!;
-
-              final isSelected = _selectedView == type;
-
-              return GestureDetector(
-                onTap: () async {
-                  setState(() => _selectedView = type);
-                  await _loadData();
-                },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    color:
-                        isSelected ? Colors.blue.shade100 : Colors.transparent,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: isSelected ? Colors.blue : Colors.grey.shade300,
+        CustomCard(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children:
+                ["Tous", "Equipements", "Usages"].map((option) {
+                  final isSelected = option == filtre;
+                  return GestureDetector(
+                    onTap: () => majFiltre(option),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color:
+                            isSelected
+                                ? Colors.blue.shade100
+                                : Colors.transparent,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color:
+                              isSelected ? Colors.blue : Colors.grey.shade300,
+                        ),
+                      ),
+                      child: Text(
+                        option,
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight:
+                              isSelected ? FontWeight.bold : FontWeight.normal,
+                          color: isSelected ? Colors.blue[900] : Colors.black87,
+                        ),
+                      ),
                     ),
-                  ),
-                  child: Text(
-                    label,
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                      color: isSelected ? Colors.blue[800] : Colors.grey[700],
-                    ),
+                  );
+                }).toList(),
+          ),
+        ),
+        FutureBuilder<Map<String, Map<String, double>>>(
+          future: dataFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (snapshot.hasError) {
+              return Center(child: Text("Erreur : ${snapshot.error}"));
+            }
+            final data = snapshot.data!;
+            final typeCategories =
+                data.keys.toList()..sort((a, b) {
+                  final sumA = data[a]!.values.fold(0.0, (p, v) => p + v);
+                  final sumB = data[b]!.values.fold(0.0, (p, v) => p + v);
+                  return sumB.compareTo(sumA);
+                });
+            final total = totalEmissions(data);
+
+            return Column(
+              children: [
+                CustomCard(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  child: Column(
+                    children: [
+                      DashboardGauge(valeur: total * 1000), // converti en kg
+                      const SizedBox(height: 8),
+                      Text(
+                        "${filtre.toUpperCase()} — ${total.toStringAsFixed(2)} tCO₂e/an",
+                        style: const TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              );
-            }).toList(),
-      ),
+                CustomCard(
+                  child: CategoryListCard(
+                    data: data,
+                    typeCategories: typeCategories,
+                    total: total,
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+      ],
     );
   }
 }
