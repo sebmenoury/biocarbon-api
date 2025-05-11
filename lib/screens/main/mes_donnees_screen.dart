@@ -3,7 +3,7 @@ import '../../ui/layout/base_screen.dart';
 import '../../ui/layout/custom_card.dart';
 import '../../ui/widgets/dashboard_gauge.dart';
 import '../../ui/widgets/category_list_card.dart';
-import 'package:carbone_web/data/services/api_service.dart';
+import '../../data/services/api_service.dart';
 
 class MesDonneesScreen extends StatefulWidget {
   const MesDonneesScreen({super.key});
@@ -22,22 +22,30 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
   @override
   void initState() {
     super.initState();
-    dataFuture = ApiService.getEmissionsByTypeAndYearAndUser(
-      filtre,
-      codeIndividu,
-      valeurTemps,
-    );
+    dataFuture = fetchData();
   }
 
   void majFiltre(String nouveau) {
     setState(() {
       filtre = nouveau;
-      dataFuture = ApiService.getEmissionsByTypeAndYearAndUser(
+      dataFuture = fetchData();
+    });
+  }
+
+  Future<Map<String, Map<String, double>>> fetchData() {
+    if (filtre == "Tous") {
+      return ApiService.getEmissionsByTypeAndYearAndUser(
         filtre,
         codeIndividu,
         valeurTemps,
       );
-    });
+    } else {
+      return ApiService.getEmissionsFilteredByTypePosteGroupedByCategorie(
+        filtre.substring(0, filtre.length - 1), // "Usages" → "Usage"
+        codeIndividu,
+        valeurTemps,
+      );
+    }
   }
 
   double totalEmissions(Map<String, Map<String, double>> data) {
@@ -50,7 +58,7 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
       title: "Mes Données",
       children: [
         CustomCard(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children:
@@ -61,14 +69,13 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
                     child: Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 12,
-                        vertical: 6,
+                        vertical: 5,
                       ),
                       decoration: BoxDecoration(
-                        color: isSelected ? Colors.indigo : Colors.transparent,
+                        color: isSelected ? Colors.indigo : Colors.white,
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
-                          color:
-                              isSelected ? Colors.indigo : Colors.grey.shade300,
+                          color: isSelected ? Colors.indigo : Colors.white,
                         ),
                       ),
                       child: Text(
@@ -108,15 +115,22 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
                 CustomCard(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       DashboardGauge(valeur: total),
-                      const SizedBox(height: 8),
+                      SizedBox(height: 12),
                       Text(
-                        "$filtre — $total tCO₂e/an",
-                        style: const TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w500,
+                        "Niveau d'émission carbone",
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
                         ),
+                      ),
+                      SizedBox(height: 1),
+                      Text(
+                        "Données annuelles en kg CO₂e / personne",
+                        style: TextStyle(fontSize: 8, color: Colors.black54),
                       ),
                     ],
                   ),

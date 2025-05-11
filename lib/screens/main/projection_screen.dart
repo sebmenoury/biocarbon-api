@@ -21,8 +21,7 @@ class _ProjectionScreenState extends State<ProjectionScreen> {
   @override
   void initState() {
     super.initState();
-    dataFuture = ApiService.getEmissionsByTypeAndYearAndUser(
-      filtre,
+    dataFuture = ApiService.getEmissionsByCategoryAndSousCategorie(
       codeIndividu,
       valeurTemps,
     );
@@ -72,7 +71,7 @@ class _ProjectionScreenState extends State<ProjectionScreen> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
-                          "Total : \${total.toStringAsFixed(2)} tCO₂e/an",
+                          "Total : ${total.toStringAsFixed(2)} tCO₂e/an",
                           style: const TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.bold,

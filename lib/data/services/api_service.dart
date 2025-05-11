@@ -51,4 +51,55 @@ class ApiService {
 
     return result;
   }
+
+  static Future<Map<String, Map<String, double>>>
+  getEmissionsByCategoryAndSousCategorie(
+    String codeIndividu,
+    String valeurTemps,
+  ) async {
+    final List<Map<String, dynamic>> allData = await getUCPostes(
+      codeIndividu,
+      valeurTemps,
+    );
+
+    final Map<String, Map<String, double>> result = {};
+
+    for (final item in allData) {
+      final String typeCategorie = item['Type_Categorie'] ?? 'Inconnu';
+      final String sousCategorie = item['Sous_Categorie'] ?? 'Autre';
+      final emission = (item['Emission_Calculee'] ?? 0).toDouble();
+
+      result.putIfAbsent(typeCategorie, () => {});
+      result[typeCategorie]![sousCategorie] =
+          (result[typeCategorie]![sousCategorie] ?? 0) + emission / 1000;
+    }
+
+    return result;
+  }
+
+  static Future<Map<String, Map<String, double>>>
+  getEmissionsFilteredByTypePosteGroupedByCategorie(
+    String typePoste, // "Usage", "Equipement"
+    String codeIndividu,
+    String valeurTemps,
+  ) async {
+    final allData = await getUCPostes(codeIndividu, valeurTemps);
+
+    // Filtrer par Type_Poste
+    final filtered =
+        allData.where((item) => item['Type_Poste'] == typePoste).toList();
+
+    final Map<String, Map<String, double>> result = {};
+
+    for (final item in filtered) {
+      final categorie = item['Type_Categorie'] ?? 'Inconnu';
+      final emission = (item['Emission_Calculee'] ?? 0).toDouble();
+
+      result.putIfAbsent(categorie, () => {});
+      result[categorie]!['total'] =
+          (result[categorie]!['total'] ?? 0) + emission / 1000;
+    }
+
+    return result;
+  }
 }
