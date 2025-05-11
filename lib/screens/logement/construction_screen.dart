@@ -56,8 +56,11 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
   }
 
   Future<void> loadEquipementsData() async {
+    print("🔄 Chargement des données d'équipements...");
     try {
       final equipements = await ApiService.getRefEquipements();
+      print("✅ Données d'équipements récupérées : $equipements");
+
       final Map<String, double> facteurs = {};
       final Map<String, int> durees = {};
 
@@ -79,6 +82,9 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
         isLoading = false;
         errorMsg = null;
         print("✅ Données chargées (${facteursEmission.length})");
+        print(
+          "Clés disponibles dans facteursEmission : ${facteursEmission.keys}",
+        );
       });
     } catch (e) {
       print("❌ Erreur chargement équipements : $e");
@@ -91,12 +97,16 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
 
   double calculerTotalEmission() {
     final reduction = reductionParAnnee(bien.anneeConstruction);
+    print("Réduction par année : $reduction");
+
     double total = 0.0;
 
     total +=
         (bien.surface * (facteursEmission[bien.type] ?? 0) * reduction) /
         (dureesAmortissement[bien.type] ?? 1) /
         bien.nbProprietaires;
+
+    print("Total après type principal : $total");
 
     if (bien.garage) {
       total +=
@@ -105,6 +115,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
               reduction) /
           (dureesAmortissement['Garage béton'] ?? 1) /
           bien.nbProprietaires;
+      print("Total après garage : $total");
     }
 
     if (bien.piscine) {
@@ -115,6 +126,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
               reduction) /
           (dureesAmortissement[bien.typePiscine] ?? 1) /
           bien.nbProprietaires;
+      print("Total après piscine : $total");
     }
 
     if (bien.abriEtSerre) {
@@ -124,6 +136,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
               reduction) /
           (dureesAmortissement['Abri de jardin bois'] ?? 1) /
           bien.nbProprietaires;
+      print("Total après abri/serre : $total");
     }
 
     return total;
@@ -165,106 +178,111 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
       title: "Construction du logement",
       children: [
         CustomCard(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              DropdownButton<String>(
-                value:
-                    facteursEmission.keys.contains(bien.type)
-                        ? bien.type
-                        : null,
-                isExpanded: true,
-                items:
-                    facteursEmission.keys
-                        .where(
-                          (k) =>
-                              k.contains("Maison") || k.contains("Appartement"),
-                        )
-                        .map((t) => DropdownMenuItem(value: t, child: Text(t)))
-                        .toList(),
-                onChanged: (val) => setState(() => bien.type = val!),
-              ),
-              champ(
-                "Surface (m²)",
-                bien.surface,
-                (v) => setState(() => bien.surface = v),
-              ),
-              champ(
-                "Année de construction",
-                bien.anneeConstruction.toDouble(),
-                (v) => setState(() => bien.anneeConstruction = v.toInt()),
-              ),
-              champ(
-                "Nb. propriétaires",
-                bien.nbProprietaires.toDouble(),
-                (v) => setState(() => bien.nbProprietaires = v.toInt()),
-              ),
-              const Divider(),
-              CheckboxListTile(
-                title: const Text("J’ai un garage"),
-                value: bien.garage,
-                onChanged: (val) => setState(() => bien.garage = val!),
-              ),
-              if (bien.garage)
-                champ(
-                  "Surface garage (m²)",
-                  bien.surfaceGarage,
-                  (v) => setState(() => bien.surfaceGarage = v),
-                ),
-              const Divider(),
-              CheckboxListTile(
-                title: const Text("J’ai une piscine"),
-                value: bien.piscine,
-                onChanged: (val) => setState(() => bien.piscine = val!),
-              ),
-              if (bien.piscine) ...[
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
                 DropdownButton<String>(
-                  value: bien.typePiscine,
+                  value:
+                      facteursEmission.keys.contains(bien.type)
+                          ? bien.type
+                          : null,
                   isExpanded: true,
                   items:
-                      ["Piscine béton", "Piscine coque"]
+                      facteursEmission.keys
+                          .where(
+                            (k) =>
+                                k.contains("Maison") ||
+                                k.contains("Appartement"),
+                          )
                           .map(
                             (t) => DropdownMenuItem(value: t, child: Text(t)),
                           )
                           .toList(),
-                  onChanged: (val) => setState(() => bien.typePiscine = val!),
+                  onChanged: (val) => setState(() => bien.type = val!),
                 ),
                 champ(
-                  "Longueur piscine (m)",
-                  bien.piscineLongueur,
-                  (v) => setState(() => bien.piscineLongueur = v),
-                  allowDecimal: true,
+                  "Surface (m²)",
+                  bien.surface,
+                  (v) => setState(() => bien.surface = v),
                 ),
                 champ(
-                  "Largeur piscine (m)",
-                  bien.piscineLargeur,
-                  (v) => setState(() => bien.piscineLargeur = v),
-                  allowDecimal: true,
+                  "Année de construction",
+                  bien.anneeConstruction.toDouble(),
+                  (v) => setState(() => bien.anneeConstruction = v.toInt()),
+                ),
+                champ(
+                  "Nb. propriétaires",
+                  bien.nbProprietaires.toDouble(),
+                  (v) => setState(() => bien.nbProprietaires = v.toInt()),
+                ),
+                const Divider(),
+                CheckboxListTile(
+                  title: const Text("J’ai un garage"),
+                  value: bien.garage,
+                  onChanged: (val) => setState(() => bien.garage = val!),
+                ),
+                if (bien.garage)
+                  champ(
+                    "Surface garage (m²)",
+                    bien.surfaceGarage,
+                    (v) => setState(() => bien.surfaceGarage = v),
+                  ),
+                const Divider(),
+                CheckboxListTile(
+                  title: const Text("J’ai une piscine"),
+                  value: bien.piscine,
+                  onChanged: (val) => setState(() => bien.piscine = val!),
+                ),
+                if (bien.piscine) ...[
+                  DropdownButton<String>(
+                    value: bien.typePiscine,
+                    isExpanded: true,
+                    items:
+                        ["Piscine béton", "Piscine coque"]
+                            .map(
+                              (t) => DropdownMenuItem(value: t, child: Text(t)),
+                            )
+                            .toList(),
+                    onChanged: (val) => setState(() => bien.typePiscine = val!),
+                  ),
+                  champ(
+                    "Longueur piscine (m)",
+                    bien.piscineLongueur,
+                    (v) => setState(() => bien.piscineLongueur = v),
+                    allowDecimal: true,
+                  ),
+                  champ(
+                    "Largeur piscine (m)",
+                    bien.piscineLargeur,
+                    (v) => setState(() => bien.piscineLargeur = v),
+                    allowDecimal: true,
+                  ),
+                ],
+                const Divider(),
+                CheckboxListTile(
+                  title: const Text(
+                    "J’ai une construction dans mon jardin (abri ou serre)",
+                  ),
+                  value: bien.abriEtSerre,
+                  onChanged: (val) => setState(() => bien.abriEtSerre = val!),
+                ),
+                if (bien.abriEtSerre)
+                  champ(
+                    "Surface abri/serre (m²)",
+                    bien.surfaceAbriEtSerre,
+                    (v) => setState(() => bien.surfaceAbriEtSerre = v),
+                  ),
+                const SizedBox(height: 12),
+                ElevatedButton(
+                  onPressed: () => setState(() {}),
+                  child: const Text("Recalculer"),
+                ),
+                Text(
+                  "Émission estimée : ${calculerTotalEmission().toStringAsFixed(1)} kg CO₂e/an",
                 ),
               ],
-              const Divider(),
-              CheckboxListTile(
-                title: const Text(
-                  "J’ai une construction dans mon jardin (abri ou serre)",
-                ),
-                value: bien.abriEtSerre,
-                onChanged: (val) => setState(() => bien.abriEtSerre = val!),
-              ),
-              if (bien.abriEtSerre)
-                champ(
-                  "Surface abri/serre (m²)",
-                  bien.surfaceAbriEtSerre,
-                  (v) => setState(() => bien.surfaceAbriEtSerre = v),
-                ),
-              const SizedBox(height: 12),
-              ElevatedButton(
-                onPressed: () => setState(() {}),
-                child: const Text("Recalculer"),
-              ),
-              Text(
-                "Émission estimée : ${calculerTotalEmission().toStringAsFixed(1)} kg CO₂e/an",
-              ),
-            ],
+            ),
           ),
         ),
       ],
