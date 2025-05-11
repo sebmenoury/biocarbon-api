@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../ui/layout/base_screen.dart';
 import '../../ui/layout/custom_card.dart';
-import '../logement/construction_screen.dart';
+import '../logement/logement_list_screen.dart';
 
 class MesDonneesScreen extends StatefulWidget {
   const MesDonneesScreen({super.key});
@@ -11,162 +10,142 @@ class MesDonneesScreen extends StatefulWidget {
 }
 
 class _MesDonneesScreenState extends State<MesDonneesScreen> {
-  String filtre = "Equipements";
-
-  final Map<String, List<Map<String, dynamic>>> sousCategories = {
-    "Equipements": [
-      {"nom": "Véhicules", "icon": Icons.directions_bike},
-      {"nom": "Logements", "icon": Icons.house},
-      {"nom": "Equipements ménagers", "icon": Icons.local_laundry_service},
-      {"nom": "Equipements multi-média", "icon": Icons.smartphone},
-      {"nom": "Equipements bricolage", "icon": Icons.precision_manufacturing},
-    ],
-    "Usages": [
-      {"nom": "Déplacement quotidien / loisirs", "icon": Icons.directions_walk},
-      {"nom": "Chauffage/Climatisation", "icon": Icons.thermostat},
-      {"nom": "Alimentation", "icon": Icons.local_dining},
-      {"nom": "Loisirs", "icon": Icons.card_travel},
-      {"nom": "Habillement", "icon": Icons.checkroom},
-      {"nom": "Banque et assurance", "icon": Icons.account_balance},
-      {"nom": "Services publics", "icon": Icons.settings},
-    ],
-  };
-
-  Widget? getFormulaireWidget(String nom) {
-    switch (nom) {
-      case "Logements":
-        return const ConstructionScreen();
-      default:
-        return const Text("Formulaire non encore disponible");
-    }
-  }
-
-  void ouvrirFormulaire(String nom) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder:
-          (context) => DraggableScrollableSheet(
-            initialChildSize: 0.85,
-            maxChildSize: 0.95,
-            minChildSize: 0.6,
-            expand: false,
-            builder: (context, scrollController) {
-              return Container(
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
-                ),
-                padding: const EdgeInsets.all(16),
-                child: ListView(
-                  controller: scrollController,
-                  children: [
-                    Center(
-                      child: Container(
-                        width: 40,
-                        height: 4,
-                        margin: const EdgeInsets.only(bottom: 12),
-                        decoration: BoxDecoration(
-                          color: Colors.grey[400],
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                    ),
-                    getFormulaireWidget(nom) ?? const SizedBox.shrink(),
-                  ],
-                ),
-              );
-            },
-          ),
-    );
-  }
+  int selectedIndex = 0; // 0 = Equipements, 1 = Usages
 
   @override
   Widget build(BuildContext context) {
-    final currentList = sousCategories[filtre]!;
+    final equipementItems = [
+      {'icon': Icons.directions_bike, 'label': 'Véhicules'},
+      {'icon': Icons.home, 'label': 'Logements'},
+      {'icon': Icons.local_laundry_service, 'label': 'Equipements ménagers'},
+      {'icon': Icons.smartphone, 'label': 'Equipements multi-média'},
+      {'icon': Icons.handyman, 'label': 'Equipements bricolage'},
+    ];
 
-    return BaseScreen(
-      title: "Mes données",
-      children: [
-        CustomCard(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children:
-                ["Equipements", "Usages"].map((option) {
-                  final isSelected = filtre == option;
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    child: GestureDetector(
-                      onTap: () => setState(() => filtre = option),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: isSelected ? Colors.indigo : Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: isSelected ? Colors.indigo : Colors.white,
-                          ),
-                        ),
-                        child: Text(
-                          option,
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight:
-                                isSelected
-                                    ? FontWeight.bold
-                                    : FontWeight.normal,
-                            color: isSelected ? Colors.white : Colors.black87,
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
-                }).toList(),
+    final usageItems = [
+      {
+        'icon': Icons.directions_walk,
+        'label': 'Déplacement quotidien / loisirs',
+      },
+      {'icon': Icons.thermostat, 'label': 'Chauffage/Climatisation'},
+      {'icon': Icons.local_dining, 'label': 'Alimentation'},
+      {'icon': Icons.card_travel, 'label': 'Loisirs'},
+      {'icon': Icons.checkroom, 'label': 'Habillement'},
+      {'icon': Icons.account_balance, 'label': 'Banque et assurance'},
+      {'icon': Icons.account_balance_outlined, 'label': 'Services publics'},
+    ];
+
+    final currentItems = selectedIndex == 0 ? equipementItems : usageItems;
+
+    return SafeArea(
+      child: Column(
+        children: [
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 8),
+            child: Text(
+              "Mes données",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
           ),
-        ),
-        CustomCard(
-          padding: const EdgeInsets.all(8),
-          child: GridView.count(
-            shrinkWrap: true,
-            crossAxisCount: 2,
-            crossAxisSpacing: 12,
-            mainAxisSpacing: 12,
-            childAspectRatio: 1,
-            physics: const NeverScrollableScrollPhysics(),
-            children:
-                currentList.map((item) {
-                  return GestureDetector(
-                    onTap: () => ouvrirFormulaire(item['nom']),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Row(
+              children: [
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () => setState(() => selectedIndex = 0),
                     child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
                       decoration: BoxDecoration(
-                        border: Border.all(color: Colors.black87),
-                        borderRadius: BorderRadius.circular(10),
+                        color:
+                            selectedIndex == 0
+                                ? Colors.indigo
+                                : Colors.grey.shade200,
+                        borderRadius: const BorderRadius.horizontal(
+                          left: Radius.circular(20),
+                        ),
                       ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(item['icon'], size: 36, color: Colors.black87),
-                          const SizedBox(height: 8),
-                          Text(
-                            item['nom'],
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              fontSize: 13,
-                              color: Colors.black87,
-                            ),
-                          ),
-                        ],
+                      alignment: Alignment.center,
+                      child: Text(
+                        "Equipements",
+                        style: TextStyle(
+                          color:
+                              selectedIndex == 0 ? Colors.white : Colors.black,
+                        ),
                       ),
                     ),
-                  );
-                }).toList(),
+                  ),
+                ),
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () => setState(() => selectedIndex = 1),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      decoration: BoxDecoration(
+                        color:
+                            selectedIndex == 1
+                                ? Colors.indigo
+                                : Colors.grey.shade200,
+                        borderRadius: const BorderRadius.horizontal(
+                          right: Radius.circular(20),
+                        ),
+                      ),
+                      alignment: Alignment.center,
+                      child: Text(
+                        "Usages",
+                        style: TextStyle(
+                          color:
+                              selectedIndex == 1 ? Colors.white : Colors.black,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-      ],
+          const SizedBox(height: 12),
+          Expanded(
+            child: GridView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+              ),
+              itemCount: currentItems.length,
+              itemBuilder: (context, index) {
+                final item = currentItems[index];
+                return CustomCard(
+                  onTap: () {
+                    if (item['label'] == 'Logements') {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const LogementListScreen(),
+                        ),
+                      );
+                    } else {
+                      // TODO: Navigate to other screens as needed
+                    }
+                  },
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(item['icon'] as IconData, size: 36),
+                      const SizedBox(height: 8),
+                      Text(
+                        item['label'] as String,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontSize: 13),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

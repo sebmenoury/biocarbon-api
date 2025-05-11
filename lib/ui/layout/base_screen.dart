@@ -2,13 +2,40 @@ import 'package:flutter/material.dart';
 
 class BaseScreen extends StatelessWidget {
   final String title;
-  final List<Widget> children;
+  final Widget? child;
+  final List<Widget>? children;
+  final List<Widget>? actions;
 
-  const BaseScreen({super.key, required this.title, required this.children});
+  const BaseScreen({
+    super.key,
+    required this.title,
+    this.child,
+    this.children,
+    this.actions,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final Widget content;
+
+    if (child != null) {
+      content = child!;
+    } else if (children != null) {
+      content = Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: children!,
+      );
+    } else {
+      content = const SizedBox.shrink();
+    }
+
     return Scaffold(
+      appBar: AppBar(
+        title: Text(title),
+        actions: actions,
+        backgroundColor: Colors.indigo,
+        foregroundColor: Colors.white,
+      ),
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -17,23 +44,7 @@ class BaseScreen extends StatelessWidget {
             colors: [Color(0xFFECF2FE), Colors.white],
           ),
         ),
-        child: ListView(
-          padding: const EdgeInsets.symmetric(vertical: 14),
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 14),
-              child: Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            const SizedBox(height: 8),
-            ...children,
-          ],
-        ),
+        child: ListView(padding: const EdgeInsets.all(14), children: [content]),
       ),
     );
   }

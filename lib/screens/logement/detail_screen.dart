@@ -15,10 +15,23 @@ class DetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BaseScreen(
-      title: 'Projection',
-      children: const [
-        CustomCard(child: Text('Trajectoire carbone projetée...')),
-      ],
+      title: category,
+      child: Column(
+        children: [
+          CustomCard(
+            child: Text('📈 Trajectoire carbone projetée pour $category'),
+          ),
+          const SizedBox(height: 12),
+          ...subData.entries.map(
+            (e) => CustomCard(
+              child: ListTile(
+                title: Text(e.key),
+                trailing: Text('${e.value.toStringAsFixed(2)} tCO₂e'),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
