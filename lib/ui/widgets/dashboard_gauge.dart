@@ -21,7 +21,7 @@ class DashboardGauge extends StatelessWidget {
   Widget build(BuildContext context) {
     final double maxValue = valeur > 10000 ? valeur * 1.1 : 10000;
     return CustomPaint(
-      size: const Size(280, 160),
+      size: Size(MediaQuery.of(context).size.width - 64, 160),
       painter: _GaugePainter(
         valeur: valeur,
         seuil2050: seuil2050,

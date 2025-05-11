@@ -81,7 +81,7 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
                       child: Text(
                         option,
                         style: TextStyle(
-                          fontSize: 10,
+                          fontSize: 12,
                           fontWeight:
                               isSelected ? FontWeight.bold : FontWeight.normal,
                           color: isSelected ? Colors.white : Colors.black87,
@@ -117,7 +117,7 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      DashboardGauge(valeur: total),
+                      DashboardGauge(valeur: total * 1000),
                       SizedBox(height: 12),
                       Text(
                         "Niveau d'émission carbone",
