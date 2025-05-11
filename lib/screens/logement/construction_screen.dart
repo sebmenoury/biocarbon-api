@@ -76,10 +76,13 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
         facteursEmission = facteurs;
         dureesAmortissement = durees;
         isLoading = false;
+        print("✅ Facteurs dispo : ${facteursEmission.length}");
+        print("🧩 Exemples : ${facteursEmission.keys.take(5).toList()}");
+        print("💡 Bien actuel : ${bien.type}");
       });
     } catch (e) {
+      print("Erreur : $e");
       setState(() => isLoading = false);
-      debugPrint("Erreur chargement des équipements : $e");
     }
   }
 
@@ -114,9 +117,9 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
     if (bien.abriEtSerre) {
       total +=
           (bien.surfaceAbriEtSerre *
-              (facteursEmission['Abri/Serre de jardin'] ?? 0) *
+              (facteursEmission['Abri de jardin bois'] ?? 0) *
               reduction) /
-          (dureesAmortissement['Abri/Serre de jardin'] ?? 1) /
+          (dureesAmortissement['Abri de jardin bois'] ?? 1) /
           bien.nbProprietaires;
     }
 
@@ -153,14 +156,16 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               DropdownButton<String>(
-                value: bien.type,
+                value:
+                    facteursEmission.keys.contains(bien.type)
+                        ? bien.type
+                        : null,
                 isExpanded: true,
                 items:
                     facteursEmission.keys
                         .where(
                           (k) =>
-                              k.startsWith("Maison") ||
-                              k.startsWith("Appartement"),
+                              k.contains("Maison") || k.contains("Appartement"),
                         )
                         .map((t) => DropdownMenuItem(value: t, child: Text(t)))
                         .toList(),
