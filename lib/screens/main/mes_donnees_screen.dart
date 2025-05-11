@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../ui/layout/base_screen.dart';
 import '../../ui/layout/custom_card.dart';
+import '../logement/construction_screen.dart';
 
 class MesDonneesScreen extends StatefulWidget {
   const MesDonneesScreen({super.key});
@@ -10,7 +11,7 @@ class MesDonneesScreen extends StatefulWidget {
 }
 
 class _MesDonneesScreenState extends State<MesDonneesScreen> {
-  String filtre = "Equipements"; // "Equipements" ou "Usages"
+  String filtre = "Equipements";
 
   final Map<String, List<Map<String, dynamic>>> sousCategories = {
     "Equipements": [
@@ -30,6 +31,15 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
       {"nom": "Services publics", "icon": Icons.settings},
     ],
   };
+
+  Widget? getFormulaireWidget(String nom) {
+    switch (nom) {
+      case "Logements":
+        return const ConstructionScreen();
+      default:
+        return const Text("Formulaire non encore disponible");
+    }
+  }
 
   void ouvrirFormulaire(String nom) {
     showModalBottomSheet(
@@ -63,15 +73,7 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
                         ),
                       ),
                     ),
-                    Text(
-                      "Saisie : $nom",
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    const Text("Formulaire à venir ici..."),
+                    getFormulaireWidget(nom) ?? const SizedBox.shrink(),
                   ],
                 ),
               );
