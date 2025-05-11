@@ -113,10 +113,18 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
             return Column(
               children: [
                 CustomCard(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  padding: const EdgeInsets.all(16),
                   child: Column(
-                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Text(
+                        'Simulation carbone – Année 2024',
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 12),
                       DashboardGauge(valeur: total * 1000),
                       SizedBox(height: 12),
                       Text(

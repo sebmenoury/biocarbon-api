@@ -21,7 +21,8 @@ class DashboardGauge extends StatelessWidget {
   Widget build(BuildContext context) {
     final double maxValue = valeur > 10000 ? valeur * 1.1 : 10000;
     return CustomPaint(
-      size: Size(MediaQuery.of(context).size.width - 64, 160),
+      size: const Size(280, 160),
+      //size: Size(MediaQuery.of(context).size.width - 64, 160), pour l'adapter à la taille de l'écran
       painter: _GaugePainter(
         valeur: valeur,
         seuil2050: seuil2050,
@@ -129,7 +130,7 @@ class _GaugePainter extends CustomPainter {
     canvas.drawPath(needlePath, needlePaint);
 
     // Texte au bout de l'aiguille
-    final label = (valeur).toStringAsFixed(1);
+    final label = (valeur / 1000).toStringAsFixed(2);
     final textPainter = TextPainter(textDirection: TextDirection.ltr);
     textPainter.text = TextSpan(
       style: const TextStyle(
