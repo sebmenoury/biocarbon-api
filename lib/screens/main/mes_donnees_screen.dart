@@ -58,7 +58,7 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
       title: "Mes Données",
       children: [
         CustomCard(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 3),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children:
@@ -68,8 +68,8 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
                     onTap: () => majFiltre(option),
                     child: Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 5,
+                        horizontal: 10,
+                        vertical: 3,
                       ),
                       decoration: BoxDecoration(
                         color: isSelected ? Colors.indigo : Colors.white,
@@ -81,7 +81,7 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
                       child: Text(
                         option,
                         style: TextStyle(
-                          fontSize: 12,
+                          fontSize: 10,
                           fontWeight:
                               isSelected ? FontWeight.bold : FontWeight.normal,
                           color: isSelected ? Colors.white : Colors.black87,

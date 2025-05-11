@@ -129,7 +129,7 @@ class _GaugePainter extends CustomPainter {
     canvas.drawPath(needlePath, needlePaint);
 
     // Texte au bout de l'aiguille
-    final label = (valeur / 1000).toStringAsFixed(2);
+    final label = (valeur).toStringAsFixed(1);
     final textPainter = TextPainter(textDirection: TextDirection.ltr);
     textPainter.text = TextSpan(
       style: const TextStyle(
