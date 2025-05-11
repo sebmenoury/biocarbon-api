@@ -24,8 +24,8 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
   int anneeConstruction = 2000;
 
   double emissionTotale = 0;
-  late Map<String, double> facteursEmission;
-  late Map<String, int> dureesAmortissement;
+  Map<String, double> facteursEmission = {};
+  Map<String, int> dureesAmortissement = {};
   bool isLoading = true;
 
   final List<Map<String, dynamic>> equipementsConfort = [

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:carbone_web/screens/construction/detail_screen.dart';
+import '../../screens/logement/detail_screen.dart';
 import 'package:carbone_web/core/constants/app_icons.dart';
 
 class CategoryListCard extends StatelessWidget {
