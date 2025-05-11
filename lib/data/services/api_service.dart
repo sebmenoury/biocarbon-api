@@ -102,4 +102,47 @@ class ApiService {
 
     return result;
   }
+
+  static Future<Map<String, double>> getEmissionFactors() async {
+    final response = await http.get(Uri.parse("$baseUrl/api/ref/emission"));
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body);
+
+      // On mappe par nom d’équipement ou poste, et on stocke le facteur d’émission
+      final Map<String, double> result = {};
+      for (final item in data) {
+        final nom = item["Nom_Poste"];
+        final facteur =
+            double.tryParse(
+              item["Facteur_Emission"].toString().replaceAll(",", "."),
+            ) ??
+            0;
+        result[nom] = facteur;
+      }
+
+      return result;
+    } else {
+      throw Exception("Erreur lors du chargement des facteurs d'émission");
+    }
+  }
+
+  static Future<Map<String, int>> getDureeAmortissement() async {
+    final response = await http.get(Uri.parse("$baseUrl/api/ref/duree"));
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body);
+
+      final Map<String, int> result = {};
+      for (final item in data) {
+        final nom = item["Nom_Poste"];
+        final duree = int.tryParse(item["Duree_Amortissement"].toString()) ?? 0;
+        result[nom] = duree;
+      }
+
+      return result;
+    } else {
+      throw Exception("Erreur lors du chargement des durées d’amortissement");
+    }
+  }
 }
