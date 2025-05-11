@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../ui/layout/base_screen.dart';
-import '../../ui/layout/custom_card.dart';
 import '../../data/services/api_service.dart';
 import '../../core/utils/const_construction.dart';
 
@@ -198,6 +196,61 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
               bien.nbProprietaires.toDouble(),
               (v) => setState(() => bien.nbProprietaires = v.toInt()),
             ),
+            const Divider(),
+            CheckboxListTile(
+              title: const Text("J’ai un garage"),
+              value: bien.garage,
+              onChanged: (val) => setState(() => bien.garage = val!),
+            ),
+            if (bien.garage)
+              champ(
+                "Surface garage (m²)",
+                bien.surfaceGarage,
+                (v) => setState(() => bien.surfaceGarage = v),
+              ),
+            const Divider(),
+            CheckboxListTile(
+              title: const Text("J’ai une piscine"),
+              value: bien.piscine,
+              onChanged: (val) => setState(() => bien.piscine = val!),
+            ),
+            if (bien.piscine) ...[
+              DropdownButton<String>(
+                value: bien.typePiscine,
+                isExpanded: true,
+                items:
+                    ["Piscine béton", "Piscine coque"]
+                        .map((t) => DropdownMenuItem(value: t, child: Text(t)))
+                        .toList(),
+                onChanged: (val) => setState(() => bien.typePiscine = val!),
+              ),
+              champ(
+                "Longueur piscine (m)",
+                bien.piscineLongueur,
+                (v) => setState(() => bien.piscineLongueur = v),
+                allowDecimal: true,
+              ),
+              champ(
+                "Largeur piscine (m)",
+                bien.piscineLargeur,
+                (v) => setState(() => bien.piscineLargeur = v),
+                allowDecimal: true,
+              ),
+            ],
+            const Divider(),
+            CheckboxListTile(
+              title: const Text(
+                "J’ai une construction dans mon jardin (abri ou serre)",
+              ),
+              value: bien.abriEtSerre,
+              onChanged: (val) => setState(() => bien.abriEtSerre = val!),
+            ),
+            if (bien.abriEtSerre)
+              champ(
+                "Surface abri/serre (m²)",
+                bien.surfaceAbriEtSerre,
+                (v) => setState(() => bien.surfaceAbriEtSerre = v),
+              ),
             const Divider(),
             Text(
               "📊 Total : ${calculerTotalEmission().toStringAsFixed(2)} kgCO₂e/an",
