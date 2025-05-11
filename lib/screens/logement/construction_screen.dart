@@ -47,6 +47,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
   Map<String, double> facteursEmission = {};
   Map<String, int> dureesAmortissement = {};
   bool isLoading = true;
+  String? errorMsg;
 
   @override
   void initState() {
@@ -76,13 +77,15 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
         facteursEmission = facteurs;
         dureesAmortissement = durees;
         isLoading = false;
-        print("✅ Facteurs dispo : ${facteursEmission.length}");
-        print("🧩 Exemples : ${facteursEmission.keys.take(5).toList()}");
-        print("💡 Bien actuel : ${bien.type}");
+        errorMsg = null;
+        print("✅ Données chargées (${facteursEmission.length})");
       });
     } catch (e) {
-      print("Erreur : $e");
-      setState(() => isLoading = false);
+      print("❌ Erreur chargement équipements : $e");
+      setState(() {
+        isLoading = false;
+        errorMsg = "Erreur lors du chargement des équipements";
+      });
     }
   }
 
@@ -146,7 +149,17 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (isLoading) return const Center(child: CircularProgressIndicator());
+    print("🧩 isLoading = $isLoading | errorMsg = $errorMsg");
+
+    if (isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (errorMsg != null) {
+      return Center(
+        child: Text(errorMsg!, style: const TextStyle(color: Colors.red)),
+      );
+    }
 
     return BaseScreen(
       title: "Construction du logement",
