@@ -145,4 +145,15 @@ class ApiService {
       throw Exception("Erreur lors du chargement des durées d’amortissement");
     }
   }
+
+  static Future<List<Map<String, dynamic>>> getRefEquipements() async {
+    final response = await http.get(Uri.parse("$baseUrl/api/ref/equipements"));
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body);
+      return data.cast<Map<String, dynamic>>();
+    } else {
+      throw Exception("Erreur lors du chargement des équipements");
+    }
+  }
 }
