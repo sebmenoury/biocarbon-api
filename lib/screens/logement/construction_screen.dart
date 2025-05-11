@@ -2,7 +2,37 @@ import 'package:flutter/material.dart';
 import '../../ui/layout/base_screen.dart';
 import '../../ui/layout/custom_card.dart';
 import '../../data/services/api_service.dart';
-import '../../utils/const_construction.dart';
+import '../../core/utils/const_construction.dart';
+
+class BienImmobilier {
+  String type;
+  double surface;
+  int anneeConstruction;
+  int nbProprietaires;
+  double surfaceGarage;
+  bool garage;
+  bool piscine;
+  String typePiscine;
+  double piscineLongueur;
+  double piscineLargeur;
+  bool abriEtSerre;
+  double surfaceAbriEtSerre;
+
+  BienImmobilier({
+    required this.type,
+    this.surface = 100,
+    this.anneeConstruction = 2010,
+    this.nbProprietaires = 1,
+    this.surfaceGarage = 30,
+    this.garage = false,
+    this.piscine = false,
+    this.typePiscine = "Piscine béton",
+    this.piscineLongueur = 4,
+    this.piscineLargeur = 2.5,
+    this.abriEtSerre = false,
+    this.surfaceAbriEtSerre = 10,
+  });
+}
 
 class ConstructionScreen extends StatefulWidget {
   const ConstructionScreen({super.key});
@@ -12,41 +42,15 @@ class ConstructionScreen extends StatefulWidget {
 }
 
 class _ConstructionScreenState extends State<ConstructionScreen> {
-  final TextEditingController surfaceLogementController =
-      TextEditingController();
-  final TextEditingController surfaceGarageController = TextEditingController();
-  final TextEditingController surfacePiscineLongueurController =
-      TextEditingController();
-  final TextEditingController surfacePiscineLargeurController =
-      TextEditingController();
-  final TextEditingController surfaceJardinController = TextEditingController();
-  final TextEditingController nbProprietairesController = TextEditingController(
-    text: '1',
-  );
+  final BienImmobilier bien = BienImmobilier(type: "Maison Classique");
 
-  Map<String, TextEditingController> confortControllers = {};
-
-  String typeLogement = "Maison Classique";
-  String typePiscine = "Piscine béton";
-  int anneeConstruction = 2000;
-
-  double emissionTotale = 0;
   Map<String, double> facteursEmission = {};
   Map<String, int> dureesAmortissement = {};
   bool isLoading = true;
 
-  final List<Map<String, dynamic>> equipementsConfort = [
-    {"nom": "Poële à granule", "unite": "unité"},
-    {"nom": "Radiateur électrique", "unite": "unité"},
-    {"nom": "Pompe à chaleur", "unite": "unité"},
-  ];
-
   @override
   void initState() {
     super.initState();
-    for (var eq in equipementsConfort) {
-      confortControllers[eq["nom"]] = TextEditingController();
-    }
     loadEquipementsData();
   }
 
@@ -79,60 +83,60 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
     }
   }
 
-  void calculerEmission() {
-    final reduction = reductionParAnnee(anneeConstruction);
-    final nbProprio = int.tryParse(nbProprietairesController.text) ?? 1;
-
-    final double logement =
-        double.tryParse(surfaceLogementController.text) ?? 0;
-    final double garage = double.tryParse(surfaceGarageController.text) ?? 0;
-    final double largeurPiscine =
-        double.tryParse(surfacePiscineLargeurController.text) ?? 0;
-    final double longueurPiscine =
-        double.tryParse(surfacePiscineLongueurController.text) ?? 0;
-    final double jardin = double.tryParse(surfaceJardinController.text) ?? 0;
-    final surfacePiscine = largeurPiscine * longueurPiscine;
-
-    double total = 0;
+  double calculerTotalEmission() {
+    final reduction = reductionParAnnee(bien.anneeConstruction);
+    double total = 0.0;
 
     total +=
-        (logement * (facteursEmission[typeLogement] ?? 0) * reduction) /
-        (dureesAmortissement[typeLogement] ?? 1) /
-        nbProprio;
-    total +=
-        (garage * (facteursEmission['Garage béton'] ?? 0) * reduction) /
-        (dureesAmortissement['Garage béton'] ?? 1) /
-        nbProprio;
-    total +=
-        (surfacePiscine * (facteursEmission[typePiscine] ?? 0) * reduction) /
-        (dureesAmortissement[typePiscine] ?? 1) /
-        nbProprio;
-    total +=
-        (jardin * (facteursEmission['Abri de jardin bois'] ?? 0) * reduction) /
-        (dureesAmortissement['Abri de jardin bois'] ?? 1) /
-        nbProprio;
+        (bien.surface * (facteursEmission[bien.type] ?? 0) * reduction) /
+        (dureesAmortissement[bien.type] ?? 1) /
+        bien.nbProprietaires;
 
-    for (var eq in equipementsConfort) {
-      final nom = eq["nom"];
-      final quantite =
-          double.tryParse(confortControllers[nom]?.text ?? "") ?? 0;
-      final facteur = facteursEmission[nom] ?? 0;
-      final duree = dureesAmortissement[nom] ?? 1;
-      total += (quantite * facteur * reduction) / (duree * nbProprio);
+    if (bien.garage) {
+      total +=
+          (bien.surfaceGarage *
+              (facteursEmission['Garage béton'] ?? 0) *
+              reduction) /
+          (dureesAmortissement['Garage béton'] ?? 1) /
+          bien.nbProprietaires;
     }
 
-    setState(() {
-      emissionTotale = total;
-    });
+    if (bien.piscine) {
+      final surfacePiscine = bien.piscineLargeur * bien.piscineLongueur;
+      total +=
+          (surfacePiscine *
+              (facteursEmission[bien.typePiscine] ?? 0) *
+              reduction) /
+          (dureesAmortissement[bien.typePiscine] ?? 1) /
+          bien.nbProprietaires;
+    }
+
+    if (bien.abriEtSerre) {
+      total +=
+          (bien.surfaceAbriEtSerre *
+              (facteursEmission['Abri/Serre de jardin'] ?? 0) *
+              reduction) /
+          (dureesAmortissement['Abri/Serre de jardin'] ?? 1) /
+          bien.nbProprietaires;
+    }
+
+    return total;
   }
 
-  Widget champ(String label, TextEditingController controller) {
+  Widget champ(
+    String label,
+    double value,
+    Function(double) onChanged, {
+    bool allowDecimal = false,
+  }) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: TextField(
-        controller: controller,
-        keyboardType: TextInputType.number,
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: TextFormField(
+        initialValue: value.toString(),
+        keyboardType: const TextInputType.numberWithOptions(decimal: true),
         decoration: InputDecoration(labelText: label),
+        onChanged:
+            (val) => onChanged(double.tryParse(val.replaceAll(',', '.')) ?? 0),
       ),
     );
   }
@@ -146,10 +150,11 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
       children: [
         CustomCard(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               DropdownButton<String>(
-                value: typeLogement,
-                onChanged: (value) => setState(() => typeLogement = value!),
+                value: bien.type,
+                isExpanded: true,
                 items:
                     facteursEmission.keys
                         .where(
@@ -157,63 +162,93 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                               k.startsWith("Maison") ||
                               k.startsWith("Appartement"),
                         )
-                        .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+                        .map((t) => DropdownMenuItem(value: t, child: Text(t)))
                         .toList(),
+                onChanged: (val) => setState(() => bien.type = val!),
               ),
-              champ("Surface logement (m²)", surfaceLogementController),
-              Row(
-                children: [
-                  IconButton(
-                    onPressed: () => setState(() => anneeConstruction--),
-                    icon: const Icon(Icons.remove),
-                  ),
-                  Text("Année : $anneeConstruction"),
-                  IconButton(
-                    onPressed: () => setState(() => anneeConstruction++),
-                    icon: const Icon(Icons.add),
-                  ),
-                ],
+              champ(
+                "Surface (m²)",
+                bien.surface,
+                (v) => setState(() => bien.surface = v),
               ),
-              champ("Nombre de propriétaires", nbProprietairesController),
-              champ("Surface garage (m²)", surfaceGarageController),
-              DropdownButton<String>(
-                value: typePiscine,
-                onChanged: (val) => setState(() => typePiscine = val!),
-                items:
-                    ["Piscine béton", "Piscine coque"]
-                        .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                        .toList(),
+              champ(
+                "Année de construction",
+                bien.anneeConstruction.toDouble(),
+                (v) => setState(() => bien.anneeConstruction = v.toInt()),
               ),
-              champ("Longueur piscine (m)", surfacePiscineLongueurController),
-              champ("Largeur piscine (m)", surfacePiscineLargeurController),
-              champ("Surface abri/serre (m²)", surfaceJardinController),
-            ],
-          ),
-        ),
-        CustomCard(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                "Équipements de confort",
-                style: TextStyle(fontWeight: FontWeight.bold),
+              champ(
+                "Nb. propriétaires",
+                bien.nbProprietaires.toDouble(),
+                (v) => setState(() => bien.nbProprietaires = v.toInt()),
               ),
-              const SizedBox(height: 12),
-              for (var eq in equipementsConfort)
+              const Divider(),
+              CheckboxListTile(
+                title: const Text("J’ai un garage"),
+                value: bien.garage,
+                onChanged: (val) => setState(() => bien.garage = val!),
+              ),
+              if (bien.garage)
                 champ(
-                  "${eq["nom"]} (${eq["unite"]})",
-                  confortControllers[eq["nom"]]!,
+                  "Surface garage (m²)",
+                  bien.surfaceGarage,
+                  (v) => setState(() => bien.surfaceGarage = v),
                 ),
+              const Divider(),
+              CheckboxListTile(
+                title: const Text("J’ai une piscine"),
+                value: bien.piscine,
+                onChanged: (val) => setState(() => bien.piscine = val!),
+              ),
+              if (bien.piscine) ...[
+                DropdownButton<String>(
+                  value: bien.typePiscine,
+                  isExpanded: true,
+                  items:
+                      ["Piscine béton", "Piscine coque"]
+                          .map(
+                            (t) => DropdownMenuItem(value: t, child: Text(t)),
+                          )
+                          .toList(),
+                  onChanged: (val) => setState(() => bien.typePiscine = val!),
+                ),
+                champ(
+                  "Longueur piscine (m)",
+                  bien.piscineLongueur,
+                  (v) => setState(() => bien.piscineLongueur = v),
+                  allowDecimal: true,
+                ),
+                champ(
+                  "Largeur piscine (m)",
+                  bien.piscineLargeur,
+                  (v) => setState(() => bien.piscineLargeur = v),
+                  allowDecimal: true,
+                ),
+              ],
+              const Divider(),
+              CheckboxListTile(
+                title: const Text(
+                  "J’ai une construction dans mon jardin (abri ou serre)",
+                ),
+                value: bien.abriEtSerre,
+                onChanged: (val) => setState(() => bien.abriEtSerre = val!),
+              ),
+              if (bien.abriEtSerre)
+                champ(
+                  "Surface abri/serre (m²)",
+                  bien.surfaceAbriEtSerre,
+                  (v) => setState(() => bien.surfaceAbriEtSerre = v),
+                ),
+              const SizedBox(height: 12),
+              ElevatedButton(
+                onPressed: () => setState(() {}),
+                child: const Text("Recalculer"),
+              ),
+              Text(
+                "Émission estimée : ${calculerTotalEmission().toStringAsFixed(1)} kg CO₂e/an",
+              ),
             ],
           ),
         ),
-        const SizedBox(height: 16),
-        ElevatedButton(
-          onPressed: calculerEmission,
-          child: const Text("Calculer émission"),
-        ),
-        const SizedBox(height: 10),
-        Text("Émission estimée : ${emissionTotale.toStringAsFixed(1)} kg CO₂e"),
       ],
     );
   }
