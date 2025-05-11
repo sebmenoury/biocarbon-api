@@ -114,33 +114,37 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
               children: [
                 CustomCard(
                   padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Simulation carbone – Année 2024',
-                        style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
+                  child: Center(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Simulation carbone – Année 2024',
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      SizedBox(height: 12),
-                      DashboardGauge(valeur: total * 1000),
-                      SizedBox(height: 12),
-                      Text(
-                        "Niveau d'émission carbone",
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
+                        const SizedBox(height: 30),
+                        DashboardGauge(
+                          valeur: total * 1000,
+                        ), // Assurez-vous que `total` est défini
+                        const SizedBox(height: 12),
+                        const Text(
+                          "Niveau d'émission carbone",
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
                         ),
-                      ),
-                      SizedBox(height: 1),
-                      Text(
-                        "Données annuelles en kg CO₂e / personne",
-                        style: TextStyle(fontSize: 8, color: Colors.black54),
-                      ),
-                    ],
+                        const SizedBox(height: 1),
+                        const Text(
+                          "Données annuelles en kg CO₂e / personne",
+                          style: TextStyle(fontSize: 8, color: Colors.black54),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 CustomCard(
