@@ -1,6 +1,7 @@
 class BienImmobilier {
-  String nom;
-  String type;
+  String nomLogement; // Nom personnalisé par l'utilisateur
+  String nomEquipement; // Nom exact issu du référentiel
+  String type; // ex : "Maison Classique", "Appartement"
   double surface;
   int anneeConstruction;
   int nbProprietaires;
@@ -17,13 +18,14 @@ class BienImmobilier {
   double surfaceAbriEtSerre;
 
   BienImmobilier({
-    required this.nom,
+    this.nomLogement = "Mon logement",
+    this.nomEquipement = "",
     required this.type,
     this.surface = 100,
     this.anneeConstruction = 2010,
     this.nbProprietaires = 1,
-    this.garage = false,
     this.surfaceGarage = 30,
+    this.garage = false,
     this.piscine = false,
     this.typePiscine = "Piscine béton",
     this.piscineLongueur = 4,

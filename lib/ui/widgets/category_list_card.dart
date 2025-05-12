@@ -1,6 +1,8 @@
+import 'package:carbone_web/screens/detail/subcategory_screen.dart';
 import 'package:flutter/material.dart';
 import '../../screens/logement/detail_screen.dart';
 import 'package:carbone_web/core/constants/app_icons.dart';
+import '../../screens/detail/subcategorie_screen.dart';
 
 class CategoryListCard extends StatelessWidget {
   final Map<String, Map<String, double>> data;
@@ -63,9 +65,10 @@ class CategoryListCard extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder:
-                          (context) => DetailScreen(
-                            category: category,
-                            subData: data[category]!,
+                          (context) => SubCategorieScreen(
+                            typeCategorie: typeCategories, // ex : "Logement"
+                            codeIndividu: "BASILE", // ou variable si dynamique
+                            valeurTemps: "2025", // ou variable
                           ),
                     ),
                   );

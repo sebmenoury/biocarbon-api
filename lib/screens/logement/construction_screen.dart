@@ -107,11 +107,11 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                     "📊 Total : ${calculerTotalEmission(bien, facteursEmission, dureesAmortissement).toStringAsFixed(2)} kgCO₂e/an",
                   ),
                   TextFormField(
-                    initialValue: bien.nom,
+                    initialValue: bien.nomLogement,
                     decoration: const InputDecoration(
                       labelText: "Nom du logement",
                     ),
-                    onChanged: (val) => setState(() => bien.nom = val),
+                    onChanged: (val) => setState(() => bien.nomLogement = val),
                   ),
                   DropdownButton<String>(
                     value:
@@ -130,7 +130,12 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                               (t) => DropdownMenuItem(value: t, child: Text(t)),
                             )
                             .toList(),
-                    onChanged: (val) => setState(() => bien.type = val!),
+                    onChanged: (val) {
+                      setState(() {
+                        bien.nomEquipement = val!;
+                        bien.type = val; // si encore utilisé pour autre chose
+                      });
+                    },
                   ),
                   champNombre(
                     "Surface (m²)",
@@ -237,7 +242,8 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                   "Type_Poste": "Equipement",
                   "Type_Categorie": "Logement",
                   "Sous_Categorie": "Habitat",
-                  "Nom_Poste": bien.nom,
+                  "Nom_Poste": bien.nomEquipement,
+                  "Nom_Logement": bien.nomLogement,
                   "Quantite": bien.surface,
                   "Unite": "m²",
                   "Facteur_Emission": facteursEmission[bien.type],

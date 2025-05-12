@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import '../models/poste.dart';
 
 class ApiService {
   static const String baseUrl = "https://biocarbon-api.onrender.com";
@@ -18,6 +19,28 @@ class ApiService {
       return data.cast<Map<String, dynamic>>();
     } else {
       throw Exception("Erreur lors du chargement des postes");
+    }
+  }
+
+  static Future<List<Poste>> getPostesByCategorie(
+    String typeCategorie,
+    String codeIndividu,
+    String valeurTemps,
+  ) async {
+    final response = await http.get(
+      Uri.parse(
+        '$baseUrl/api/uc/postes?code_individu=$codeIndividu&valeur_temps=$valeurTemps',
+      ),
+    );
+
+    if (response.statusCode == 200) {
+      final List<dynamic> jsonList = jsonDecode(response.body);
+      return jsonList
+          .map((json) => Poste.fromJson(json))
+          .where((poste) => poste.typeCategorie == typeCategorie)
+          .toList();
+    } else {
+      throw Exception("Erreur lors de la récupération des postes");
     }
   }
 
