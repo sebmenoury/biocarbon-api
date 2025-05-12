@@ -89,6 +89,8 @@ class _ProjectionScreenState extends State<ProjectionScreen> {
                       data: data,
                       typeCategories: typeCategories,
                       total: total,
+                      codeIndividu: "BASILE", // ou ta variable
+                      valeurTemps: "2025", // ou ta variable
                     ),
                   ),
                 ],

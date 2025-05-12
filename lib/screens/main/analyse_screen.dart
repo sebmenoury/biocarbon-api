@@ -99,7 +99,7 @@ class _AnalyseScreenState extends State<AnalyseScreen> {
               return const Center(child: CircularProgressIndicator());
             }
             if (snapshot.hasError) {
-              return Center(child: Text("Erreur : ${snapshot.error}"));
+              return Center(child: Text("Erreur : \${snapshot.error}"));
             }
             final data = snapshot.data!;
             final typeCategories =
@@ -150,6 +150,8 @@ class _AnalyseScreenState extends State<AnalyseScreen> {
                     data: data,
                     typeCategories: typeCategories,
                     total: total,
+                    codeIndividu: codeIndividu,
+                    valeurTemps: valeurTemps,
                   ),
                 ),
               ],

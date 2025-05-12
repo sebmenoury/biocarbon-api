@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../ui/layout/base_screen.dart';
 import '../../data/services/api_service.dart';
 import '../../data/models/poste.dart';
-import '../../ui/widgets/poste_list_card.dart';
+import '../../ui/widgets/post_list_card.dart';
 
 class SubCategorieScreen extends StatefulWidget {
   final String typeCategorie;
@@ -53,8 +53,9 @@ class _SubCategorieScreenState extends State<SubCategorieScreen> {
               return const Center(child: CircularProgressIndicator());
             }
             if (snapshot.hasError) {
-              return Center(child: Text("Erreur : \${snapshot.error}"));
+              return Center(child: Text("Erreur : ${snapshot.error}"));
             }
+
             final postes = snapshot.data!;
             if (postes.isEmpty) {
               return const Padding(
@@ -63,10 +64,19 @@ class _SubCategorieScreenState extends State<SubCategorieScreen> {
               );
             }
 
-            return PosteListCard(
-              postes: postes,
-              onEdit: handleEdit,
-              onDelete: handleDelete,
+            return Column(
+              children:
+                  postes.map((poste) {
+                    return PostListCard(
+                      title: poste.nomPoste ?? poste.sousCategorie,
+                      subtitle: "Quantité : ${poste.quantite} ${poste.unite}",
+                      emission:
+                          "${poste.emissionCalculee.toStringAsFixed(2)} kgCO₂e",
+                      icon: Icons.home,
+                      onEdit: () => handleEdit(poste),
+                      onDelete: () => handleDelete(poste),
+                    );
+                  }).toList(),
             );
           },
         ),

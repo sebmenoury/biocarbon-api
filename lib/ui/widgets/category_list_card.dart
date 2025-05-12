@@ -1,19 +1,21 @@
 import 'package:carbone_web/screens/detail/subcategory_screen.dart';
 import 'package:flutter/material.dart';
-import '../../screens/logement/detail_screen.dart';
 import 'package:carbone_web/core/constants/app_icons.dart';
-import '../../screens/detail/subcategorie_screen.dart';
 
 class CategoryListCard extends StatelessWidget {
   final Map<String, Map<String, double>> data;
   final List<String> typeCategories;
   final double total;
+  final String codeIndividu;
+  final String valeurTemps;
 
   const CategoryListCard({
     super.key,
     required this.data,
     required this.typeCategories,
     required this.total,
+    required this.codeIndividu,
+    required this.valeurTemps,
   });
 
   @override
@@ -46,7 +48,7 @@ class CategoryListCard extends StatelessWidget {
                   ),
                 ),
                 subtitle: Text(
-                  "${percentage}%",
+                  "$percentage%",
                   style: const TextStyle(fontSize: 10),
                 ),
                 trailing: Row(
@@ -66,9 +68,9 @@ class CategoryListCard extends StatelessWidget {
                     MaterialPageRoute(
                       builder:
                           (context) => SubCategorieScreen(
-                            typeCategorie: typeCategories, // ex : "Logement"
-                            codeIndividu: "BASILE", // ou variable si dynamique
-                            valeurTemps: "2025", // ou variable
+                            typeCategorie: category,
+                            codeIndividu: codeIndividu,
+                            valeurTemps: valeurTemps,
                           ),
                     ),
                   );
