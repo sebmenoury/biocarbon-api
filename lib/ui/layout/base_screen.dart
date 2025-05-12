@@ -25,23 +25,43 @@ class BaseScreen extends StatelessWidget {
             colors: [Color(0xFFECF2FE), Colors.white],
           ),
         ),
-        child: ListView(
-          padding: const EdgeInsets.symmetric(vertical: 12),
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
+        child:
+            child != null
+                ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 12),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Text(
+                        title,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Expanded(child: child!),
+                  ],
+                )
+                : ListView(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Text(
+                        title,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    if (children != null) ...children!,
+                  ],
                 ),
-              ),
-            ),
-            const SizedBox(height: 12),
-            if (children != null) ...children!,
-          ],
-        ),
       ),
     );
   }
