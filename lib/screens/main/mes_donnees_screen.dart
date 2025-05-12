@@ -49,7 +49,7 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
                 child: GestureDetector(
                   onTap: () => setState(() => selectedIndex = 0),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    padding: const EdgeInsets.symmetric(vertical: 3),
                     decoration: BoxDecoration(
                       color:
                           selectedIndex == 0
@@ -63,6 +63,7 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
                     child: Text(
                       "Equipements",
                       style: TextStyle(
+                        fontSize: 12,
                         color: selectedIndex == 0 ? Colors.white : Colors.black,
                       ),
                     ),
@@ -73,7 +74,7 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
                 child: GestureDetector(
                   onTap: () => setState(() => selectedIndex = 1),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    padding: const EdgeInsets.symmetric(vertical: 3),
                     decoration: BoxDecoration(
                       color:
                           selectedIndex == 1
@@ -87,6 +88,7 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
                     child: Text(
                       "Usages",
                       style: TextStyle(
+                        fontSize: 12,
                         color: selectedIndex == 1 ? Colors.white : Colors.black,
                       ),
                     ),
