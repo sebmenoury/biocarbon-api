@@ -16,25 +16,13 @@ class BaseScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Widget content;
-
-    if (child != null) {
-      content = child!;
-    } else if (children != null) {
-      content = Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: children!,
-      );
-    } else {
-      content = const SizedBox.shrink();
-    }
-
     return Scaffold(
       appBar: AppBar(
-        title: Text(title),
+        backgroundColor: Colors.white,
+        elevation: 0.5,
+        title: Text(title, style: const TextStyle(color: Colors.black)),
+        iconTheme: const IconThemeData(color: Colors.black),
         actions: actions,
-        backgroundColor: Colors.indigo,
-        foregroundColor: Colors.white,
       ),
       body: Container(
         decoration: const BoxDecoration(
@@ -44,7 +32,23 @@ class BaseScreen extends StatelessWidget {
             colors: [Color(0xFFECF2FE), Colors.white],
           ),
         ),
-        child: ListView(padding: const EdgeInsets.all(14), children: [content]),
+        child: ListView(
+          padding: const EdgeInsets.symmetric(vertical: 24),
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            if (children != null) ...children!,
+          ],
+        ),
       ),
     );
   }
