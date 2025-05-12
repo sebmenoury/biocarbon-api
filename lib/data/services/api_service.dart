@@ -156,4 +156,18 @@ class ApiService {
       throw Exception("Erreur lors du chargement des équipements");
     }
   }
+
+  static Future<void> savePoste(Map<String, dynamic> data) async {
+    final response = await http.post(
+      Uri.parse("$baseUrl/api/uc/postes"), // Appelle add_poste dans Flask
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode(data),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception(
+        "Erreur lors de l'enregistrement du poste : ${response.body}",
+      );
+    }
+  }
 }

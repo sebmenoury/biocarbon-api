@@ -7,7 +7,7 @@ import uuid
 bp_uc_postes = Blueprint("uc_postes", __name__)
 
 @bp_uc_postes.route("/api/uc/postes", methods=["POST"])
-def add_equipement():
+def add_poste():
     data = request.get_json()
 
     required_fields = [

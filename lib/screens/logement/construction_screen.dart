@@ -1,41 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../ui/layout/custom_card.dart';
 import '../../data/services/api_service.dart';
-import '../../core/utils/const_construction.dart';
-
-class BienImmobilier {
-  String id;
-  String nom;
-  String type;
-  double surface;
-  int anneeConstruction;
-  int nbProprietaires;
-  double surfaceGarage;
-  bool garage;
-  bool piscine;
-  String typePiscine;
-  double piscineLongueur;
-  double piscineLargeur;
-  bool abriEtSerre;
-  double surfaceAbriEtSerre;
-
-  BienImmobilier({
-    required this.id,
-    required this.nom,
-    required this.type,
-    this.surface = 100,
-    this.anneeConstruction = 2010,
-    this.nbProprietaires = 1,
-    this.surfaceGarage = 30,
-    this.garage = false,
-    this.piscine = false,
-    this.typePiscine = "Piscine béton",
-    this.piscineLongueur = 4,
-    this.piscineLargeur = 2.5,
-    this.abriEtSerre = false,
-    this.surfaceAbriEtSerre = 10,
-  });
-}
+import '../../data/logement/bien_immobilier.dart';
+import '../../data/logement/emission_calculator_immobilier.dart';
 
 class ConstructionScreen extends StatefulWidget {
   final BienImmobilier bien;
@@ -92,46 +59,6 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
     }
   }
 
-  double calculerTotalEmission() {
-    final reduction = reductionParAnnee(bien.anneeConstruction);
-    double total = 0.0;
-
-    total +=
-        (bien.surface * (facteursEmission[bien.type] ?? 0) * reduction) /
-        (dureesAmortissement[bien.type] ?? 1) /
-        bien.nbProprietaires;
-
-    if (bien.garage) {
-      total +=
-          (bien.surfaceGarage *
-              (facteursEmission['Garage béton'] ?? 0) *
-              reduction) /
-          (dureesAmortissement['Garage béton'] ?? 1) /
-          bien.nbProprietaires;
-    }
-
-    if (bien.piscine) {
-      final surfacePiscine = bien.piscineLargeur * bien.piscineLongueur;
-      total +=
-          (surfacePiscine *
-              (facteursEmission[bien.typePiscine] ?? 0) *
-              reduction) /
-          (dureesAmortissement[bien.typePiscine] ?? 1) /
-          bien.nbProprietaires;
-    }
-
-    if (bien.abriEtSerre) {
-      total +=
-          (bien.surfaceAbriEtSerre *
-              (facteursEmission['Abri de jardin bois'] ?? 0) *
-              reduction) /
-          (dureesAmortissement['Abri de jardin bois'] ?? 1) /
-          bien.nbProprietaires;
-    }
-
-    return total;
-  }
-
   Widget champNombre(
     String label,
     double value,
@@ -161,10 +88,11 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
   @override
   Widget build(BuildContext context) {
     if (isLoading) return const Center(child: CircularProgressIndicator());
-    if (errorMsg != null)
+    if (errorMsg != null) {
       return Center(
         child: Text(errorMsg!, style: const TextStyle(color: Colors.red)),
       );
+    }
 
     return SafeArea(
       child: SingleChildScrollView(
@@ -176,7 +104,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "📊 Total : ${calculerTotalEmission().toStringAsFixed(2)} kgCO₂e/an",
+                    "📊 Total : ${calculerTotalEmission(bien, facteursEmission, dureesAmortissement).toStringAsFixed(2)} kgCO₂e/an",
                   ),
                   TextFormField(
                     initialValue: bien.nom,
@@ -294,7 +222,34 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
             ),
             const SizedBox(height: 10),
             ElevatedButton.icon(
-              onPressed: widget.onSave,
+              onPressed: () async {
+                final double emission = calculerTotalEmission(
+                  bien,
+                  facteursEmission,
+                  dureesAmortissement,
+                );
+
+                await ApiService.savePoste({
+                  "Code_Individu": "BASILE",
+                  "Type_Temps": "Réel",
+                  "Valeur_Temps": "2025",
+                  "Date_enregistrement": DateTime.now().toIso8601String(),
+                  "Type_Poste": "Equipement",
+                  "Type_Categorie": "Logement",
+                  "Sous_Categorie": "Habitat",
+                  "Nom_Poste": bien.nom,
+                  "Quantite": bien.surface,
+                  "Unite": "m²",
+                  "Facteur_Emission": facteursEmission[bien.type],
+                  "Emission_Calculee": emission,
+                  "Mode_Calcul": "Amorti",
+                  "Annee_Achat": bien.anneeConstruction,
+                  "Duree_Amortissement": dureesAmortissement[bien.type],
+                });
+
+                if (widget.onSave != null) widget.onSave!();
+                Navigator.of(context).pop(); // pour revenir à la liste
+              },
               icon: const Icon(Icons.save),
               label: const Text("Enregistrer"),
             ),
