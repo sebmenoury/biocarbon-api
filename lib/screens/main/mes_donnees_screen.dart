@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../ui/layout/base_screen.dart';
 import '../../ui/layout/custom_card.dart';
 import '../logement/logement_list_screen.dart';
 
@@ -37,115 +38,105 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
 
     final currentItems = selectedIndex == 0 ? equipementItems : usageItems;
 
-    return SafeArea(
-      child: Column(
-        children: [
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 8),
-            child: Text(
-              "Mes données",
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Row(
-              children: [
-                Expanded(
-                  child: GestureDetector(
-                    onTap: () => setState(() => selectedIndex = 0),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 8),
-                      decoration: BoxDecoration(
-                        color:
-                            selectedIndex == 0
-                                ? Colors.indigo
-                                : Colors.grey.shade200,
-                        borderRadius: const BorderRadius.horizontal(
-                          left: Radius.circular(20),
-                        ),
+    return BaseScreen(
+      title: "Mes données",
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Row(
+            children: [
+              Expanded(
+                child: GestureDetector(
+                  onTap: () => setState(() => selectedIndex = 0),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    decoration: BoxDecoration(
+                      color:
+                          selectedIndex == 0
+                              ? Colors.indigo
+                              : Colors.grey.shade200,
+                      borderRadius: const BorderRadius.horizontal(
+                        left: Radius.circular(20),
                       ),
-                      alignment: Alignment.center,
-                      child: Text(
-                        "Equipements",
-                        style: TextStyle(
-                          color:
-                              selectedIndex == 0 ? Colors.white : Colors.black,
-                        ),
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      "Equipements",
+                      style: TextStyle(
+                        color: selectedIndex == 0 ? Colors.white : Colors.black,
                       ),
                     ),
                   ),
                 ),
-                Expanded(
-                  child: GestureDetector(
-                    onTap: () => setState(() => selectedIndex = 1),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 8),
-                      decoration: BoxDecoration(
-                        color:
-                            selectedIndex == 1
-                                ? Colors.indigo
-                                : Colors.grey.shade200,
-                        borderRadius: const BorderRadius.horizontal(
-                          right: Radius.circular(20),
-                        ),
-                      ),
-                      alignment: Alignment.center,
-                      child: Text(
-                        "Usages",
-                        style: TextStyle(
-                          color:
-                              selectedIndex == 1 ? Colors.white : Colors.black,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 12),
-          Expanded(
-            child: GridView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12,
               ),
-              itemCount: currentItems.length,
-              itemBuilder: (context, index) {
-                final item = currentItems[index];
-                return CustomCard(
-                  onTap: () {
-                    if (item['label'] == 'Logements') {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => const LogementListScreen(),
-                        ),
-                      );
-                    } else {
-                      // TODO: Navigate to other screens as needed
-                    }
-                  },
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(item['icon'] as IconData, size: 36),
-                      const SizedBox(height: 8),
-                      Text(
-                        item['label'] as String,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(fontSize: 13),
+              Expanded(
+                child: GestureDetector(
+                  onTap: () => setState(() => selectedIndex = 1),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    decoration: BoxDecoration(
+                      color:
+                          selectedIndex == 1
+                              ? Colors.indigo
+                              : Colors.grey.shade200,
+                      borderRadius: const BorderRadius.horizontal(
+                        right: Radius.circular(20),
                       ),
-                    ],
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      "Usages",
+                      style: TextStyle(
+                        color: selectedIndex == 1 ? Colors.white : Colors.black,
+                      ),
+                    ),
                   ),
-                );
-              },
-            ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+        const SizedBox(height: 12),
+        GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 12,
+            mainAxisSpacing: 12,
+          ),
+          itemCount: currentItems.length,
+          itemBuilder: (context, index) {
+            final item = currentItems[index];
+            return CustomCard(
+              onTap: () {
+                if (item['label'] == 'Logements') {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => const LogementListScreen(),
+                    ),
+                  );
+                } else {
+                  // TODO: Navigate to other screens as needed
+                }
+              },
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(item['icon'] as IconData, size: 36),
+                  const SizedBox(height: 8),
+                  Text(
+                    item['label'] as String,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 13),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      ],
     );
   }
 }
