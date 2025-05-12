@@ -35,12 +35,13 @@ class Poste {
       typePoste: json['Type_Poste'] ?? '',
       nomPoste: json['Nom_Poste'],
       nomLogement: json['Nom_Logement'],
-      quantite: (json['Quantite'] ?? 0).toDouble(),
+      quantite: double.tryParse(json['Quantite'].toString()) ?? 0.0,
       unite: json['Unite'] ?? '',
-      emissionCalculee: (json['Emission_Calculee'] ?? 0).toDouble(),
+      emissionCalculee:
+          double.tryParse(json['Emission_Calculee'].toString()) ?? 0.0,
       frequence: json['Facteur_Emission']?.toString(),
-      anneeAchat: json['Annee_Achat'],
-      dureeAmortissement: json['Duree_Amortissement'],
+      anneeAchat: int.tryParse(json['Annee_Achat'].toString()),
+      dureeAmortissement: int.tryParse(json['Duree_Amortissement'].toString()),
     );
   }
 }
