@@ -17,13 +17,6 @@ class BaseScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0.5,
-        title: Text(title, style: const TextStyle(color: Colors.black)),
-        iconTheme: const IconThemeData(color: Colors.black),
-        actions: actions,
-      ),
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -33,14 +26,14 @@ class BaseScreen extends StatelessWidget {
           ),
         ),
         child: ListView(
-          padding: const EdgeInsets.symmetric(vertical: 24),
+          padding: const EdgeInsets.symmetric(vertical: 12),
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
                 title,
                 style: const TextStyle(
-                  fontSize: 20,
+                  fontSize: 12,
                   fontWeight: FontWeight.bold,
                 ),
               ),
