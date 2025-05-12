@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../ui/layout/base_screen.dart';
 import '../../ui/layout/custom_card.dart';
+import '../../ui/widgets/post_list_card.dart'
 import 'construction_screen.dart';
 
 class LogementListScreen extends StatefulWidget {
@@ -50,35 +51,42 @@ class _LogementListScreenState extends State<LogementListScreen> {
     );
   }
 
-  @override
   Widget build(BuildContext context) {
-    return BaseScreen(
-      title: 'Mes logements',
-      actions: [
-        IconButton(icon: const Icon(Icons.add), onPressed: ajouterNouveauBien),
-      ],
-      child:
-          biens.isEmpty
-              ? const Center(child: Text("Aucun logement déclaré"))
-              : ListView.builder(
-                itemCount: biens.length,
-                itemBuilder: (context, index) {
-                  final bien = biens[index];
-                  return CustomCard(
-                    onTap: () => modifierBien(bien),
-                    child: ListTile(
-                      leading: const Icon(Icons.home),
-                      title: Text(
-                        bien.nom.isEmpty ? 'Logement sans nom' : bien.nom,
-                      ),
-                      subtitle: Text(
-                        "${bien.type}, ${bien.surface.toInt()} m²",
-                      ),
-                      trailing: const Icon(Icons.chevron_right),
-                    ),
-                  );
-                },
-              ),
-    );
-  }
+  return BaseScreen(
+    title: 'Mes logements',
+    actions: [
+      IconButton(icon: const Icon(Icons.add), onPressed: ajouterNouveauBien),
+    ],
+    child: biens.isEmpty
+        ? CustomCard(
+            margin: const EdgeInsets.all(16),
+            onTap: ajouterNouveauBien,
+            child: const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.add_circle_outline),
+                SizedBox(width: 8),
+                Text("Déclarer un nouveau logement"),
+              ],
+            ),
+          )
+        : ListView.builder(
+            itemCount: biens.length,
+            itemBuilder: (context, index) {
+              final bien = biens[index];
+              final type = bien.type.toLowerCase();
+              final icon = type.contains('appartement') ? Icons.apartment : Icons.home;
+
+              return PostListCard(
+                icon: icon,
+                title: bien.nom.isEmpty ? 'Logement sans nom' : bien.nom,
+                subtitle: "${bien.type}, ${bien.surface.toInt()} m²",
+                emission: "${bien.calculerTotalEmission().toStringAsFixed(2)} kgCO₂e/an",
+                onEdit: () => modifierBien(bien),
+                onDelete: () => setState(() => biens.removeAt(index)),
+              );
+            },
+          ),
+  );
 }
+
