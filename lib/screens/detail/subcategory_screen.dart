@@ -3,6 +3,7 @@ import '../../ui/layout/base_screen.dart';
 import '../../data/services/api_service.dart';
 import '../../data/models/poste.dart';
 import '../../ui/widgets/post_list_card.dart';
+import '../../ui/layout/custom_card.dart';
 
 class SubCategorieScreen extends StatefulWidget {
   final String typeCategorie;
@@ -64,16 +65,42 @@ class _SubCategorieScreenState extends State<SubCategorieScreen> {
               );
             }
 
+            // Regroupement par Type_Poste - Sous_Categorie
+            final Map<String, List<Poste>> grouped = {};
+            for (var poste in postes) {
+              final key =
+                  '${poste.typePoste ?? 'Inconnu'} - ${poste.sousCategorie ?? 'Autre'}';
+              grouped.putIfAbsent(key, () => []).add(poste);
+            }
+
             return Column(
               children:
-                  postes.map<Widget>((poste) {
-                    return PostListCard(
-                      title: poste.nomPoste ?? poste.sousCategorie,
-                      subtitle: "Quantité : ${poste.quantite} ${poste.unite}",
-                      emission:
-                          "${poste.emissionCalculee.toStringAsFixed(2)} kgCO₂e",
-                      onEdit: () => handleEdit(poste),
-                      onDelete: () => handleDelete(poste),
+                  grouped.entries.map<Widget>((entry) {
+                    final groupTitle = entry.key;
+                    final groupPostes = entry.value;
+
+                    return CustomCard(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            groupTitle,
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                          const SizedBox(height: 8),
+                          ...groupPostes.map<Widget>(
+                            (poste) => PostListCard(
+                              title: poste.nomPoste ?? poste.sousCategorie,
+                              subtitle:
+                                  "Quantité : ${poste.quantite} ${poste.unite}",
+                              emission:
+                                  "${poste.emissionCalculee.toStringAsFixed(2)} kgCO₂e",
+                              onEdit: () => handleEdit(poste),
+                              onDelete: () => handleDelete(poste),
+                            ),
+                          ),
+                        ],
+                      ),
                     );
                   }).toList(),
             );
