@@ -211,14 +211,8 @@ class _SubCategorieScreenState extends State<SubCategorieScreen> {
                             final poste = posts[index ~/ 2];
                             return PostListCard(
                               title: poste.nomPoste ?? poste.sousCategorie,
-                              subtitle: Text(
-                                "Quantité : ${poste.quantite} ${poste.unite}",
-                                style: const TextStyle(
-                                  fontSize: 9,
-                                  color: Colors.grey,
-                                  fontStyle: FontStyle.italic,
-                                ),
-                              ),
+                              subtitle:
+                                  "Quantité : ${poste.quantite} ${poste.unite}",
                               emission:
                                   "${poste.emissionCalculee?.round()} kgCO₂e",
                               onEdit: () {},
