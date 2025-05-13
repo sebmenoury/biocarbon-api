@@ -100,17 +100,20 @@ class _SubCategorieScreenState extends State<SubCategorieScreen> {
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.home, size: 28), // 🏠 Icône à gauche
+                      const Icon(Icons.home, size: 16), // 🏠 Icône à gauche
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
-                          "Total Logement",
-                          style: Theme.of(context).textTheme.titleMedium,
+                          "Logement",
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                       Text(
                         "${(totalEmission / 1000).toStringAsFixed(2)} tCO₂e",
-                        style: Theme.of(context).textTheme.headlineSmall,
+                        style: const TextStyle(fontSize: 11),
                       ),
                     ],
                   ),
@@ -136,18 +139,21 @@ class _SubCategorieScreenState extends State<SubCategorieScreen> {
                             Expanded(
                               child: Text(
                                 "$type - $sousCat",
-                                style: Theme.of(context).textTheme.titleMedium,
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                             Row(
                               children: [
                                 IconButton(
-                                  icon: const Icon(Icons.edit, size: 20),
+                                  icon: const Icon(Icons.edit, size: 12),
                                   onPressed:
                                       () => handleGroupEdit(type, sousCat),
                                 ),
                                 IconButton(
-                                  icon: const Icon(Icons.add, size: 20),
+                                  icon: const Icon(Icons.add, size: 12),
                                   onPressed:
                                       () => handleGroupAdd(type, sousCat),
                                 ),
