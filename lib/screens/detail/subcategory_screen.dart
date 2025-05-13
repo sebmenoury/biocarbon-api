@@ -161,7 +161,7 @@ class _SubCategorieScreenState extends State<SubCategorieScreen> {
                               ),
                             ),
 
-                            // Bloc trailing : valeur émission
+                            // Bloc trailing : valeur émission + actions
                             Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
@@ -216,9 +216,7 @@ class _SubCategorieScreenState extends State<SubCategorieScreen> {
                                 style: const TextStyle(
                                   fontSize: 9,
                                   color: Colors.grey,
-                                  fontStyle:
-                                      FontStyle
-                                          .italic, // ou FontStyle.italic si tu préfères
+                                  fontStyle: FontStyle.italic,
                                 ),
                               ),
                               emission:

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class PostListCard extends StatelessWidget {
   final String title;
-  final String subtitle;
+  final Widget subtitle;
   final String emission;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
@@ -21,7 +21,6 @@ class PostListCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
             child: Column(
@@ -34,26 +33,13 @@ class PostListCard extends StatelessWidget {
                     fontWeight: FontWeight.normal,
                   ),
                 ),
-                Text(
-                  subtitle,
-                  style: const TextStyle(
-                    fontSize: 9,
-                    color: Colors.grey,
-                    fontStyle: FontStyle.italic,
-                  ),
-                ),
+                subtitle, // widget déjà stylisé
               ],
             ),
           ),
           Padding(
             padding: const EdgeInsets.only(right: 4, top: 2),
-            child: Text(
-              emission,
-              style: const TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.normal,
-              ),
-            ),
+            child: Text(emission, style: const TextStyle(fontSize: 11)),
           ),
         ],
       ),

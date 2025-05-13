@@ -4,7 +4,7 @@ import '../layout/custom_card.dart';
 
 class PostData {
   final String title;
-  final String subtitle;
+  final Widget subtitle;
   final double emission;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
