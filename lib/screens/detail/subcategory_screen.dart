@@ -101,7 +101,7 @@ class _SubCategorieScreenState extends State<SubCategorieScreen> {
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
-                          "Logement",
+                          widget.typeCategorie,
                           style: const TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
@@ -142,7 +142,7 @@ class _SubCategorieScreenState extends State<SubCategorieScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "$type - $sousCat",
+                                    sousCat,
                                     style: const TextStyle(
                                       fontSize: 12,
                                       fontWeight: FontWeight.bold,
@@ -165,7 +165,10 @@ class _SubCategorieScreenState extends State<SubCategorieScreen> {
                               children: [
                                 Text(
                                   "${sum.round()} kgCO₂e",
-                                  style: const TextStyle(fontSize: 11),
+                                  style: const TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                                 const SizedBox(width: 6),
                                 IconButton(
