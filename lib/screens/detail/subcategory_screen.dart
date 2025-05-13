@@ -66,13 +66,12 @@ class _SubCategorieScreenState extends State<SubCategorieScreen> {
 
             return Column(
               children:
-                  postes.map((poste) {
+                  postes.map<Widget>((poste) {
                     return PostListCard(
                       title: poste.nomPoste ?? poste.sousCategorie,
                       subtitle: "Quantité : ${poste.quantite} ${poste.unite}",
                       emission:
                           "${poste.emissionCalculee.toStringAsFixed(2)} kgCO₂e",
-                      icon: Icons.home,
                       onEdit: () => handleEdit(poste),
                       onDelete: () => handleDelete(poste),
                     );
