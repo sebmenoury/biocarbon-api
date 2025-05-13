@@ -31,7 +31,7 @@ class PostListCard extends StatelessWidget {
                   title,
                   style: const TextStyle(
                     fontSize: 11,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.normal,
                   ),
                 ),
                 Text(
@@ -45,20 +45,11 @@ class PostListCard extends StatelessWidget {
             padding: const EdgeInsets.only(right: 4, top: 2),
             child: Text(
               emission,
-              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+              style: const TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.normal,
+              ),
             ),
-          ),
-          IconButton(
-            icon: const Icon(Icons.edit, size: 16),
-            onPressed: onEdit,
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(),
-          ),
-          IconButton(
-            icon: const Icon(Icons.delete_outline, size: 16),
-            onPressed: onDelete,
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(),
           ),
         ],
       ),

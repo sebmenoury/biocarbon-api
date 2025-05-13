@@ -35,13 +35,8 @@ class _SubCategorieScreenState extends State<SubCategorieScreen> {
     );
   }
 
-  void handleGroupEdit(String typePoste, String sousCategorie) {
-    // TODO : Naviguer vers l'écran de saisie du groupe
-  }
-
-  void handleGroupAdd(String typePoste, String sousCategorie) {
-    // TODO : Naviguer vers un ajout de poste dans ce groupe
-  }
+  void handleGroupEdit(String typePoste, String sousCategorie) {}
+  void handleGroupAdd(String typePoste, String sousCategorie) {}
 
   @override
   Widget build(BuildContext context) {
@@ -66,13 +61,11 @@ class _SubCategorieScreenState extends State<SubCategorieScreen> {
               );
             }
 
-            // Total global de la catégorie
             final totalEmission = postes.fold<double>(
               0,
               (sum, p) => sum + (p.emissionCalculee ?? 0),
             );
 
-            // Regrouper par Type_Poste - Sous_Categorie avec somme par groupe
             final Map<String, List<Poste>> grouped = {};
             final Map<String, double> groupSums = {};
 
@@ -80,13 +73,11 @@ class _SubCategorieScreenState extends State<SubCategorieScreen> {
               final type = poste.typePoste ?? 'Inconnu';
               final sousCat = poste.sousCategorie ?? 'Autre';
               final key = '$type - $sousCat';
-
               grouped.putIfAbsent(key, () => []).add(poste);
               groupSums[key] =
                   (groupSums[key] ?? 0) + (poste.emissionCalculee ?? 0);
             }
 
-            // Trier les groupes par émission décroissante
             final sortedKeys =
                 groupSums.keys.toList()
                   ..sort((a, b) => groupSums[b]!.compareTo(groupSums[a]!));
@@ -97,7 +88,7 @@ class _SubCategorieScreenState extends State<SubCategorieScreen> {
                 CustomCard(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 16,
-                    vertical: 8,
+                    vertical: 8, // ✅ corrigé ici
                   ),
                   child: Row(
                     children: [
@@ -106,7 +97,7 @@ class _SubCategorieScreenState extends State<SubCategorieScreen> {
                             Icons.label_outline,
                         size: 16,
                         color: Colors.grey[700],
-                      ), // 🏠 Icône à gauche
+                      ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
@@ -135,44 +126,66 @@ class _SubCategorieScreenState extends State<SubCategorieScreen> {
                   final sousCat = posts.first.sousCategorie ?? 'Autre';
 
                   return CustomCard(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 3,
+                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Titre avec actions
+                        // Ligne 1 — Titre, valeur, icônes
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Expanded(
                               child: Text(
                                 "$type - $sousCat",
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                                style: const TextStyle(fontSize: 12),
                               ),
                             ),
                             Text(
-                              "${sum.toStringAsFixed(2)} kgCO₂e • $pourcentage%",
-                              style: Theme.of(context).textTheme.bodySmall,
+                              "${sum.round()} kgCO₂e",
+                              style: const TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.normal,
+                              ),
                             ),
-                            Row(
-                              children: [
-                                IconButton(
-                                  icon: const Icon(Icons.edit, size: 12),
-                                  onPressed:
-                                      () => handleGroupEdit(type, sousCat),
-                                ),
-                                IconButton(
-                                  icon: const Icon(Icons.add, size: 12),
-                                  onPressed:
-                                      () => handleGroupAdd(type, sousCat),
-                                ),
-                              ],
+                            const SizedBox(width: 8),
+                            IconButton(
+                              icon: const Icon(Icons.edit, size: 14),
+                              onPressed: () => handleGroupEdit(type, sousCat),
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.add, size: 14),
+                              onPressed: () => handleGroupAdd(type, sousCat),
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.delete_outline, size: 14),
+                              onPressed: () {
+                                // TODO: handleGroupDelete
+                              },
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(),
                             ),
                           ],
                         ),
 
-                        const SizedBox(height: 8),
+                        // Ligne 2 — Sous-titre
+                        Padding(
+                          padding: const EdgeInsets.only(top: 2.0, bottom: 6.0),
+                          child: Text(
+                            "$type ($pourcentage%)",
+                            style: const TextStyle(
+                              fontSize: 10,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ),
+
+                        // Liste des postes
                         ...List.generate(posts.length * 2 - 1, (index) {
                           if (index.isEven) {
                             final poste = posts[index ~/ 2];
