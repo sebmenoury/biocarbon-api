@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../ui/layout/base_screen.dart';
-import '../../ui/layout/custom_card.dart';
-import '../../ui/widgets/post_list_card.dart';
+import '../../ui/widgets/post_group_card.dart';
 import '../../data/services/api_service.dart';
 
 class LogementListScreen extends StatefulWidget {
@@ -12,96 +11,74 @@ class LogementListScreen extends StatefulWidget {
 }
 
 class _LogementListScreenState extends State<LogementListScreen> {
-  List<Map<String, dynamic>> logements = [];
-  bool isLoading = true;
+  Map<String, List<PostData>> groupedPosts = {};
+  bool loading = true;
 
   @override
   void initState() {
     super.initState();
-    loadPostesLogement();
+    loadPosts();
   }
 
-  Future<void> loadPostesLogement() async {
-    try {
-      final data = await ApiService.getUCPostes("BASILE", "2025");
-      final result =
-          data
-              .where(
-                (e) =>
-                    e['Type_Categorie'] == 'Logement' &&
-                    e['Sous_Categorie'] == 'Habitat' &&
-                    e['Type_Poste'] == 'Equipement',
-              )
-              .toList();
+  Future<void> loadPosts() async {
+    const individu = 'SEBASTIEN'; // à rendre dynamique plus tard
+    const annee = '2024';
 
-      setState(() {
-        logements = result;
-        isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        isLoading = false;
-      });
-      // Handle error visually if needed
+    final data = await ApiService.getPostesByCategorie(
+      'Logement',
+      individu,
+      annee,
+    );
+
+    final Map<String, List<PostData>> groupMap = {};
+    for (var item in data) {
+      final sousCat = item.sousCategorie ?? 'Autre';
+      final titre = item.nomPoste ?? '';
+      final quantite = item.quantite ?? '';
+      final unite = item.unite ?? '';
+      final emission = item.emissionCalculee?.toDouble() ?? 0;
+
+      final post = PostData(
+        title: titre,
+        subtitle: '$quantite $unite',
+        emission: emission,
+        onEdit: () {}, // à connecter
+        onDelete: () {}, // à connecter
+      );
+
+      groupMap.putIfAbsent(sousCat, () => []).add(post);
     }
+
+    setState(() {
+      groupedPosts = groupMap;
+      loading = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return BaseScreen(
-      title: 'Mes logements',
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.add),
-          onPressed: () {
-            // Ajout logement temporaire (à remplacer par ouverture formulaire)
-          },
-        ),
-      ],
-      child:
-          isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : logements.isEmpty
-              ? CustomCard(
-                margin: const EdgeInsets.all(16),
-                onTap: () {
-                  // Ajout d’un nouveau logement
-                },
-                child: const Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.add_circle_outline),
-                    SizedBox(width: 8),
-                    Text("Déclarer un nouveau logement"),
-                  ],
+      title: "Logement",
+      children:
+          loading
+              ? [const Center(child: CircularProgressIndicator())]
+              : [
+                ...groupedPosts.entries.map(
+                  (entry) => PostGroupCard(
+                    sousCategorie: entry.key,
+                    posts: entry.value,
+                  ),
                 ),
-              )
-              : ListView.builder(
-                itemCount: logements.length,
-                itemBuilder: (context, index) {
-                  final log = logements[index];
-                  final icon =
-                      log["Nom_Poste"].toString().toLowerCase().contains(
-                            "appartement",
-                          )
-                          ? Icons.apartment
-                          : Icons.home;
-
-                  return PostListCard(
-                    icon: icon,
-                    title: log["Nom_Poste"] ?? "Logement",
-                    subtitle: "${log["Quantite"]} ${log["Unite"]}",
-                    emission:
-                        "${(log["Emission_Calculee"] ?? 0).toString()} kgCO₂e/an",
-                    onEdit: () {
-                      // ouverture écran d’édition si prévu
+                const SizedBox(height: 20),
+                Center(
+                  child: IconButton(
+                    icon: const Icon(Icons.add_circle_outline, size: 28),
+                    onPressed: () {
+                      // logique d’ajout
                     },
-                    onDelete: () {
-                      // suppression via API si souhaité
-                    },
-                  );
-                },
-              ),
+                  ),
+                ),
+              ],
     );
   }
 }
