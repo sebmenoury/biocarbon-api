@@ -96,7 +96,9 @@ class _SubCategorieScreenState extends State<SubCategorieScreen> {
                         categoryIcons[widget.typeCategorie] ??
                             Icons.label_outline,
                         size: 16,
-                        color: Colors.grey[700],
+                        color:
+                            categoryColors[widget.typeCategorie] ??
+                            Colors.grey[700],
                       ),
                       const SizedBox(width: 12),
                       Expanded(
@@ -149,7 +151,7 @@ class _SubCategorieScreenState extends State<SubCategorieScreen> {
                                     ),
                                   ),
                                   Text(
-                                    "$type ($pourcentage%)",
+                                    "$pourcentage% ($type)",
                                     style: const TextStyle(
                                       fontSize: 10,
                                       color: Colors.grey,
@@ -209,8 +211,16 @@ class _SubCategorieScreenState extends State<SubCategorieScreen> {
                             final poste = posts[index ~/ 2];
                             return PostListCard(
                               title: poste.nomPoste ?? poste.sousCategorie,
-                              subtitle:
-                                  "Quantité : ${poste.quantite} ${poste.unite}",
+                              subtitle: Text(
+                                "Quantité : ${poste.quantite} ${poste.unite}",
+                                style: const TextStyle(
+                                  fontSize: 9,
+                                  color: Colors.grey,
+                                  fontStyle:
+                                      FontStyle
+                                          .italic, // ou FontStyle.italic si tu préfères
+                                ),
+                              ),
                               emission:
                                   "${poste.emissionCalculee?.round()} kgCO₂e",
                               onEdit: () {},

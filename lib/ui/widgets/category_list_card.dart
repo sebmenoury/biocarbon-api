@@ -38,7 +38,7 @@ class CategoryListCard extends StatelessWidget {
                 leading: Icon(
                   categoryIcons[category] ?? Icons.label_outline,
                   size: 16,
-                  color: Colors.grey[700],
+                  color: categoryColors[category] ?? Colors.grey[700],
                 ),
                 title: Text(
                   category,
