@@ -88,7 +88,7 @@ class _SubCategorieScreenState extends State<SubCategorieScreen> {
                 CustomCard(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 16,
-                    vertical: 8, // ✅ corrigé ici
+                    vertical: 8,
                   ),
                   child: Row(
                     children: [
@@ -128,62 +128,77 @@ class _SubCategorieScreenState extends State<SubCategorieScreen> {
                   return CustomCard(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 12,
-                      vertical: 3,
+                      vertical: 6,
                     ),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Ligne 1 — Titre, valeur, icônes
+                        // Ligne combinée type titre/sous-titre + trailing + actions
                         Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            // Bloc gauche : titre + sous-titre
                             Expanded(
-                              child: Text(
-                                "$type - $sousCat",
-                                style: const TextStyle(fontSize: 12),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "$type - $sousCat",
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Text(
+                                    "$type ($pourcentage%)",
+                                    style: const TextStyle(
+                                      fontSize: 10,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                            Text(
-                              "${sum.round()} kgCO₂e",
-                              style: const TextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.normal,
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            IconButton(
-                              icon: const Icon(Icons.edit, size: 14),
-                              onPressed: () => handleGroupEdit(type, sousCat),
-                              padding: EdgeInsets.zero,
-                              constraints: const BoxConstraints(),
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.add, size: 14),
-                              onPressed: () => handleGroupAdd(type, sousCat),
-                              padding: EdgeInsets.zero,
-                              constraints: const BoxConstraints(),
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.delete_outline, size: 14),
-                              onPressed: () {
-                                // TODO: handleGroupDelete
-                              },
-                              padding: EdgeInsets.zero,
-                              constraints: const BoxConstraints(),
+
+                            // Bloc trailing : valeur émission
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  "${sum.round()} kgCO₂e",
+                                  style: const TextStyle(fontSize: 11),
+                                ),
+                                const SizedBox(width: 6),
+                                IconButton(
+                                  icon: const Icon(Icons.edit, size: 11),
+                                  onPressed:
+                                      () => handleGroupEdit(type, sousCat),
+                                  padding: EdgeInsets.zero,
+                                  constraints: const BoxConstraints(),
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.add, size: 11),
+                                  onPressed:
+                                      () => handleGroupAdd(type, sousCat),
+                                  padding: EdgeInsets.zero,
+                                  constraints: const BoxConstraints(),
+                                ),
+                                IconButton(
+                                  icon: const Icon(
+                                    Icons.delete_outline,
+                                    size: 11,
+                                  ),
+                                  onPressed: () {
+                                    // TODO: handleGroupDelete
+                                  },
+                                  padding: EdgeInsets.zero,
+                                  constraints: const BoxConstraints(),
+                                ),
+                              ],
                             ),
                           ],
                         ),
 
-                        // Ligne 2 — Sous-titre
-                        Padding(
-                          padding: const EdgeInsets.only(top: 2.0, bottom: 6.0),
-                          child: Text(
-                            "$type ($pourcentage%)",
-                            style: const TextStyle(
-                              fontSize: 10,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ),
+                        const SizedBox(height: 6),
 
                         // Liste des postes
                         ...List.generate(posts.length * 2 - 1, (index) {
