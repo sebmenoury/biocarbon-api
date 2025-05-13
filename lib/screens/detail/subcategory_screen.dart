@@ -111,7 +111,7 @@ class _SubCategorieScreenState extends State<SubCategorieScreen> {
                         ),
                       ),
                       Text(
-                        "${(totalEmission / 1000).toStringAsFixed(2)} tCO₂e",
+                        "${(totalEmission / 1000).toStringAsFixed(2)} tCO₂",
                         style: const TextStyle(fontSize: 11),
                       ),
                     ],
@@ -166,38 +166,14 @@ class _SubCategorieScreenState extends State<SubCategorieScreen> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Text(
-                                  "${sum.round()} kgCO₂e",
+                                  "${sum.round()} kgCO",
                                   style: const TextStyle(
                                     fontSize: 11,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
                                 const SizedBox(width: 6),
-                                IconButton(
-                                  icon: const Icon(Icons.edit, size: 11),
-                                  onPressed:
-                                      () => handleGroupEdit(type, sousCat),
-                                  padding: EdgeInsets.zero,
-                                  constraints: const BoxConstraints(),
-                                ),
-                                IconButton(
-                                  icon: const Icon(Icons.add, size: 11),
-                                  onPressed:
-                                      () => handleGroupAdd(type, sousCat),
-                                  padding: EdgeInsets.zero,
-                                  constraints: const BoxConstraints(),
-                                ),
-                                IconButton(
-                                  icon: const Icon(
-                                    Icons.delete_outline,
-                                    size: 11,
-                                  ),
-                                  onPressed: () {
-                                    // TODO: handleGroupDelete
-                                  },
-                                  padding: EdgeInsets.zero,
-                                  constraints: const BoxConstraints(),
-                                ),
+                                const Icon(Icons.chevron_right, size: 14),
                               ],
                             ),
                           ],
@@ -211,10 +187,8 @@ class _SubCategorieScreenState extends State<SubCategorieScreen> {
                             final poste = posts[index ~/ 2];
                             return PostListCard(
                               title: poste.nomPoste ?? poste.sousCategorie,
-                              subtitle:
-                                  "Quantité : ${poste.quantite} ${poste.unite}",
                               emission:
-                                  "${poste.emissionCalculee?.round()} kgCO₂e",
+                                  "${poste.emissionCalculee?.round()} kgCO₂",
                               onEdit: () {},
                               onDelete: () {},
                             );
