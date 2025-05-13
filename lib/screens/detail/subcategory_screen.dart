@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../ui/layout/base_screen.dart';
 import '../../data/services/api_service.dart';
+import '../../core/constants/app_icons.dart';
 import '../../data/models/poste.dart';
 import '../../ui/widgets/post_list_card.dart';
 import '../../ui/layout/custom_card.dart';
@@ -96,11 +97,16 @@ class _SubCategorieScreenState extends State<SubCategorieScreen> {
                 CustomCard(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 16,
-                    vertical: 12,
+                    vertical: 8,
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.home, size: 16), // 🏠 Icône à gauche
+                      Icon(
+                        categoryIcons[widget.typeCategorie] ??
+                            Icons.label_outline,
+                        size: 16,
+                        color: Colors.grey[700],
+                      ), // 🏠 Icône à gauche
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
@@ -145,6 +151,10 @@ class _SubCategorieScreenState extends State<SubCategorieScreen> {
                                 ),
                               ),
                             ),
+                            Text(
+                              "${sum.toStringAsFixed(2)} kgCO₂e • $pourcentage%",
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
                             Row(
                               children: [
                                 IconButton(
@@ -161,22 +171,28 @@ class _SubCategorieScreenState extends State<SubCategorieScreen> {
                             ),
                           ],
                         ),
-                        Text(
-                          "${sum.toStringAsFixed(2)} kgCO₂e • $pourcentage%",
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
+
                         const SizedBox(height: 8),
-                        ...posts.map<Widget>(
-                          (poste) => PostListCard(
-                            title: poste.nomPoste ?? poste.sousCategorie,
-                            subtitle:
-                                "Quantité : ${poste.quantite} ${poste.unite}",
-                            emission:
-                                "${poste.emissionCalculee.toStringAsFixed(2)} kgCO₂e",
-                            onEdit: () {},
-                            onDelete: () {},
-                          ),
-                        ),
+                        ...List.generate(posts.length * 2 - 1, (index) {
+                          if (index.isEven) {
+                            final poste = posts[index ~/ 2];
+                            return PostListCard(
+                              title: poste.nomPoste ?? poste.sousCategorie,
+                              subtitle:
+                                  "Quantité : ${poste.quantite} ${poste.unite}",
+                              emission:
+                                  "${poste.emissionCalculee?.round()} kgCO₂e",
+                              onEdit: () {},
+                              onDelete: () {},
+                            );
+                          } else {
+                            return const Divider(
+                              height: 1,
+                              thickness: 0.2,
+                              color: Colors.grey,
+                            );
+                          }
+                        }),
                       ],
                     ),
                   );
