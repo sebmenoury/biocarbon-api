@@ -94,14 +94,20 @@ class _SubCategorieScreenState extends State<SubCategorieScreen> {
               children: [
                 // Carte récap globale Logement
                 CustomCard(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
+                  child: Row(
                     children: [
-                      Text(
-                        "Total Logement",
-                        style: Theme.of(context).textTheme.titleMedium,
+                      const Icon(Icons.home, size: 28), // 🏠 Icône à gauche
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          "Total Logement",
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
                       ),
-                      const SizedBox(height: 4),
                       Text(
                         "${(totalEmission / 1000).toStringAsFixed(2)} tCO₂e",
                         style: Theme.of(context).textTheme.headlineSmall,
