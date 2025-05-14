@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/material.dart';
 
 class WaterfallChart extends StatelessWidget {
   final Map<String, Map<String, double>> data;
@@ -17,18 +17,17 @@ class WaterfallChart extends StatelessWidget {
         );
 
     final barGroups = <BarChartGroupData>[];
-    double cumulativeStart = 0;
     double maxY = 0;
 
     for (int i = 0; i < sortedCategories.length; i++) {
       final cat = sortedCategories[i];
       final sousCats = data[cat]!;
-      final total = sousCats.values.fold(0.0, (a, b) => a + b);
+      double cumulativeStart = 0;
 
       final rods = [
         BarChartRodData(
-          toY: cumulativeStart + total,
-          fromY: cumulativeStart,
+          toY: sousCats.values.fold(0.0, (a, b) => a + b),
+          fromY: 0,
           rodStackItems:
               sousCats.entries.map((entry) {
                 final color = palette[entry.key] ?? Colors.grey;
@@ -46,7 +45,9 @@ class WaterfallChart extends StatelessWidget {
       ];
 
       barGroups.add(BarChartGroupData(x: i, barRods: rods));
-      if (cumulativeStart > maxY) maxY = cumulativeStart;
+
+      final sum = sousCats.values.fold(0.0, (a, b) => a + b);
+      if (sum > maxY) maxY = sum;
     }
 
     final targetLines = [
@@ -66,13 +67,13 @@ class WaterfallChart extends StatelessWidget {
 
     return BarChart(
       BarChartData(
-        maxY: maxY * 1.2,
+        maxY: maxY * 1.4,
         alignment: BarChartAlignment.spaceAround,
         barGroups: barGroups,
         barTouchData: BarTouchData(
           enabled: true,
           touchTooltipData: BarTouchTooltipData(
-            tooltipBgColor: Colors.black.withOpacity(0.8),
+            tooltipBgColor: Colors.black.withOpacity(0.85),
             getTooltipItem: (group, groupIndex, rod, rodIndex) {
               final cat = sortedCategories[group.x.toInt()];
               final sousCats = data[cat]!;
@@ -88,55 +89,46 @@ class WaterfallChart extends StatelessWidget {
         ),
         titlesData: FlTitlesData(
           leftTitles: AxisTitles(
-            axisNameWidget: RotatedBox(
+            axisNameWidget: const RotatedBox(
               quarterTurns: 4,
-              child: SizedBox(
-                height: 140,
-                width: 200,
-                child: Center(
-                  child: Text(
-                    'tCO₂e/an',
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
+              child: Text(
+                "tCO₂e/an",
+                style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
               ),
             ),
             sideTitles: SideTitles(
               showTitles: true,
+              reservedSize: 28,
               interval: 1,
               getTitlesWidget: (value, meta) {
-                if (value == meta.max) return Container();
+                if (value == meta.max) return const SizedBox.shrink();
                 return Text(
                   value.toStringAsFixed(0),
                   style: const TextStyle(fontSize: 9),
                 );
               },
-              reservedSize: 28,
             ),
           ),
           bottomTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
-              reservedSize: 36,
+              reservedSize: 40,
               getTitlesWidget: (value, meta) {
                 final index = value.toInt();
                 if (index < 0 || index >= sortedCategories.length) {
                   return const SizedBox.shrink();
                 }
-                final category = sortedCategories[index];
-                final emissions = data[category]!.values.reduce(
+                final label = sortedCategories[index];
+                final emissions = data[label]!.values.fold(
+                  0.0,
                   (a, b) => a + b,
                 );
                 return SideTitleWidget(
                   axisSide: meta.axisSide,
                   space: 8,
                   child: Column(
-                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(category, style: const TextStyle(fontSize: 10)),
+                      Text(label, style: const TextStyle(fontSize: 10)),
                       Text(
                         '${emissions.toStringAsFixed(2)} t',
                         style: const TextStyle(
@@ -162,19 +154,16 @@ class WaterfallChart extends StatelessWidget {
                   y: target['value'] as double,
                   color: target['color'] as Color,
                   strokeWidth: 1,
-                  dashArray: [5, 3],
+                  dashArray: [4, 3],
                   label: HorizontalLineLabel(
                     show: true,
-                    alignment:
-                        target['label'] == 'Objectif 2 t (2050)'
-                            ? Alignment.topRight
-                            : Alignment.topLeft,
+                    labelResolver: (_) => target['label'] as String,
+                    alignment: Alignment.topRight,
                     style: TextStyle(
                       fontSize: 9,
-                      color: target['color'] as Color,
                       fontWeight: FontWeight.w500,
+                      color: target['color'] as Color,
                     ),
-                    labelResolver: (_) => target['label'] as String,
                   ),
                 );
               }).toList(),

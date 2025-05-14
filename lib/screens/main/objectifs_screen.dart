@@ -4,6 +4,7 @@ import '../../ui/layout/custom_card.dart';
 import '../../ui/widgets/waterfall_chart.dart';
 import '../../data/services/api_service.dart';
 import '../../core/constants/app_colors.dart';
+import '../../core/constants/app_text.dart';
 
 class ObjectifsScreen extends StatefulWidget {
   const ObjectifsScreen({super.key});
@@ -61,6 +62,7 @@ class _ObjectifsScreenState extends State<ObjectifsScreen> {
             final total = totalEmissions(data);
 
             return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CustomCard(
                   padding: const EdgeInsets.all(12),
@@ -78,7 +80,10 @@ class _ObjectifsScreenState extends State<ObjectifsScreen> {
                       SizedBox(
                         height: 320,
                         child: WaterfallChart(
-                          data: data,
+                          data: data.map((cat, sousCatMap) {
+                            final short = AppText.shortLabel(cat);
+                            return MapEntry(short, sousCatMap);
+                          }),
                           palette: AppColors.categoryColors,
                         ),
                       ),
