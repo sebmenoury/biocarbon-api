@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../ui/layout/base_screen.dart';
 import '../../ui/layout/custom_card.dart';
-import '../logement/logement_list_screen.dart';
+import '../../core/constants/app_icons.dart';
+import '../detail/poste_list_screen.dart';
 
 class MesDonneesScreen extends StatefulWidget {
   const MesDonneesScreen({super.key});
@@ -13,31 +14,29 @@ class MesDonneesScreen extends StatefulWidget {
 class _MesDonneesScreenState extends State<MesDonneesScreen> {
   int selectedIndex = 0; // 0 = Equipements, 1 = Usages
 
+  final List<String> equipementLabels = [
+    'Habitats',
+    'Véhicules',
+    'Equipements Confort',
+    'Equipements Ménager',
+    'Equipements Multi-média',
+    'Equipements Bricolage',
+  ];
+
+  final List<String> usageLabels = [
+    'Alimentation',
+    'Gaz et Fioul',
+    'Electricité',
+    'Loisirs',
+    'Habillement',
+    'Banque et Assurances',
+    'Déplacements quotidien / loisirs',
+    'Services publics',
+  ];
+
   @override
   Widget build(BuildContext context) {
-    final equipementItems = [
-      {'icon': Icons.directions_bike, 'label': 'Véhicules'},
-      {'icon': Icons.home, 'label': 'Habitats'},
-      {'icon': Icons.local_laundry_service, 'label': 'Equipements ménagers'},
-      {'icon': Icons.smartphone, 'label': 'Equipements multi-média'},
-      {'icon': Icons.construction, 'label': 'Equipements bricolage'},
-    ];
-
-    final usageItems = [
-      {
-        'icon': Icons.directions_walk,
-        'label': 'Déplacement quotidien / loisirs',
-      },
-      {'icon': Icons.local_fire_department, 'label': 'Gaz et Fioul'},
-      {'icon': Icons.flash_on, 'label': 'Électricité'},
-      {'icon': Icons.local_dining, 'label': 'Alimentation'},
-      {'icon': Icons.card_travel, 'label': 'Loisirs'},
-      {'icon': Icons.checkroom, 'label': 'Habillement'},
-      {'icon': Icons.account_balance, 'label': 'Banque et assurance'},
-      {'icon': Icons.account_balance_outlined, 'label': 'Services publics'},
-    ];
-
-    final currentItems = selectedIndex == 0 ? equipementItems : usageItems;
+    final currentLabels = selectedIndex == 0 ? equipementLabels : usageLabels;
 
     return BaseScreen(
       title: const Text(
@@ -45,6 +44,7 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
         style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
       ),
       children: [
+        // Onglets Equipements / Usages
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8),
           child: Row(
@@ -103,6 +103,8 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
           ),
         ),
         const SizedBox(height: 12),
+
+        // Grille de sous-catégories
         GridView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
@@ -112,28 +114,33 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
             crossAxisSpacing: 12,
             mainAxisSpacing: 12,
           ),
-          itemCount: currentItems.length,
+          itemCount: currentLabels.length,
           itemBuilder: (context, index) {
-            final item = currentItems[index];
+            final label = currentLabels[index];
+            final icon = sousCategorieIcons[label] ?? Icons.help_outline;
+            final color = souscategoryColors[label] ?? Colors.grey;
+
             return CustomCard(
               onTap: () {
-                if (item['label'] == 'Habitats') {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => const LogementListScreen(),
-                    ),
-                  );
-                } else {
-                  // TODO: Navigate to other screens as needed
-                }
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder:
+                        (_) => PosteListScreen(
+                          sousCategorie: label,
+                          codeIndividu: 'BASILE',
+                          valeurTemps: '2025',
+                        ),
+                  ),
+                );
               },
+              backgroundColor: color.withOpacity(0.1),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(item['icon'] as IconData, size: 36),
+                  Icon(icon, size: 36, color: color),
                   const SizedBox(height: 8),
                   Text(
-                    item['label'] as String,
+                    label,
                     textAlign: TextAlign.center,
                     style: const TextStyle(fontSize: 13),
                   ),

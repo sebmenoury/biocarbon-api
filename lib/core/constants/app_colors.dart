@@ -11,12 +11,12 @@ class AppColors {
     "Autres publics": Color.fromARGB(255, 220, 216, 212),
 
     // Biens et services (verts)
-    "Bricolage": Color.fromARGB(255, 24, 168, 41),
+    "Eqt. Bricolage": Color.fromARGB(255, 24, 168, 41),
     "Eqt. Ménager": Color.fromARGB(255, 56, 179, 77),
     "Vêtements": Color.fromARGB(255, 82, 194, 96),
-    "Digital": Color.fromARGB(255, 121, 204, 132),
+    "Eqt.Multi-media": Color.fromARGB(255, 121, 204, 132),
     "Loisirs": Color.fromARGB(255, 156, 217, 164),
-    "Assurance, Banque": Color.fromARGB(255, 189, 229, 193),
+    "Banques et assurances": Color.fromARGB(255, 189, 229, 193),
 
     // Déplacements (bleus)
     "Véhicules": Color.fromARGB(255, 1, 60, 110),
@@ -28,11 +28,10 @@ class AppColors {
     "Autres": Color.fromARGB(255, 219, 231, 243),
 
     // Logement (violets/roses)
-    "Construction": Color.fromARGB(255, 81, 2, 73),
-    "Renov. Confort": Color.fromARGB(255, 134, 10, 129),
-    "Eqt. Confort": Color.fromARGB(255, 152, 43, 147),
-    "Gaz et fioul": Color.fromARGB(255, 184, 114, 184),
-    "Électricité": Color.fromARGB(255, 203, 147, 202),
+    "Habitat": Color.fromARGB(255, 81, 2, 73),
+    "Eqt. Confort": Color.fromARGB(255, 134, 10, 129),
+    "Gaz et fioul": Color.fromARGB(255, 152, 43, 147),
+    "Électricité": Color.fromARGB(255, 184, 114, 184),
     "Déchets / Eau": Color.fromARGB(255, 219, 185, 218),
 
     // Alimentation (rouge > jaune clair)

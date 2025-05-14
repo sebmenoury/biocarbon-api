@@ -154,10 +154,10 @@ class WaterfallChart extends StatelessWidget {
           horizontalLines:
               targetLines.map((target) {
                 return HorizontalLine(
-                  y: target['value'] as double,
+                  y: target['label'] as double,
                   color: target['color'] as Color,
                   strokeWidth: 1,
-                  dashArray: [5, 3],
+                  dashArray: [4, 3],
                   label: HorizontalLineLabel(
                     show: true,
                     alignment:
@@ -165,7 +165,7 @@ class WaterfallChart extends StatelessWidget {
                             ? Alignment.topRight
                             : Alignment.topLeft,
                     style: TextStyle(
-                      fontSize: 9,
+                      fontSize: 8,
                       fontWeight: FontWeight.w500,
                       color: target['color'] as Color,
                     ),

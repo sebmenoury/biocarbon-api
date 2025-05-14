@@ -15,3 +15,38 @@ final Map<String, Color> categoryColors = {
   "Biens et services": Colors.orange,
   "Services publics": Colors.purple,
 };
+
+final Map<String, IconData> sousCategorieIcons = {
+  'Habitats': Icons.home,
+  'Véhicules': Icons.directions_car,
+  'Equipements Multi-média': Icons.devices,
+  'Equipements Bricolage': Icons.handyman,
+  'Equipements Ménager': Icons.kitchen,
+  'Equipements Confort': Icons.thermostat,
+  'Alimentation': Icons.restaurant,
+  'Gaz et Fioul': Icons.local_gas_station,
+  'Electricité': Icons.electrical_services,
+  'Loisirs': Icons.sports_esports,
+  'Habillement': Icons.checkroom,
+  'Banque et Assurances': Icons.account_balance,
+  'Déplacements quotidien / loisirs': Icons.directions_transit,
+  'services publics': Icons.business,
+};
+
+final Map<String, Color> souscategoryColors = {
+  "Habitats": Colors.teal,
+  'Véhicules': Colors.indigo,
+  'Equipements Multi-média': Colors.orange,
+  'Equipements Bricolage': Colors.orange,
+  'Equipements Ménager': Colors.orange,
+  'Equipements Confort': Colors.orange,
+  'Gaz et Fioul': Colors.teal,
+  'Electricité': Colors.teal,
+  "Alimentation": Colors.redAccent,
+  'Loisirs': Colors.orange,
+  'Habillement': Colors.orange,
+  'Banque et Assurances': Colors.orange,
+  'Déplacements quotidien / loisirs': Colors.indigo,
+  "Biens et services": Colors.orange,
+  "Services publics": Colors.purple,
+};
