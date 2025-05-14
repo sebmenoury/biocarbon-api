@@ -15,7 +15,10 @@ class DetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BaseScreen(
-      title: category,
+      title: Text(
+        category,
+        style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+      ),
       child: Column(
         children: [
           CustomCard(

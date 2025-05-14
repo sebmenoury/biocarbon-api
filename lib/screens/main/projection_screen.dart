@@ -34,7 +34,10 @@ class _ProjectionScreenState extends State<ProjectionScreen> {
   @override
   Widget build(BuildContext context) {
     return BaseScreen(
-      title: 'Projection',
+      title: const Text(
+        "Projection",
+        style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+      ),
       children: [
         const CustomCard(
           child: Text(

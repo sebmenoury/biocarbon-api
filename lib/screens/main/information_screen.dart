@@ -8,7 +8,10 @@ class InformationScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BaseScreen(
-      title: 'Information',
+      title: const Text(
+        "Informations",
+        style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+      ),
       children: const [
         CustomCard(child: Text('Notions, documentation, pédagogie...')),
       ],

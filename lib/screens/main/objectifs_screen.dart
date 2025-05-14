@@ -9,7 +9,10 @@ class ObjectifsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BaseScreen(
-      title: 'Objectifs',
+      title: const Text(
+        "Objectifs",
+        style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+      ),
       children: [
         const CustomCard(child: Text('Suivi des objectifs 2035 et 2050...')),
         CustomCard(

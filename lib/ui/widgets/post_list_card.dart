@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 class PostListCard extends StatelessWidget {
   final String title;
-  final String subtitle;
   final String emission;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
@@ -10,7 +9,6 @@ class PostListCard extends StatelessWidget {
   const PostListCard({
     super.key,
     required this.title,
-    required this.subtitle,
     required this.emission,
     required this.onEdit,
     required this.onDelete,
@@ -31,14 +29,6 @@ class PostListCard extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.normal,
-                  ),
-                ),
-                Text(
-                  subtitle,
-                  style: const TextStyle(
-                    fontSize: 9,
-                    color: Colors.grey,
-                    fontStyle: FontStyle.italic,
                   ),
                 ),
               ],

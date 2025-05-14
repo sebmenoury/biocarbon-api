@@ -9,7 +9,10 @@ class AnalyseScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BaseScreen(
-      title: "Analyse des Données",
+      title: const Text(
+        "Analyse des données",
+        style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+      ),
       children: [
         const SizedBox(height: 16),
         const Center(

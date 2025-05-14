@@ -41,7 +41,22 @@ class _SubCategorieScreenState extends State<SubCategorieScreen> {
   @override
   Widget build(BuildContext context) {
     return BaseScreen(
-      title: widget.typeCategorie,
+      title: Row(
+        children: [
+          IconButton(
+            icon: const Icon(Icons.arrow_back),
+            iconSize: 18,
+            onPressed: () => Navigator.pop(context),
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            widget.typeCategorie,
+            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+          ),
+        ],
+      ),
       children: [
         FutureBuilder<List<Poste>>(
           future: postesFuture,
@@ -126,6 +141,13 @@ class _SubCategorieScreenState extends State<SubCategorieScreen> {
                       .toStringAsFixed(1);
                   final type = posts.first.typePoste ?? 'Inconnu';
                   final sousCat = posts.first.sousCategorie ?? 'Autre';
+
+                  // ✅ Trie ici les postes par émission décroissante
+                  posts.sort(
+                    (a, b) => (b.emissionCalculee ?? 0).compareTo(
+                      a.emissionCalculee ?? 0,
+                    ),
+                  );
 
                   return CustomCard(
                     padding: const EdgeInsets.symmetric(

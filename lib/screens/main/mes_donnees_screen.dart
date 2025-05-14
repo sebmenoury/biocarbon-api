@@ -17,7 +17,11 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
   Widget build(BuildContext context) {
     final equipementItems = [
       {'icon': Icons.directions_bike, 'label': 'Véhicules'},
-      {'icon': Icons.home, 'label': 'Logements'},
+      {'icon': Icons.home, 'label': 'Logements et équipements'},
+      {'icon': Icons.electric_car, 'label': 'Véhicules électriques'},
+      {'icon': Icons.local_grocery_store, 'label': 'Alimentation'},
+      {'icon': Icons.local_hospital, 'label': 'Santé'},
+      {'icon': Icons.local_fire_department, 'label': 'Services publics'},
       {'icon': Icons.local_laundry_service, 'label': 'Equipements ménagers'},
       {'icon': Icons.smartphone, 'label': 'Equipements multi-média'},
       {'icon': Icons.handyman, 'label': 'Equipements bricolage'},
@@ -39,7 +43,10 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
     final currentItems = selectedIndex == 0 ? equipementItems : usageItems;
 
     return BaseScreen(
-      title: "Mes données",
+      title: const Text(
+        "Mes données",
+        style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+      ),
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8),

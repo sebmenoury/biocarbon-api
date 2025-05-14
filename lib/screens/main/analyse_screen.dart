@@ -55,7 +55,10 @@ class _AnalyseScreenState extends State<AnalyseScreen> {
   @override
   Widget build(BuildContext context) {
     return BaseScreen(
-      title: "Analyse des Données",
+      title: const Text(
+        "Analyse des données",
+        style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+      ),
       children: [
         CustomCard(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 3),

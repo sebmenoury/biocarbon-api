@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class BaseScreen extends StatelessWidget {
-  final String title;
+  final Widget title;
   final Widget? child;
   final List<Widget>? children;
   final List<Widget>? actions;
@@ -33,13 +33,7 @@ class BaseScreen extends StatelessWidget {
                     const SizedBox(height: 12),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Text(
-                        title,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      child: title,
                     ),
                     const SizedBox(height: 12),
                     Expanded(child: child!),
@@ -50,13 +44,7 @@ class BaseScreen extends StatelessWidget {
                   children: [
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Text(
-                        title,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      child: title,
                     ),
                     const SizedBox(height: 12),
                     if (children != null) ...children!,
