@@ -27,7 +27,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
   @override
   void initState() {
     super.initState();
-    postesFuture = ApiService.getPostesByCategorie(
+    postesFuture = ApiService.getPostesBysousCategorie(
       widget.sousCategorie,
       widget.codeIndividu,
       widget.valeurTemps,
@@ -133,7 +133,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                       return const Divider(
                         height: 1,
                         thickness: 0.2,
-                        color: Colors.grey,
+                        color: Colors.white,
                       );
                     }
                   }),

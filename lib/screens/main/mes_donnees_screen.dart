@@ -33,8 +33,8 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
     'Banque et Assurances',
     'Déplacements Avion',
     'Déplacements Voiture',
-    'Déplacements Train/Métro/Bus'
-        'Déplacements Autre',
+    'Déplacements Train/Métro/Bus',
+    'Déplacements Autre',
     'Services publics',
   ];
 
@@ -117,6 +117,7 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
             crossAxisCount: 2,
             crossAxisSpacing: 12,
             mainAxisSpacing: 12,
+            childAspectRatio: 0.8,
           ),
           itemCount: currentLabels.length,
           itemBuilder: (context, index) {
@@ -141,12 +142,12 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(icon, size: 24, color: color),
-                  const SizedBox(height: 6),
+                  Icon(icon, size: 36, color: color),
+                  const SizedBox(height: 8),
                   Text(
                     label,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 12),
+                    style: const TextStyle(fontSize: 13),
                   ),
                 ],
               ),
