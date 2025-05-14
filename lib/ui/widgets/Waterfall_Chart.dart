@@ -18,16 +18,17 @@ class WaterfallChart extends StatelessWidget {
 
     final barGroups = <BarChartGroupData>[];
     double maxY = 0;
+    double cumulativeStart = 0;
 
     for (int i = 0; i < sortedCategories.length; i++) {
       final cat = sortedCategories[i];
       final sousCats = data[cat]!;
-      double cumulativeStart = 0;
+      final total = sousCats.values.fold(0.0, (a, b) => a + b);
 
       final rods = [
         BarChartRodData(
-          toY: sousCats.values.fold(0.0, (a, b) => a + b),
-          fromY: 0,
+          toY: cumulativeStart + total,
+          fromY: cumulativeStart,
           rodStackItems:
               sousCats.entries.map((entry) {
                 final color = palette[entry.key] ?? Colors.grey;
@@ -45,9 +46,7 @@ class WaterfallChart extends StatelessWidget {
       ];
 
       barGroups.add(BarChartGroupData(x: i, barRods: rods));
-
-      final sum = sousCats.values.fold(0.0, (a, b) => a + b);
-      if (sum > maxY) maxY = sum;
+      if (cumulativeStart > maxY) maxY = cumulativeStart;
     }
 
     final targetLines = [
@@ -65,9 +64,13 @@ class WaterfallChart extends StatelessWidget {
       },
     ];
 
+    final double total = data.values
+        .expand((e) => e.values)
+        .fold(0.0, (a, b) => a + b);
+
     return BarChart(
       BarChartData(
-        maxY: maxY * 1.4,
+        maxY: maxY * 1.2,
         alignment: BarChartAlignment.spaceAround,
         barGroups: barGroups,
         barTouchData: BarTouchData(
@@ -112,7 +115,7 @@ class WaterfallChart extends StatelessWidget {
           bottomTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
-              reservedSize: 40,
+              reservedSize: 36,
               getTitlesWidget: (value, meta) {
                 final index = value.toInt();
                 if (index < 0 || index >= sortedCategories.length) {
@@ -130,7 +133,7 @@ class WaterfallChart extends StatelessWidget {
                     children: [
                       Text(label, style: const TextStyle(fontSize: 10)),
                       Text(
-                        '${emissions.toStringAsFixed(2)} t',
+                        '${emissions.toStringAsFixed(1)} t',
                         style: const TextStyle(
                           fontSize: 10,
                           fontWeight: FontWeight.bold,
@@ -154,7 +157,7 @@ class WaterfallChart extends StatelessWidget {
                   y: target['value'] as double,
                   color: target['color'] as Color,
                   strokeWidth: 1,
-                  dashArray: [4, 3],
+                  dashArray: [5, 3],
                   label: HorizontalLineLabel(
                     show: true,
                     labelResolver: (_) => target['label'] as String,
