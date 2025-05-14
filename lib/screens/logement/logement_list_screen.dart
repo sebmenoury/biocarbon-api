@@ -27,9 +27,21 @@ class _LogementListScreenState extends State<LogementListScreen> {
   @override
   Widget build(BuildContext context) {
     return BaseScreen(
-      title: const Text(
-        "Logement",
-        style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+      title: Row(
+        children: [
+          IconButton(
+            icon: const Icon(Icons.arrow_back),
+            iconSize: 18,
+            onPressed: () => Navigator.pop(context),
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            "Habitats et équipements conforts",
+            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+          ),
+        ],
       ),
       child: FutureBuilder<List<Poste>>(
         future: postesFuture,
