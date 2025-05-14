@@ -160,8 +160,10 @@ class WaterfallChart extends StatelessWidget {
                   dashArray: [5, 3],
                   label: HorizontalLineLabel(
                     show: true,
-                    labelResolver: (_) => target['label'] as String,
-                    alignment: Alignment.topRight,
+                    alignment:
+                        target['label'] == 'Objectif 2 t (2050)'
+                            ? Alignment.topRight
+                            : Alignment.topLeft,
                     style: TextStyle(
                       fontSize: 9,
                       fontWeight: FontWeight.w500,

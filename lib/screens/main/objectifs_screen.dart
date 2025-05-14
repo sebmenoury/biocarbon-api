@@ -22,8 +22,7 @@ class _ObjectifsScreenState extends State<ObjectifsScreen> {
   @override
   void initState() {
     super.initState();
-    dataFuture = ApiService.getEmissionsByTypeAndYearAndUser(
-      "Tous",
+    dataFuture = ApiService.getEmissionsByCategoryAndSousCategorie(
       codeIndividu,
       valeurTemps,
     );
