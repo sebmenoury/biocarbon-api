@@ -34,38 +34,69 @@ class _PosteListScreenState extends State<PosteListScreen> {
     );
   }
 
+  void handleAdd() {
+    // TODO : navigation vers formulaire d’ajout
+    debugPrint("Ajout d’un poste pour ${widget.sousCategorie}");
+  }
+
+  void handleEdit() {
+    // TODO : navigation vers formulaire de modification
+    debugPrint("Modifier ${widget.sousCategorie}");
+  }
+
+  void handleDelete() {
+    // TODO : suppression après confirmation
+    debugPrint("Suppression de ${widget.sousCategorie}");
+  }
+
   @override
   Widget build(BuildContext context) {
     return BaseScreen(
-      title: Row(
-        children: [
-          IconButton(
-            icon: const Icon(Icons.arrow_back, size: 18),
-            onPressed: () => Navigator.pop(context),
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(),
-          ),
-          const SizedBox(width: 8),
-          Text(
-            widget.sousCategorie,
-            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-          ),
-        ],
+      showBackButton: true,
+      title: Text(
+        widget.sousCategorie,
+        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
       ),
       children: [
+        // 🔘 Boutons d’action
+        Padding(
+          padding: const EdgeInsets.only(right: 12, top: 4),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.edit, size: 18),
+                tooltip: 'Modifier',
+                onPressed: handleEdit,
+              ),
+              IconButton(
+                icon: const Icon(Icons.add, size: 18),
+                tooltip: 'Ajouter',
+                onPressed: handleAdd,
+              ),
+              IconButton(
+                icon: const Icon(Icons.delete_outline, size: 18),
+                tooltip: 'Supprimer',
+                onPressed: handleDelete,
+              ),
+            ],
+          ),
+        ),
+
+        // 🔁 FutureBuilder
         FutureBuilder<List<Poste>>(
           future: postesFuture,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Padding(
-                padding: EdgeInsets.all(8),
+                padding: EdgeInsets.all(32),
                 child: Center(child: CircularProgressIndicator()),
               );
             }
 
             if (snapshot.hasError) {
               return Padding(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(16),
                 child: Text("Erreur : ${snapshot.error}"),
               );
             }
@@ -75,7 +106,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
             if (postes.isEmpty) {
               return CustomCard(
                 child: Padding(
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(16),
                   child: Text(
                     "Déclarer mes ${widget.sousCategorie}",
                     style: const TextStyle(fontSize: 12),
@@ -84,6 +115,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
               );
             }
 
+            // 🔢 Total & tri décroissant
             final total = postes.fold<double>(
               0,
               (sum, p) => sum + (p.emissionCalculee ?? 0),
@@ -99,7 +131,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Titre + total
+                  // 🏷 Titre + total
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -119,6 +151,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                   const SizedBox(height: 4),
                   const Divider(thickness: 0.5, height: 16),
 
+                  // 📄 Liste des postes
                   ...List.generate(postes.length * 2 - 1, (index) {
                     if (index.isEven) {
                       final poste = postes[index ~/ 2];
@@ -133,7 +166,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                       return const Divider(
                         height: 1,
                         thickness: 0.2,
-                        color: Colors.white,
+                        color: Colors.grey,
                       );
                     }
                   }),

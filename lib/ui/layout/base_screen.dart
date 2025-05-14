@@ -5,6 +5,7 @@ class BaseScreen extends StatelessWidget {
   final Widget? child;
   final List<Widget>? children;
   final List<Widget>? actions;
+  final bool showBackButton;
 
   const BaseScreen({
     super.key,
@@ -12,10 +13,25 @@ class BaseScreen extends StatelessWidget {
     this.child,
     this.children,
     this.actions,
+    this.showBackButton = false, // 👈 valeur par défaut : false
   });
 
   @override
   Widget build(BuildContext context) {
+    final titleWidget = Row(
+      children: [
+        if (showBackButton)
+          IconButton(
+            icon: const Icon(Icons.arrow_back),
+            iconSize: 18,
+            onPressed: () => Navigator.pop(context),
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+          ),
+        if (showBackButton) const SizedBox(width: 8),
+        Expanded(child: title),
+      ],
+    );
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
