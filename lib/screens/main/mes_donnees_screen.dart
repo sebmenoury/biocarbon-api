@@ -24,13 +24,17 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
   ];
 
   final List<String> usageLabels = [
-    'Alimentation',
-    'Gaz et Fioul',
     'Electricité',
+    'Gaz et Fioul',
+    'Déchets et Eau',
+    'Alimentation',
     'Loisirs',
     'Habillement',
     'Banque et Assurances',
-    'Déplacements quotidien / loisirs',
+    'Déplacements Avion',
+    'Déplacements Voiture',
+    'Déplacements Train/Métro/Bus'
+        'Déplacements Autre',
     'Services publics',
   ];
 
@@ -137,12 +141,12 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(icon, size: 36, color: color),
-                  const SizedBox(height: 8),
+                  Icon(icon, size: 24, color: color),
+                  const SizedBox(height: 6),
                   Text(
                     label,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 13),
+                    style: const TextStyle(fontSize: 12),
                   ),
                 ],
               ),

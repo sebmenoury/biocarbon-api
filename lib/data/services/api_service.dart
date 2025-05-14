@@ -75,6 +75,26 @@ class ApiService {
     return result;
   }
 
+  static Future<List<Poste>> getPostesBysousCategorie(
+    String sousCategorie,
+    String codeIndividu,
+    String valeurTemps,
+  ) async {
+    // Fonction de normalisation (accents, majuscules)
+    String normalize(String s) =>
+        s.toLowerCase().replaceAll('é', 'e').replaceAll('è', 'e').trim();
+
+    final allData = await getUCPostes(codeIndividu, valeurTemps);
+
+    final filtered = allData.where((item) {
+      final itemCat = normalize(item['Sous_Categorie'] ?? '');
+      final targetCat = normalize(sousCategorie);
+      return itemCat == targetCat;
+    });
+
+    return filtered.map((item) => Poste.fromJson(item)).toList();
+  }
+
   static Future<Map<String, Map<String, double>>>
   getEmissionsByCategoryAndSousCategorie(
     String codeIndividu,

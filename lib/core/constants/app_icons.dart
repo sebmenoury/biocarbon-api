@@ -29,8 +29,12 @@ final Map<String, IconData> sousCategorieIcons = {
   'Loisirs': Icons.sports_esports,
   'Habillement': Icons.checkroom,
   'Banque et Assurances': Icons.account_balance,
-  'Déplacements quotidien / loisirs': Icons.directions_transit,
+  'Déplacements Avion': Icons.flight_takeoff,
+  'Déplacements Voiture': Icons.directions_car,
+  'Déplacements Train/Métro/Bus': Icons.directions_transit,
+  'Déplacements Autre': Icons.directions_bike,
   'services publics': Icons.business,
+  'Déchets et Eau': Icons.water_drop_sharp,
 };
 
 final Map<String, Color> souscategoryColors = {
@@ -47,6 +51,11 @@ final Map<String, Color> souscategoryColors = {
   'Habillement': Colors.orange,
   'Banque et Assurances': Colors.orange,
   'Déplacements quotidien / loisirs': Colors.indigo,
+  'Déplacements Avion': Colors.indigo,
+  'Déplacements Voiture': Colors.indigo,
+  'Déplacements Train/Métro/Bus': Colors.indigo,
+  'Déplacements Autre': Colors.indigo,
   "Biens et services": Colors.orange,
   "Services publics": Colors.purple,
+  'Déchets et Eau': Colors.teal,
 };

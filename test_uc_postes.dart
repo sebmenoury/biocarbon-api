@@ -23,7 +23,6 @@ void main() async {
       if (categorie == "Logement") {
         final nom = item["Nom_Poste"] ?? "??";
         final poste = item["Type_Poste"] ?? "?";
-        print("- [$poste] $nom : ${emissionKg.toStringAsFixed(2)} kgCO₂");
       }
     }
   } else {
