@@ -17,14 +17,10 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
   Widget build(BuildContext context) {
     final equipementItems = [
       {'icon': Icons.directions_bike, 'label': 'Véhicules'},
-      {'icon': Icons.home, 'label': 'Logements et équipements'},
-      {'icon': Icons.electric_car, 'label': 'Véhicules électriques'},
-      {'icon': Icons.local_grocery_store, 'label': 'Alimentation'},
-      {'icon': Icons.local_hospital, 'label': 'Santé'},
-      {'icon': Icons.local_fire_department, 'label': 'Services publics'},
+      {'icon': Icons.home, 'label': 'Habitats'},
       {'icon': Icons.local_laundry_service, 'label': 'Equipements ménagers'},
       {'icon': Icons.smartphone, 'label': 'Equipements multi-média'},
-      {'icon': Icons.handyman, 'label': 'Equipements bricolage'},
+      {'icon': Icons.construction, 'label': 'Equipements bricolage'},
     ];
 
     final usageItems = [
@@ -32,7 +28,8 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
         'icon': Icons.directions_walk,
         'label': 'Déplacement quotidien / loisirs',
       },
-      {'icon': Icons.thermostat, 'label': 'Chauffage/Climatisation'},
+      {'icon': Icons.local_fire_department, 'label': 'Gaz et Fioul'},
+      {'icon': Icons.flash_on, 'label': 'Électricité'},
       {'icon': Icons.local_dining, 'label': 'Alimentation'},
       {'icon': Icons.card_travel, 'label': 'Loisirs'},
       {'icon': Icons.checkroom, 'label': 'Habillement'},
@@ -120,7 +117,7 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
             final item = currentItems[index];
             return CustomCard(
               onTap: () {
-                if (item['label'] == 'Logements') {
+                if (item['label'] == 'Habitats') {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (_) => const LogementListScreen(),
