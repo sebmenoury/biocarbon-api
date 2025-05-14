@@ -37,7 +37,7 @@ class PostGroupCard extends StatelessWidget {
             : "0";
 
     return CustomCard(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

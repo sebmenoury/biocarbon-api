@@ -33,7 +33,7 @@ final Map<String, IconData> sousCategorieIcons = {
   'Déplacements Voiture': Icons.directions_car,
   'Déplacements Train/Métro/Bus': Icons.directions_transit,
   'Déplacements Autre': Icons.directions_bike,
-  'services publics': Icons.business,
+  'Services publics': Icons.business,
   'Déchets et Eau': Icons.water_drop_sharp,
 };
 

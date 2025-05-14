@@ -58,14 +58,14 @@ class _PosteListScreenState extends State<PosteListScreen> {
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Padding(
-                padding: EdgeInsets.all(32),
+                padding: EdgeInsets.all(8),
                 child: Center(child: CircularProgressIndicator()),
               );
             }
 
             if (snapshot.hasError) {
               return Padding(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(8),
                 child: Text("Erreur : ${snapshot.error}"),
               );
             }
@@ -75,7 +75,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
             if (postes.isEmpty) {
               return CustomCard(
                 child: Padding(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(8),
                   child: Text(
                     "Déclarer mes ${widget.sousCategorie}",
                     style: const TextStyle(fontSize: 12),
