@@ -117,7 +117,7 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
             crossAxisCount: 2,
             crossAxisSpacing: 12,
             mainAxisSpacing: 12,
-            childAspectRatio: 0.8,
+            childAspectRatio: 1.3,
           ),
           itemCount: currentLabels.length,
           itemBuilder: (context, index) {
@@ -126,6 +126,7 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
             final color = souscategoryColors[label] ?? Colors.grey;
 
             return CustomCard(
+              padding: const EdgeInsets.all(8),
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
@@ -142,7 +143,7 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(icon, size: 36, color: color),
+                  Icon(icon, size: 28, color: color),
                   const SizedBox(height: 8),
                   Text(
                     label,
