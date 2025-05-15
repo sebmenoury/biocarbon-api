@@ -17,7 +17,7 @@ final Map<String, Color> categoryColors = {
 };
 
 final Map<String, IconData> sousCategorieIcons = {
-  'Habitats': Icons.home,
+  'Biens Immobiliers': Icons.home,
   'Véhicules': Icons.directions_car,
   'Equipements Multi-média': Icons.devices,
   'Equipements Bricolage': Icons.handyman,
@@ -32,13 +32,13 @@ final Map<String, IconData> sousCategorieIcons = {
   'Déplacements Avion': Icons.flight_takeoff,
   'Déplacements Voiture': Icons.directions_car,
   'Déplacements Train/Métro/Bus': Icons.directions_transit,
-  'Déplacements Autre': Icons.directions_bike,
+  'Déplacements Autres': Icons.directions_bike,
   'Services publics': Icons.business,
   'Déchets et Eau': Icons.water_drop_sharp,
 };
 
 final Map<String, Color> souscategoryColors = {
-  "Habitats": Colors.teal,
+  "Biens Immobiliers": Colors.teal,
   'Véhicules': Colors.indigo,
   'Equipements Multi-média': Colors.orange,
   'Equipements Bricolage': Colors.orange,
@@ -50,11 +50,10 @@ final Map<String, Color> souscategoryColors = {
   'Loisirs': Colors.orange,
   'Habillement': Colors.orange,
   'Banque et Assurances': Colors.orange,
-  'Déplacements quotidien / loisirs': Colors.indigo,
   'Déplacements Avion': Colors.indigo,
   'Déplacements Voiture': Colors.indigo,
   'Déplacements Train/Métro/Bus': Colors.indigo,
-  'Déplacements Autre': Colors.indigo,
+  'Déplacements Autres': Colors.indigo,
   "Biens et services": Colors.orange,
   "Services publics": Colors.purple,
   'Déchets et Eau': Colors.teal,

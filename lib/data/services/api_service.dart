@@ -5,6 +5,193 @@ import '../models/poste.dart';
 class ApiService {
   static const String baseUrl = "https://biocarbon-api.onrender.com";
 
+  // ---------------------------------------------------------------------------
+  // 🔧 MÉTHODE UTILITAIRE COMMUNE
+  // ---------------------------------------------------------------------------
+
+  static dynamic _handleResponse(http.Response response) {
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Erreur API : ${response.statusCode} - ${response.body}');
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // 📚 REF - DONNES DE REFERENCE
+  // ---------------------------------------------------------------------------
+  // récupère les émissions par équipements
+  // ---------------------------------------------------------------------------
+
+  static Future<List<Map<String, dynamic>>> getRefEquipements() async {
+    final response = await http.get(Uri.parse("$baseUrl/api/ref/equipements"));
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body);
+      return data.cast<Map<String, dynamic>>();
+    } else {
+      throw Exception("Erreur lors du chargement des équipements");
+    }
+  }
+  // REF - Usages
+  // ---------------------------------------------------------------------------
+
+  static Future<List<dynamic>> getRefUsages() async {
+    final response = await http.get(Uri.parse('$baseUrl/api/ref/usages'));
+    return _handleResponse(response);
+  }
+
+  // REF - Alimentation
+  // ---------------------------------------------------------------------------
+
+  static Future<List<dynamic>> getRefAlimentation() async {
+    final response = await http.get(Uri.parse('$baseUrl/api/ref/alimentation'));
+    return _handleResponse(response);
+  }
+
+  // REF - Aéroports
+  // ---------------------------------------------------------------------------
+
+  static Future<List<dynamic>> getRefPays() async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/api/ref/aeroports/pays'),
+    );
+    return _handleResponse(response);
+  }
+
+  static Future<List<dynamic>> getRefVilles(String pays) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/api/ref/aeroports/villes?pays=$pays'),
+    );
+    return _handleResponse(response);
+  }
+
+  static Future<List<dynamic>> getRefAeroports(
+    String pays,
+    String ville,
+  ) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/api/ref/aeroports/noms?pays=$pays&ville=$ville'),
+    );
+    return _handleResponse(response);
+  }
+
+  static Future<Map<String, dynamic>> getRefAeroportDetails(
+    String pays,
+    String ville,
+    String aeroport,
+  ) async {
+    final response = await http.get(
+      Uri.parse(
+        '$baseUrl/api/ref/aeroports/details?pays=$pays&ville=$ville&aeroport=$aeroport',
+      ),
+    );
+    return _handleResponse(response);
+  }
+  // ---------------------------------------------------------------------------
+  // 📦 UC - BIENS IMMOBILIERS
+  // ---------------------------------------------------------------------------
+
+  static Future<List<dynamic>> getBiens(String codeIndividu) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/api/uc/biens?code_individu=$codeIndividu'),
+    );
+    return _handleResponse(response);
+  }
+
+  static Future<Map<String, dynamic>> addBien({
+    required String codeIndividu,
+    required String typeBien,
+    required String description,
+    required String adresse,
+    required String inclureDansBilan,
+  }) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/api/uc/biens'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'Code_Individu': codeIndividu,
+        'Type_Bien': typeBien,
+        'Description': description,
+        'Adresse': adresse,
+        'Inclure_dans_bilan': inclureDansBilan,
+      }),
+    );
+    return _handleResponse(response);
+  }
+
+  static Future<Map<String, dynamic>> updateBien(
+    String idBien,
+    Map<String, dynamic> data,
+  ) async {
+    final response = await http.patch(
+      Uri.parse('$baseUrl/api/uc/biens/$idBien'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(data),
+    );
+    return _handleResponse(response);
+  }
+
+  static Future<Map<String, dynamic>> deleteBien(String idBien) async {
+    final response = await http.delete(
+      Uri.parse('$baseUrl/api/uc/biens/$idBien'),
+    );
+    return _handleResponse(response);
+  }
+
+  // ---------------------------------------------------------------------------
+  // 📦 UC - POSTES en écriture
+  // ---------------------------------------------------------------------------
+
+  static Future<Map<String, dynamic>> addUCPoste(
+    Map<String, dynamic> data,
+  ) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/api/uc/postes'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(data),
+    );
+    return _handleResponse(response);
+  }
+
+  static Future<Map<String, dynamic>> updateUCPoste(
+    String id,
+    Map<String, dynamic> data,
+  ) async {
+    final response = await http.patch(
+      Uri.parse('$baseUrl/api/uc/postes/$id'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(data),
+    );
+    return _handleResponse(response);
+  }
+
+  static Future<Map<String, dynamic>> deleteUCPoste(String id) async {
+    final response = await http.delete(Uri.parse('$baseUrl/api/uc/postes/$id'));
+    return _handleResponse(response);
+  }
+
+  static Future<void> savePoste(Map<String, dynamic> data) async {
+    final response = await http.post(
+      Uri.parse("$baseUrl/api/uc/postes"), // Appelle add_poste dans Flask
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode(data),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception(
+        "Erreur lors de l'enregistrement du poste : ${response.body}",
+      );
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // 📦 UC - POSTES en lecture
+  // ---------------------------------------------------------------------------
+
+  // récupère l'ensemble des données d'un individu pour un bilan (année ou simulation)
+  // ---------------------------------------------------------------------------
+
   static Future<List<Map<String, dynamic>>> getUCPostes(
     String codeIndividu,
     String valeurTemps,
@@ -21,6 +208,9 @@ class ApiService {
       throw Exception("Erreur lors du chargement des postes");
     }
   }
+
+  // récupère les données par Type Catégories
+  // ---------------------------------------------------------------------------
 
   static Future<List<Poste>> getPostesByCategorie(
     String typeCategorie,
@@ -43,6 +233,9 @@ class ApiService {
       throw Exception("Erreur lors de la récupération des postes");
     }
   }
+
+  // récupère les données par Type de poste
+  // ---------------------------------------------------------------------------
 
   static Future<Map<String, Map<String, double>>>
   getEmissionsByTypeAndYearAndUser(
@@ -75,6 +268,9 @@ class ApiService {
     return result;
   }
 
+  // récupère les données par sous Catégorie
+  // ---------------------------------------------------------------------------
+
   static Future<List<Poste>> getPostesBysousCategorie(
     String sousCategorie,
     String codeIndividu,
@@ -94,6 +290,9 @@ class ApiService {
 
     return filtered.map((item) => Poste.fromJson(item)).toList();
   }
+
+  // récupère les données par Type Catégorie et sous Catégorie
+  // ---------------------------------------------------------------------------
 
   static Future<Map<String, Map<String, double>>>
   getEmissionsByCategoryAndSousCategorie(
@@ -120,6 +319,9 @@ class ApiService {
     return result;
   }
 
+  // récupère les données par Type poste et Type Catégorie
+  // ---------------------------------------------------------------------------
+
   static Future<Map<String, Map<String, double>>>
   getEmissionsFilteredByTypePosteGroupedByCategorie(
     String typePoste, // "Usage", "Equipement"
@@ -144,73 +346,5 @@ class ApiService {
     }
 
     return result;
-  }
-
-  static Future<Map<String, double>> getEmissionFactors() async {
-    final response = await http.get(Uri.parse("$baseUrl/api/ref/emission"));
-
-    if (response.statusCode == 200) {
-      final List<dynamic> data = jsonDecode(response.body);
-
-      // On mappe par nom d’équipement ou poste, et on stocke le facteur d’émission
-      final Map<String, double> result = {};
-      for (final item in data) {
-        final nom = item["Nom_Poste"];
-        final facteur =
-            double.tryParse(
-              item["Facteur_Emission"].toString().replaceAll(",", "."),
-            ) ??
-            0;
-        result[nom] = facteur;
-      }
-
-      return result;
-    } else {
-      throw Exception("Erreur lors du chargement des facteurs d'émission");
-    }
-  }
-
-  static Future<Map<String, int>> getDureeAmortissement() async {
-    final response = await http.get(Uri.parse("$baseUrl/api/ref/duree"));
-
-    if (response.statusCode == 200) {
-      final List<dynamic> data = jsonDecode(response.body);
-
-      final Map<String, int> result = {};
-      for (final item in data) {
-        final nom = item["Nom_Poste"];
-        final duree = int.tryParse(item["Duree_Amortissement"].toString()) ?? 0;
-        result[nom] = duree;
-      }
-
-      return result;
-    } else {
-      throw Exception("Erreur lors du chargement des durées d’amortissement");
-    }
-  }
-
-  static Future<List<Map<String, dynamic>>> getRefEquipements() async {
-    final response = await http.get(Uri.parse("$baseUrl/api/ref/equipements"));
-
-    if (response.statusCode == 200) {
-      final List<dynamic> data = jsonDecode(response.body);
-      return data.cast<Map<String, dynamic>>();
-    } else {
-      throw Exception("Erreur lors du chargement des équipements");
-    }
-  }
-
-  static Future<void> savePoste(Map<String, dynamic> data) async {
-    final response = await http.post(
-      Uri.parse("$baseUrl/api/uc/postes"), // Appelle add_poste dans Flask
-      headers: {"Content-Type": "application/json"},
-      body: jsonEncode(data),
-    );
-
-    if (response.statusCode != 200) {
-      throw Exception(
-        "Erreur lors de l'enregistrement du poste : ${response.body}",
-      );
-    }
   }
 }

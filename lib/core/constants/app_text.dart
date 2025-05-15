@@ -3,7 +3,7 @@ class AppText {
   static const Map<String, String> shortCategoryLabels = {
     'Services publics': 'Serv. Pub.',
     'Biens et services': 'Biens & S.',
-    'Alimentation': 'Alimentation',
+    'Alimentation': 'Aliment.',
     'Logement': 'Logement',
     'Déplacements': 'Dépl.',
   };

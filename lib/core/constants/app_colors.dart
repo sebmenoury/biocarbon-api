@@ -11,25 +11,23 @@ class AppColors {
     "Autres publics": Color.fromARGB(255, 220, 216, 212),
 
     // Biens et services (verts)
-    "Eqt. Bricolage": Color.fromARGB(255, 24, 168, 41),
-    "Eqt. Ménager": Color.fromARGB(255, 56, 179, 77),
-    "Vêtements": Color.fromARGB(255, 82, 194, 96),
-    "Eqt.Multi-media": Color.fromARGB(255, 121, 204, 132),
+    "Equipements Bricolage": Color.fromARGB(255, 24, 168, 41),
+    "Equipements Ménager": Color.fromARGB(255, 56, 179, 77),
+    "Habillement": Color.fromARGB(255, 82, 194, 96),
+    "EquipementsMulti-media": Color.fromARGB(255, 121, 204, 132),
     "Loisirs": Color.fromARGB(255, 156, 217, 164),
     "Banques et assurances": Color.fromARGB(255, 189, 229, 193),
 
     // Déplacements (bleus)
     "Véhicules": Color.fromARGB(255, 1, 60, 110),
-    "Voiture": Color.fromARGB(255, 5, 98, 176),
-    "Train": Color.fromARGB(255, 38, 120, 193),
-    "2-roues": Color.fromARGB(255, 110, 195, 229),
-    "Car/Bus/Métro/tram": Color.fromARGB(255, 148, 208, 237),
-    "Avion": Color.fromARGB(255, 179, 219, 239),
-    "Autres": Color.fromARGB(255, 219, 231, 243),
+    "Déplacements Voiture": Color.fromARGB(255, 5, 98, 176),
+    "Déplacements Train/Métro/Bus": Color.fromARGB(255, 38, 120, 193),
+    "Déplacements Avion": Color.fromARGB(255, 110, 195, 229),
+    "Déplacements Autres": Color.fromARGB(255, 148, 208, 237),
 
     // Logement (violets/roses)
-    "Habitat": Color.fromARGB(255, 81, 2, 73),
-    "Eqt. Confort": Color.fromARGB(255, 134, 10, 129),
+    "Biens Immobiliers": Color.fromARGB(255, 81, 2, 73),
+    "Equipements Confort": Color.fromARGB(255, 134, 10, 129),
     "Gaz et fioul": Color.fromARGB(255, 152, 43, 147),
     "Électricité": Color.fromARGB(255, 184, 114, 184),
     "Déchets / Eau": Color.fromARGB(255, 219, 185, 218),

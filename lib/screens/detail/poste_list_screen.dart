@@ -52,10 +52,21 @@ class _PosteListScreenState extends State<PosteListScreen> {
   @override
   Widget build(BuildContext context) {
     return BaseScreen(
-      showBackButton: true,
-      title: Text(
-        widget.sousCategorie,
-        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+      title: Row(
+        children: [
+          IconButton(
+            icon: const Icon(Icons.arrow_back),
+            iconSize: 18,
+            onPressed: () => Navigator.pop(context),
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            widget.sousCategorie,
+            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+          ),
+        ],
       ),
       children: [
         // 🔘 Boutons d’action

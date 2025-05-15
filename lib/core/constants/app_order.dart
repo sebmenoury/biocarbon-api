@@ -11,21 +11,18 @@ class AppOrder {
   // Ordre des sous-catégories par type (du plus foncé au plus clair)
   static const Map<String, List<String>> sousCategorieOrder = {
     'Logement': [
-      "Construction",
-      "Renov. Confort",
-      "Eqt. Confort",
+      "Biens Immobiliers",
+      "Equipements Confort",
       "Gaz et fioul",
       "Électricité",
       "Déchets / Eau",
     ],
     'Déplacements': [
       "Véhicules",
-      "Voiture",
-      "Train",
-      "2-roues",
-      "Car/Bus/Métro/tram",
-      "Avion",
-      "Autres",
+      "Déplacements Voiture",
+      "Déplacements Train/Métro/Bus",
+      "Déplacements Avion",
+      "Déplacements Autres",
     ],
     'Alimentation': [
       "Fruits et légumes",
@@ -36,12 +33,12 @@ class AppOrder {
       "Boissons",
     ],
     'Biens et services': [
-      "Bricolage",
-      "Eqt. Ménager",
-      "Vêtements",
-      "Digital",
+      "Equipement Bricolage",
+      "Equipement Ménager",
+      "Habillement",
+      "Equipement Multi-media",
       "Loisirs",
-      "Assurance, Banque",
+      "Banques et assurances",
     ],
     'Services publics': [
       "Admin. et défense",
