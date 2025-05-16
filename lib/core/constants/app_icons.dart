@@ -43,7 +43,7 @@ final Map<String, Color> souscategoryColors = {
   'Equipements Multi-média': Colors.orange,
   'Equipements Bricolage': Colors.orange,
   'Equipements Ménager': Colors.orange,
-  'Equipements Confort': Colors.orange,
+  'Equipements Confort': Colors.teal,
   'Gaz et Fioul': Colors.teal,
   'Electricité': Colors.teal,
   "Alimentation": Colors.redAccent,

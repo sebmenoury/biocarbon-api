@@ -77,24 +77,6 @@ class _PosteListScreenState extends State<PosteListScreen> {
         ],
       ),
       children: [
-        Padding(
-          padding: const EdgeInsets.only(right: 12, top: 2),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              IconButton(
-                icon: const Icon(Icons.edit, size: 13),
-                tooltip: 'Modifier',
-                onPressed: handleEdit,
-              ),
-              IconButton(
-                icon: const Icon(Icons.delete_outline, size: 13),
-                tooltip: 'Supprimer',
-                onPressed: handleDelete,
-              ),
-            ],
-          ),
-        ),
         FutureBuilder<List<Poste>>(
           future: postesFuture,
           builder: (context, snapshot) {
@@ -116,12 +98,36 @@ class _PosteListScreenState extends State<PosteListScreen> {
 
             if (!avecBien) {
               if (postes.isEmpty) {
+                Padding(
+                  padding: const EdgeInsets.only(right: 6, top: 1),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.edit, size: 13),
+                        tooltip: 'Modifier',
+                        onPressed: handleEdit,
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.delete_outline, size: 13),
+                        tooltip: 'Supprimer',
+                        onPressed: handleDelete,
+                      ),
+                    ],
+                  ),
+                ),
                 return CustomCard(
                   child: Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: Text(
-                      "Vous n'avez pas encore de déclaration sur ce poste, veuillez commencer à déclarer des éléments concernant le thème : ${widget.sousCategorie}",
-                      style: const TextStyle(fontSize: 12),
+                    padding: const EdgeInsets.all(6),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Déclarer mes premiers éléments concernant ce thème",
+                          style: const TextStyle(fontSize: 12),
+                        ),
+                        const Icon(Icons.chevron_right, size: 12),
+                      ],
                     ),
                   ),
                 );
@@ -203,7 +209,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                   if (biens.isEmpty) {
                     return CustomCard(
                       child: Padding(
-                        padding: const EdgeInsets.all(12),
+                        padding: const EdgeInsets.all(8),
                         child: Column(
                           children: [
                             const Text(
@@ -211,13 +217,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                               style: TextStyle(fontSize: 12),
                             ),
                             const SizedBox(height: 8),
-                            TextButton.icon(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              icon: const Icon(Icons.arrow_forward),
-                              label: const Text("Retour à Mes données"),
-                            ),
+                            const Icon(Icons.chevron_right, size: 12),
                           ],
                         ),
                       ),

@@ -1,1 +1,0 @@
-// Fonctions utilitaires : formatage, calculs

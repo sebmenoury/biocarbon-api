@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../ui/layout/base_screen.dart';
 import '../../ui/layout/custom_card.dart';
 import '../../core/constants/app_icons.dart';
-import '../detail/poste_list_screen.dart';
+import '../detail/OLD_poste_list_screen.dart';
 
 class MesDonneesScreen extends StatefulWidget {
   const MesDonneesScreen({super.key});
@@ -16,11 +16,11 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
 
   final List<String> equipementLabels = [
     'Biens Immobiliers',
-    'Véhicules',
     'Equipements Confort',
     'Equipements Ménager',
-    'Equipements Multi-média',
     'Equipements Bricolage',
+    'Equipements Multi-média',
+    'Véhicules',
   ];
 
   final List<String> usageLabels = [
