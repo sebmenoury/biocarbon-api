@@ -251,28 +251,18 @@ class _PosteListScreenState extends State<PosteListScreen> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    "${bien['Type_Bien'] ?? ''} – ${bien['Dénomination'] ?? ''}",
+                                    widget.sousCategorie,
                                     style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 12,
                                     ),
                                   ),
-                                  Row(
-                                    children: [
-                                      IconButton(
-                                        icon: const Icon(Icons.edit, size: 13),
-                                        tooltip: 'Modifier',
-                                        onPressed: handleEdit,
-                                      ),
-                                      IconButton(
-                                        icon: const Icon(
-                                          Icons.delete_outline,
-                                          size: 13,
-                                        ),
-                                        tooltip: 'Supprimer',
-                                        onPressed: handleDelete,
-                                      ),
-                                    ],
+                                  Text(
+                                    "Total : ${total.round()} kgCO₂",
+                                    style: const TextStyle(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -286,30 +276,30 @@ class _PosteListScreenState extends State<PosteListScreen> {
                                   onDelete: () {},
                                 ),
                               ),
-                              const Divider(height: 8),
-                              Align(
-                                alignment: Alignment.centerRight,
-                                child: Text(
-                                  "Total : ${total.round()} kgCO₂",
-                                  style: const TextStyle(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
                             ],
                           ),
                         ),
                       );
                     } else {
                       widgets.add(
-                        ListTile(
-                          title: Text(
-                            "Ajouter une déclaration pour ${bien['Dénomination'] ?? ''}",
-                            style: const TextStyle(fontSize: 12),
+                        CustomCard(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 6,
+                            horizontal: 12,
                           ),
-                          trailing: const Icon(Icons.arrow_forward),
-                          onTap: () => handleAdd(bien['ID_Bien']),
+                          child: InkWell(
+                            onTap: () => handleAdd(bien['ID_Bien']),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Ajouter une déclaration pour ${bien['Dénomination'] ?? ''}",
+                                  style: const TextStyle(fontSize: 12),
+                                ),
+                                const Icon(Icons.chevron_right, size: 14),
+                              ],
+                            ),
+                          ),
                         ),
                       );
                     }
