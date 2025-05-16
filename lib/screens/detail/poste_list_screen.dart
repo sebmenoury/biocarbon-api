@@ -4,7 +4,7 @@ import '../../ui/layout/custom_card.dart';
 import '../../ui/widgets/post_list_card.dart';
 import '../../data/services/api_service.dart';
 import '../../data/models/poste.dart';
-import '../../ui/widgets/biens_poste_card_group.dart';
+import '../../ui/widgets/post_group_card.dart';
 import '../../core/utils/sous_categorie_avec_bien.dart';
 
 class PosteListScreen extends StatefulWidget {
@@ -133,61 +133,22 @@ class _PosteListScreenState extends State<PosteListScreen> {
                 (sum, p) => sum + (p.emissionCalculee ?? 0),
               );
 
-              postes.sort(
-                (a, b) => (b.emissionCalculee ?? 0).compareTo(
-                  a.emissionCalculee ?? 0,
-                ),
-              );
-
-              return CustomCard(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 6,
-                  horizontal: 12,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          widget.sousCategorie,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12,
-                          ),
-                        ),
-                        Text(
-                          "Total : ${total.round()} kgCO₂",
-                          style: const TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 2),
-                    const Divider(thickness: 0.5, height: 16),
-                    ...List.generate(postes.length * 2 - 1, (index) {
-                      if (index.isEven) {
-                        final poste = postes[index ~/ 2];
-                        return PostListCard(
-                          title: poste.nomPoste ?? 'Sans nom',
-                          emission:
-                              "${poste.emissionCalculee?.toStringAsFixed(0) ?? '0'} kgCO₂",
+              final postDataList =
+                  postes
+                      .map(
+                        (p) => PostData(
+                          title: p.nomPoste ?? 'Sans nom',
+                          emission: p.emissionCalculee ?? 0,
                           onEdit: () {},
                           onDelete: () {},
-                        );
-                      } else {
-                        return const Divider(
-                          height: 1,
-                          thickness: 0.2,
-                          color: Colors.grey,
-                        );
-                      }
-                    }),
-                  ],
-                ),
+                        ),
+                      )
+                      .toList();
+
+              return PostGroupCard(
+                sousCategorie: widget.sousCategorie,
+                posts: postDataList,
+                totalCategorieEmission: total,
               );
             } else {
               return FutureBuilder<List<Map<String, dynamic>>>(
@@ -234,70 +195,48 @@ class _PosteListScreenState extends State<PosteListScreen> {
                     );
                   }
 
-                  // Si des biens existent
-                  final biensAvecPostes = <Map<String, dynamic>>[];
-                  final biensSansPostes = <Map<String, dynamic>>[];
+                  final widgets = <Widget>[];
 
                   for (var bien in biens) {
                     final idBien = bien['ID_Bien'];
                     final postesPourCeBien =
                         postes.where((p) => p.idBien == idBien).toList();
+
                     if (postesPourCeBien.isNotEmpty) {
-                      bien['__postes'] = postesPourCeBien;
-                      biensAvecPostes.add(bien);
-                    } else {
-                      biensSansPostes.add(bien);
-                    }
-                  }
+                      final postDataList =
+                          postesPourCeBien
+                              .map(
+                                (p) => PostData(
+                                  title: p.nomPoste ?? 'Sans nom',
+                                  emission: p.emissionCalculee ?? 0,
+                                  onEdit: () {},
+                                  onDelete: () {},
+                                ),
+                              )
+                              .toList();
 
-                  final widgets = <Widget>[];
-
-                  for (var bien in biensAvecPostes) {
-                    widgets.add(
-                      BienPosteCardGroup(
-                        bien: bien,
-                        postes:
-                            (bien['__postes'] as List<Poste>)
-                                .map(
-                                  (p) => {
-                                    'Nom_Usage': p.nomPoste ?? '',
-                                    'Emission_Calculee':
-                                        p.emissionCalculee ?? 0,
-                                    'ID_Usage': p.idUsage ?? '',
-                                  },
-                                )
-                                .toList(),
-                        sousCategorie:
-                            "${widget.sousCategorie} – ${bien['Dénomination'] ?? ''}",
-                        onAdd: () => handleAdd(bien['ID_Bien']),
-                        onEdit: (poste) => handleEdit(),
-                        onDelete: (poste) => handleDelete(),
-                        //typeBien: bien['Type_Bien'] ?? '',
-                      ),
-                    );
-                  }
-
-                  if (biensSansPostes.isNotEmpty) {
-                    widgets.add(
-                      CustomCard(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              "Ajouter des équipements à mes autres biens",
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            ...biensSansPostes.map(
-                              (bien) => ListTile(
-                                title: Text(bien['Dénomination'] ?? ''),
-                                trailing: const Icon(Icons.arrow_forward),
-                                onTap: () => handleAdd(bien['ID_Bien']),
-                              ),
-                            ),
-                          ],
+                      widgets.add(
+                        PostGroupCard(
+                          sousCategorie:
+                              "${widget.sousCategorie} – ${bien['Dénomination'] ?? ''}",
+                          posts: postDataList,
+                          totalCategorieEmission: postDataList.fold(
+                            0,
+                            (sum, p) => sum + p.emission,
+                          ),
                         ),
-                      ),
-                    );
+                      );
+                    } else {
+                      widgets.add(
+                        ListTile(
+                          title: Text(
+                            "Ajouter une déclaration pour ${bien['Dénomination'] ?? ''}",
+                          ),
+                          trailing: const Icon(Icons.arrow_forward),
+                          onTap: () => handleAdd(bien['ID_Bien']),
+                        ),
+                      );
+                    }
                   }
 
                   return Column(children: widgets);
