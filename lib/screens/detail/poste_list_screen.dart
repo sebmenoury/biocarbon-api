@@ -79,22 +79,17 @@ class _PosteListScreenState extends State<PosteListScreen> {
       ),
       children: [
         Padding(
-          padding: const EdgeInsets.only(right: 12, top: 4),
+          padding: const EdgeInsets.only(right: 12, top: 2),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               IconButton(
-                icon: const Icon(Icons.edit, size: 18),
+                icon: const Icon(Icons.edit, size: 13),
                 tooltip: 'Modifier',
                 onPressed: handleEdit,
               ),
               IconButton(
-                icon: const Icon(Icons.add, size: 18),
-                tooltip: 'Ajouter',
-                onPressed: () => handleAdd(),
-              ),
-              IconButton(
-                icon: const Icon(Icons.delete_outline, size: 18),
+                icon: const Icon(Icons.delete_outline, size: 13),
                 tooltip: 'Supprimer',
                 onPressed: handleDelete,
               ),
@@ -124,9 +119,9 @@ class _PosteListScreenState extends State<PosteListScreen> {
               if (postes.isEmpty) {
                 return CustomCard(
                   child: Padding(
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(8),
                     child: Text(
-                      "Déclarer mes ${widget.sousCategorie}",
+                      "Vous n'avez pas encore de déclaration sur ce poste, veuillez commencer à déclarer des éléments concernant le thème : ${widget.sousCategorie}",
                       style: const TextStyle(fontSize: 12),
                     ),
                   ),
@@ -146,7 +141,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
 
               return CustomCard(
                 padding: const EdgeInsets.symmetric(
-                  vertical: 4,
+                  vertical: 6,
                   horizontal: 12,
                 ),
                 child: Column(
@@ -163,12 +158,15 @@ class _PosteListScreenState extends State<PosteListScreen> {
                           ),
                         ),
                         Text(
-                          "Total : ${total.round()} kg",
-                          style: const TextStyle(fontSize: 11),
+                          "Total : ${total.round()} kgCO₂",
+                          style: const TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 2),
                     const Divider(thickness: 0.5, height: 16),
                     ...List.generate(postes.length * 2 - 1, (index) {
                       if (index.isEven) {
@@ -213,43 +211,96 @@ class _PosteListScreenState extends State<PosteListScreen> {
                   final biens = biensSnapshot.data ?? [];
 
                   if (biens.isEmpty) {
-                    return Center(
-                      child: TextButton.icon(
-                        onPressed: () {},
-                        icon: const Icon(Icons.add),
-                        label: const Text("Ajouter un bien immobilier"),
+                    return CustomCard(
+                      child: Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: Column(
+                          children: [
+                            const Text(
+                              "Veuillez commencer par déclarer un bien immobilier",
+                              style: TextStyle(fontSize: 12),
+                            ),
+                            const SizedBox(height: 8),
+                            TextButton.icon(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              icon: const Icon(Icons.arrow_forward),
+                              label: const Text("Retour à Mes données"),
+                            ),
+                          ],
+                        ),
                       ),
                     );
                   }
 
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children:
-                        biens.map((bien) {
-                          final idBien = bien['ID_Bien'];
-                          final postesPourCeBien =
-                              postes.where((p) => p.idBien == idBien).toList();
+                  // Si des biens existent
+                  final biensAvecPostes = <Map<String, dynamic>>[];
+                  final biensSansPostes = <Map<String, dynamic>>[];
 
-                          return BienPosteCardGroup(
-                            bien: bien,
-                            postes:
-                                postesPourCeBien
-                                    .map(
-                                      (p) => {
-                                        'Nom_Usage': p.nomPoste ?? '',
-                                        'Emission_Calculee':
-                                            p.emissionCalculee ?? 0,
-                                        'ID_Usage': p.idUsage ?? '',
-                                      },
-                                    )
-                                    .toList(),
-                            sousCategorie: widget.sousCategorie,
-                            onAdd: () => handleAdd(idBien),
-                            onEdit: (poste) => handleEdit(),
-                            onDelete: (poste) => handleDelete(),
-                          );
-                        }).toList(),
-                  );
+                  for (var bien in biens) {
+                    final idBien = bien['ID_Bien'];
+                    final postesPourCeBien =
+                        postes.where((p) => p.idBien == idBien).toList();
+                    if (postesPourCeBien.isNotEmpty) {
+                      bien['__postes'] = postesPourCeBien;
+                      biensAvecPostes.add(bien);
+                    } else {
+                      biensSansPostes.add(bien);
+                    }
+                  }
+
+                  final widgets = <Widget>[];
+
+                  for (var bien in biensAvecPostes) {
+                    widgets.add(
+                      BienPosteCardGroup(
+                        bien: bien,
+                        postes:
+                            (bien['__postes'] as List<Poste>)
+                                .map(
+                                  (p) => {
+                                    'Nom_Usage': p.nomPoste ?? '',
+                                    'Emission_Calculee':
+                                        p.emissionCalculee ?? 0,
+                                    'ID_Usage': p.idUsage ?? '',
+                                  },
+                                )
+                                .toList(),
+                        sousCategorie:
+                            "${widget.sousCategorie} – ${bien['Dénomination'] ?? ''}",
+                        onAdd: () => handleAdd(bien['ID_Bien']),
+                        onEdit: (poste) => handleEdit(),
+                        onDelete: (poste) => handleDelete(),
+                        //typeBien: bien['Type_Bien'] ?? '',
+                      ),
+                    );
+                  }
+
+                  if (biensSansPostes.isNotEmpty) {
+                    widgets.add(
+                      CustomCard(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Ajouter des équipements à mes autres biens",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            ...biensSansPostes.map(
+                              (bien) => ListTile(
+                                title: Text(bien['Dénomination'] ?? ''),
+                                trailing: const Icon(Icons.arrow_forward),
+                                onTap: () => handleAdd(bien['ID_Bien']),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }
+
+                  return Column(children: widgets);
                 },
               );
             }

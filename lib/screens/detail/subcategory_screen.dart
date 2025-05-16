@@ -71,7 +71,7 @@ class _SubCategorieScreenState extends State<SubCategorieScreen> {
             final postes = snapshot.data!;
             if (postes.isEmpty) {
               return const Padding(
-                padding: EdgeInsets.all(16),
+                padding: EdgeInsets.all(8),
                 child: Text("Aucun poste déclaré dans cette catégorie."),
               );
             }
