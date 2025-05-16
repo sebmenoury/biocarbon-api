@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../data/services/api_service.dart';
 import '../../ui/widgets/biens_poste_card_group.dart';
 import '../../core/utils/sous_categorie_avec_bien.dart';
+import '../../ui/layout/base_screen.dart';
 
 class PosteListScreen extends StatefulWidget {
   final String sousCategorie;
@@ -20,8 +21,8 @@ class PosteListScreen extends StatefulWidget {
 }
 
 class _PosteListScreenState extends State<PosteListScreen> {
-  List<dynamic> postes = [];
-  List<dynamic> biens = [];
+  List<Map<String, dynamic>> postes = [];
+  List<Map<String, dynamic>> biens = [];
   bool isLoading = true;
 
   @override
@@ -32,7 +33,11 @@ class _PosteListScreenState extends State<PosteListScreen> {
 
   Future<void> loadData() async {
     try {
-      final fetchedPostes = await ApiService.getUCPostes(widget.codeIndividu);
+      final fetchedPostes = await ApiService.getUCPostes(
+        widget.codeIndividu,
+        widget.valeurTemps,
+      );
+
       final fetchedBiens =
           sousCategoriesAvecBien.contains(widget.sousCategorie)
               ? await ApiService.getBiens(widget.codeIndividu)
@@ -41,8 +46,8 @@ class _PosteListScreenState extends State<PosteListScreen> {
       if (!mounted) return;
 
       setState(() {
-        postes = fetchedPostes;
-        biens = fetchedBiens;
+        postes = List<Map<String, dynamic>>.from(fetchedPostes);
+        biens = List<Map<String, dynamic>>.from(fetchedBiens);
         isLoading = false;
       });
     } catch (e) {
@@ -55,7 +60,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
   }
 
   void ajouterPostePourBien(String idBien) {
-    // TODO: Naviguer vers le formulaire d'ajout avec idBien, widget.codeIndividu, widget.valeurTemps
+    // TODO: Naviguer vers le formulaire d'ajout avec idBien
   }
 
   void modifierPoste(Map<String, dynamic> poste) {
@@ -68,12 +73,13 @@ class _PosteListScreenState extends State<PosteListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(widget.sousCategorie)),
-      body:
-          isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : _buildPosteList(context),
+    if (isLoading) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
+    return BaseScreen(
+      title: Text(widget.sousCategorie),
+      child: _buildPosteList(context),
     );
   }
 
@@ -81,6 +87,18 @@ class _PosteListScreenState extends State<PosteListScreen> {
     final avecBien = sousCategoriesAvecBien.contains(widget.sousCategorie);
 
     if (avecBien) {
+      if (biens.isEmpty) {
+        return Center(
+          child: TextButton.icon(
+            onPressed: () {
+              // TODO: Naviguer vers l'écran d'ajout de bien immobilier
+            },
+            icon: const Icon(Icons.add),
+            label: const Text("Ajouter un bien immobilier"),
+          ),
+        );
+      }
+
       return ListView(
         padding: const EdgeInsets.all(16),
         children:
@@ -93,12 +111,11 @@ class _PosteListScreenState extends State<PosteListScreen> {
                             p['ID_Bien'] == idBien &&
                             p['Sous_Catégorie'] == widget.sousCategorie,
                       )
-                      .toList()
-                      .cast<Map<String, dynamic>>();
+                      .toList();
 
               return BienPosteCardGroup(
                 bien: bien,
-                postes: postesPourCeBien,
+                postes: List<Map<String, dynamic>>.from(postesPourCeBien),
                 sousCategorie: widget.sousCategorie,
                 onAdd: () => ajouterPostePourBien(idBien),
                 onEdit: modifierPoste,
@@ -110,8 +127,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
       final postesFiltres =
           postes
               .where((p) => p['Sous_Catégorie'] == widget.sousCategorie)
-              .toList()
-              .cast<Map<String, dynamic>>();
+              .toList();
 
       return ListView.builder(
         padding: const EdgeInsets.all(16),
