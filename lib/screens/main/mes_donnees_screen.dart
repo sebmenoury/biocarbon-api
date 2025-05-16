@@ -15,7 +15,7 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
   int selectedIndex = 0; // 0 = Equipements, 1 = Usages
 
   final List<String> equipementLabels = [
-    'Habitats',
+    'Biens Immobiliers',
     'Véhicules',
     'Equipements Confort',
     'Equipements Ménager',
@@ -117,7 +117,7 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
             crossAxisCount: 2,
             crossAxisSpacing: 12,
             mainAxisSpacing: 12,
-            childAspectRatio: 1.3,
+            childAspectRatio: 1.5,
           ),
           itemCount: currentLabels.length,
           itemBuilder: (context, index) {
@@ -143,8 +143,8 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(icon, size: 28, color: color),
-                  const SizedBox(height: 8),
+                  Icon(icon, size: 24, color: color),
+                  const SizedBox(height: 6),
                   Text(
                     label,
                     textAlign: TextAlign.center,

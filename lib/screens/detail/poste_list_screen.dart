@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../ui/layout/base_screen.dart';
-import '../../ui/layout/custom_card.dart';
-import '../../ui/widgets/post_list_card.dart';
 import '../../data/services/api_service.dart';
-import '../../data/models/poste.dart';
+import '../../ui/widgets/biens_poste_card_group.dart';
+import '../../core/utils/sous_categorie_avec_bien.dart';
 
 class PosteListScreen extends StatefulWidget {
   final String sousCategorie;
@@ -22,171 +20,126 @@ class PosteListScreen extends StatefulWidget {
 }
 
 class _PosteListScreenState extends State<PosteListScreen> {
-  late Future<List<Poste>> postesFuture;
+  List<dynamic> postes = [];
+  List<dynamic> biens = [];
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    postesFuture = ApiService.getPostesBysousCategorie(
-      widget.sousCategorie,
-      widget.codeIndividu,
-      widget.valeurTemps,
-    );
+    loadData();
   }
 
-  void handleAdd() {
-    // TODO : navigation vers formulaire d’ajout
-    debugPrint("Ajout d’un poste pour ${widget.sousCategorie}");
+  Future<void> loadData() async {
+    try {
+      final fetchedPostes = await ApiService.getUCPostes(widget.codeIndividu);
+      final fetchedBiens =
+          sousCategoriesAvecBien.contains(widget.sousCategorie)
+              ? await ApiService.getBiens(widget.codeIndividu)
+              : [];
+
+      if (!mounted) return;
+
+      setState(() {
+        postes = fetchedPostes;
+        biens = fetchedBiens;
+        isLoading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => isLoading = false);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Erreur : $e")));
+    }
   }
 
-  void handleEdit() {
-    // TODO : navigation vers formulaire de modification
-    debugPrint("Modifier ${widget.sousCategorie}");
+  void ajouterPostePourBien(String idBien) {
+    // TODO: Naviguer vers le formulaire d'ajout avec idBien, widget.codeIndividu, widget.valeurTemps
   }
 
-  void handleDelete() {
-    // TODO : suppression après confirmation
-    debugPrint("Suppression de ${widget.sousCategorie}");
+  void modifierPoste(Map<String, dynamic> poste) {
+    // TODO: Naviguer vers l'écran d'édition
+  }
+
+  void supprimerPoste(Map<String, dynamic> poste) {
+    // TODO: Appeler ApiService.deleteUCPoste(poste['ID_Usage']) puis recharger
   }
 
   @override
   Widget build(BuildContext context) {
-    return BaseScreen(
-      title: Row(
-        children: [
-          IconButton(
-            icon: const Icon(Icons.arrow_back),
-            iconSize: 18,
-            onPressed: () => Navigator.pop(context),
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(),
-          ),
-          const SizedBox(width: 8),
-          Text(
-            widget.sousCategorie,
-            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-          ),
-        ],
-      ),
-      children: [
-        // 🔘 Boutons d’action
-        Padding(
-          padding: const EdgeInsets.only(right: 12, top: 4),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              IconButton(
-                icon: const Icon(Icons.edit, size: 18),
-                tooltip: 'Modifier',
-                onPressed: handleEdit,
-              ),
-              IconButton(
-                icon: const Icon(Icons.add, size: 18),
-                tooltip: 'Ajouter',
-                onPressed: handleAdd,
-              ),
-              IconButton(
-                icon: const Icon(Icons.delete_outline, size: 18),
-                tooltip: 'Supprimer',
-                onPressed: handleDelete,
-              ),
-            ],
-          ),
-        ),
+    return Scaffold(
+      appBar: AppBar(title: Text(widget.sousCategorie)),
+      body:
+          isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : _buildPosteList(context),
+    );
+  }
 
-        // 🔁 FutureBuilder
-        FutureBuilder<List<Poste>>(
-          future: postesFuture,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Padding(
-                padding: EdgeInsets.all(32),
-                child: Center(child: CircularProgressIndicator()),
+  Widget _buildPosteList(BuildContext context) {
+    final avecBien = sousCategoriesAvecBien.contains(widget.sousCategorie);
+
+    if (avecBien) {
+      return ListView(
+        padding: const EdgeInsets.all(16),
+        children:
+            biens.map((bien) {
+              final idBien = bien['ID_Bien'];
+              final postesPourCeBien =
+                  postes
+                      .where(
+                        (p) =>
+                            p['ID_Bien'] == idBien &&
+                            p['Sous_Catégorie'] == widget.sousCategorie,
+                      )
+                      .toList()
+                      .cast<Map<String, dynamic>>();
+
+              return BienPosteCardGroup(
+                bien: bien,
+                postes: postesPourCeBien,
+                sousCategorie: widget.sousCategorie,
+                onAdd: () => ajouterPostePourBien(idBien),
+                onEdit: modifierPoste,
+                onDelete: supprimerPoste,
               );
-            }
+            }).toList(),
+      );
+    } else {
+      final postesFiltres =
+          postes
+              .where((p) => p['Sous_Catégorie'] == widget.sousCategorie)
+              .toList()
+              .cast<Map<String, dynamic>>();
 
-            if (snapshot.hasError) {
-              return Padding(
-                padding: const EdgeInsets.all(16),
-                child: Text("Erreur : ${snapshot.error}"),
-              );
-            }
-
-            final postes = snapshot.data ?? [];
-
-            if (postes.isEmpty) {
-              return CustomCard(
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Text(
-                    "Déclarer mes ${widget.sousCategorie}",
-                    style: const TextStyle(fontSize: 12),
-                  ),
-                ),
-              );
-            }
-
-            // 🔢 Total & tri décroissant
-            final total = postes.fold<double>(
-              0,
-              (sum, p) => sum + (p.emissionCalculee ?? 0),
-            );
-
-            postes.sort(
-              (a, b) =>
-                  (b.emissionCalculee ?? 0).compareTo(a.emissionCalculee ?? 0),
-            );
-
-            return CustomCard(
-              padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+      return ListView.builder(
+        padding: const EdgeInsets.all(16),
+        itemCount: postesFiltres.length,
+        itemBuilder: (context, index) {
+          final poste = postesFiltres[index];
+          return Card(
+            child: ListTile(
+              title: Text(
+                '${poste['Nom_Usage'] ?? "Mesure"} : ${poste['Emission_Calculee']} kgCO₂',
+              ),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  // 🏷 Titre + total
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        widget.sousCategorie,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12,
-                        ),
-                      ),
-                      Text(
-                        "Total : ${total.round()} kg",
-                        style: const TextStyle(fontSize: 11),
-                      ),
-                    ],
+                  IconButton(
+                    icon: const Icon(Icons.edit),
+                    onPressed: () => modifierPoste(poste),
                   ),
-                  const SizedBox(height: 4),
-                  const Divider(thickness: 0.5, height: 16),
-
-                  // 📄 Liste des postes
-                  ...List.generate(postes.length * 2 - 1, (index) {
-                    if (index.isEven) {
-                      final poste = postes[index ~/ 2];
-                      return PostListCard(
-                        title: poste.nomPoste ?? 'Sans nom',
-                        emission:
-                            "${poste.emissionCalculee?.toStringAsFixed(0) ?? '0'} kgCO₂",
-                        onEdit: () {},
-                        onDelete: () {},
-                      );
-                    } else {
-                      return const Divider(
-                        height: 1,
-                        thickness: 0.2,
-                        color: Colors.grey,
-                      );
-                    }
-                  }),
+                  IconButton(
+                    icon: const Icon(Icons.delete),
+                    onPressed: () => supprimerPoste(poste),
+                  ),
                 ],
               ),
-            );
-          },
-        ),
-      ],
-    );
+            ),
+          );
+        },
+      );
+    }
   }
 }
