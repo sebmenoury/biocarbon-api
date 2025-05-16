@@ -1,10 +1,11 @@
 class Poste {
-  final String id;
+  final String idUsage;
   final String typeCategorie;
   final String sousCategorie;
   final String typePoste;
   final String? nomPoste;
-  final String? nomLogement;
+  final String? idBien;
+  final String? typeBien;
   final double quantite;
   final String unite;
   final double emissionCalculee;
@@ -13,12 +14,13 @@ class Poste {
   final int? dureeAmortissement;
 
   Poste({
-    required this.id,
+    required this.idUsage,
     required this.typeCategorie,
     required this.sousCategorie,
     required this.typePoste,
     this.nomPoste,
-    this.nomLogement,
+    this.idBien,
+    this.typeBien,
     required this.quantite,
     required this.unite,
     required this.emissionCalculee,
@@ -29,12 +31,14 @@ class Poste {
 
   factory Poste.fromJson(Map<String, dynamic> json) {
     return Poste(
-      id: json['ID_Usage']?.toString() ?? '', // 🔹 ID attendu dans UC-Poste
+      idUsage:
+          json['ID_Usage']?.toString() ?? '', // 🔹 ID attendu dans UC-Poste
       typeCategorie: json['Type_Categorie'] ?? '',
       sousCategorie: json['Sous_Categorie'] ?? '',
       typePoste: json['Type_Poste'] ?? '',
       nomPoste: json['Nom_Poste'],
-      nomLogement: json['Nom_Logement'],
+      idBien: json['ID_Bien'],
+      typeBien: json['Type_Bien'],
       quantite: double.tryParse(json['Quantite'].toString()) ?? 0.0,
       unite: json['Unite'] ?? '',
       emissionCalculee:
