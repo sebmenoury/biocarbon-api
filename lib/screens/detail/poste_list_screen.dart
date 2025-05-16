@@ -98,38 +98,42 @@ class _PosteListScreenState extends State<PosteListScreen> {
 
             if (!avecBien) {
               if (postes.isEmpty) {
-                Padding(
-                  padding: const EdgeInsets.only(right: 6, top: 1),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.edit, size: 13),
-                        tooltip: 'Modifier',
-                        onPressed: handleEdit,
+                return Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(right: 6, top: 1),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.edit, size: 13),
+                            tooltip: 'Modifier',
+                            onPressed: handleEdit,
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.delete_outline, size: 13),
+                            tooltip: 'Supprimer',
+                            onPressed: handleDelete,
+                          ),
+                        ],
                       ),
-                      IconButton(
-                        icon: const Icon(Icons.delete_outline, size: 13),
-                        tooltip: 'Supprimer',
-                        onPressed: handleDelete,
-                      ),
-                    ],
-                  ),
-                ),
-                return CustomCard(
-                  child: Padding(
-                    padding: const EdgeInsets.all(6),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Déclarer mes premiers éléments concernant ce thème",
-                          style: const TextStyle(fontSize: 12),
-                        ),
-                        const Icon(Icons.chevron_right, size: 12),
-                      ],
                     ),
-                  ),
+                    CustomCard(
+                      child: Padding(
+                        padding: const EdgeInsets.all(6),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Déclarer mes premiers éléments concernant ce thème",
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                            const Icon(Icons.chevron_right, size: 12),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 );
               }
 
