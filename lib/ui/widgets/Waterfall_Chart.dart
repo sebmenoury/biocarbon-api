@@ -154,7 +154,7 @@ class WaterfallChart extends StatelessWidget {
           horizontalLines:
               targetLines.map((target) {
                 return HorizontalLine(
-                  y: target['label'] as double,
+                  y: target['value'] as double,
                   color: target['color'] as Color,
                   strokeWidth: 1,
                   dashArray: [4, 3],

@@ -27,15 +27,30 @@ class _PosteListScreenState extends State<PosteListScreen> {
   late Future<List<Map<String, dynamic>>> biensFuture;
   bool avecBien = false;
 
+  final Map<String, String> sousCategorieRedirigeeParType = {
+    "Alimentation": "Alimentation",
+    "Services publics": "Services publics",
+  };
+
   @override
   void initState() {
     super.initState();
     avecBien = sousCategoriesAvecBien.contains(widget.sousCategorie);
-    postesFuture = ApiService.getPostesBysousCategorie(
-      widget.sousCategorie,
-      widget.codeIndividu,
-      widget.valeurTemps,
-    );
+
+    if (sousCategorieRedirigeeParType.containsKey(widget.sousCategorie)) {
+      postesFuture = ApiService.getPostesByCategorie(
+        sousCategorieRedirigeeParType[widget.sousCategorie]!,
+        widget.codeIndividu,
+        widget.valeurTemps,
+      );
+    } else {
+      postesFuture = ApiService.getPostesBysousCategorie(
+        widget.sousCategorie,
+        widget.codeIndividu,
+        widget.valeurTemps,
+      );
+    }
+
     if (avecBien) {
       biensFuture = ApiService.getBiens(
         widget.codeIndividu,
@@ -95,6 +110,76 @@ class _PosteListScreenState extends State<PosteListScreen> {
             }
 
             final postes = snapshot.data ?? [];
+
+            if (widget.sousCategorie == 'Alimentation') {
+              final Map<String, List<Poste>> postesParSousCat = {};
+              for (var poste in postes) {
+                final key = poste.sousCategorie;
+                if (!postesParSousCat.containsKey(key)) {
+                  postesParSousCat[key] = [];
+                }
+                postesParSousCat[key]!.add(poste);
+              }
+
+              return Column(
+                children:
+                    postesParSousCat.entries.map((entry) {
+                      final sousCat = entry.key;
+                      final postes = entry.value;
+                      final total = postes.fold<double>(
+                        0,
+                        (sum, p) => sum + (p.emissionCalculee ?? 0),
+                      );
+
+                      postes.sort(
+                        (a, b) => (b.emissionCalculee ?? 0).compareTo(
+                          a.emissionCalculee ?? 0,
+                        ),
+                      );
+
+                      return CustomCard(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 6,
+                          horizontal: 12,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  sousCat,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                                Text(
+                                  "Total : ${total.round()} kgCO₂",
+                                  style: const TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const Divider(thickness: 0.5, height: 16),
+                            ...postes.map(
+                              (poste) => PostListCard(
+                                title: poste.nomPoste ?? 'Sans nom',
+                                emission:
+                                    "${poste.emissionCalculee?.toStringAsFixed(0) ?? '0'} kgCO₂",
+                                onEdit: () {},
+                                onDelete: () {},
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+              );
+            }
 
             if (!avecBien) {
               if (postes.isEmpty) {
@@ -156,7 +241,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                   ),
                   CustomCard(
                     padding: const EdgeInsets.symmetric(
-                      vertical: 6,
+                      vertical: 3,
                       horizontal: 12,
                     ),
                     child: Column(
@@ -260,7 +345,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                           children: [
                             Padding(
                               padding: const EdgeInsets.only(
-                                right: 6,
+                                right: 3,
                                 left: 12,
                               ),
                               child: Row(
@@ -304,7 +389,8 @@ class _PosteListScreenState extends State<PosteListScreen> {
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
-                                        "${widget.sousCategorie} – ${bien['Dénomination'] ?? ''}",
+                                        //"${widget.sousCategorie} – ${bien['Dénomination'] ?? ''}",
+                                        widget.sousCategorie,
                                         style: const TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 12,

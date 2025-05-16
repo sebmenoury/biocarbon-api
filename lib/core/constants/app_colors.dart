@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class AppColors {
   static const Map<String, Color> categoryColors = {
     // Services publics (bruns/gris)
+    "Services publics": Color.fromARGB(255, 61, 51, 40),
     "Admin. et défense": Color.fromARGB(255, 61, 51, 40),
     "Enseignement": Color.fromARGB(255, 112, 94, 77),
     "Santé": Color.fromARGB(255, 132, 118, 102),
@@ -14,7 +15,7 @@ class AppColors {
     "Equipements Bricolage": Color.fromARGB(255, 24, 168, 41),
     "Equipements Ménager": Color.fromARGB(255, 56, 179, 77),
     "Habillement": Color.fromARGB(255, 82, 194, 96),
-    "EquipementsMulti-media": Color.fromARGB(255, 121, 204, 132),
+    "Equipements Multi-media": Color.fromARGB(255, 121, 204, 132),
     "Loisirs": Color.fromARGB(255, 156, 217, 164),
     "Banques et assurances": Color.fromARGB(255, 189, 229, 193),
 

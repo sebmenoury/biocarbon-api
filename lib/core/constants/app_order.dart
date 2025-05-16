@@ -33,10 +33,10 @@ class AppOrder {
       "Boissons",
     ],
     'Biens et services': [
-      "Equipement Bricolage",
-      "Equipement Ménager",
+      "Equipements Bricolage",
+      "Equipements Ménager",
       "Habillement",
-      "Equipement Multi-media",
+      "Equipements Multi-media",
       "Loisirs",
       "Banques et assurances",
     ],
