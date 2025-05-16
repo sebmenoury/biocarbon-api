@@ -98,42 +98,28 @@ class _PosteListScreenState extends State<PosteListScreen> {
 
             if (!avecBien) {
               if (postes.isEmpty) {
-                return Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(right: 6, top: 1),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.edit, size: 13),
-                            tooltip: 'Modifier',
-                            onPressed: handleEdit,
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.delete_outline, size: 13),
-                            tooltip: 'Supprimer',
-                            onPressed: handleDelete,
-                          ),
-                        ],
-                      ),
-                    ),
-                    CustomCard(
-                      child: Padding(
-                        padding: const EdgeInsets.all(6),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "Déclarer mes premiers éléments concernant ce thème",
-                              style: const TextStyle(fontSize: 12),
-                            ),
-                            const Icon(Icons.chevron_right, size: 12),
-                          ],
+                return CustomCard(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 6,
+                    horizontal: 12,
+                  ),
+                  child: InkWell(
+                    onTap:
+                        () => Navigator.pushNamed(
+                          context,
+                          '/construction_screen',
                         ),
-                      ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          "Déclarer mes premiers éléments concernant ce thème",
+                          style: TextStyle(fontSize: 12),
+                        ),
+                        const Icon(Icons.chevron_right, size: 14),
+                      ],
                     ),
-                  ],
+                  ),
                 );
               }
 
@@ -148,46 +134,68 @@ class _PosteListScreenState extends State<PosteListScreen> {
                 ),
               );
 
-              return CustomCard(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 6,
-                  horizontal: 12,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              return Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 6, top: 1),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        Text(
-                          widget.sousCategorie,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12,
-                          ),
+                        IconButton(
+                          icon: const Icon(Icons.edit, size: 13),
+                          tooltip: 'Modifier',
+                          onPressed: handleEdit,
                         ),
-                        Text(
-                          "Total : ${total.round()} kgCO₂",
-                          style: const TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.bold,
+                        IconButton(
+                          icon: const Icon(Icons.delete_outline, size: 13),
+                          tooltip: 'Supprimer',
+                          onPressed: handleDelete,
+                        ),
+                      ],
+                    ),
+                  ),
+                  CustomCard(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 6,
+                      horizontal: 12,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              widget.sousCategorie,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                              ),
+                            ),
+                            Text(
+                              "Total : ${total.round()} kgCO₂",
+                              style: const TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 2),
+                        const Divider(thickness: 0.5, height: 16),
+                        ...postes.map(
+                          (poste) => PostListCard(
+                            title: poste.nomPoste ?? 'Sans nom',
+                            emission:
+                                "${poste.emissionCalculee?.toStringAsFixed(0) ?? '0'} kgCO₂",
+                            onEdit: () {},
+                            onDelete: () {},
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 2),
-                    const Divider(thickness: 0.5, height: 16),
-                    ...postes.map(
-                      (poste) => PostListCard(
-                        title: poste.nomPoste ?? 'Sans nom',
-                        emission:
-                            "${poste.emissionCalculee?.toStringAsFixed(0) ?? '0'} kgCO₂",
-                        onEdit: () {},
-                        onDelete: () {},
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               );
             } else {
               return FutureBuilder<List<Map<String, dynamic>>>(
@@ -212,16 +220,21 @@ class _PosteListScreenState extends State<PosteListScreen> {
 
                   if (biens.isEmpty) {
                     return CustomCard(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8),
-                        child: Column(
+                      padding: const EdgeInsets.all(12),
+                      child: InkWell(
+                        onTap:
+                            () => Navigator.pushNamed(
+                              context,
+                              '/construction_screen',
+                            ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             const Text(
                               "Veuillez commencer par déclarer un bien immobilier",
                               style: TextStyle(fontSize: 12),
                             ),
-                            const SizedBox(height: 8),
-                            const Icon(Icons.chevron_right, size: 12),
+                            const Icon(Icons.chevron_right, size: 14),
                           ],
                         ),
                       ),
@@ -242,46 +255,84 @@ class _PosteListScreenState extends State<PosteListScreen> {
                       );
 
                       widgets.add(
-                        CustomCard(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 6,
-                            horizontal: 12,
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                right: 6,
+                                left: 12,
+                              ),
+                              child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    widget.sousCategorie,
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 12,
-                                    ),
+                                    bien['Type_Bien'] ?? '',
+                                    style: const TextStyle(fontSize: 12),
                                   ),
-                                  Text(
-                                    "Total : ${total.round()} kgCO₂",
-                                    style: const TextStyle(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.bold,
+                                  Row(
+                                    children: [
+                                      IconButton(
+                                        icon: const Icon(Icons.edit, size: 13),
+                                        tooltip: 'Modifier',
+                                        onPressed: handleEdit,
+                                      ),
+                                      IconButton(
+                                        icon: const Icon(
+                                          Icons.delete_outline,
+                                          size: 13,
+                                        ),
+                                        tooltip: 'Supprimer',
+                                        onPressed: handleDelete,
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                            CustomCard(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 6,
+                                horizontal: 12,
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        "${widget.sousCategorie} – ${bien['Dénomination'] ?? ''}",
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                      Text(
+                                        "Total : ${total.round()} kgCO₂",
+                                        style: const TextStyle(
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const Divider(height: 8),
+                                  ...postesPourCeBien.map(
+                                    (poste) => PostListCard(
+                                      title: poste.nomPoste ?? 'Sans nom',
+                                      emission:
+                                          "${poste.emissionCalculee?.toStringAsFixed(0) ?? '0'} kgCO₂",
+                                      onEdit: () {},
+                                      onDelete: () {},
                                     ),
                                   ),
                                 ],
                               ),
-                              const Divider(height: 8),
-                              ...postesPourCeBien.map(
-                                (poste) => PostListCard(
-                                  title: poste.nomPoste ?? 'Sans nom',
-                                  emission:
-                                      "${poste.emissionCalculee?.toStringAsFixed(0) ?? '0'} kgCO₂",
-                                  onEdit: () {},
-                                  onDelete: () {},
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       );
                     } else {
