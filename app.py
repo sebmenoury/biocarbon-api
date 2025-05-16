@@ -12,6 +12,7 @@ from lib.api.api_ref_equipements import bp_ref_equipements
 from lib.api.api_ref_type_categories import bp_ref_type_categories
 
 from lib.api.api_UC_postes import bp_uc_postes
+from lib.api.api_UC_biens_immobiliers import bp_uc_biens
 from lib.api.api_UC_individu import bp_uc_individu
 from lib.api.api_UC_synthese import bp_uc_synthese
 
@@ -31,6 +32,7 @@ app.register_blueprint(bp_ref_equipements)
 app.register_blueprint(bp_ref_type_categories)
 
 app.register_blueprint(bp_uc_postes)
+app.register_blueprint(bp_uc_biens)
 app.register_blueprint(bp_uc_individu)
 app.register_blueprint(bp_uc_synthese)
 
