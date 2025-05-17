@@ -50,7 +50,7 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
       children: [
         // Onglets Equipements / Usages
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 12),
           child: Row(
             children: [
               Expanded(

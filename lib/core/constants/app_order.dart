@@ -27,10 +27,11 @@ class AppOrder {
     'Alimentation': [
       "Fruits et légumes",
       "Céréales et autres",
+      "Poisson",
       "Laits et œufs",
       "Viande",
-      "Poisson",
-      "Boissons",
+      "Plats cuisinés"
+          "Boissons",
     ],
     'Biens et services': [
       "Equipements Bricolage",

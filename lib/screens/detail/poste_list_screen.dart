@@ -156,7 +156,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                                   ),
                                 ),
                                 Text(
-                                  "Total : ${total.round()} kgCO₂",
+                                  "${total.round()} kgCO₂",
                                   style: const TextStyle(
                                     fontSize: 11,
                                     fontWeight: FontWeight.bold,
@@ -164,16 +164,25 @@ class _PosteListScreenState extends State<PosteListScreen> {
                                 ),
                               ],
                             ),
-                            const Divider(thickness: 0.5, height: 16),
-                            ...postes.map(
-                              (poste) => PostListCard(
-                                title: poste.nomPoste ?? 'Sans nom',
-                                emission:
-                                    "${poste.emissionCalculee?.toStringAsFixed(0) ?? '0'} kgCO₂",
-                                onEdit: () {},
-                                onDelete: () {},
-                              ),
-                            ),
+                            const SizedBox(height: 6),
+                            ...List.generate(postes.length * 2 - 1, (index) {
+                              if (index.isEven) {
+                                final poste = postes[index ~/ 2];
+                                return PostListCard(
+                                  title: poste.nomPoste ?? 'Sans nom',
+                                  emission:
+                                      "${poste.emissionCalculee?.round() ?? 0} kgCO₂",
+                                  onEdit: () {},
+                                  onDelete: () {},
+                                );
+                              } else {
+                                return const Divider(
+                                  height: 1,
+                                  thickness: 0.2,
+                                  color: Colors.grey,
+                                );
+                              }
+                            }),
                           ],
                         ),
                       );
@@ -221,63 +230,62 @@ class _PosteListScreenState extends State<PosteListScreen> {
 
               return Column(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 6, top: 1),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.edit, size: 13),
-                          tooltip: 'Modifier',
-                          onPressed: handleEdit,
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.delete_outline, size: 13),
-                          tooltip: 'Supprimer',
-                          onPressed: handleDelete,
-                        ),
-                      ],
-                    ),
-                  ),
-                  CustomCard(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 3,
-                      horizontal: 12,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              widget.sousCategorie,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 12,
+                  InkWell(
+                    onTap: handleEdit,
+                    child: CustomCard(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 6,
+                        horizontal: 12,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                widget.sousCategorie,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                ),
                               ),
-                            ),
-                            Text(
-                              "Total : ${total.round()} kgCO₂",
-                              style: const TextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.bold,
+                              Row(
+                                children: [
+                                  Text(
+                                    "Total : ${total.round()} kgCO₂",
+                                    style: const TextStyle(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 4),
+                                  const Icon(Icons.chevron_right, size: 14),
+                                ],
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 2),
-                        const Divider(thickness: 0.5, height: 16),
-                        ...postes.map(
-                          (poste) => PostListCard(
-                            title: poste.nomPoste ?? 'Sans nom',
-                            emission:
-                                "${poste.emissionCalculee?.toStringAsFixed(0) ?? '0'} kgCO₂",
-                            onEdit: () {},
-                            onDelete: () {},
+                            ],
                           ),
-                        ),
-                      ],
+                          const SizedBox(height: 6),
+                          ...List.generate(postes.length * 2 - 1, (index) {
+                            if (index.isEven) {
+                              final poste = postes[index ~/ 2];
+                              return PostListCard(
+                                title: poste.nomPoste ?? 'Sans nom',
+                                emission:
+                                    "${poste.emissionCalculee?.round() ?? 0} kgCO₂",
+                                onEdit: () {},
+                                onDelete: () {},
+                              );
+                            } else {
+                              return const Divider(
+                                height: 1,
+                                thickness: 0.2,
+                                color: Colors.grey,
+                              );
+                            }
+                          }),
+                        ],
+                      ),
                     ),
                   ),
                 ],
@@ -356,23 +364,6 @@ class _PosteListScreenState extends State<PosteListScreen> {
                                     bien['Type_Bien'] ?? '',
                                     style: const TextStyle(fontSize: 12),
                                   ),
-                                  Row(
-                                    children: [
-                                      IconButton(
-                                        icon: const Icon(Icons.edit, size: 13),
-                                        tooltip: 'Modifier',
-                                        onPressed: handleEdit,
-                                      ),
-                                      IconButton(
-                                        icon: const Icon(
-                                          Icons.delete_outline,
-                                          size: 13,
-                                        ),
-                                        tooltip: 'Supprimer',
-                                        onPressed: handleDelete,
-                                      ),
-                                    ],
-                                  ),
                                 ],
                               ),
                             ),
@@ -389,31 +380,52 @@ class _PosteListScreenState extends State<PosteListScreen> {
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
-                                        //"${widget.sousCategorie} – ${bien['Dénomination'] ?? ''}",
                                         widget.sousCategorie,
                                         style: const TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 12,
                                         ),
                                       ),
-                                      Text(
-                                        "Total : ${total.round()} kgCO₂",
-                                        style: const TextStyle(
-                                          fontSize: 11,
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            "Total : ${total.round()} kgCO₂",
+                                            style: const TextStyle(
+                                              fontSize: 11,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 4),
+                                          const Icon(
+                                            Icons.chevron_right,
+                                            size: 14,
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),
                                   const Divider(height: 8),
-                                  ...postesPourCeBien.map(
-                                    (poste) => PostListCard(
-                                      title: poste.nomPoste ?? 'Sans nom',
-                                      emission:
-                                          "${poste.emissionCalculee?.toStringAsFixed(0) ?? '0'} kgCO₂",
-                                      onEdit: () {},
-                                      onDelete: () {},
-                                    ),
+                                  ...List.generate(
+                                    postesPourCeBien.length * 2 - 1,
+                                    (index) {
+                                      if (index.isEven) {
+                                        final poste =
+                                            postesPourCeBien[index ~/ 2];
+                                        return PostListCard(
+                                          title: poste.nomPoste ?? 'Sans nom',
+                                          emission:
+                                              "${poste.emissionCalculee?.round() ?? 0} kgCO₂",
+                                          onEdit: () {},
+                                          onDelete: () {},
+                                        );
+                                      } else {
+                                        return const Divider(
+                                          height: 1,
+                                          thickness: 0.2,
+                                          color: Colors.grey,
+                                        );
+                                      }
+                                    },
                                   ),
                                 ],
                               ),
