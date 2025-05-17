@@ -155,16 +155,22 @@ class _PosteListScreenState extends State<PosteListScreen> {
                                     fontSize: 12,
                                   ),
                                 ),
-                                Text(
-                                  "${total.round()} kgCO₂",
-                                  style: const TextStyle(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                Row(
+                                  children: [
+                                    Text(
+                                      "${total.round()} kgCO₂",
+                                      style: const TextStyle(
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 4),
+                                    const Icon(Icons.chevron_right, size: 14),
+                                  ],
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 6),
+                            const Divider(height: 8),
                             ...List.generate(postes.length * 2 - 1, (index) {
                               if (index.isEven) {
                                 final poste = postes[index ~/ 2];
@@ -253,7 +259,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                               Row(
                                 children: [
                                   Text(
-                                    "Total : ${total.round()} kgCO₂",
+                                    "${total.round()} kgCO₂",
                                     style: const TextStyle(
                                       fontSize: 11,
                                       fontWeight: FontWeight.bold,
@@ -265,7 +271,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                               ),
                             ],
                           ),
-                          const SizedBox(height: 6),
+                          const Divider(height: 8),
                           ...List.generate(postes.length * 2 - 1, (index) {
                             if (index.isEven) {
                               final poste = postes[index ~/ 2];
@@ -389,7 +395,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                                       Row(
                                         children: [
                                           Text(
-                                            "Total : ${total.round()} kgCO₂",
+                                            "${total.round()} kgCO₂",
                                             style: const TextStyle(
                                               fontSize: 11,
                                               fontWeight: FontWeight.bold,
