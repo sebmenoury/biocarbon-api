@@ -201,7 +201,7 @@ class _SubCategorieScreenState extends State<SubCategorieScreen> {
                           ],
                         ),
 
-                        const SizedBox(height: 6),
+                        const Divider(height: 8),
 
                         // Liste des postes
                         ...List.generate(posts.length * 2 - 1, (index) {
