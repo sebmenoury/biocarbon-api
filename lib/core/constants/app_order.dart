@@ -15,7 +15,7 @@ class AppOrder {
       "Equipements Confort",
       "Gaz et Fioul",
       "Électricité",
-      "Déchets / Eau",
+      "Déchets et Eau",
     ],
     'Déplacements': [
       "Véhicules",

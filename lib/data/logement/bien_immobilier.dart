@@ -1,6 +1,7 @@
 class BienImmobilier {
+  final String? idBien;
   String nomLogement; // Nom personnalisé par l'utilisateur
-  String nomEquipement; // Nom exact issu du référentiel
+  String nomEquipement;
   String type; // ex : "Maison Classique", "Appartement"
   double surface;
   int anneeConstruction;
@@ -18,6 +19,7 @@ class BienImmobilier {
   double surfaceAbriEtSerre;
 
   BienImmobilier({
+    this.idBien,
     this.nomLogement = "Mon logement",
     this.nomEquipement = "",
     required this.type,

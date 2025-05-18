@@ -31,7 +31,7 @@ class AppColors {
     "Equipements Confort": Color.fromARGB(255, 134, 10, 129),
     "Gaz et Fioul": Color.fromARGB(255, 152, 43, 147),
     "Électricité": Color.fromARGB(255, 184, 114, 184),
-    "Déchets / Eau": Color.fromARGB(255, 219, 185, 218),
+    "Déchets et Eau": Color.fromARGB(255, 219, 185, 218),
 
     // Alimentation (rouge > jaune clair)
     "Fruits et légumes": Color.fromARGB(255, 150, 38, 2),

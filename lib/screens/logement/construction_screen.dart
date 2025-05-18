@@ -7,6 +7,7 @@ import '../../data/logement/emission_calculator_immobilier.dart';
 class ConstructionScreen extends StatefulWidget {
   final BienImmobilier bien;
   final VoidCallback? onSave;
+
   const ConstructionScreen({super.key, required this.bien, this.onSave});
 
   @override
@@ -35,11 +36,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
 
       for (var e in equipements) {
         final nom = e['Nom_Equipement'];
-        final facteur =
-            double.tryParse(
-              e['Valeur_Emission_Grise'].toString().replaceAll(',', '.'),
-            ) ??
-            0;
+        final facteur = double.tryParse(e['Valeur_Emission_Grise'].toString().replaceAll(',', '.')) ?? 0;
         final duree = int.tryParse(e['Duree_Amortissement'].toString()) ?? 1;
         facteurs[nom] = facteur;
         durees[nom] = duree;
@@ -59,26 +56,16 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
     }
   }
 
-  Widget champNombre(
-    String label,
-    double value,
-    void Function(double) onChanged,
-  ) {
+  Widget champNombre(String label, double value, void Function(double) onChanged) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(label),
         Row(
           children: [
-            IconButton(
-              icon: const Icon(Icons.remove),
-              onPressed: () => setState(() => onChanged(value - 1)),
-            ),
+            IconButton(icon: const Icon(Icons.remove), onPressed: () => setState(() => onChanged(value - 1))),
             Text(value.toStringAsFixed(0)),
-            IconButton(
-              icon: const Icon(Icons.add),
-              onPressed: () => setState(() => onChanged(value + 1)),
-            ),
+            IconButton(icon: const Icon(Icons.add), onPressed: () => setState(() => onChanged(value + 1))),
           ],
         ),
       ],
@@ -89,9 +76,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
   Widget build(BuildContext context) {
     if (isLoading) return const Center(child: CircularProgressIndicator());
     if (errorMsg != null) {
-      return Center(
-        child: Text(errorMsg!, style: const TextStyle(color: Colors.red)),
-      );
+      return Center(child: Text(errorMsg!, style: const TextStyle(color: Colors.red)));
     }
 
     return SafeArea(
@@ -103,136 +88,84 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    "📊 Total : ${calculerTotalEmission(bien, facteursEmission, dureesAmortissement).toStringAsFixed(2)} kgCO₂e/an",
-                  ),
+                  Text("📊 Total : ${calculerTotalEmission(bien, facteursEmission, dureesAmortissement).toStringAsFixed(2)} kgCO₂e/an"),
                   TextFormField(
                     initialValue: bien.nomLogement,
-                    decoration: const InputDecoration(
-                      labelText: "Nom du logement",
-                    ),
+                    decoration: const InputDecoration(labelText: "Nom du logement"),
                     onChanged: (val) => setState(() => bien.nomLogement = val),
                   ),
                   DropdownButton<String>(
-                    value:
-                        facteursEmission.keys.contains(bien.type)
-                            ? bien.type
-                            : null,
+                    value: facteursEmission.keys.contains(bien.type) ? bien.type : null,
                     isExpanded: true,
                     items:
                         facteursEmission.keys
-                            .where(
-                              (k) =>
-                                  k.contains("Maison") ||
-                                  k.contains("Appartement"),
-                            )
-                            .map(
-                              (t) => DropdownMenuItem(value: t, child: Text(t)),
-                            )
+                            .where((k) => k.contains("Maison") || k.contains("Appartement"))
+                            .map((t) => DropdownMenuItem(value: t, child: Text(t)))
                             .toList(),
                     onChanged: (val) {
                       setState(() {
                         bien.nomEquipement = val!;
-                        bien.type = val; // si encore utilisé pour autre chose
+                        bien.type = val;
                       });
                     },
                   ),
-                  champNombre(
-                    "Surface (m²)",
-                    bien.surface,
-                    (v) => bien.surface = v,
-                  ),
-                  champNombre(
-                    "Année construction",
-                    bien.anneeConstruction.toDouble(),
-                    (v) => bien.anneeConstruction = v.toInt(),
-                  ),
-                  champNombre(
-                    "Nb. propriétaires",
-                    bien.nbProprietaires.toDouble(),
-                    (v) => bien.nbProprietaires = v.toInt(),
-                  ),
+                  champNombre("Surface (m²)", bien.surface, (v) => bien.surface = v),
+                  champNombre("Année construction", bien.anneeConstruction.toDouble(), (v) => bien.anneeConstruction = v.toInt()),
+                  champNombre("Nb. propriétaires", bien.nbProprietaires.toDouble(), (v) => bien.nbProprietaires = v.toInt()),
                 ],
               ),
             ),
+            const SizedBox(height: 12),
             CustomCard(
-              child: Column(
-                children: [
-                  CheckboxListTile(
-                    title: const Text("J’ai un garage"),
-                    value: bien.garage,
-                    onChanged: (val) => setState(() => bien.garage = val!),
-                  ),
-                  if (bien.garage)
-                    champNombre(
-                      "Surface garage",
-                      bien.surfaceGarage,
-                      (v) => bien.surfaceGarage = v,
-                    ),
-                ],
+              child: InkWell(
+                onTap: () => setState(() => bien.garage = !bien.garage),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [const Text("Déclarer un garage", style: TextStyle(fontSize: 13)), const Icon(Icons.chevron_right, size: 18)],
+                ),
               ),
             ),
+            if (bien.garage) CustomCard(child: champNombre("Surface garage", bien.surfaceGarage, (v) => bien.surfaceGarage = v)),
+            const SizedBox(height: 12),
             CustomCard(
-              child: Column(
-                children: [
-                  CheckboxListTile(
-                    title: const Text("J’ai une piscine"),
-                    value: bien.piscine,
-                    onChanged: (val) => setState(() => bien.piscine = val!),
-                  ),
-                  if (bien.piscine) ...[
+              child: InkWell(
+                onTap: () => setState(() => bien.piscine = !bien.piscine),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [const Text("Déclarer une piscine", style: TextStyle(fontSize: 13)), const Icon(Icons.chevron_right, size: 18)],
+                ),
+              ),
+            ),
+            if (bien.piscine)
+              CustomCard(
+                child: Column(
+                  children: [
                     DropdownButton<String>(
                       value: bien.typePiscine,
                       isExpanded: true,
-                      items:
-                          ["Piscine béton", "Piscine coque"]
-                              .map(
-                                (t) =>
-                                    DropdownMenuItem(value: t, child: Text(t)),
-                              )
-                              .toList(),
-                      onChanged:
-                          (val) => setState(() => bien.typePiscine = val!),
+                      items: ["Piscine béton", "Piscine coque"].map((t) => DropdownMenuItem(value: t, child: Text(t))).toList(),
+                      onChanged: (val) => setState(() => bien.typePiscine = val!),
                     ),
-                    champNombre(
-                      "Longueur",
-                      bien.piscineLongueur,
-                      (v) => bien.piscineLongueur = v,
-                    ),
-                    champNombre(
-                      "Largeur",
-                      bien.piscineLargeur,
-                      (v) => bien.piscineLargeur = v,
-                    ),
+                    champNombre("Longueur", bien.piscineLongueur, (v) => bien.piscineLongueur = v),
+                    champNombre("Largeur", bien.piscineLargeur, (v) => bien.piscineLargeur = v),
                   ],
-                ],
+                ),
               ),
-            ),
+            const SizedBox(height: 12),
             CustomCard(
-              child: Column(
-                children: [
-                  CheckboxListTile(
-                    title: const Text("J’ai un abri ou une serre"),
-                    value: bien.abriEtSerre,
-                    onChanged: (val) => setState(() => bien.abriEtSerre = val!),
-                  ),
-                  if (bien.abriEtSerre)
-                    champNombre(
-                      "Surface abri/serre",
-                      bien.surfaceAbriEtSerre,
-                      (v) => bien.surfaceAbriEtSerre = v,
-                    ),
-                ],
+              child: InkWell(
+                onTap: () => setState(() => bien.abriEtSerre = !bien.abriEtSerre),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [const Text("Déclarer abri / serre", style: TextStyle(fontSize: 13)), const Icon(Icons.chevron_right, size: 18)],
+                ),
               ),
             ),
+            if (bien.abriEtSerre) CustomCard(child: champNombre("Surface abri/serre", bien.surfaceAbriEtSerre, (v) => bien.surfaceAbriEtSerre = v)),
             const SizedBox(height: 10),
             ElevatedButton.icon(
               onPressed: () async {
-                final double emission = calculerTotalEmission(
-                  bien,
-                  facteursEmission,
-                  dureesAmortissement,
-                );
+                final double emission = calculerTotalEmission(bien, facteursEmission, dureesAmortissement);
 
                 await ApiService.savePoste({
                   "Code_Individu": "BASILE",
@@ -254,7 +187,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                 });
 
                 if (widget.onSave != null) widget.onSave!();
-                Navigator.of(context).pop(); // pour revenir à la liste
+                Navigator.of(context).pop();
               },
               icon: const Icon(Icons.save),
               label: const Text("Enregistrer"),
