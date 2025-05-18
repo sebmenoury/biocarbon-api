@@ -34,7 +34,7 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
     'Déplacements Avion',
     'Déplacements Voiture',
     'Déplacements Train/Métro/Bus',
-    'Déplacements Autre',
+    'Déplacements Autres',
     'Services publics',
   ];
 
