@@ -13,7 +13,7 @@ class AppOrder {
     'Logement': [
       "Biens Immobiliers",
       "Equipements Confort",
-      "Gaz et fioul",
+      "Gaz et Fioul",
       "Électricité",
       "Déchets / Eau",
     ],
@@ -37,7 +37,7 @@ class AppOrder {
       "Equipements Bricolage",
       "Equipements Ménager",
       "Habillement",
-      "Equipements Multi-media",
+      "Equipements Multi-média",
       "Loisirs",
       "Banques et assurances",
     ],

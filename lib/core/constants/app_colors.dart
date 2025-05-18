@@ -29,7 +29,7 @@ class AppColors {
     // Logement (violets/roses)
     "Biens Immobiliers": Color.fromARGB(255, 81, 2, 73),
     "Equipements Confort": Color.fromARGB(255, 134, 10, 129),
-    "Gaz et fioul": Color.fromARGB(255, 152, 43, 147),
+    "Gaz et Fioul": Color.fromARGB(255, 152, 43, 147),
     "Électricité": Color.fromARGB(255, 184, 114, 184),
     "Déchets / Eau": Color.fromARGB(255, 219, 185, 218),
 
@@ -39,6 +39,7 @@ class AppColors {
     "Laits et œufs": Color.fromARGB(255, 237, 100, 54),
     "Viande": Color.fromARGB(255, 235, 116, 74),
     "Poisson": Color.fromARGB(255, 240, 143, 111),
+    "Plats cuisinés": Color.fromARGB(255, 241, 154, 125),
     "Boissons": Color.fromARGB(255, 243, 168, 145),
   };
 }
