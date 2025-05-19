@@ -137,7 +137,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
               /// IDENTITÉ DU BIEN
               CustomCard(
                 padding: const EdgeInsets.symmetric(
-                  vertical: 6,
+                  vertical: 3,
                   horizontal: 16,
                 ),
                 child: Column(
@@ -149,20 +149,20 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                         labelText: "Dénomination du bien",
                         labelStyle: TextStyle(fontSize: 12),
                       ),
-                      style: const TextStyle(fontSize: 12),
+                      style: const TextStyle(fontSize: 10),
                       onChanged: (val) => bien.nomLogement = val,
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 6),
                     TextFormField(
                       initialValue: bien.adresse ?? '',
                       decoration: const InputDecoration(
                         labelText: "Adresse",
                         labelStyle: TextStyle(fontSize: 12),
                       ),
-                      style: const TextStyle(fontSize: 12),
+                      style: const TextStyle(fontSize: 10),
                       onChanged: (val) => bien.adresse = val,
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 6),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
@@ -176,19 +176,19 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                         const SizedBox(width: 4),
                         const Text(
                           "Inclure dans le bilan",
-                          style: TextStyle(fontSize: 12),
+                          style: TextStyle(fontSize: 10),
                         ),
                       ],
                     ),
                   ],
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 6),
 
               /// DESCRIPTIF DU BIEN
               CustomCard(
                 padding: const EdgeInsets.symmetric(
-                  vertical: 6,
+                  vertical: 3,
                   horizontal: 16,
                 ),
                 child: Column(
@@ -201,10 +201,10 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                               : null,
                       decoration: const InputDecoration(
                         labelText: "Type de maison/appartement",
-                        labelStyle: TextStyle(fontSize: 12),
+                        labelStyle: TextStyle(fontSize: 10),
                       ),
                       isExpanded: true,
-                      style: const TextStyle(fontSize: 12),
+                      style: const TextStyle(fontSize: 10),
                       items:
                           facteursEmission.keys
                               .where(
@@ -220,7 +220,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                       onChanged:
                           (val) => setState(() => poste.nomEquipement = val!),
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 3),
 
                     /// SURFACE
                     Row(
@@ -252,6 +252,14 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                                 textAlign: TextAlign.center,
                                 style: const TextStyle(fontSize: 12),
                                 keyboardType: TextInputType.number,
+                                decoration: const InputDecoration(
+                                  isDense: true,
+                                  contentPadding: EdgeInsets.symmetric(
+                                    vertical: 4,
+                                    horizontal: 8,
+                                  ),
+                                  border: InputBorder.none, // Supprime le trait
+                                ),
                                 onChanged: (val) {
                                   final parsed = double.tryParse(val);
                                   if (parsed != null)
@@ -310,6 +318,14 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                                 textAlign: TextAlign.center,
                                 style: const TextStyle(fontSize: 12),
                                 keyboardType: TextInputType.number,
+                                decoration: const InputDecoration(
+                                  isDense: true,
+                                  contentPadding: EdgeInsets.symmetric(
+                                    vertical: 4,
+                                    horizontal: 8,
+                                  ),
+                                  border: InputBorder.none, // Supprime le trait
+                                ),
                                 onChanged: (val) {
                                   final parsed = int.tryParse(val);
                                   if (parsed != null)
@@ -371,13 +387,13 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                 ),
               ),
 
-              const SizedBox(height: 12),
+              const SizedBox(height: 6),
 
               /// GARAGE
               CustomCard(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16,
-                  vertical: 8,
+                  vertical: 6,
                 ),
                 child: Column(
                   children: [
@@ -394,17 +410,73 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                       onTap: () => setState(() => showGarage = !showGarage),
                     ),
                     if (showGarage)
-                      TextFormField(
-                        initialValue: poste.surfaceGarage.toStringAsFixed(0),
-                        decoration: const InputDecoration(
-                          labelText: "Surface garage (m²)",
-                          labelStyle: TextStyle(fontSize: 12),
-                        ),
-                        style: const TextStyle(fontSize: 12),
-                        keyboardType: TextInputType.number,
-                        onChanged:
-                            (val) =>
-                                poste.surfaceGarage = double.tryParse(val) ?? 0,
+                      /// SURFACE GARAGE
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            "Surface garage (m²)",
+                            style: TextStyle(fontSize: 10),
+                          ),
+                          Row(
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.remove),
+                                iconSize: 12,
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                                onPressed:
+                                    () => setState(() {
+                                      poste.surfaceGarage =
+                                          (poste.surfaceGarage - 1).clamp(
+                                            0,
+                                            500,
+                                          );
+                                    }),
+                              ),
+                              SizedBox(
+                                width: 50,
+                                child: TextFormField(
+                                  initialValue: poste.surfaceGarage
+                                      .toStringAsFixed(0),
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(fontSize: 12),
+                                  keyboardType: TextInputType.number,
+                                  decoration: const InputDecoration(
+                                    isDense: true,
+                                    contentPadding: EdgeInsets.symmetric(
+                                      vertical: 4,
+                                      horizontal: 8,
+                                    ),
+                                    border:
+                                        InputBorder.none, // Supprime le trait
+                                  ),
+                                  onChanged: (val) {
+                                    final parsed = double.tryParse(val);
+                                    if (parsed != null)
+                                      setState(
+                                        () => poste.surfaceGarage = parsed,
+                                      );
+                                  },
+                                ),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.add),
+                                iconSize: 12,
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                                onPressed:
+                                    () => setState(() {
+                                      poste.surfaceGarage =
+                                          (poste.surfaceGarage + 1).clamp(
+                                            0,
+                                            500,
+                                          );
+                                    }),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                   ],
                 ),
@@ -485,6 +557,16 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                                           const TextInputType.numberWithOptions(
                                             decimal: true,
                                           ),
+                                      decoration: const InputDecoration(
+                                        isDense: true,
+                                        contentPadding: EdgeInsets.symmetric(
+                                          vertical: 4,
+                                          horizontal: 8,
+                                        ),
+                                        border:
+                                            InputBorder
+                                                .none, // Supprime le trait
+                                      ),
                                       onChanged: (val) {
                                         final parsed = double.tryParse(val);
                                         if (parsed != null)
@@ -546,6 +628,16 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                                           const TextInputType.numberWithOptions(
                                             decimal: true,
                                           ),
+                                      decoration: const InputDecoration(
+                                        isDense: true,
+                                        contentPadding: EdgeInsets.symmetric(
+                                          vertical: 4,
+                                          horizontal: 8,
+                                        ),
+                                        border:
+                                            InputBorder
+                                                .none, // Supprime le trait
+                                      ),
                                       onChanged: (val) {
                                         final parsed = double.tryParse(val);
                                         if (parsed != null)
@@ -599,20 +691,73 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                       onTap: () => setState(() => showAbri = !showAbri),
                     ),
                     if (showAbri)
-                      TextFormField(
-                        initialValue: poste.surfaceAbriEtSerre.toStringAsFixed(
-                          0,
-                        ),
-                        decoration: const InputDecoration(
-                          labelText: "Surface abri / serre (m²)",
-                          labelStyle: TextStyle(fontSize: 12),
-                        ),
-                        style: const TextStyle(fontSize: 12),
-                        keyboardType: TextInputType.number,
-                        onChanged:
-                            (val) =>
-                                poste.surfaceAbriEtSerre =
-                                    double.tryParse(val) ?? 0,
+                      /// SURFACE ABRI / SERRE
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            "Surface abri / serre (m²)",
+                            style: TextStyle(fontSize: 10),
+                          ),
+                          Row(
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.remove),
+                                iconSize: 12,
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                                onPressed:
+                                    () => setState(() {
+                                      poste.surfaceAbriEtSerre =
+                                          (poste.surfaceAbriEtSerre - 1).clamp(
+                                            0,
+                                            200,
+                                          );
+                                    }),
+                              ),
+                              SizedBox(
+                                width: 50,
+                                child: TextFormField(
+                                  initialValue: poste.surfaceAbriEtSerre
+                                      .toStringAsFixed(0),
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(fontSize: 12),
+                                  keyboardType: TextInputType.number,
+                                  decoration: const InputDecoration(
+                                    isDense: true,
+                                    contentPadding: EdgeInsets.symmetric(
+                                      vertical: 4,
+                                      horizontal: 8,
+                                    ),
+                                    border:
+                                        InputBorder.none, // Supprime le trait
+                                  ),
+                                  onChanged: (val) {
+                                    final parsed = double.tryParse(val);
+                                    if (parsed != null)
+                                      setState(
+                                        () => poste.surfaceAbriEtSerre = parsed,
+                                      );
+                                  },
+                                ),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.add),
+                                iconSize: 12,
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                                onPressed:
+                                    () => setState(() {
+                                      poste.surfaceAbriEtSerre =
+                                          (poste.surfaceAbriEtSerre + 1).clamp(
+                                            0,
+                                            200,
+                                          );
+                                    }),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                   ],
                 ),
