@@ -85,384 +85,406 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
     }
 
     return BaseScreen(
-      title: const Text(
-        "Bien immobilier",
-        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+      title: Row(
+        children: [
+          IconButton(
+            icon: const Icon(Icons.arrow_back),
+            iconSize: 18,
+            onPressed: () => Navigator.pop(context),
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            "Bien immobilier",
+            style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+          ),
+        ],
       ),
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            /// HEADER
-            CustomCard(
-              padding: const EdgeInsets.all(12),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      Icon(
-                        sousCategorieIcons['Biens Immobiliers'] ?? Icons.home,
-                        size: 12,
-                      ),
-                      const SizedBox(width: 8),
-                      const Text(
-                        "Bien immobilier",
-                        style: TextStyle(fontSize: 12),
-                      ),
-                    ],
-                  ),
-                  Text(
-                    "${total.toStringAsFixed(0)} kgCO₂/an",
-                    style: const TextStyle(fontSize: 12),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 12),
-
-            /// IDENTITÉ DU BIEN
-            CustomCard(
-              padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  DropdownButtonFormField<String>(
-                    value:
-                        [
-                              "Maison Principale",
-                              "Maison Secondaire",
-                              "Bien locatif",
-                            ].contains(bien.typeBien)
-                            ? bien.typeBien
-                            : null,
-                    decoration: const InputDecoration(
-                      labelText: "Type de bien",
-                      labelStyle: TextStyle(fontSize: 12),
-                    ),
-                    isExpanded: true,
-                    style: const TextStyle(fontSize: 12),
-                    items:
-                        [
-                              "Maison Principale",
-                              "Maison Secondaire",
-                              "Bien locatif",
-                            ]
-                            .map(
-                              (t) => DropdownMenuItem(value: t, child: Text(t)),
-                            )
-                            .toList(),
-                    onChanged: (val) => setState(() => bien.typeBien = val!),
-                  ),
-                  const SizedBox(height: 12),
-                  TextFormField(
-                    initialValue: bien.nomLogement,
-                    decoration: const InputDecoration(
-                      labelText: "Dénomination du bien",
-                      labelStyle: TextStyle(fontSize: 12),
-                    ),
-                    style: const TextStyle(fontSize: 12),
-                    onChanged: (val) => bien.nomLogement = val,
-                  ),
-                  const SizedBox(height: 12),
-                  TextFormField(
-                    initialValue: bien.adresse ?? '',
-                    decoration: const InputDecoration(
-                      labelText: "Adresse",
-                      labelStyle: TextStyle(fontSize: 12),
-                    ),
-                    style: const TextStyle(fontSize: 12),
-                    onChanged: (val) => bien.adresse = val,
-                  ),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      Checkbox(
-                        value: bien.inclureDansBilan ?? true,
-                        onChanged:
-                            (v) => setState(() => bien.inclureDansBilan = v),
-                      ),
-                      const Text(
-                        "Inclure dans le bilan",
-                        style: TextStyle(fontSize: 12),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 12),
-
-            /// DESCRIPTIF DU BIEN
-            CustomCard(
-              padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  DropdownButtonFormField<String>(
-                    value:
-                        facteursEmission.keys.contains(poste.nomEquipement)
-                            ? poste.nomEquipement
-                            : null,
-                    decoration: const InputDecoration(
-                      labelText: "Type de maison/appartement",
-                      labelStyle: TextStyle(fontSize: 12),
-                    ),
-                    isExpanded: true,
-                    style: const TextStyle(fontSize: 12),
-                    items:
-                        facteursEmission.keys
-                            .where(
-                              (k) =>
-                                  k.contains("Maison") ||
-                                  k.contains("Appartement"),
-                            )
-                            .map(
-                              (t) => DropdownMenuItem(value: t, child: Text(t)),
-                            )
-                            .toList(),
-                    onChanged:
-                        (val) => setState(() => poste.nomEquipement = val!),
-                  ),
-                  const SizedBox(height: 12),
-                  TextFormField(
-                    initialValue: poste.surface.toStringAsFixed(0),
-                    decoration: const InputDecoration(
-                      labelText: "Surface (m²)",
-                      labelStyle: TextStyle(fontSize: 12),
-                    ),
-                    style: const TextStyle(fontSize: 12),
-                    keyboardType: TextInputType.number,
-                    onChanged:
-                        (val) => poste.surface = double.tryParse(val) ?? 0,
-                  ),
-                  const SizedBox(height: 12),
-                  TextFormField(
-                    initialValue: poste.anneeConstruction.toString(),
-                    decoration: const InputDecoration(
-                      labelText: "Année de construction",
-                      labelStyle: TextStyle(fontSize: 12),
-                    ),
-                    style: const TextStyle(fontSize: 12),
-                    keyboardType: TextInputType.number,
-                    onChanged:
-                        (val) =>
-                            poste.anneeConstruction = int.tryParse(val) ?? 2000,
-                  ),
-                  const SizedBox(height: 12),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        "Nombre de propriétaires",
-                        style: TextStyle(fontSize: 12),
-                      ),
-                      Row(
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.remove),
-                            onPressed:
-                                () => setState(() => poste.nbProprietaires--),
-                          ),
-                          Text(
-                            poste.nbProprietaires.toString(),
-                            style: const TextStyle(fontSize: 12),
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.add),
-                            onPressed:
-                                () => setState(() => poste.nbProprietaires++),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-
-            /// GARAGE
-            CustomCard(
-              padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-              child: Column(
-                children: [
-                  ListTile(
-                    dense: true,
-                    contentPadding: EdgeInsets.zero,
-                    title: const Text(
-                      "Déclarer un garage",
-                      style: TextStyle(fontSize: 12),
-                    ),
-                    trailing: Icon(
-                      showGarage ? Icons.expand_less : Icons.chevron_right,
-                    ),
-                    onTap: () => setState(() => showGarage = !showGarage),
-                  ),
-                  if (showGarage)
-                    TextFormField(
-                      initialValue: poste.surfaceGarage.toStringAsFixed(0),
-                      decoration: const InputDecoration(
-                        labelText: "Surface garage (m²)",
-                        labelStyle: TextStyle(fontSize: 12),
-                      ),
-                      style: const TextStyle(fontSize: 12),
-                      keyboardType: TextInputType.number,
-                      onChanged:
-                          (val) =>
-                              poste.surfaceGarage = double.tryParse(val) ?? 0,
-                    ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 12),
-
-            /// PISCINE
-            CustomCard(
-              padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-              child: Column(
-                children: [
-                  ListTile(
-                    dense: true,
-                    contentPadding: EdgeInsets.zero,
-                    title: const Text(
-                      "Déclarer une piscine",
-                      style: TextStyle(fontSize: 12),
-                    ),
-                    trailing: Icon(
-                      showPiscine ? Icons.expand_less : Icons.chevron_right,
-                    ),
-                    onTap: () => setState(() => showPiscine = !showPiscine),
-                  ),
-                  if (showPiscine)
-                    Column(
+      children: [
+        SingleChildScrollView(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              /// HEADER
+              CustomCard(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 6,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
                       children: [
-                        DropdownButtonFormField<String>(
-                          value: poste.typePiscine,
-                          isExpanded: true,
-                          style: const TextStyle(fontSize: 12),
-                          items:
-                              ["Piscine béton", "Piscine coque"]
-                                  .map(
-                                    (t) => DropdownMenuItem(
-                                      value: t,
-                                      child: Text(t),
-                                    ),
-                                  )
-                                  .toList(),
-                          onChanged:
-                              (val) => setState(() => poste.typePiscine = val!),
+                        Icon(
+                          sousCategorieIcons['Biens Immobiliers'] ?? Icons.home,
+                          size: 12,
                         ),
-                        TextFormField(
-                          initialValue: poste.piscineLongueur.toString(),
-                          decoration: const InputDecoration(
-                            labelText: "Longueur (m)",
-                            labelStyle: TextStyle(fontSize: 12),
-                          ),
-                          keyboardType: TextInputType.number,
-                          onChanged:
-                              (val) =>
-                                  poste.piscineLongueur =
-                                      double.tryParse(val) ?? 0,
-                        ),
-                        TextFormField(
-                          initialValue: poste.piscineLargeur.toString(),
-                          decoration: const InputDecoration(
-                            labelText: "Largeur (m)",
-                            labelStyle: TextStyle(fontSize: 12),
-                          ),
-                          keyboardType: TextInputType.number,
-                          onChanged:
-                              (val) =>
-                                  poste.piscineLargeur =
-                                      double.tryParse(val) ?? 0,
+                        const SizedBox(width: 8),
+                        const Text(
+                          "Bien immobilier",
+                          style: TextStyle(fontSize: 12),
                         ),
                       ],
                     ),
-                ],
+                    Text(
+                      "${total.toStringAsFixed(0)} kgCO₂/an",
+                      style: const TextStyle(fontSize: 12),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(height: 12),
+              const SizedBox(height: 12),
 
-            /// ABRI / SERRE
-            CustomCard(
-              padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-              child: Column(
-                children: [
-                  ListTile(
-                    dense: true,
-                    contentPadding: EdgeInsets.zero,
-                    title: const Text(
-                      "Déclarer abri / serre",
-                      style: TextStyle(fontSize: 12),
+              /// IDENTITÉ DU BIEN
+              CustomCard(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 6,
+                  horizontal: 16,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Type : ${bien.typeBien}",
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                    trailing: Icon(
-                      showAbri ? Icons.expand_less : Icons.chevron_right,
-                    ),
-                    onTap: () => setState(() => showAbri = !showAbri),
-                  ),
-                  if (showAbri)
+                    const SizedBox(height: 12),
                     TextFormField(
-                      initialValue: poste.surfaceAbriEtSerre.toStringAsFixed(0),
+                      initialValue: bien.nomLogement,
                       decoration: const InputDecoration(
-                        labelText: "Surface abri / serre (m²)",
+                        labelText: "Dénomination du bien",
+                        labelStyle: TextStyle(fontSize: 12),
+                      ),
+                      style: const TextStyle(fontSize: 12),
+                      onChanged: (val) => bien.nomLogement = val,
+                    ),
+                    const SizedBox(height: 12),
+                    TextFormField(
+                      initialValue: bien.adresse ?? '',
+                      decoration: const InputDecoration(
+                        labelText: "Adresse",
+                        labelStyle: TextStyle(fontSize: 12),
+                      ),
+                      style: const TextStyle(fontSize: 12),
+                      onChanged: (val) => bien.adresse = val,
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        Checkbox(
+                          value: bien.inclureDansBilan ?? true,
+                          onChanged: (v) {
+                            if (v != null) {
+                              setState(() => bien.inclureDansBilan = v);
+                            }
+                          },
+                        ),
+                        const Text(
+                          "Inclure dans le bilan",
+                          style: TextStyle(fontSize: 12),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              /// DESCRIPTIF DU BIEN
+              CustomCard(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 6,
+                  horizontal: 16,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    DropdownButtonFormField<String>(
+                      value:
+                          facteursEmission.keys.contains(poste.nomEquipement)
+                              ? poste.nomEquipement
+                              : null,
+                      decoration: const InputDecoration(
+                        labelText: "Type de maison/appartement",
+                        labelStyle: TextStyle(fontSize: 12),
+                      ),
+                      isExpanded: true,
+                      style: const TextStyle(fontSize: 12),
+                      items:
+                          facteursEmission.keys
+                              .where(
+                                (k) =>
+                                    k.contains("Maison") ||
+                                    k.contains("Appartement"),
+                              )
+                              .map(
+                                (t) =>
+                                    DropdownMenuItem(value: t, child: Text(t)),
+                              )
+                              .toList(),
+                      onChanged:
+                          (val) => setState(() => poste.nomEquipement = val!),
+                    ),
+                    const SizedBox(height: 12),
+                    TextFormField(
+                      initialValue: poste.surface.toStringAsFixed(0),
+                      decoration: const InputDecoration(
+                        labelText: "Surface (m²)",
+                        labelStyle: TextStyle(fontSize: 12),
+                      ),
+                      style: const TextStyle(fontSize: 12),
+                      keyboardType: TextInputType.number,
+                      onChanged:
+                          (val) => poste.surface = double.tryParse(val) ?? 0,
+                    ),
+                    const SizedBox(height: 12),
+                    TextFormField(
+                      initialValue: poste.anneeConstruction.toString(),
+                      decoration: const InputDecoration(
+                        labelText: "Année de construction",
                         labelStyle: TextStyle(fontSize: 12),
                       ),
                       style: const TextStyle(fontSize: 12),
                       keyboardType: TextInputType.number,
                       onChanged:
                           (val) =>
-                              poste.surfaceAbriEtSerre =
-                                  double.tryParse(val) ?? 0,
+                              poste.anneeConstruction =
+                                  int.tryParse(val) ?? 2000,
                     ),
-                ],
+                    const SizedBox(height: 12),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          "Nombre de propriétaires",
+                          style: TextStyle(fontSize: 12),
+                        ),
+                        Row(
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.remove),
+                              onPressed:
+                                  () => setState(() => poste.nbProprietaires--),
+                            ),
+                            Text(
+                              poste.nbProprietaires.toString(),
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.add),
+                              onPressed:
+                                  () => setState(() => poste.nbProprietaires++),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(height: 20),
 
-            /// BOUTON
-            const SizedBox(height: 20),
-            ElevatedButton.icon(
-              onPressed: () async {
-                final double emission = calculerTotalEmission(
-                  poste,
-                  facteursEmission,
-                  dureesAmortissement,
-                );
-                await ApiService.savePoste({
-                  "Code_Individu": "BASILE",
-                  "Type_Temps": "Réel",
-                  "Valeur_Temps": "2025",
-                  "Date_enregistrement": DateTime.now().toIso8601String(),
-                  "Type_Poste": "Equipement",
-                  "Type_Categorie": "Logement",
-                  "Sous_Categorie": "Habitat",
-                  "Nom_Poste": poste.nomEquipement,
-                  "Nom_Logement": bien.nomLogement,
-                  "Quantite": poste.surface,
-                  "Unite": "m²",
-                  "Facteur_Emission": facteursEmission[poste.nomEquipement],
-                  "Emission_Calculee": emission,
-                  "Mode_Calcul": "Amorti",
-                  "Annee_Achat": poste.anneeConstruction,
-                  "Duree_Amortissement":
-                      dureesAmortissement[poste.nomEquipement],
-                });
+              const SizedBox(height: 12),
 
-                if (!mounted) return;
-                if (widget.onSave != null) widget.onSave!();
-                Navigator.of(context).pop();
-              },
-              icon: const Icon(Icons.save),
-              label: const Text("Enregistrer"),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green[100],
-                foregroundColor: Colors.green[900],
+              /// GARAGE
+              CustomCard(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 6,
+                  horizontal: 12,
+                ),
+                child: Column(
+                  children: [
+                    ListTile(
+                      dense: true,
+                      contentPadding: EdgeInsets.zero,
+                      title: const Text(
+                        "Déclarer un garage",
+                        style: TextStyle(fontSize: 12),
+                      ),
+                      trailing: Icon(
+                        showGarage ? Icons.expand_less : Icons.chevron_right,
+                      ),
+                      onTap: () => setState(() => showGarage = !showGarage),
+                    ),
+                    if (showGarage)
+                      TextFormField(
+                        initialValue: poste.surfaceGarage.toStringAsFixed(0),
+                        decoration: const InputDecoration(
+                          labelText: "Surface garage (m²)",
+                          labelStyle: TextStyle(fontSize: 12),
+                        ),
+                        style: const TextStyle(fontSize: 12),
+                        keyboardType: TextInputType.number,
+                        onChanged:
+                            (val) =>
+                                poste.surfaceGarage = double.tryParse(val) ?? 0,
+                      ),
+                  ],
+                ),
               ),
-            ),
-          ],
+              const SizedBox(height: 12),
+
+              /// PISCINE
+              CustomCard(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 6,
+                  horizontal: 12,
+                ),
+                child: Column(
+                  children: [
+                    ListTile(
+                      dense: true,
+                      contentPadding: EdgeInsets.zero,
+                      title: const Text(
+                        "Déclarer une piscine",
+                        style: TextStyle(fontSize: 12),
+                      ),
+                      trailing: Icon(
+                        showPiscine ? Icons.expand_less : Icons.chevron_right,
+                      ),
+                      onTap: () => setState(() => showPiscine = !showPiscine),
+                    ),
+                    if (showPiscine)
+                      Column(
+                        children: [
+                          DropdownButtonFormField<String>(
+                            value: poste.typePiscine,
+                            isExpanded: true,
+                            style: const TextStyle(fontSize: 12),
+                            items:
+                                ["Piscine béton", "Piscine coque"]
+                                    .map(
+                                      (t) => DropdownMenuItem(
+                                        value: t,
+                                        child: Text(t),
+                                      ),
+                                    )
+                                    .toList(),
+                            onChanged:
+                                (val) =>
+                                    setState(() => poste.typePiscine = val!),
+                          ),
+                          TextFormField(
+                            initialValue: poste.piscineLongueur.toString(),
+                            decoration: const InputDecoration(
+                              labelText: "Longueur (m)",
+                              labelStyle: TextStyle(fontSize: 12),
+                            ),
+                            keyboardType: TextInputType.number,
+                            onChanged:
+                                (val) =>
+                                    poste.piscineLongueur =
+                                        double.tryParse(val) ?? 0,
+                          ),
+                          TextFormField(
+                            initialValue: poste.piscineLargeur.toString(),
+                            decoration: const InputDecoration(
+                              labelText: "Largeur (m)",
+                              labelStyle: TextStyle(fontSize: 12),
+                            ),
+                            keyboardType: TextInputType.number,
+                            onChanged:
+                                (val) =>
+                                    poste.piscineLargeur =
+                                        double.tryParse(val) ?? 0,
+                          ),
+                        ],
+                      ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              /// ABRI / SERRE
+              CustomCard(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 6,
+                  horizontal: 12,
+                ),
+                child: Column(
+                  children: [
+                    ListTile(
+                      dense: true,
+                      contentPadding: EdgeInsets.zero,
+                      title: const Text(
+                        "Déclarer abri / serre",
+                        style: TextStyle(fontSize: 12),
+                      ),
+                      trailing: Icon(
+                        showAbri ? Icons.expand_less : Icons.chevron_right,
+                      ),
+                      onTap: () => setState(() => showAbri = !showAbri),
+                    ),
+                    if (showAbri)
+                      TextFormField(
+                        initialValue: poste.surfaceAbriEtSerre.toStringAsFixed(
+                          0,
+                        ),
+                        decoration: const InputDecoration(
+                          labelText: "Surface abri / serre (m²)",
+                          labelStyle: TextStyle(fontSize: 12),
+                        ),
+                        style: const TextStyle(fontSize: 12),
+                        keyboardType: TextInputType.number,
+                        onChanged:
+                            (val) =>
+                                poste.surfaceAbriEtSerre =
+                                    double.tryParse(val) ?? 0,
+                      ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              /// BOUTON
+              const SizedBox(height: 20),
+              ElevatedButton.icon(
+                onPressed: () async {
+                  final double emission = calculerTotalEmission(
+                    poste,
+                    facteursEmission,
+                    dureesAmortissement,
+                  );
+                  await ApiService.savePoste({
+                    "Code_Individu": "BASILE",
+                    "Type_Temps": "Réel",
+                    "Valeur_Temps": "2025",
+                    "Date_enregistrement": DateTime.now().toIso8601String(),
+                    "Type_Poste": "Equipement",
+                    "Type_Categorie": "Logement",
+                    "Sous_Categorie": "Habitat",
+                    "Nom_Poste": poste.nomEquipement,
+                    "Nom_Logement": bien.nomLogement,
+                    "Quantite": poste.surface,
+                    "Unite": "m²",
+                    "Facteur_Emission": facteursEmission[poste.nomEquipement],
+                    "Emission_Calculee": emission,
+                    "Mode_Calcul": "Amorti",
+                    "Annee_Achat": poste.anneeConstruction,
+                    "Duree_Amortissement":
+                        dureesAmortissement[poste.nomEquipement],
+                  });
+
+                  if (!mounted) return;
+                  if (widget.onSave != null) widget.onSave!();
+                  Navigator.of(context).pop();
+                },
+                icon: const Icon(Icons.save),
+                label: const Text("Enregistrer"),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green[100],
+                  foregroundColor: Colors.green[900],
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
+      ],
     );
   }
 }

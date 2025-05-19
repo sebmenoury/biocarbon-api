@@ -8,6 +8,7 @@ import '../../core/utils/sous_categorie_avec_bien.dart';
 import '../../data/logement/bien_immobilier.dart';
 import '../../data/logement/poste_bien_immobilier.dart';
 import '../logement/construction_screen.dart';
+import '../../data/logement/dialogs_type_bien.dart';
 
 class PosteListScreen extends StatefulWidget {
   final String sousCategorie;
@@ -64,15 +65,15 @@ class _PosteListScreenState extends State<PosteListScreen> {
   void handleAdd([String? idBien]) {
     final nouveauPoste = PosteBienImmobilier(
       nomEquipement: '',
-      surface: 0,
-      anneeConstruction: DateTime.now().year,
+      surface: 100,
+      anneeConstruction: 2010,
       nbProprietaires: 1,
       garage: false,
       surfaceGarage: 0,
       piscine: false,
       typePiscine: "Piscine béton",
-      piscineLongueur: 0,
-      piscineLargeur: 0,
+      piscineLongueur: 4,
+      piscineLargeur: 2.5,
       abriEtSerre: false,
       surfaceAbriEtSerre: 0,
     );
@@ -516,7 +517,24 @@ class _PosteListScreenState extends State<PosteListScreen> {
                         horizontal: 12,
                       ),
                       child: InkWell(
-                        onTap: () => handleAdd(),
+                        onTap: () {
+                          showChoixTypeBienDialog(context, (String typeChoisi) {
+                            final bien = BienImmobilier(
+                              idBien:
+                                  "BASILE-${DateTime.now().millisecondsSinceEpoch}", // ou un ID UUID
+                              typeBien: typeChoisi,
+                              nomLogement: "", // ou une valeur par défaut
+                              poste:
+                                  PosteBienImmobilier(), // avec ses valeurs par défaut si besoin
+                            );
+
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => ConstructionScreen(bien: bien),
+                              ),
+                            );
+                          });
+                        },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: const [
