@@ -6,6 +6,7 @@ import '../../data/services/api_service.dart';
 import '../../data/models/poste.dart';
 import '../../core/utils/sous_categorie_avec_bien.dart';
 import '../../data/logement/bien_immobilier.dart';
+import '../../data/logement/poste_bien_immobilier.dart';
 import '../logement/construction_screen.dart';
 
 class PosteListScreen extends StatefulWidget {
@@ -61,13 +62,28 @@ class _PosteListScreenState extends State<PosteListScreen> {
   }
 
   void handleAdd([String? idBien]) {
-    final nouveauBien = BienImmobilier(
-      idBien: idBien,
-      type: '',
-      nomLogement: '',
+    final nouveauPoste = PosteBienImmobilier(
+      nomEquipement: '',
       surface: 0,
       anneeConstruction: DateTime.now().year,
       nbProprietaires: 1,
+      garage: false,
+      surfaceGarage: 0,
+      piscine: false,
+      typePiscine: "Piscine béton",
+      piscineLongueur: 0,
+      piscineLargeur: 0,
+      abriEtSerre: false,
+      surfaceAbriEtSerre: 0,
+    );
+
+    final nouveauBien = BienImmobilier(
+      idBien: idBien,
+      typeBien: 'Maison principale',
+      nomLogement: '',
+      adresse: '',
+      inclureDansBilan: true,
+      poste: nouveauPoste,
     );
 
     Navigator.push(
@@ -83,16 +99,35 @@ class _PosteListScreenState extends State<PosteListScreen> {
   }
 
   void openConstructionScreen(Map<String, dynamic> bien) {
-    final bienObj = BienImmobilier(
-      idBien: bien['ID_Bien'],
-      type: bien['Type_Bien'] ?? '',
-      nomLogement: bien['Dénomination'] ?? '',
+    final poste = PosteBienImmobilier(
+      nomEquipement: bien['Nom_Equipement'] ?? '',
       surface: double.tryParse(bien['Surface']?.toString() ?? '100') ?? 100,
       anneeConstruction:
           int.tryParse(bien['Annee_Construction']?.toString() ?? '2000') ??
           2000,
       nbProprietaires:
           int.tryParse(bien['Nb_Proprietaires']?.toString() ?? '2') ?? 2,
+      garage: bien['Garage'] == true,
+      surfaceGarage:
+          double.tryParse(bien['Surface_Garage']?.toString() ?? '0') ?? 0,
+      piscine: bien['Piscine'] == true,
+      typePiscine: bien['Type_Piscine'] ?? "Piscine béton",
+      piscineLongueur:
+          double.tryParse(bien['Piscine_Longueur']?.toString() ?? '0') ?? 0,
+      piscineLargeur:
+          double.tryParse(bien['Piscine_Largeur']?.toString() ?? '0') ?? 0,
+      abriEtSerre: bien['AbriEtSerre'] == true,
+      surfaceAbriEtSerre:
+          double.tryParse(bien['Surface_AbriEtSerre']?.toString() ?? '0') ?? 0,
+    );
+
+    final bienObj = BienImmobilier(
+      idBien: bien['ID_Bien'],
+      typeBien: bien['Type_Bien'] ?? '',
+      nomLogement: bien['Dénomination'] ?? '',
+      adresse: bien['Adresse'] ?? '',
+      inclureDansBilan: bien['Inclure_dans_Bilan'] == true,
+      poste: poste,
     );
 
     Navigator.push(

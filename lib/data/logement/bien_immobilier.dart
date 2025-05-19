@@ -1,43 +1,22 @@
+import '../../data/logement/poste_bien_immobilier.dart';
+
 class BienImmobilier {
   final String? idBien;
-  String nomLogement; // Nom personnalisé par l'utilisateur
-  String nomEquipement;
-  String type; // ex : "Maison Classique", "Appartement"
-  double surface;
-  int anneeConstruction;
-  int nbProprietaires;
-
-  bool garage;
-  double surfaceGarage;
-
-  bool piscine;
-  String typePiscine;
-  double piscineLongueur;
-  double piscineLargeur;
-
-  bool abriEtSerre;
-  double surfaceAbriEtSerre;
-
+  String
+  typeBien; // "Maison principale", "Maison secondaire", "Appartement locatif"
+  String nomLogement;
   String? adresse;
-  bool? inclureDansBilan;
+  bool inclureDansBilan;
+
+  PosteBienImmobilier
+  poste; // 🔁 association directe avec le descriptif technique
 
   BienImmobilier({
     this.idBien,
+    this.typeBien = "Maison principale",
     this.nomLogement = "Mon logement",
-    this.nomEquipement = "",
-    required this.type,
-    this.surface = 100,
-    this.anneeConstruction = 2010,
-    this.nbProprietaires = 1,
-    this.surfaceGarage = 30,
-    this.garage = false,
-    this.piscine = false,
-    this.typePiscine = "Piscine béton",
-    this.piscineLongueur = 4,
-    this.piscineLargeur = 2.5,
-    this.abriEtSerre = false,
-    this.surfaceAbriEtSerre = 10,
     this.adresse,
     this.inclureDansBilan = true,
+    required this.poste, // 👈 il devient obligatoire ici
   });
 }

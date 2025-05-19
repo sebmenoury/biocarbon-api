@@ -1,8 +1,8 @@
-import 'bien_immobilier.dart';
+import 'poste_bien_immobilier.dart';
 import 'const_construction.dart';
 
 double calculerTotalEmission(
-  BienImmobilier bien,
+  PosteBienImmobilier bien,
   Map<String, double> facteursEmission,
   Map<String, int> dureesAmortissement,
 ) {
@@ -10,8 +10,8 @@ double calculerTotalEmission(
   double total = 0.0;
 
   total +=
-      (bien.surface * (facteursEmission[bien.type] ?? 0) * reduction) /
-      (dureesAmortissement[bien.type] ?? 1) /
+      (bien.surface * (facteursEmission[bien.nomEquipement] ?? 0) * reduction) /
+      (dureesAmortissement[bien.nomEquipement] ?? 1) /
       bien.nbProprietaires;
 
   if (bien.garage) {

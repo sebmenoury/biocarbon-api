@@ -4,6 +4,7 @@ import '../../ui/layout/base_screen.dart';
 import '../../ui/layout/custom_card.dart';
 import '../../data/services/api_service.dart';
 import '../../data/logement/bien_immobilier.dart';
+import '../../data/logement/poste_bien_immobilier.dart';
 import '../../data/logement/emission_calculator_immobilier.dart';
 
 class ConstructionScreen extends StatefulWidget {
@@ -23,6 +24,8 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
   String? errorMsg;
 
   BienImmobilier get bien => widget.bien;
+  PosteBienImmobilier get poste => widget.bien.poste;
+
   bool showGarage = false;
   bool showPiscine = false;
   bool showAbri = false;
@@ -67,7 +70,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
   @override
   Widget build(BuildContext context) {
     final total = calculerTotalEmission(
-      bien,
+      poste,
       facteursEmission,
       dureesAmortissement,
     );
@@ -126,7 +129,14 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   DropdownButtonFormField<String>(
-                    value: bien.type,
+                    value:
+                        [
+                              "Maison Principale",
+                              "Maison Secondaire",
+                              "Bien locatif",
+                            ].contains(bien.typeBien)
+                            ? bien.typeBien
+                            : null,
                     decoration: const InputDecoration(
                       labelText: "Type de bien",
                       labelStyle: TextStyle(fontSize: 12),
@@ -143,7 +153,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                               (t) => DropdownMenuItem(value: t, child: Text(t)),
                             )
                             .toList(),
-                    onChanged: (val) => setState(() => bien.type = val!),
+                    onChanged: (val) => setState(() => bien.typeBien = val!),
                   ),
                   const SizedBox(height: 12),
                   TextFormField(
@@ -192,8 +202,8 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                 children: [
                   DropdownButtonFormField<String>(
                     value:
-                        facteursEmission.keys.contains(bien.nomEquipement)
-                            ? bien.nomEquipement
+                        facteursEmission.keys.contains(poste.nomEquipement)
+                            ? poste.nomEquipement
                             : null,
                     decoration: const InputDecoration(
                       labelText: "Type de maison/appartement",
@@ -212,16 +222,12 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                               (t) => DropdownMenuItem(value: t, child: Text(t)),
                             )
                             .toList(),
-                    onChanged: (val) {
-                      setState(() {
-                        bien.nomEquipement = val!;
-                        bien.type = val;
-                      });
-                    },
+                    onChanged:
+                        (val) => setState(() => poste.nomEquipement = val!),
                   ),
                   const SizedBox(height: 12),
                   TextFormField(
-                    initialValue: bien.surface.toStringAsFixed(0),
+                    initialValue: poste.surface.toStringAsFixed(0),
                     decoration: const InputDecoration(
                       labelText: "Surface (m²)",
                       labelStyle: TextStyle(fontSize: 12),
@@ -229,11 +235,11 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                     style: const TextStyle(fontSize: 12),
                     keyboardType: TextInputType.number,
                     onChanged:
-                        (val) => bien.surface = double.tryParse(val) ?? 0,
+                        (val) => poste.surface = double.tryParse(val) ?? 0,
                   ),
                   const SizedBox(height: 12),
                   TextFormField(
-                    initialValue: bien.anneeConstruction.toString(),
+                    initialValue: poste.anneeConstruction.toString(),
                     decoration: const InputDecoration(
                       labelText: "Année de construction",
                       labelStyle: TextStyle(fontSize: 12),
@@ -242,7 +248,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                     keyboardType: TextInputType.number,
                     onChanged:
                         (val) =>
-                            bien.anneeConstruction = int.tryParse(val) ?? 2000,
+                            poste.anneeConstruction = int.tryParse(val) ?? 2000,
                   ),
                   const SizedBox(height: 12),
                   Row(
@@ -257,16 +263,16 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                           IconButton(
                             icon: const Icon(Icons.remove),
                             onPressed:
-                                () => setState(() => bien.nbProprietaires--),
+                                () => setState(() => poste.nbProprietaires--),
                           ),
                           Text(
-                            bien.nbProprietaires.toString(),
+                            poste.nbProprietaires.toString(),
                             style: const TextStyle(fontSize: 12),
                           ),
                           IconButton(
                             icon: const Icon(Icons.add),
                             onPressed:
-                                () => setState(() => bien.nbProprietaires++),
+                                () => setState(() => poste.nbProprietaires++),
                           ),
                         ],
                       ),
@@ -275,7 +281,6 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 12),
 
             /// GARAGE
             CustomCard(
@@ -296,7 +301,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                   ),
                   if (showGarage)
                     TextFormField(
-                      initialValue: bien.surfaceGarage.toStringAsFixed(0),
+                      initialValue: poste.surfaceGarage.toStringAsFixed(0),
                       decoration: const InputDecoration(
                         labelText: "Surface garage (m²)",
                         labelStyle: TextStyle(fontSize: 12),
@@ -305,7 +310,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                       keyboardType: TextInputType.number,
                       onChanged:
                           (val) =>
-                              bien.surfaceGarage = double.tryParse(val) ?? 0,
+                              poste.surfaceGarage = double.tryParse(val) ?? 0,
                     ),
                 ],
               ),
@@ -333,7 +338,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                     Column(
                       children: [
                         DropdownButtonFormField<String>(
-                          value: bien.typePiscine,
+                          value: poste.typePiscine,
                           isExpanded: true,
                           style: const TextStyle(fontSize: 12),
                           items:
@@ -346,10 +351,10 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                                   )
                                   .toList(),
                           onChanged:
-                              (val) => setState(() => bien.typePiscine = val!),
+                              (val) => setState(() => poste.typePiscine = val!),
                         ),
                         TextFormField(
-                          initialValue: bien.piscineLongueur.toString(),
+                          initialValue: poste.piscineLongueur.toString(),
                           decoration: const InputDecoration(
                             labelText: "Longueur (m)",
                             labelStyle: TextStyle(fontSize: 12),
@@ -357,11 +362,11 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                           keyboardType: TextInputType.number,
                           onChanged:
                               (val) =>
-                                  bien.piscineLongueur =
+                                  poste.piscineLongueur =
                                       double.tryParse(val) ?? 0,
                         ),
                         TextFormField(
-                          initialValue: bien.piscineLargeur.toString(),
+                          initialValue: poste.piscineLargeur.toString(),
                           decoration: const InputDecoration(
                             labelText: "Largeur (m)",
                             labelStyle: TextStyle(fontSize: 12),
@@ -369,7 +374,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                           keyboardType: TextInputType.number,
                           onChanged:
                               (val) =>
-                                  bien.piscineLargeur =
+                                  poste.piscineLargeur =
                                       double.tryParse(val) ?? 0,
                         ),
                       ],
@@ -398,7 +403,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                   ),
                   if (showAbri)
                     TextFormField(
-                      initialValue: bien.surfaceAbriEtSerre.toStringAsFixed(0),
+                      initialValue: poste.surfaceAbriEtSerre.toStringAsFixed(0),
                       decoration: const InputDecoration(
                         labelText: "Surface abri / serre (m²)",
                         labelStyle: TextStyle(fontSize: 12),
@@ -407,7 +412,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                       keyboardType: TextInputType.number,
                       onChanged:
                           (val) =>
-                              bien.surfaceAbriEtSerre =
+                              poste.surfaceAbriEtSerre =
                                   double.tryParse(val) ?? 0,
                     ),
                 ],
@@ -416,10 +421,11 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
             const SizedBox(height: 20),
 
             /// BOUTON
+            const SizedBox(height: 20),
             ElevatedButton.icon(
               onPressed: () async {
                 final double emission = calculerTotalEmission(
-                  bien,
+                  poste,
                   facteursEmission,
                   dureesAmortissement,
                 );
@@ -431,17 +437,19 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                   "Type_Poste": "Equipement",
                   "Type_Categorie": "Logement",
                   "Sous_Categorie": "Habitat",
-                  "Nom_Poste": bien.nomEquipement,
+                  "Nom_Poste": poste.nomEquipement,
                   "Nom_Logement": bien.nomLogement,
-                  "Quantite": bien.surface,
+                  "Quantite": poste.surface,
                   "Unite": "m²",
-                  "Facteur_Emission": facteursEmission[bien.type],
+                  "Facteur_Emission": facteursEmission[poste.nomEquipement],
                   "Emission_Calculee": emission,
                   "Mode_Calcul": "Amorti",
-                  "Annee_Achat": bien.anneeConstruction,
-                  "Duree_Amortissement": dureesAmortissement[bien.type],
+                  "Annee_Achat": poste.anneeConstruction,
+                  "Duree_Amortissement":
+                      dureesAmortissement[poste.nomEquipement],
                 });
 
+                if (!mounted) return;
                 if (widget.onSave != null) widget.onSave!();
                 Navigator.of(context).pop();
               },
