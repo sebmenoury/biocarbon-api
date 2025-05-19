@@ -134,7 +134,11 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                     isExpanded: true,
                     style: const TextStyle(fontSize: 12),
                     items:
-                        ["Maison", "Appartement", "Maison Passive"]
+                        [
+                              "Maison Principale",
+                              "Maison Secondaire",
+                              "Bien locatif",
+                            ]
                             .map(
                               (t) => DropdownMenuItem(value: t, child: Text(t)),
                             )
@@ -188,7 +192,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                 children: [
                   DropdownButtonFormField<String>(
                     value:
-                        bien.nomEquipement.isNotEmpty
+                        facteursEmission.keys.contains(bien.nomEquipement)
                             ? bien.nomEquipement
                             : null,
                     decoration: const InputDecoration(
@@ -199,11 +203,21 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                     style: const TextStyle(fontSize: 12),
                     items:
                         facteursEmission.keys
+                            .where(
+                              (k) =>
+                                  k.contains("Maison") ||
+                                  k.contains("Appartement"),
+                            )
                             .map(
-                              (e) => DropdownMenuItem(value: e, child: Text(e)),
+                              (t) => DropdownMenuItem(value: t, child: Text(t)),
                             )
                             .toList(),
-                    onChanged: (v) => setState(() => bien.nomEquipement = v!),
+                    onChanged: (val) {
+                      setState(() {
+                        bien.nomEquipement = val!;
+                        bien.type = val;
+                      });
+                    },
                   ),
                   const SizedBox(height: 12),
                   TextFormField(
