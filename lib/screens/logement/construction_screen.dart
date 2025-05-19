@@ -95,7 +95,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
             constraints: const BoxConstraints(),
           ),
           const SizedBox(width: 8),
-          Text(
+          const Text(
             "Bien immobilier",
             style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
           ),
@@ -104,6 +104,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
 
       children: [
         SingleChildScrollView(
+          padding: const EdgeInsets.all(12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -140,7 +141,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 18),
 
                     /// Dénomination
                     Row(
@@ -148,7 +149,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                         const Expanded(
                           flex: 2,
                           child: Text(
-                            "Dénomination du bien",
+                            "Dénomination",
                             style: TextStyle(fontSize: 11),
                           ),
                         ),
@@ -157,7 +158,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                           child: TextFormField(
                             initialValue: bien.nomLogement,
                             onChanged: (val) => bien.nomLogement = val,
-                            style: const TextStyle(fontSize: 11),
+                            style: const TextStyle(fontSize: 12),
                             decoration: const InputDecoration(
                               isDense: true,
                               contentPadding: EdgeInsets.only(bottom: 6),
@@ -167,7 +168,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 12),
 
                     /// Adresse
                     Row(
@@ -199,13 +200,18 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                     /// Inclure dans le bilan
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Checkbox(
-                          value: bien.inclureDansBilan ?? true,
-                          onChanged:
-                              (v) => setState(
-                                () => bien.inclureDansBilan = v ?? true,
-                              ),
+                        Transform.scale(
+                          scale: 0.75,
+                          child: Checkbox(
+                            value: bien.inclureDansBilan ?? true,
+                            visualDensity: VisualDensity.compact,
+                            onChanged:
+                                (v) => setState(
+                                  () => bien.inclureDansBilan = v ?? true,
+                                ),
+                          ),
                         ),
                         const SizedBox(width: 4),
                         const Text(
@@ -222,7 +228,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
               /// DESCRIPTIF DU BIEN
               CustomCard(
                 padding: const EdgeInsets.symmetric(
-                  vertical: 3,
+                  vertical: 6,
                   horizontal: 16,
                 ),
                 child: Column(
@@ -462,13 +468,16 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                   children: [
                     ListTile(
                       dense: true,
-                      contentPadding: EdgeInsets.zero,
+                      visualDensity: VisualDensity(horizontal: 0, vertical: -4),
+                      minVerticalPadding: 0,
+                      contentPadding: EdgeInsets.symmetric(horizontal: 8),
                       title: const Text(
                         "Déclarer un garage",
                         style: TextStyle(fontSize: 12),
                       ),
                       trailing: Icon(
                         showGarage ? Icons.expand_less : Icons.chevron_right,
+                        size: 12,
                       ),
                       onTap: () => setState(() => showGarage = !showGarage),
                     ),
@@ -556,13 +565,16 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                   children: [
                     ListTile(
                       dense: true,
-                      contentPadding: EdgeInsets.zero,
+                      visualDensity: VisualDensity(horizontal: 0, vertical: -4),
+                      minVerticalPadding: 0,
+                      contentPadding: EdgeInsets.symmetric(horizontal: 8),
                       title: const Text(
                         "Déclarer une piscine",
                         style: TextStyle(fontSize: 12),
                       ),
                       trailing: Icon(
                         showPiscine ? Icons.expand_less : Icons.chevron_right,
+                        size: 12,
                       ),
                       onTap: () => setState(() => showPiscine = !showPiscine),
                     ),
@@ -743,12 +755,16 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                   children: [
                     ListTile(
                       dense: true,
+                      visualDensity: VisualDensity(horizontal: 0, vertical: -4),
+                      minVerticalPadding: 0,
+                      contentPadding: EdgeInsets.symmetric(horizontal: 8),
                       title: const Text(
                         "Déclarer abri / serre",
                         style: TextStyle(fontSize: 12),
                       ),
                       trailing: Icon(
                         showAbri ? Icons.expand_less : Icons.chevron_right,
+                        size: 12,
                       ),
                       onTap: () => setState(() => showAbri = !showAbri),
                     ),
@@ -828,43 +844,60 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
 
               /// BOUTON
               const SizedBox(height: 12),
-              ElevatedButton.icon(
-                onPressed: () async {
-                  final double emission = calculerTotalEmission(
-                    poste,
-                    facteursEmission,
-                    dureesAmortissement,
-                  );
-                  await ApiService.savePoste({
-                    "Code_Individu": "BASILE",
-                    "Type_Temps": "Réel",
-                    "Valeur_Temps": "2025",
-                    "Date_enregistrement": DateTime.now().toIso8601String(),
-                    "Type_Poste": "Equipement",
-                    "Type_Categorie": "Logement",
-                    "Sous_Categorie": "Habitat",
-                    "Nom_Poste": poste.nomEquipement,
-                    "Nom_Logement": bien.nomLogement,
-                    "Quantite": poste.surface,
-                    "Unite": "m²",
-                    "Facteur_Emission": facteursEmission[poste.nomEquipement],
-                    "Emission_Calculee": emission,
-                    "Mode_Calcul": "Amorti",
-                    "Annee_Achat": poste.anneeConstruction,
-                    "Duree_Amortissement":
-                        dureesAmortissement[poste.nomEquipement],
-                  });
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  ElevatedButton.icon(
+                    onPressed: () async {
+                      final double emission = calculerTotalEmission(
+                        poste,
+                        facteursEmission,
+                        dureesAmortissement,
+                      );
+                      await ApiService.savePoste({
+                        "Code_Individu": "BASILE",
+                        "Type_Temps": "Réel",
+                        "Valeur_Temps": "2025",
+                        "Date_enregistrement": DateTime.now().toIso8601String(),
+                        "Type_Poste": "Equipement",
+                        "Type_Categorie": "Logement",
+                        "Sous_Categorie": "Habitat",
+                        "Nom_Poste": poste.nomEquipement,
+                        "Nom_Logement": bien.nomLogement,
+                        "Quantite": poste.surface,
+                        "Unite": "m²",
+                        "Facteur_Emission":
+                            facteursEmission[poste.nomEquipement],
+                        "Emission_Calculee": emission,
+                        "Mode_Calcul": "Amorti",
+                        "Annee_Achat": poste.anneeConstruction,
+                        "Duree_Amortissement":
+                            dureesAmortissement[poste.nomEquipement],
+                      });
 
-                  if (!mounted) return;
-                  if (widget.onSave != null) widget.onSave!();
-                  Navigator.of(context).pop();
-                },
-                icon: const Icon(Icons.save),
-                label: const Text("Enregistrer"),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green[100],
-                  foregroundColor: Colors.green[900],
-                ),
+                      if (!mounted) return;
+                      if (widget.onSave != null) widget.onSave!();
+                      Navigator.of(context).pop();
+                    },
+                    icon: const Icon(Icons.save, size: 14),
+                    label: const Text(
+                      "Enregistrer",
+                      style: TextStyle(fontSize: 12),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: const Size(120, 36),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
+                      ),
+                      backgroundColor: Colors.green[100],
+                      foregroundColor: Colors.green[900],
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
