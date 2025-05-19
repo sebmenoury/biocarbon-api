@@ -462,7 +462,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  "Ajouter une déclaration pour \${bien['Dénomination'] ?? ''}",
+                                  "Ajouter une déclaration pour ${bien['Dénomination'] ?? ''}",
                                   style: const TextStyle(fontSize: 12),
                                 ),
                                 const Icon(Icons.chevron_right, size: 14),
@@ -476,7 +476,10 @@ class _PosteListScreenState extends State<PosteListScreen> {
 
                   widgets.add(
                     CustomCard(
-                      padding: const EdgeInsets.all(12),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 6,
+                        horizontal: 12,
+                      ),
                       child: InkWell(
                         onTap: () => handleAdd(),
                         child: Row(
