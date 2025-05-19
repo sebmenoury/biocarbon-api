@@ -140,7 +140,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
             if (snapshot.hasError) {
               return Padding(
                 padding: const EdgeInsets.all(16),
-                child: Text("Erreur : \${snapshot.error}"),
+                child: Text("Erreur : ${snapshot.error}"),
               );
             }
 
@@ -193,7 +193,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                                 Row(
                                   children: [
                                     Text(
-                                      "\${total.round()} kgCO₂",
+                                      "${total.round()} kgCO₂",
                                       style: const TextStyle(
                                         fontSize: 11,
                                         fontWeight: FontWeight.bold,
@@ -212,7 +212,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                                 return PostListCard(
                                   title: poste.nomPoste ?? 'Sans nom',
                                   emission:
-                                      "\${poste.emissionCalculee?.round() ?? 0} kgCO₂",
+                                      "${poste.emissionCalculee?.round() ?? 0} kgCO₂",
                                   onEdit: () {},
                                   onDelete: () {},
                                 );
@@ -290,7 +290,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                               Row(
                                 children: [
                                   Text(
-                                    "\${total.round()} kgCO₂",
+                                    "${total.round()} kgCO₂",
                                     style: const TextStyle(
                                       fontSize: 11,
                                       fontWeight: FontWeight.bold,
@@ -309,7 +309,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                               return PostListCard(
                                 title: poste.nomPoste ?? 'Sans nom',
                                 emission:
-                                    "\${poste.emissionCalculee?.round() ?? 0} kgCO₂",
+                                    "${poste.emissionCalculee?.round() ?? 0} kgCO₂",
                                 onEdit: () {},
                                 onDelete: () {},
                               );
@@ -342,7 +342,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                   if (biensSnapshot.hasError) {
                     return Padding(
                       padding: const EdgeInsets.all(16),
-                      child: Text("Erreur : \${biensSnapshot.error}"),
+                      child: Text("Erreur : ${biensSnapshot.error}"),
                     );
                   }
 
@@ -404,7 +404,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                                         Row(
                                           children: [
                                             Text(
-                                              "\${total.round()} kgCO₂",
+                                              "${total.round()} kgCO₂",
                                               style: const TextStyle(
                                                 fontSize: 11,
                                                 fontWeight: FontWeight.bold,
@@ -429,7 +429,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                                           return PostListCard(
                                             title: poste.nomPoste ?? 'Sans nom',
                                             emission:
-                                                "\${poste.emissionCalculee?.round() ?? 0} kgCO₂",
+                                                "${poste.emissionCalculee?.round() ?? 0} kgCO₂",
                                             onEdit: () {},
                                             onDelete: () {},
                                           );
