@@ -101,56 +101,55 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
           ),
         ],
       ),
+
       children: [
         SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              /// HEADER
+              /// INFOS DU BIEN IMMOBILIER (fusionné)
               CustomCard(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16,
-                  vertical: 8,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          sousCategorieIcons['Biens Immobiliers'] ?? Icons.home,
-                          size: 12,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(bien.typeBien, style: TextStyle(fontSize: 12)),
-                      ],
-                    ),
-                    Text(
-                      "${total.toStringAsFixed(0)} kgCO₂/an",
-                      style: const TextStyle(fontSize: 12),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 3),
-
-              /// IDENTITÉ DU BIEN
-              CustomCard(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 3,
-                  horizontal: 16,
+                  vertical: 6,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    /// DÉNOMINATION
+                    /// Ligne type de bien + émission
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              sousCategorieIcons['Biens Immobiliers'] ??
+                                  Icons.home,
+                              size: 12,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              bien.typeBien,
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                          ],
+                        ),
+                        Text(
+                          "${total.toStringAsFixed(0)} kgCO₂/an",
+                          style: const TextStyle(fontSize: 12),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+
+                    /// Dénomination
                     Row(
                       children: [
                         const Expanded(
                           flex: 2,
                           child: Text(
                             "Dénomination du bien",
-                            style: TextStyle(fontSize: 10),
+                            style: TextStyle(fontSize: 11),
                           ),
                         ),
                         Expanded(
@@ -158,30 +157,26 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                           child: TextFormField(
                             initialValue: bien.nomLogement,
                             onChanged: (val) => bien.nomLogement = val,
-                            style: const TextStyle(fontSize: 10),
+                            style: const TextStyle(fontSize: 11),
                             decoration: const InputDecoration(
                               isDense: true,
-                              contentPadding: EdgeInsets.symmetric(
-                                vertical: 6,
-                                horizontal: 8,
-                              ),
-                              border:
-                                  OutlineInputBorder(), // ou InputBorder.none si tu préfères sans
+                              contentPadding: EdgeInsets.only(bottom: 6),
+                              border: UnderlineInputBorder(),
                             ),
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 10),
 
-                    /// ADRESSE
+                    /// Adresse
                     Row(
                       children: [
                         const Expanded(
                           flex: 2,
                           child: Text(
                             "Adresse",
-                            style: TextStyle(fontSize: 12),
+                            style: TextStyle(fontSize: 11),
                           ),
                         ),
                         Expanded(
@@ -189,20 +184,19 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                           child: TextFormField(
                             initialValue: bien.adresse ?? '',
                             onChanged: (val) => bien.adresse = val,
-                            style: const TextStyle(fontSize: 12),
+                            style: const TextStyle(fontSize: 11),
                             decoration: const InputDecoration(
                               isDense: true,
-                              contentPadding: EdgeInsets.symmetric(
-                                vertical: 6,
-                                horizontal: 8,
-                              ),
-                              border: OutlineInputBorder(),
+                              contentPadding: EdgeInsets.only(bottom: 6),
+                              border: UnderlineInputBorder(),
                             ),
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 6),
+                    const SizedBox(height: 12),
+
+                    /// Inclure dans le bilan
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
@@ -216,7 +210,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                         const SizedBox(width: 4),
                         const Text(
                           "Inclure dans le bilan",
-                          style: TextStyle(fontSize: 10),
+                          style: TextStyle(fontSize: 11),
                         ),
                       ],
                     ),
@@ -260,7 +254,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                       onChanged:
                           (val) => setState(() => poste.nomEquipement = val!),
                     ),
-                    const SizedBox(height: 3),
+                    const SizedBox(height: 12),
 
                     /// SURFACE
                     Row(
@@ -268,13 +262,13 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                       children: [
                         const Text(
                           "Surface (m²)",
-                          style: TextStyle(fontSize: 10),
+                          style: TextStyle(fontSize: 11),
                         ),
                         Row(
                           children: [
                             IconButton(
                               icon: const Icon(Icons.remove),
-                              iconSize: 12,
+                              iconSize: 11,
                               padding: EdgeInsets.zero,
                               constraints: const BoxConstraints(),
                               onPressed:
@@ -290,7 +284,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                               child: TextFormField(
                                 initialValue: poste.surface.toStringAsFixed(0),
                                 textAlign: TextAlign.center,
-                                style: const TextStyle(fontSize: 12),
+                                style: const TextStyle(fontSize: 11),
                                 keyboardType: TextInputType.number,
                                 decoration: const InputDecoration(
                                   isDense: true,
@@ -309,7 +303,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                             ),
                             IconButton(
                               icon: const Icon(Icons.add),
-                              iconSize: 12,
+                              iconSize: 11,
                               padding: EdgeInsets.zero,
                               constraints: const BoxConstraints(),
                               onPressed:
@@ -332,13 +326,13 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                       children: [
                         const Text(
                           "Année de construction",
-                          style: TextStyle(fontSize: 10),
+                          style: TextStyle(fontSize: 11),
                         ),
                         Row(
                           children: [
                             IconButton(
                               icon: const Icon(Icons.remove),
-                              iconSize: 12,
+                              iconSize: 11,
                               padding: EdgeInsets.zero,
                               constraints: const BoxConstraints(),
                               onPressed:
@@ -356,7 +350,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                                 initialValue:
                                     poste.anneeConstruction.toString(),
                                 textAlign: TextAlign.center,
-                                style: const TextStyle(fontSize: 12),
+                                style: const TextStyle(fontSize: 11),
                                 keyboardType: TextInputType.number,
                                 decoration: const InputDecoration(
                                   isDense: true,
@@ -377,7 +371,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                             ),
                             IconButton(
                               icon: const Icon(Icons.add),
-                              iconSize: 12,
+                              iconSize: 11,
                               padding: EdgeInsets.zero,
                               constraints: const BoxConstraints(),
                               onPressed:
@@ -399,25 +393,54 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                       children: [
                         const Text(
                           "Nombre de propriétaires",
-                          style: TextStyle(fontSize: 10),
+                          style: TextStyle(fontSize: 11),
                         ),
                         Row(
                           children: [
                             IconButton(
                               icon: const Icon(Icons.remove),
-                              iconSize: 12,
+                              iconSize: 11,
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(),
                               onPressed:
-                                  () => setState(() => poste.nbProprietaires--),
+                                  () => setState(() {
+                                    if (poste.nbProprietaires > 1)
+                                      poste.nbProprietaires--;
+                                  }),
                             ),
-                            Text(
-                              poste.nbProprietaires.toString(),
-                              style: const TextStyle(fontSize: 12),
+                            SizedBox(
+                              width: 40,
+                              child: TextFormField(
+                                initialValue: poste.nbProprietaires.toString(),
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(fontSize: 11),
+                                keyboardType: TextInputType.number,
+                                decoration: const InputDecoration(
+                                  isDense: true,
+                                  contentPadding: EdgeInsets.symmetric(
+                                    vertical: 4,
+                                  ),
+                                  border: InputBorder.none,
+                                ),
+                                onChanged: (val) {
+                                  final parsed = int.tryParse(val);
+                                  if (parsed != null && parsed >= 1) {
+                                    setState(
+                                      () => poste.nbProprietaires = parsed,
+                                    );
+                                  }
+                                },
+                              ),
                             ),
                             IconButton(
                               icon: const Icon(Icons.add),
-                              iconSize: 12,
+                              iconSize: 11,
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(),
                               onPressed:
-                                  () => setState(() => poste.nbProprietaires++),
+                                  () => setState(() {
+                                    poste.nbProprietaires++;
+                                  }),
                             ),
                           ],
                         ),
