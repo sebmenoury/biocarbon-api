@@ -13,7 +13,7 @@ def add_poste():
     required_fields = [
         "Code_Individu", "Type_Temps", "Valeur_Temps", "Date_Enregistrement",
         "Type_Poste", "Type_Categorie", "Sous_Categorie", "ID_Bien", "Type_Bien", "Nom_Poste", "Quantite", "Unite",
-        "Facteur_Emission", "Emission_Calculee", "Mode_Calcul", "Annee_Achat", "Duree_Amortissement"
+        "Frequence", "Facteur_Emission", "Emission_Calculee", "Mode_Calcul", "Annee_Achat", "Duree_Amortissement"
     ]
 
     if not all(field in data for field in required_fields):
@@ -38,6 +38,7 @@ def add_poste():
         data["Nom_Poste"],
         data["Quantite"],
         data["Unite"],
+        data["Frequence"],
         data["Facteur_Emission"],
         data["Emission_Calculee"],
         data["Mode_Calcul"],

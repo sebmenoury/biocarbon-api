@@ -18,6 +18,9 @@ class BienImmobilier {
   bool abriEtSerre;
   double surfaceAbriEtSerre;
 
+  String? adresse;
+  bool? inclureDansBilan;
+
   BienImmobilier({
     this.idBien,
     this.nomLogement = "Mon logement",
@@ -34,5 +37,7 @@ class BienImmobilier {
     this.piscineLargeur = 2.5,
     this.abriEtSerre = false,
     this.surfaceAbriEtSerre = 10,
+    this.adresse,
+    this.inclureDansBilan = true,
   });
 }
