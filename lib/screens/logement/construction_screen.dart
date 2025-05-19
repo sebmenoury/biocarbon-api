@@ -44,11 +44,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
 
       for (var e in equipements) {
         final nom = e['Nom_Equipement'];
-        final facteur =
-            double.tryParse(
-              e['Valeur_Emission_Grise'].toString().replaceAll(',', '.'),
-            ) ??
-            0;
+        final facteur = double.tryParse(e['Valeur_Emission_Grise'].toString().replaceAll(',', '.')) ?? 0;
         final duree = int.tryParse(e['Duree_Amortissement'].toString()) ?? 1;
         facteurs[nom] = facteur;
         durees[nom] = duree;
@@ -69,19 +65,11 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final total = calculerTotalEmission(
-      poste,
-      facteursEmission,
-      dureesAmortissement,
-    );
+    final total = calculerTotalEmission(poste, facteursEmission, dureesAmortissement);
 
     if (isLoading) return const Center(child: CircularProgressIndicator());
     if (errorMsg != null) {
-      return Scaffold(
-        body: Center(
-          child: Text(errorMsg!, style: const TextStyle(color: Colors.red)),
-        ),
-      );
+      return Scaffold(body: Center(child: Text(errorMsg!, style: const TextStyle(color: Colors.red))));
     }
 
     return BaseScreen(
@@ -95,10 +83,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
             constraints: const BoxConstraints(),
           ),
           const SizedBox(width: 8),
-          const Text(
-            "Bien immobilier",
-            style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-          ),
+          const Text("Bien immobilier", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
         ],
       ),
 
@@ -110,10 +95,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
             children: [
               /// INFOS DU BIEN IMMOBILIER (fusionné)
               CustomCard(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 6,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -123,22 +105,12 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                       children: [
                         Row(
                           children: [
-                            Icon(
-                              sousCategorieIcons['Biens Immobiliers'] ??
-                                  Icons.home,
-                              size: 12,
-                            ),
+                            Icon(sousCategorieIcons['Biens Immobiliers'] ?? Icons.home, size: 12),
                             const SizedBox(width: 8),
-                            Text(
-                              bien.typeBien,
-                              style: const TextStyle(fontSize: 12),
-                            ),
+                            Text(bien.typeBien, style: const TextStyle(fontSize: 12)),
                           ],
                         ),
-                        Text(
-                          "${total.toStringAsFixed(0)} kgCO₂/an",
-                          style: const TextStyle(fontSize: 12),
-                        ),
+                        Text("${total.toStringAsFixed(0)} kgCO₂/an", style: const TextStyle(fontSize: 12)),
                       ],
                     ),
                     const SizedBox(height: 18),
@@ -146,13 +118,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                     /// Dénomination
                     Row(
                       children: [
-                        const Expanded(
-                          flex: 2,
-                          child: Text(
-                            "Dénomination",
-                            style: TextStyle(fontSize: 11),
-                          ),
-                        ),
+                        const Expanded(flex: 2, child: Text("Dénomination", style: TextStyle(fontSize: 11))),
                         Expanded(
                           flex: 3,
                           child: TextFormField(
@@ -173,13 +139,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                     /// Adresse
                     Row(
                       children: [
-                        const Expanded(
-                          flex: 2,
-                          child: Text(
-                            "Adresse",
-                            style: TextStyle(fontSize: 11),
-                          ),
-                        ),
+                        const Expanded(flex: 2, child: Text("Adresse", style: TextStyle(fontSize: 11))),
                         Expanded(
                           flex: 3,
                           child: TextFormField(
@@ -207,17 +167,11 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                           child: Checkbox(
                             value: bien.inclureDansBilan ?? true,
                             visualDensity: VisualDensity.compact,
-                            onChanged:
-                                (v) => setState(
-                                  () => bien.inclureDansBilan = v ?? true,
-                                ),
+                            onChanged: (v) => setState(() => bien.inclureDansBilan = v ?? true),
                           ),
                         ),
                         const SizedBox(width: 4),
-                        const Text(
-                          "Inclure dans le bilan",
-                          style: TextStyle(fontSize: 11),
-                        ),
+                        const Text("Inclure dans le bilan", style: TextStyle(fontSize: 11)),
                       ],
                     ),
                   ],
@@ -227,38 +181,28 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
 
               /// DESCRIPTIF DU BIEN
               CustomCard(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 6,
-                  horizontal: 16,
-                ),
+                padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     DropdownButtonFormField<String>(
-                      value:
-                          facteursEmission.keys.contains(poste.nomEquipement)
-                              ? poste.nomEquipement
-                              : null,
+                      value: facteursEmission.keys.contains(poste.nomEquipement) ? poste.nomEquipement : null,
                       decoration: const InputDecoration(
                         labelText: "Type de maison/appartement",
                         labelStyle: TextStyle(fontSize: 10),
+                        isDense: true,
+                        contentPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
                       ),
                       isExpanded: true,
-                      style: const TextStyle(fontSize: 10),
+                      style: const TextStyle(fontSize: 11),
                       items:
                           facteursEmission.keys
-                              .where(
-                                (k) =>
-                                    k.contains("Maison") ||
-                                    k.contains("Appartement"),
-                              )
+                              .where((k) => k.contains("Maison") || k.contains("Appartement"))
                               .map(
-                                (t) =>
-                                    DropdownMenuItem(value: t, child: Text(t)),
+                                (t) => DropdownMenuItem(value: t, child: Text(t, style: const TextStyle(fontSize: 11))),
                               )
                               .toList(),
-                      onChanged:
-                          (val) => setState(() => poste.nomEquipement = val!),
+                      onChanged: (val) => setState(() => poste.nomEquipement = val!),
                     ),
                     const SizedBox(height: 12),
 
@@ -266,10 +210,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
-                          "Surface (m²)",
-                          style: TextStyle(fontSize: 11),
-                        ),
+                        const Text("Surface (m²)", style: TextStyle(fontSize: 11)),
                         Row(
                           children: [
                             IconButton(
@@ -279,10 +220,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                               constraints: const BoxConstraints(),
                               onPressed:
                                   () => setState(() {
-                                    poste.surface = (poste.surface - 1).clamp(
-                                      0,
-                                      10000,
-                                    ); // limite basse 0
+                                    poste.surface = (poste.surface - 1).clamp(0, 10000); // limite basse 0
                                   }),
                             ),
                             SizedBox(
@@ -294,16 +232,12 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                                 keyboardType: TextInputType.number,
                                 decoration: const InputDecoration(
                                   isDense: true,
-                                  contentPadding: EdgeInsets.symmetric(
-                                    vertical: 4,
-                                    horizontal: 8,
-                                  ),
+                                  contentPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
                                   border: InputBorder.none, // Supprime le trait
                                 ),
                                 onChanged: (val) {
                                   final parsed = double.tryParse(val);
-                                  if (parsed != null)
-                                    setState(() => poste.surface = parsed);
+                                  if (parsed != null) setState(() => poste.surface = parsed);
                                 },
                               ),
                             ),
@@ -314,10 +248,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                               constraints: const BoxConstraints(),
                               onPressed:
                                   () => setState(() {
-                                    poste.surface = (poste.surface + 1).clamp(
-                                      0,
-                                      10000,
-                                    );
+                                    poste.surface = (poste.surface + 1).clamp(0, 10000);
                                   }),
                             ),
                           ],
@@ -330,10 +261,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
-                          "Année de construction",
-                          style: TextStyle(fontSize: 11),
-                        ),
+                        const Text("Année de construction", style: TextStyle(fontSize: 11)),
                         Row(
                           children: [
                             IconButton(
@@ -343,35 +271,27 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                               constraints: const BoxConstraints(),
                               onPressed:
                                   () => setState(() {
-                                    poste.anneeConstruction =
-                                        (poste.anneeConstruction - 1).clamp(
-                                          1800,
-                                          DateTime.now().year,
-                                        );
+                                    poste.anneeConstruction = (poste.anneeConstruction - 1).clamp(
+                                      1800,
+                                      DateTime.now().year,
+                                    );
                                   }),
                             ),
                             SizedBox(
                               width: 50,
                               child: TextFormField(
-                                initialValue:
-                                    poste.anneeConstruction.toString(),
+                                initialValue: poste.anneeConstruction.toString(),
                                 textAlign: TextAlign.center,
                                 style: const TextStyle(fontSize: 11),
                                 keyboardType: TextInputType.number,
                                 decoration: const InputDecoration(
                                   isDense: true,
-                                  contentPadding: EdgeInsets.symmetric(
-                                    vertical: 4,
-                                    horizontal: 8,
-                                  ),
+                                  contentPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
                                   border: InputBorder.none, // Supprime le trait
                                 ),
                                 onChanged: (val) {
                                   final parsed = int.tryParse(val);
-                                  if (parsed != null)
-                                    setState(
-                                      () => poste.anneeConstruction = parsed,
-                                    );
+                                  if (parsed != null) setState(() => poste.anneeConstruction = parsed);
                                 },
                               ),
                             ),
@@ -382,11 +302,10 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                               constraints: const BoxConstraints(),
                               onPressed:
                                   () => setState(() {
-                                    poste.anneeConstruction =
-                                        (poste.anneeConstruction + 1).clamp(
-                                          1800,
-                                          DateTime.now().year,
-                                        );
+                                    poste.anneeConstruction = (poste.anneeConstruction + 1).clamp(
+                                      1800,
+                                      DateTime.now().year,
+                                    );
                                   }),
                             ),
                           ],
@@ -397,10 +316,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
-                          "Nombre de propriétaires",
-                          style: TextStyle(fontSize: 11),
-                        ),
+                        const Text("Nombre de propriétaires", style: TextStyle(fontSize: 11)),
                         Row(
                           children: [
                             IconButton(
@@ -410,8 +326,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                               constraints: const BoxConstraints(),
                               onPressed:
                                   () => setState(() {
-                                    if (poste.nbProprietaires > 1)
-                                      poste.nbProprietaires--;
+                                    if (poste.nbProprietaires > 1) poste.nbProprietaires--;
                                   }),
                             ),
                             SizedBox(
@@ -423,17 +338,13 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                                 keyboardType: TextInputType.number,
                                 decoration: const InputDecoration(
                                   isDense: true,
-                                  contentPadding: EdgeInsets.symmetric(
-                                    vertical: 4,
-                                  ),
+                                  contentPadding: EdgeInsets.symmetric(vertical: 4),
                                   border: InputBorder.none,
                                 ),
                                 onChanged: (val) {
                                   final parsed = int.tryParse(val);
                                   if (parsed != null && parsed >= 1) {
-                                    setState(
-                                      () => poste.nbProprietaires = parsed,
-                                    );
+                                    setState(() => poste.nbProprietaires = parsed);
                                   }
                                 },
                               ),
@@ -460,10 +371,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
 
               /// GARAGE
               CustomCard(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 6,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                 child: Column(
                   children: [
                     ListTile(
@@ -471,14 +379,8 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                       visualDensity: VisualDensity(horizontal: 0, vertical: -4),
                       minVerticalPadding: 0,
                       contentPadding: EdgeInsets.symmetric(horizontal: 8),
-                      title: const Text(
-                        "Déclarer un garage",
-                        style: TextStyle(fontSize: 12),
-                      ),
-                      trailing: Icon(
-                        showGarage ? Icons.expand_less : Icons.chevron_right,
-                        size: 12,
-                      ),
+                      title: const Text("Déclarer un garage", style: TextStyle(fontSize: 12)),
+                      trailing: Icon(showGarage ? Icons.expand_less : Icons.chevron_right, size: 12),
                       onTap: () => setState(() => showGarage = !showGarage),
                     ),
                     if (showGarage)
@@ -486,10 +388,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text(
-                            "Surface garage (m²)",
-                            style: TextStyle(fontSize: 11),
-                          ),
+                          const Text("Surface garage (m²)", style: TextStyle(fontSize: 11)),
                           Row(
                             children: [
                               IconButton(
@@ -499,36 +398,24 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                                 constraints: const BoxConstraints(),
                                 onPressed:
                                     () => setState(() {
-                                      poste.surfaceGarage =
-                                          (poste.surfaceGarage - 1).clamp(
-                                            0,
-                                            500,
-                                          );
+                                      poste.surfaceGarage = (poste.surfaceGarage - 1).clamp(0, 500);
                                     }),
                               ),
                               SizedBox(
                                 width: 50,
                                 child: TextFormField(
-                                  initialValue: poste.surfaceGarage
-                                      .toStringAsFixed(0),
+                                  initialValue: poste.surfaceGarage.toStringAsFixed(0),
                                   textAlign: TextAlign.center,
                                   style: const TextStyle(fontSize: 12),
                                   keyboardType: TextInputType.number,
                                   decoration: const InputDecoration(
                                     isDense: true,
-                                    contentPadding: EdgeInsets.symmetric(
-                                      vertical: 4,
-                                      horizontal: 8,
-                                    ),
-                                    border:
-                                        InputBorder.none, // Supprime le trait
+                                    contentPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                                    border: InputBorder.none, // Supprime le trait
                                   ),
                                   onChanged: (val) {
                                     final parsed = double.tryParse(val);
-                                    if (parsed != null)
-                                      setState(
-                                        () => poste.surfaceGarage = parsed,
-                                      );
+                                    if (parsed != null) setState(() => poste.surfaceGarage = parsed);
                                   },
                                 ),
                               ),
@@ -539,11 +426,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                                 constraints: const BoxConstraints(),
                                 onPressed:
                                     () => setState(() {
-                                      poste.surfaceGarage =
-                                          (poste.surfaceGarage + 1).clamp(
-                                            0,
-                                            500,
-                                          );
+                                      poste.surfaceGarage = (poste.surfaceGarage + 1).clamp(0, 500);
                                     }),
                               ),
                             ],
@@ -557,10 +440,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
 
               /// PISCINE
               CustomCard(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: Column(
                   children: [
                     ListTile(
@@ -568,14 +448,8 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                       visualDensity: VisualDensity(horizontal: 0, vertical: -4),
                       minVerticalPadding: 0,
                       contentPadding: EdgeInsets.symmetric(horizontal: 8),
-                      title: const Text(
-                        "Déclarer une piscine",
-                        style: TextStyle(fontSize: 12),
-                      ),
-                      trailing: Icon(
-                        showPiscine ? Icons.expand_less : Icons.chevron_right,
-                        size: 12,
-                      ),
+                      title: const Text("Déclarer une piscine", style: TextStyle(fontSize: 12)),
+                      trailing: Icon(showPiscine ? Icons.expand_less : Icons.chevron_right, size: 12),
                       onTap: () => setState(() => showPiscine = !showPiscine),
                     ),
                     if (showPiscine)
@@ -584,29 +458,35 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                           DropdownButtonFormField<String>(
                             value: poste.typePiscine,
                             isExpanded: true,
+                            decoration: const InputDecoration(
+                              labelText: "Type de piscine",
+                              labelStyle: TextStyle(fontSize: 10),
+                              isDense: true,
+                              contentPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                            ),
                             style: const TextStyle(fontSize: 11),
                             items:
                                 ["Piscine béton", "Piscine coque"]
                                     .map(
                                       (t) => DropdownMenuItem(
                                         value: t,
-                                        child: Text(t),
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                            vertical: 2,
+                                          ), // <-- réduit l'espacement vertical
+                                          child: Text(t, style: const TextStyle(fontSize: 11)),
+                                        ),
                                       ),
                                     )
                                     .toList(),
-                            onChanged:
-                                (val) =>
-                                    setState(() => poste.typePiscine = val!),
+                            onChanged: (val) => setState(() => poste.typePiscine = val!),
                           ),
 
                           /// LONGUEUR PISCINE
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text(
-                                "Longueur (m)",
-                                style: TextStyle(fontSize: 11),
-                              ),
+                              const Text("Longueur (m)", style: TextStyle(fontSize: 11)),
                               Row(
                                 children: [
                                   IconButton(
@@ -616,39 +496,24 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                                     constraints: const BoxConstraints(),
                                     onPressed:
                                         () => setState(() {
-                                          poste.piscineLongueur =
-                                              (poste.piscineLongueur - 0.2)
-                                                  .clamp(0, 50);
+                                          poste.piscineLongueur = (poste.piscineLongueur - 0.2).clamp(0, 50);
                                         }),
                                   ),
                                   SizedBox(
                                     width: 50,
                                     child: TextFormField(
-                                      initialValue: poste.piscineLongueur
-                                          .toStringAsFixed(1),
+                                      initialValue: poste.piscineLongueur.toStringAsFixed(1),
                                       textAlign: TextAlign.center,
                                       style: const TextStyle(fontSize: 12),
-                                      keyboardType:
-                                          const TextInputType.numberWithOptions(
-                                            decimal: true,
-                                          ),
+                                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
                                       decoration: const InputDecoration(
                                         isDense: true,
-                                        contentPadding: EdgeInsets.symmetric(
-                                          vertical: 4,
-                                          horizontal: 8,
-                                        ),
-                                        border:
-                                            InputBorder
-                                                .none, // Supprime le trait
+                                        contentPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                                        border: InputBorder.none, // Supprime le trait
                                       ),
                                       onChanged: (val) {
                                         final parsed = double.tryParse(val);
-                                        if (parsed != null)
-                                          setState(
-                                            () =>
-                                                poste.piscineLongueur = parsed,
-                                          );
+                                        if (parsed != null) setState(() => poste.piscineLongueur = parsed);
                                       },
                                     ),
                                   ),
@@ -659,9 +524,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                                     constraints: const BoxConstraints(),
                                     onPressed:
                                         () => setState(() {
-                                          poste.piscineLongueur =
-                                              (poste.piscineLongueur + 0.2)
-                                                  .clamp(0, 50);
+                                          poste.piscineLongueur = (poste.piscineLongueur + 0.2).clamp(0, 50);
                                         }),
                                   ),
                                 ],
@@ -674,10 +537,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text(
-                                "Largeur (m)",
-                                style: TextStyle(fontSize: 11),
-                              ),
+                              const Text("Largeur (m)", style: TextStyle(fontSize: 11)),
                               Row(
                                 children: [
                                   IconButton(
@@ -687,38 +547,24 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                                     constraints: const BoxConstraints(),
                                     onPressed:
                                         () => setState(() {
-                                          poste.piscineLargeur =
-                                              (poste.piscineLargeur - 0.1)
-                                                  .clamp(0, 50);
+                                          poste.piscineLargeur = (poste.piscineLargeur - 0.1).clamp(0, 50);
                                         }),
                                   ),
                                   SizedBox(
                                     width: 50,
                                     child: TextFormField(
-                                      initialValue: poste.piscineLargeur
-                                          .toStringAsFixed(1),
+                                      initialValue: poste.piscineLargeur.toStringAsFixed(1),
                                       textAlign: TextAlign.center,
                                       style: const TextStyle(fontSize: 12),
-                                      keyboardType:
-                                          const TextInputType.numberWithOptions(
-                                            decimal: true,
-                                          ),
+                                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
                                       decoration: const InputDecoration(
                                         isDense: true,
-                                        contentPadding: EdgeInsets.symmetric(
-                                          vertical: 4,
-                                          horizontal: 8,
-                                        ),
-                                        border:
-                                            InputBorder
-                                                .none, // Supprime le trait
+                                        contentPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                                        border: InputBorder.none, // Supprime le trait
                                       ),
                                       onChanged: (val) {
                                         final parsed = double.tryParse(val);
-                                        if (parsed != null)
-                                          setState(
-                                            () => poste.piscineLargeur = parsed,
-                                          );
+                                        if (parsed != null) setState(() => poste.piscineLargeur = parsed);
                                       },
                                     ),
                                   ),
@@ -729,9 +575,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                                     constraints: const BoxConstraints(),
                                     onPressed:
                                         () => setState(() {
-                                          poste.piscineLargeur =
-                                              (poste.piscineLargeur + 0.1)
-                                                  .clamp(0, 50);
+                                          poste.piscineLargeur = (poste.piscineLargeur + 0.1).clamp(0, 50);
                                         }),
                                   ),
                                 ],
@@ -747,10 +591,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
 
               /// ABRI / SERRE
               CustomCard(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 6,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                 child: Column(
                   children: [
                     ListTile(
@@ -758,14 +599,8 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                       visualDensity: VisualDensity(horizontal: 0, vertical: -4),
                       minVerticalPadding: 0,
                       contentPadding: EdgeInsets.symmetric(horizontal: 8),
-                      title: const Text(
-                        "Déclarer abri / serre",
-                        style: TextStyle(fontSize: 12),
-                      ),
-                      trailing: Icon(
-                        showAbri ? Icons.expand_less : Icons.chevron_right,
-                        size: 12,
-                      ),
+                      title: const Text("Déclarer abri / serre", style: TextStyle(fontSize: 12)),
+                      trailing: Icon(showAbri ? Icons.expand_less : Icons.chevron_right, size: 12),
                       onTap: () => setState(() => showAbri = !showAbri),
                     ),
                     if (showAbri)
@@ -773,10 +608,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text(
-                            "Surface abri / serre (m²)",
-                            style: TextStyle(fontSize: 11),
-                          ),
+                          const Text("Surface abri / serre (m²)", style: TextStyle(fontSize: 11)),
                           Row(
                             children: [
                               IconButton(
@@ -786,36 +618,24 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                                 constraints: const BoxConstraints(),
                                 onPressed:
                                     () => setState(() {
-                                      poste.surfaceAbriEtSerre =
-                                          (poste.surfaceAbriEtSerre - 1).clamp(
-                                            0,
-                                            200,
-                                          );
+                                      poste.surfaceAbriEtSerre = (poste.surfaceAbriEtSerre - 1).clamp(0, 200);
                                     }),
                               ),
                               SizedBox(
                                 width: 50,
                                 child: TextFormField(
-                                  initialValue: poste.surfaceAbriEtSerre
-                                      .toStringAsFixed(0),
+                                  initialValue: poste.surfaceAbriEtSerre.toStringAsFixed(0),
                                   textAlign: TextAlign.center,
                                   style: const TextStyle(fontSize: 12),
                                   keyboardType: TextInputType.number,
                                   decoration: const InputDecoration(
                                     isDense: true,
-                                    contentPadding: EdgeInsets.symmetric(
-                                      vertical: 4,
-                                      horizontal: 8,
-                                    ),
-                                    border:
-                                        InputBorder.none, // Supprime le trait
+                                    contentPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                                    border: InputBorder.none, // Supprime le trait
                                   ),
                                   onChanged: (val) {
                                     final parsed = double.tryParse(val);
-                                    if (parsed != null)
-                                      setState(
-                                        () => poste.surfaceAbriEtSerre = parsed,
-                                      );
+                                    if (parsed != null) setState(() => poste.surfaceAbriEtSerre = parsed);
                                   },
                                 ),
                               ),
@@ -826,11 +646,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                                 constraints: const BoxConstraints(),
                                 onPressed:
                                     () => setState(() {
-                                      poste.surfaceAbriEtSerre =
-                                          (poste.surfaceAbriEtSerre + 1).clamp(
-                                            0,
-                                            200,
-                                          );
+                                      poste.surfaceAbriEtSerre = (poste.surfaceAbriEtSerre + 1).clamp(0, 200);
                                     }),
                               ),
                             ],
@@ -849,11 +665,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                 children: [
                   ElevatedButton.icon(
                     onPressed: () async {
-                      final double emission = calculerTotalEmission(
-                        poste,
-                        facteursEmission,
-                        dureesAmortissement,
-                      );
+                      final double emission = calculerTotalEmission(poste, facteursEmission, dureesAmortissement);
                       await ApiService.savePoste({
                         "Code_Individu": "BASILE",
                         "Type_Temps": "Réel",
@@ -866,13 +678,11 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                         "Nom_Logement": bien.nomLogement,
                         "Quantite": poste.surface,
                         "Unite": "m²",
-                        "Facteur_Emission":
-                            facteursEmission[poste.nomEquipement],
+                        "Facteur_Emission": facteursEmission[poste.nomEquipement],
                         "Emission_Calculee": emission,
                         "Mode_Calcul": "Amorti",
                         "Annee_Achat": poste.anneeConstruction,
-                        "Duree_Amortissement":
-                            dureesAmortissement[poste.nomEquipement],
+                        "Duree_Amortissement": dureesAmortissement[poste.nomEquipement],
                       });
 
                       if (!mounted) return;
@@ -880,21 +690,13 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                       Navigator.of(context).pop();
                     },
                     icon: const Icon(Icons.save, size: 14),
-                    label: const Text(
-                      "Enregistrer",
-                      style: TextStyle(fontSize: 12),
-                    ),
+                    label: const Text("Enregistrer", style: TextStyle(fontSize: 12)),
                     style: ElevatedButton.styleFrom(
                       minimumSize: const Size(120, 36),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 8,
-                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                       backgroundColor: Colors.green[100],
                       foregroundColor: Colors.green[900],
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                     ),
                   ),
                 ],
