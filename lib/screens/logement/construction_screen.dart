@@ -132,7 +132,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                   ],
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 3),
 
               /// IDENTITÉ DU BIEN
               CustomCard(
@@ -143,24 +143,64 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    TextFormField(
-                      initialValue: bien.nomLogement,
-                      decoration: const InputDecoration(
-                        labelText: "Dénomination du bien",
-                        labelStyle: TextStyle(fontSize: 12),
-                      ),
-                      style: const TextStyle(fontSize: 10),
-                      onChanged: (val) => bien.nomLogement = val,
+                    /// DÉNOMINATION
+                    Row(
+                      children: [
+                        const Expanded(
+                          flex: 2,
+                          child: Text(
+                            "Dénomination du bien",
+                            style: TextStyle(fontSize: 10),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 3,
+                          child: TextFormField(
+                            initialValue: bien.nomLogement,
+                            onChanged: (val) => bien.nomLogement = val,
+                            style: const TextStyle(fontSize: 10),
+                            decoration: const InputDecoration(
+                              isDense: true,
+                              contentPadding: EdgeInsets.symmetric(
+                                vertical: 6,
+                                horizontal: 8,
+                              ),
+                              border:
+                                  OutlineInputBorder(), // ou InputBorder.none si tu préfères sans
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 6),
-                    TextFormField(
-                      initialValue: bien.adresse ?? '',
-                      decoration: const InputDecoration(
-                        labelText: "Adresse",
-                        labelStyle: TextStyle(fontSize: 12),
-                      ),
-                      style: const TextStyle(fontSize: 10),
-                      onChanged: (val) => bien.adresse = val,
+                    const SizedBox(height: 8),
+
+                    /// ADRESSE
+                    Row(
+                      children: [
+                        const Expanded(
+                          flex: 2,
+                          child: Text(
+                            "Adresse",
+                            style: TextStyle(fontSize: 12),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 3,
+                          child: TextFormField(
+                            initialValue: bien.adresse ?? '',
+                            onChanged: (val) => bien.adresse = val,
+                            style: const TextStyle(fontSize: 12),
+                            decoration: const InputDecoration(
+                              isDense: true,
+                              contentPadding: EdgeInsets.symmetric(
+                                vertical: 6,
+                                horizontal: 8,
+                              ),
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 6),
                     Row(
@@ -183,7 +223,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                   ],
                 ),
               ),
-              const SizedBox(height: 6),
+              const SizedBox(height: 3),
 
               /// DESCRIPTIF DU BIEN
               CustomCard(
@@ -387,7 +427,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                 ),
               ),
 
-              const SizedBox(height: 6),
+              const SizedBox(height: 3),
 
               /// GARAGE
               CustomCard(
@@ -416,7 +456,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                         children: [
                           const Text(
                             "Surface garage (m²)",
-                            style: TextStyle(fontSize: 10),
+                            style: TextStyle(fontSize: 11),
                           ),
                           Row(
                             children: [
@@ -481,7 +521,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                   ],
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 3),
 
               /// PISCINE
               CustomCard(
@@ -509,7 +549,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                           DropdownButtonFormField<String>(
                             value: poste.typePiscine,
                             isExpanded: true,
-                            style: const TextStyle(fontSize: 12),
+                            style: const TextStyle(fontSize: 11),
                             items:
                                 ["Piscine béton", "Piscine coque"]
                                     .map(
@@ -530,7 +570,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                             children: [
                               const Text(
                                 "Longueur (m)",
-                                style: TextStyle(fontSize: 10),
+                                style: TextStyle(fontSize: 11),
                               ),
                               Row(
                                 children: [
@@ -542,7 +582,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                                     onPressed:
                                         () => setState(() {
                                           poste.piscineLongueur =
-                                              (poste.piscineLongueur - 0.1)
+                                              (poste.piscineLongueur - 0.2)
                                                   .clamp(0, 50);
                                         }),
                                   ),
@@ -552,7 +592,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                                       initialValue: poste.piscineLongueur
                                           .toStringAsFixed(1),
                                       textAlign: TextAlign.center,
-                                      style: const TextStyle(fontSize: 10),
+                                      style: const TextStyle(fontSize: 12),
                                       keyboardType:
                                           const TextInputType.numberWithOptions(
                                             decimal: true,
@@ -585,7 +625,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                                     onPressed:
                                         () => setState(() {
                                           poste.piscineLongueur =
-                                              (poste.piscineLongueur + 0.1)
+                                              (poste.piscineLongueur + 0.2)
                                                   .clamp(0, 50);
                                         }),
                                   ),
@@ -601,19 +641,19 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                             children: [
                               const Text(
                                 "Largeur (m)",
-                                style: TextStyle(fontSize: 12),
+                                style: TextStyle(fontSize: 11),
                               ),
                               Row(
                                 children: [
                                   IconButton(
                                     icon: const Icon(Icons.remove),
-                                    iconSize: 16,
+                                    iconSize: 12,
                                     padding: EdgeInsets.zero,
                                     constraints: const BoxConstraints(),
                                     onPressed:
                                         () => setState(() {
                                           poste.piscineLargeur =
-                                              (poste.piscineLargeur - 0.5)
+                                              (poste.piscineLargeur - 0.1)
                                                   .clamp(0, 50);
                                         }),
                                   ),
@@ -649,13 +689,13 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                                   ),
                                   IconButton(
                                     icon: const Icon(Icons.add),
-                                    iconSize: 16,
+                                    iconSize: 12,
                                     padding: EdgeInsets.zero,
                                     constraints: const BoxConstraints(),
                                     onPressed:
                                         () => setState(() {
                                           poste.piscineLargeur =
-                                              (poste.piscineLargeur + 0.5)
+                                              (poste.piscineLargeur + 0.1)
                                                   .clamp(0, 50);
                                         }),
                                   ),
@@ -668,19 +708,18 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                   ],
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 3),
 
               /// ABRI / SERRE
               CustomCard(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16,
-                  vertical: 8,
+                  vertical: 6,
                 ),
                 child: Column(
                   children: [
                     ListTile(
                       dense: true,
-                      contentPadding: EdgeInsets.zero,
                       title: const Text(
                         "Déclarer abri / serre",
                         style: TextStyle(fontSize: 12),
@@ -697,7 +736,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                         children: [
                           const Text(
                             "Surface abri / serre (m²)",
-                            style: TextStyle(fontSize: 10),
+                            style: TextStyle(fontSize: 11),
                           ),
                           Row(
                             children: [
@@ -762,10 +801,10 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                   ],
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 3),
 
               /// BOUTON
-              const SizedBox(height: 20),
+              const SizedBox(height: 12),
               ElevatedButton.icon(
                 onPressed: () async {
                   final double emission = calculerTotalEmission(
