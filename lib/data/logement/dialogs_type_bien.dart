@@ -8,7 +8,14 @@ void showChoixTypeBienDialog(
     context: context,
     builder: (context) {
       return AlertDialog(
-        title: const Text("Quel type de bien ?"),
+        backgroundColor: Colors.white.withOpacity(
+          0.95,
+        ), // fond blanc translucide
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Text(
+          "Quel type de bien ?",
+          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+        ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -18,10 +25,13 @@ void showChoixTypeBienDialog(
               "Bien locatif",
             ])
               ListTile(
-                title: Text(type),
+                title: Text(
+                  type,
+                  style: const TextStyle(fontSize: 12), // taille 12
+                ),
                 onTap: () {
-                  Navigator.of(context).pop(); // Fermer le dialog
-                  onSelected(type); // Appelle le callback
+                  Navigator.of(context).pop();
+                  onSelected(type);
                 },
               ),
           ],
