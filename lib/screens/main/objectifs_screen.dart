@@ -22,10 +22,7 @@ class _ObjectifsScreenState extends State<ObjectifsScreen> {
   @override
   void initState() {
     super.initState();
-    dataFuture = ApiService.getEmissionsByCategoryAndSousCategorie(
-      codeIndividu,
-      valeurTemps,
-    );
+    dataFuture = ApiService.getEmissionsByCategoryAndSousCategorie(codeIndividu, valeurTemps);
   }
 
   double totalEmissions(Map<String, Map<String, double>> data) {
@@ -35,26 +32,17 @@ class _ObjectifsScreenState extends State<ObjectifsScreen> {
   @override
   Widget build(BuildContext context) {
     return BaseScreen(
-      title: const Text(
-        "Objectifs carbone",
-        style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-      ),
+      title: const Text("Objectifs carbone", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
       children: [
         FutureBuilder<Map<String, Map<String, double>>>(
           future: dataFuture,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Padding(
-                padding: EdgeInsets.all(32),
-                child: Center(child: CircularProgressIndicator()),
-              );
+              return const Padding(padding: EdgeInsets.all(32), child: Center(child: CircularProgressIndicator()));
             }
 
             if (snapshot.hasError) {
-              return Padding(
-                padding: const EdgeInsets.all(16),
-                child: Text("Erreur : ${snapshot.error}"),
-              );
+              return Padding(padding: const EdgeInsets.all(16), child: Text("Erreur : ${snapshot.error}"));
             }
 
             final data = snapshot.data!;
@@ -70,10 +58,7 @@ class _ObjectifsScreenState extends State<ObjectifsScreen> {
                     children: [
                       const Text(
                         "Projection de vos émissions annuelles",
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 12),
                       SizedBox(
@@ -87,10 +72,7 @@ class _ObjectifsScreenState extends State<ObjectifsScreen> {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      Text(
-                        "Total : ${total.toStringAsFixed(2)} tCO₂e/an",
-                        style: const TextStyle(fontSize: 10),
-                      ),
+                      Text("Total : ${total.toStringAsFixed(2)} tCO₂e/an", style: const TextStyle(fontSize: 10)),
                     ],
                   ),
                 ),

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../ui/layout/base_screen.dart';
 import '../../data/services/api_service.dart';
 import '../../core/constants/app_icons.dart';
-import '../../data/models/poste.dart';
+import '../../data/classes/poste.dart';
 import '../../ui/widgets/post_list_card.dart';
 import '../../ui/layout/custom_card.dart';
 
@@ -28,11 +28,7 @@ class _SubCategorieScreenState extends State<SubCategorieScreen> {
   @override
   void initState() {
     super.initState();
-    postesFuture = ApiService.getPostesByCategorie(
-      widget.typeCategorie,
-      widget.codeIndividu,
-      widget.valeurTemps,
-    );
+    postesFuture = ApiService.getPostesByCategorie(widget.typeCategorie, widget.codeIndividu, widget.valeurTemps);
   }
 
   void handleGroupEdit(String typePoste, String sousCategorie) {}
@@ -51,10 +47,7 @@ class _SubCategorieScreenState extends State<SubCategorieScreen> {
             constraints: const BoxConstraints(),
           ),
           const SizedBox(width: 8),
-          Text(
-            widget.typeCategorie,
-            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-          ),
+          Text(widget.typeCategorie, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
         ],
       ),
       children: [
@@ -76,10 +69,7 @@ class _SubCategorieScreenState extends State<SubCategorieScreen> {
               );
             }
 
-            final totalEmission = postes.fold<double>(
-              0,
-              (sum, p) => sum + (p.emissionCalculee ?? 0),
-            );
+            final totalEmission = postes.fold<double>(0, (sum, p) => sum + (p.emissionCalculee ?? 0));
 
             final Map<String, List<Poste>> grouped = {};
             final Map<String, double> groupSums = {};
@@ -89,46 +79,31 @@ class _SubCategorieScreenState extends State<SubCategorieScreen> {
               final sousCat = poste.sousCategorie ?? 'Autre';
               final key = '$type - $sousCat';
               grouped.putIfAbsent(key, () => []).add(poste);
-              groupSums[key] =
-                  (groupSums[key] ?? 0) + (poste.emissionCalculee ?? 0);
+              groupSums[key] = (groupSums[key] ?? 0) + (poste.emissionCalculee ?? 0);
             }
 
-            final sortedKeys =
-                groupSums.keys.toList()
-                  ..sort((a, b) => groupSums[b]!.compareTo(groupSums[a]!));
+            final sortedKeys = groupSums.keys.toList()..sort((a, b) => groupSums[b]!.compareTo(groupSums[a]!));
 
             return Column(
               children: [
                 // Carte récap globale Logement
                 CustomCard(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   child: Row(
                     children: [
                       Icon(
-                        categoryIcons[widget.typeCategorie] ??
-                            Icons.label_outline,
+                        categoryIcons[widget.typeCategorie] ?? Icons.label_outline,
                         size: 16,
-                        color:
-                            categoryColors[widget.typeCategorie] ??
-                            Colors.grey[700],
+                        color: categoryColors[widget.typeCategorie] ?? Colors.grey[700],
                       ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
                           widget.typeCategorie,
-                          style: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                         ),
                       ),
-                      Text(
-                        "${(totalEmission / 1000).toStringAsFixed(2)} tCO₂",
-                        style: const TextStyle(fontSize: 11),
-                      ),
+                      Text("${(totalEmission / 1000).toStringAsFixed(2)} tCO₂", style: const TextStyle(fontSize: 11)),
                     ],
                   ),
                 ),
@@ -137,23 +112,15 @@ class _SubCategorieScreenState extends State<SubCategorieScreen> {
                 ...sortedKeys.map((key) {
                   final posts = grouped[key]!;
                   final sum = groupSums[key]!;
-                  final pourcentage = (sum / totalEmission * 100)
-                      .toStringAsFixed(1);
+                  final pourcentage = (sum / totalEmission * 100).toStringAsFixed(1);
                   final type = posts.first.typePoste ?? 'Inconnu';
                   final sousCat = posts.first.sousCategorie ?? 'Autre';
 
                   // ✅ Trie ici les postes par émission décroissante
-                  posts.sort(
-                    (a, b) => (b.emissionCalculee ?? 0).compareTo(
-                      a.emissionCalculee ?? 0,
-                    ),
-                  );
+                  posts.sort((a, b) => (b.emissionCalculee ?? 0).compareTo(a.emissionCalculee ?? 0));
 
                   return CustomCard(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     child: Column(
                       children: [
                         // Ligne combinée type titre/sous-titre + trailing + actions
@@ -165,19 +132,10 @@ class _SubCategorieScreenState extends State<SubCategorieScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    sousCat,
-                                    style: const TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
+                                  Text(sousCat, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
                                   Text(
                                     "$pourcentage% ($type)",
-                                    style: const TextStyle(
-                                      fontSize: 10,
-                                      color: Colors.grey,
-                                    ),
+                                    style: const TextStyle(fontSize: 10, color: Colors.grey),
                                   ),
                                 ],
                               ),
@@ -189,10 +147,7 @@ class _SubCategorieScreenState extends State<SubCategorieScreen> {
                               children: [
                                 Text(
                                   "${sum.round()} kgCO",
-                                  style: const TextStyle(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                  style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
                                 ),
                                 const SizedBox(width: 6),
                                 const Icon(Icons.chevron_right, size: 14),
@@ -209,17 +164,12 @@ class _SubCategorieScreenState extends State<SubCategorieScreen> {
                             final poste = posts[index ~/ 2];
                             return PostListCard(
                               title: poste.nomPoste ?? poste.sousCategorie,
-                              emission:
-                                  "${poste.emissionCalculee?.round()} kgCO₂",
+                              emission: "${poste.emissionCalculee?.round()} kgCO₂",
                               onEdit: () {},
                               onDelete: () {},
                             );
                           } else {
-                            return const Divider(
-                              height: 1,
-                              thickness: 0.2,
-                              color: Colors.grey,
-                            );
+                            return const Divider(height: 1, thickness: 0.2, color: Colors.grey);
                           }
                         }),
                       ],

@@ -1,15 +1,13 @@
-import '../../data/logement/poste_bien_immobilier.dart';
+import 'poste_bien_immobilier.dart';
 
 class BienImmobilier {
   final String? idBien;
-  String
-  typeBien; // "Maison principale", "Maison secondaire", "Appartement locatif"
+  String typeBien; // "Maison principale", "Maison secondaire", "Appartement locatif"
   String nomLogement;
   String? adresse;
   bool inclureDansBilan;
 
-  PosteBienImmobilier
-  poste; // 🔁 association directe avec le descriptif technique
+  PosteBienImmobilier poste; // 🔁 association directe avec le descriptif technique
 
   BienImmobilier({
     this.idBien,

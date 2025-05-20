@@ -43,10 +43,7 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
     final currentLabels = selectedIndex == 0 ? equipementLabels : usageLabels;
 
     return BaseScreen(
-      title: const Text(
-        "Mes données",
-        style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-      ),
+      title: const Text("Mes données", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
       children: [
         // Onglets Equipements / Usages
         Padding(
@@ -59,21 +56,13 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
                   child: Container(
                     padding: const EdgeInsets.symmetric(vertical: 3),
                     decoration: BoxDecoration(
-                      color:
-                          selectedIndex == 0
-                              ? Colors.indigo
-                              : Colors.grey.shade200,
-                      borderRadius: const BorderRadius.horizontal(
-                        left: Radius.circular(20),
-                      ),
+                      color: selectedIndex == 0 ? Colors.indigo : Colors.grey.shade200,
+                      borderRadius: const BorderRadius.horizontal(left: Radius.circular(20)),
                     ),
                     alignment: Alignment.center,
                     child: Text(
                       "Equipements",
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: selectedIndex == 0 ? Colors.white : Colors.black,
-                      ),
+                      style: TextStyle(fontSize: 12, color: selectedIndex == 0 ? Colors.white : Colors.black),
                     ),
                   ),
                 ),
@@ -84,21 +73,13 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
                   child: Container(
                     padding: const EdgeInsets.symmetric(vertical: 3),
                     decoration: BoxDecoration(
-                      color:
-                          selectedIndex == 1
-                              ? Colors.indigo
-                              : Colors.grey.shade200,
-                      borderRadius: const BorderRadius.horizontal(
-                        right: Radius.circular(20),
-                      ),
+                      color: selectedIndex == 1 ? Colors.indigo : Colors.grey.shade200,
+                      borderRadius: const BorderRadius.horizontal(right: Radius.circular(20)),
                     ),
                     alignment: Alignment.center,
                     child: Text(
                       "Usages",
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: selectedIndex == 1 ? Colors.white : Colors.black,
-                      ),
+                      style: TextStyle(fontSize: 12, color: selectedIndex == 1 ? Colors.white : Colors.black),
                     ),
                   ),
                 ),
@@ -130,12 +111,7 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder:
-                        (_) => PosteListScreen(
-                          sousCategorie: label,
-                          codeIndividu: 'BASILE',
-                          valeurTemps: '2025',
-                        ),
+                    builder: (_) => PosteListScreen(sousCategorie: label, codeIndividu: 'BASILE', valeurTemps: '2025'),
                   ),
                 );
               },
@@ -145,11 +121,7 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
                 children: [
                   Icon(icon, size: 24, color: color),
                   const SizedBox(height: 6),
-                  Text(
-                    label,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 13),
-                  ),
+                  Text(label, textAlign: TextAlign.center, style: const TextStyle(fontSize: 13)),
                 ],
               ),
             );

@@ -3,12 +3,12 @@ import '../../ui/layout/base_screen.dart';
 import '../../ui/layout/custom_card.dart';
 import '../../ui/widgets/post_list_card.dart';
 import '../../data/services/api_service.dart';
-import '../../data/models/poste.dart';
-import '../../core/utils/sous_categorie_avec_bien.dart';
-import '../../data/logement/bien_immobilier.dart';
-import '../../data/logement/poste_bien_immobilier.dart';
+import '../../data/classes/poste.dart';
+import '../../data/parametres/sous_categorie_avec_bien.dart';
+import '../../data/classes/bien_immobilier.dart';
+import '../../data/classes/poste_bien_immobilier.dart';
 import '../logement/construction_screen.dart';
-import '../../data/logement/dialogs_type_bien.dart';
+import '../logement/dialogs_type_bien.dart';
 
 class PosteListScreen extends StatefulWidget {
   final String sousCategorie;
@@ -48,17 +48,11 @@ class _PosteListScreenState extends State<PosteListScreen> {
         widget.valeurTemps,
       );
     } else {
-      postesFuture = ApiService.getPostesBysousCategorie(
-        widget.sousCategorie,
-        widget.codeIndividu,
-        widget.valeurTemps,
-      );
+      postesFuture = ApiService.getPostesBysousCategorie(widget.sousCategorie, widget.codeIndividu, widget.valeurTemps);
     }
 
     if (avecBien) {
-      biensFuture = ApiService.getBiens(
-        widget.codeIndividu,
-      ).then((biens) => biens.cast<Map<String, dynamic>>());
+      biensFuture = ApiService.getBiens(widget.codeIndividu).then((biens) => biens.cast<Map<String, dynamic>>());
     }
   }
 
@@ -89,13 +83,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
 
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder:
-            (context) => ConstructionScreen(
-              bien: nouveauBien,
-              onSave: () => setState(() {}),
-            ),
-      ),
+      MaterialPageRoute(builder: (context) => ConstructionScreen(bien: nouveauBien, onSave: () => setState(() {}))),
     );
   }
 
@@ -103,23 +91,16 @@ class _PosteListScreenState extends State<PosteListScreen> {
     final poste = PosteBienImmobilier(
       nomEquipement: bien['Nom_Equipement'] ?? '',
       surface: double.tryParse(bien['Surface']?.toString() ?? '100') ?? 100,
-      anneeConstruction:
-          int.tryParse(bien['Annee_Construction']?.toString() ?? '2000') ??
-          2000,
-      nbProprietaires:
-          int.tryParse(bien['Nb_Proprietaires']?.toString() ?? '2') ?? 2,
+      anneeConstruction: int.tryParse(bien['Annee_Construction']?.toString() ?? '2000') ?? 2000,
+      nbProprietaires: int.tryParse(bien['Nb_Proprietaires']?.toString() ?? '2') ?? 2,
       garage: bien['Garage'] == true,
-      surfaceGarage:
-          double.tryParse(bien['Surface_Garage']?.toString() ?? '0') ?? 0,
+      surfaceGarage: double.tryParse(bien['Surface_Garage']?.toString() ?? '0') ?? 0,
       piscine: bien['Piscine'] == true,
       typePiscine: bien['Type_Piscine'] ?? "Piscine béton",
-      piscineLongueur:
-          double.tryParse(bien['Piscine_Longueur']?.toString() ?? '0') ?? 0,
-      piscineLargeur:
-          double.tryParse(bien['Piscine_Largeur']?.toString() ?? '0') ?? 0,
+      piscineLongueur: double.tryParse(bien['Piscine_Longueur']?.toString() ?? '0') ?? 0,
+      piscineLargeur: double.tryParse(bien['Piscine_Largeur']?.toString() ?? '0') ?? 0,
       abriEtSerre: bien['AbriEtSerre'] == true,
-      surfaceAbriEtSerre:
-          double.tryParse(bien['Surface_AbriEtSerre']?.toString() ?? '0') ?? 0,
+      surfaceAbriEtSerre: double.tryParse(bien['Surface_AbriEtSerre']?.toString() ?? '0') ?? 0,
     );
 
     final bienObj = BienImmobilier(
@@ -133,13 +114,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
 
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder:
-            (context) => ConstructionScreen(
-              bien: bienObj,
-              onSave: () => setState(() {}),
-            ),
-      ),
+      MaterialPageRoute(builder: (context) => ConstructionScreen(bien: bienObj, onSave: () => setState(() {}))),
     );
   }
 
@@ -156,10 +131,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
             constraints: const BoxConstraints(),
           ),
           const SizedBox(width: 8),
-          Text(
-            widget.sousCategorie,
-            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-          ),
+          Text(widget.sousCategorie, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
         ],
       ),
       children: [
@@ -167,17 +139,11 @@ class _PosteListScreenState extends State<PosteListScreen> {
           future: postesFuture,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Padding(
-                padding: EdgeInsets.all(32),
-                child: Center(child: CircularProgressIndicator()),
-              );
+              return const Padding(padding: EdgeInsets.all(32), child: Center(child: CircularProgressIndicator()));
             }
 
             if (snapshot.hasError) {
-              return Padding(
-                padding: const EdgeInsets.all(16),
-                child: Text("Erreur : ${snapshot.error}"),
-              );
+              return Padding(padding: const EdgeInsets.all(16), child: Text("Erreur : ${snapshot.error}"));
             }
 
             final postes = snapshot.data ?? [];
@@ -197,43 +163,24 @@ class _PosteListScreenState extends State<PosteListScreen> {
                     postesParSousCat.entries.map((entry) {
                       final sousCat = entry.key;
                       final postes = entry.value;
-                      final total = postes.fold<double>(
-                        0,
-                        (sum, p) => sum + (p.emissionCalculee ?? 0),
-                      );
+                      final total = postes.fold<double>(0, (sum, p) => sum + (p.emissionCalculee ?? 0));
 
-                      postes.sort(
-                        (a, b) => (b.emissionCalculee ?? 0).compareTo(
-                          a.emissionCalculee ?? 0,
-                        ),
-                      );
+                      postes.sort((a, b) => (b.emissionCalculee ?? 0).compareTo(a.emissionCalculee ?? 0));
 
                       return CustomCard(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 6,
-                          horizontal: 12,
-                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(
-                                  sousCat,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 12,
-                                  ),
-                                ),
+                                Text(sousCat, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                                 Row(
                                   children: [
                                     Text(
                                       "${total.round()} kgCO₂",
-                                      style: const TextStyle(
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                      style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
                                     ),
                                     const SizedBox(width: 4),
                                     const Icon(Icons.chevron_right, size: 14),
@@ -247,17 +194,12 @@ class _PosteListScreenState extends State<PosteListScreen> {
                                 final poste = postes[index ~/ 2];
                                 return PostListCard(
                                   title: poste.nomPoste ?? 'Sans nom',
-                                  emission:
-                                      "${poste.emissionCalculee?.round() ?? 0} kgCO₂",
+                                  emission: "${poste.emissionCalculee?.round() ?? 0} kgCO₂",
                                   onEdit: () {},
                                   onDelete: () {},
                                 );
                               } else {
-                                return const Divider(
-                                  height: 1,
-                                  thickness: 0.2,
-                                  color: Colors.grey,
-                                );
+                                return const Divider(height: 1, thickness: 0.2, color: Colors.grey);
                               }
                             }),
                           ],
@@ -270,19 +212,13 @@ class _PosteListScreenState extends State<PosteListScreen> {
             if (!avecBien) {
               if (postes.isEmpty) {
                 return CustomCard(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 6,
-                    horizontal: 12,
-                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
                   child: InkWell(
                     onTap: handleAdd,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: const [
-                        Text(
-                          "Déclarer mes premiers éléments concernant ce thème",
-                          style: TextStyle(fontSize: 12),
-                        ),
+                        Text("Déclarer mes premiers éléments concernant ce thème", style: TextStyle(fontSize: 12)),
                         Icon(Icons.chevron_right, size: 14),
                       ],
                     ),
@@ -290,26 +226,16 @@ class _PosteListScreenState extends State<PosteListScreen> {
                 );
               }
 
-              final total = postes.fold<double>(
-                0,
-                (sum, p) => sum + (p.emissionCalculee ?? 0),
-              );
+              final total = postes.fold<double>(0, (sum, p) => sum + (p.emissionCalculee ?? 0));
 
-              postes.sort(
-                (a, b) => (b.emissionCalculee ?? 0).compareTo(
-                  a.emissionCalculee ?? 0,
-                ),
-              );
+              postes.sort((a, b) => (b.emissionCalculee ?? 0).compareTo(a.emissionCalculee ?? 0));
 
               return Column(
                 children: [
                   InkWell(
                     onTap: handleAdd,
                     child: CustomCard(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 6,
-                        horizontal: 12,
-                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -318,19 +244,13 @@ class _PosteListScreenState extends State<PosteListScreen> {
                             children: [
                               Text(
                                 widget.sousCategorie,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 12,
-                                ),
+                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
                               ),
                               Row(
                                 children: [
                                   Text(
                                     "${total.round()} kgCO₂",
-                                    style: const TextStyle(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                    style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
                                   ),
                                   const SizedBox(width: 4),
                                   const Icon(Icons.chevron_right, size: 14),
@@ -344,17 +264,12 @@ class _PosteListScreenState extends State<PosteListScreen> {
                               final poste = postes[index ~/ 2];
                               return PostListCard(
                                 title: poste.nomPoste ?? 'Sans nom',
-                                emission:
-                                    "${poste.emissionCalculee?.round() ?? 0} kgCO₂",
+                                emission: "${poste.emissionCalculee?.round() ?? 0} kgCO₂",
                                 onEdit: () {},
                                 onDelete: () {},
                               );
                             } else {
-                              return const Divider(
-                                height: 1,
-                                thickness: 0.2,
-                                color: Colors.grey,
-                              );
+                              return const Divider(height: 1, thickness: 0.2, color: Colors.grey);
                             }
                           }),
                         ],
@@ -367,8 +282,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
               return FutureBuilder<List<Map<String, dynamic>>>(
                 future: biensFuture,
                 builder: (context, biensSnapshot) {
-                  if (biensSnapshot.connectionState ==
-                      ConnectionState.waiting) {
+                  if (biensSnapshot.connectionState == ConnectionState.waiting) {
                     return const Padding(
                       padding: EdgeInsets.all(32),
                       child: Center(child: CircularProgressIndicator()),
@@ -376,10 +290,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                   }
 
                   if (biensSnapshot.hasError) {
-                    return Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Text("Erreur : ${biensSnapshot.error}"),
-                    );
+                    return Padding(padding: const EdgeInsets.all(16), child: Text("Erreur : ${biensSnapshot.error}"));
                   }
 
                   final biens = biensSnapshot.data ?? [];
@@ -387,97 +298,62 @@ class _PosteListScreenState extends State<PosteListScreen> {
 
                   for (var bien in biens) {
                     final idBien = bien['ID_Bien'];
-                    final postesPourCeBien =
-                        postes.where((p) => p.idBien == idBien).toList();
+                    final postesPourCeBien = postes.where((p) => p.idBien == idBien).toList();
 
                     if (postesPourCeBien.isNotEmpty) {
-                      final total = postesPourCeBien.fold<double>(
-                        0,
-                        (sum, p) => sum + (p.emissionCalculee ?? 0),
-                      );
+                      final total = postesPourCeBien.fold<double>(0, (sum, p) => sum + (p.emissionCalculee ?? 0));
 
                       widgets.add(
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Padding(
-                              padding: const EdgeInsets.only(
-                                right: 3,
-                                left: 12,
-                              ),
+                              padding: const EdgeInsets.only(right: 3, left: 12),
                               child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    bien['Type_Bien'] ?? '',
-                                    style: const TextStyle(fontSize: 12),
-                                  ),
-                                ],
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [Text(bien['Type_Bien'] ?? '', style: const TextStyle(fontSize: 12))],
                               ),
                             ),
                             CustomCard(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 6,
-                                horizontal: 12,
-                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
                               child: InkWell(
                                 onTap: () => openConstructionScreen(bien),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
                                           widget.sousCategorie,
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 12,
-                                          ),
+                                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
                                         ),
                                         Row(
                                           children: [
                                             Text(
                                               "${total.round()} kgCO₂",
-                                              style: const TextStyle(
-                                                fontSize: 11,
-                                                fontWeight: FontWeight.bold,
-                                              ),
+                                              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
                                             ),
                                             const SizedBox(width: 4),
-                                            const Icon(
-                                              Icons.chevron_right,
-                                              size: 14,
-                                            ),
+                                            const Icon(Icons.chevron_right, size: 14),
                                           ],
                                         ),
                                       ],
                                     ),
                                     const Divider(height: 8),
-                                    ...List.generate(
-                                      postesPourCeBien.length * 2 - 1,
-                                      (index) {
-                                        if (index.isEven) {
-                                          final poste =
-                                              postesPourCeBien[index ~/ 2];
-                                          return PostListCard(
-                                            title: poste.nomPoste ?? 'Sans nom',
-                                            emission:
-                                                "${poste.emissionCalculee?.round() ?? 0} kgCO₂",
-                                            onEdit: () {},
-                                            onDelete: () {},
-                                          );
-                                        } else {
-                                          return const Divider(
-                                            height: 1,
-                                            thickness: 0.2,
-                                            color: Colors.grey,
-                                          );
-                                        }
-                                      },
-                                    ),
+                                    ...List.generate(postesPourCeBien.length * 2 - 1, (index) {
+                                      if (index.isEven) {
+                                        final poste = postesPourCeBien[index ~/ 2];
+                                        return PostListCard(
+                                          title: poste.nomPoste ?? 'Sans nom',
+                                          emission: "${poste.emissionCalculee?.round() ?? 0} kgCO₂",
+                                          onEdit: () {},
+                                          onDelete: () {},
+                                        );
+                                      } else {
+                                        return const Divider(height: 1, thickness: 0.2, color: Colors.grey);
+                                      }
+                                    }),
                                   ],
                                 ),
                               ),
@@ -488,10 +364,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                     } else {
                       widgets.add(
                         CustomCard(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 6,
-                            horizontal: 12,
-                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
                           child: InkWell(
                             onTap: () => handleAdd(bien['ID_Bien']),
                             child: Row(
@@ -512,36 +385,26 @@ class _PosteListScreenState extends State<PosteListScreen> {
 
                   widgets.add(
                     CustomCard(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 6,
-                        horizontal: 12,
-                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
                       child: InkWell(
                         onTap: () {
                           showChoixTypeBienDialog(context, (String typeChoisi) {
                             final bien = BienImmobilier(
-                              idBien:
-                                  "BASILE-${DateTime.now().millisecondsSinceEpoch}", // ou un ID UUID
+                              idBien: "BASILE-${DateTime.now().millisecondsSinceEpoch}", // ou un ID UUID
                               typeBien: typeChoisi,
                               nomLogement: "", // ou une valeur par défaut
-                              poste:
-                                  PosteBienImmobilier(), // avec ses valeurs par défaut si besoin
+                              poste: PosteBienImmobilier(), // avec ses valeurs par défaut si besoin
                             );
 
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => ConstructionScreen(bien: bien),
-                              ),
-                            );
+                            Navigator.of(
+                              context,
+                            ).push(MaterialPageRoute(builder: (_) => ConstructionScreen(bien: bien)));
                           });
                         },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: const [
-                            Text(
-                              "Ajouter un bien immobilier",
-                              style: TextStyle(fontSize: 12),
-                            ),
+                            Text("Ajouter un bien immobilier", style: TextStyle(fontSize: 12)),
                             Icon(Icons.chevron_right, size: 14),
                           ],
                         ),

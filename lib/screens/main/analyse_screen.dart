@@ -34,11 +34,7 @@ class _AnalyseScreenState extends State<AnalyseScreen> {
 
   Future<Map<String, Map<String, double>>> fetchData() {
     if (filtre == "Tous") {
-      return ApiService.getEmissionsByTypeAndYearAndUser(
-        filtre,
-        codeIndividu,
-        valeurTemps,
-      );
+      return ApiService.getEmissionsByTypeAndYearAndUser(filtre, codeIndividu, valeurTemps);
     } else {
       return ApiService.getEmissionsFilteredByTypePosteGroupedByCategorie(
         filtre.substring(0, filtre.length - 1), // "Usages" → "Usage"
@@ -55,10 +51,7 @@ class _AnalyseScreenState extends State<AnalyseScreen> {
   @override
   Widget build(BuildContext context) {
     return BaseScreen(
-      title: const Text(
-        "Analyse des données",
-        style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-      ),
+      title: const Text("Analyse des données", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
       children: [
         CustomCard(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 3),
@@ -70,23 +63,17 @@ class _AnalyseScreenState extends State<AnalyseScreen> {
                   return GestureDetector(
                     onTap: () => majFiltre(option),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 3,
-                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
                       decoration: BoxDecoration(
                         color: isSelected ? Colors.indigo : Colors.white,
                         borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: isSelected ? Colors.indigo : Colors.white,
-                        ),
+                        border: Border.all(color: isSelected ? Colors.indigo : Colors.white),
                       ),
                       child: Text(
                         option,
                         style: TextStyle(
                           fontSize: 12,
-                          fontWeight:
-                              isSelected ? FontWeight.bold : FontWeight.normal,
+                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                           color: isSelected ? Colors.white : Colors.black87,
                         ),
                       ),
@@ -123,21 +110,14 @@ class _AnalyseScreenState extends State<AnalyseScreen> {
                       children: [
                         const Text(
                           'Simulation carbone – Année 2024',
-                          style: TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 30),
                         DashboardGauge(valeur: total * 1000),
                         const SizedBox(height: 12),
                         const Text(
                           "Niveau d'émission carbone",
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
-                          ),
+                          style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.black87),
                         ),
                         const SizedBox(height: 1),
                         const Text(

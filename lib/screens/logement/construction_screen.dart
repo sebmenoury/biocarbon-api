@@ -3,9 +3,9 @@ import '../../core/constants/app_icons.dart';
 import '../../ui/layout/base_screen.dart';
 import '../../ui/layout/custom_card.dart';
 import '../../data/services/api_service.dart';
-import '../../data/logement/bien_immobilier.dart';
-import '../../data/logement/poste_bien_immobilier.dart';
-import '../../data/logement/emission_calculator_immobilier.dart';
+import '../../data/classes/bien_immobilier.dart';
+import '../../data/classes/poste_bien_immobilier.dart';
+import '../../data/fonctions/emission_calculator_immobilier.dart';
 
 class ConstructionScreen extends StatefulWidget {
   final BienImmobilier bien;

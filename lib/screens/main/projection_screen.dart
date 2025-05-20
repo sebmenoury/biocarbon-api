@@ -21,10 +21,7 @@ class _ProjectionScreenState extends State<ProjectionScreen> {
   @override
   void initState() {
     super.initState();
-    dataFuture = ApiService.getEmissionsByCategoryAndSousCategorie(
-      codeIndividu,
-      valeurTemps,
-    );
+    dataFuture = ApiService.getEmissionsByCategoryAndSousCategorie(codeIndividu, valeurTemps);
   }
 
   double calculateTotal(Map<String, Map<String, double>> data) {
@@ -34,16 +31,10 @@ class _ProjectionScreenState extends State<ProjectionScreen> {
   @override
   Widget build(BuildContext context) {
     return BaseScreen(
-      title: const Text(
-        "Projection",
-        style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-      ),
+      title: const Text("Projection", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
       children: [
         const CustomCard(
-          child: Text(
-            'Trajectoire carbone projetée...',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
+          child: Text('Trajectoire carbone projetée...', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
         ),
         FutureBuilder<Map<String, Map<String, double>>>(
           future: dataFuture,
@@ -66,19 +57,13 @@ class _ProjectionScreenState extends State<ProjectionScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CustomCard(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 12,
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
                           "Total : ${total.toStringAsFixed(2)} tCO₂e/an",
-                          style: const TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 8),
