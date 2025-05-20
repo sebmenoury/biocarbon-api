@@ -9,17 +9,21 @@ import '../../data/classes/bien_immobilier.dart';
 import '../../data/classes/poste_bien_immobilier.dart';
 import '../logement/construction_screen.dart';
 import '../logement/dialogs_type_bien.dart';
+import '../vehicules/vehicule_screen.dart';
+import 'poste_list_screen.dart';
 
 class PosteListScreen extends StatefulWidget {
   final String sousCategorie;
   final String codeIndividu;
   final String valeurTemps;
+  final VoidCallback? onAddPressed;
 
   const PosteListScreen({
     super.key,
     required this.sousCategorie,
     required this.codeIndividu,
     required this.valeurTemps,
+    this.onAddPressed,
   });
 
   @override
@@ -209,6 +213,28 @@ class _PosteListScreenState extends State<PosteListScreen> {
               );
             }
 
+            if (widget.sousCategorie == "Véhicules") {
+              if (postes.isEmpty) {
+                // Aucune déclaration : accès direct au formulaire de déclaration
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const VehiculeScreen()));
+              } else {
+                // Déclarations existantes : accès à la liste avec possibilité d’ajouter
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (context) => PosteListScreen(
+                          sousCategorie: "Véhicules",
+                          codeIndividu: "BASILE",
+                          valeurTemps: "2025",
+                          onAddPressed: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => const VehiculeScreen()));
+                          },
+                        ),
+                  ),
+                );
+              }
+            }
             if (!avecBien) {
               if (postes.isEmpty) {
                 return CustomCard(

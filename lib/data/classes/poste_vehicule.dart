@@ -3,9 +3,19 @@ import '../services/api_service.dart';
 
 class PosteVehicule {
   final String nomEquipement;
-  final List<int> anneesConstruction;
+  List<int> anneesConstruction;
+  double facteurEmission;
+  int dureeAmortissement;
 
-  PosteVehicule({required this.nomEquipement, required this.anneesConstruction});
+  PosteVehicule({
+    required this.nomEquipement,
+    required this.anneesConstruction,
+    this.facteurEmission = 0,
+    this.dureeAmortissement = 1,
+  });
+
+  // ✅ Ajoute ce getter :
+  int get quantite => anneesConstruction.length;
 
   String getSousCategorieFromNom(String nomEquipement) {
     final nom = nomEquipement.toLowerCase();

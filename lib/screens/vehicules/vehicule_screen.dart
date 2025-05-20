@@ -4,7 +4,7 @@ import '../../ui/layout/base_screen.dart';
 import '../../ui/layout/custom_card.dart';
 import '../../data/services/api_service.dart';
 import '../../data/classes/poste_vehicule.dart';
-import '../../data/fonctions/emission_calculator_immobilier.dart';
+import '../../data/fonctions/emission_calculator_vehicules.dart';
 
 class VehiculeScreen extends StatefulWidget {
   const VehiculeScreen({super.key});
@@ -34,9 +34,22 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
     for (final eq in equipements) {
       if (eq['Type_Categorie'] == 'Déplacements' && eq['Sous_Categorie'] == 'Véhicules') {
         final nom = eq['Nom_Equipement'];
-        final poste = postes.firstWhere((p) => p.nomEquipement == nom, orElse: () => PosteVehicule(nomEquipement: nom));
-        poste.facteurEmission = double.tryParse(eq['Valeur_Emission_Grise'].toString()) ?? 0;
-        poste.dureeAmortissement = int.tryParse(eq['Duree_Amortissement'].toString()) ?? 1;
+        final facteur = double.tryParse(eq['Valeur_Emission_Grise'].toString()) ?? 0;
+        final duree = int.tryParse(eq['Duree_Amortissement'].toString()) ?? 1;
+
+        // Cherche tous les postes UC correspondant à ce véhicule
+        final postesPourCetEquipement = postes.where((p) => p.nomPoste == nom).toList();
+
+        // Récupère les années ou initialise vide
+        final annees = postesPourCetEquipement.map((p) => p.anneeAchat ?? DateTime.now().year).toList();
+
+        // S'il n’y a rien de déclaré, on met une seule ligne vide
+        if (annees.isEmpty) annees.add(DateTime.now().year);
+
+        final poste = PosteVehicule(nomEquipement: nom, anneesConstruction: annees);
+
+        poste.facteurEmission = facteur;
+        poste.dureeAmortissement = duree;
 
         final categorie = eq['Type_Equipement'] ?? 'Autres';
         result[categorie]?.add(poste);
@@ -45,14 +58,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
 
     setState(() {
       vehiculesParCategorie = result;
-      totalEmission = result.values
-          .expand((e) => e)
-          .fold(
-            0.0,
-            (sum, p) =>
-                sum +
-                calculerTotalEmission(p, {p.nomEquipement: p.facteurEmission}, {p.nomEquipement: p.dureeAmortissement}),
-          );
+      totalEmission = result.values.expand((e) => e).fold(0.0, (sum, p) => sum + calculerTotalEmissionVehicule(p));
       isLoading = false;
     });
   }
@@ -61,11 +67,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
     for (final categorie in vehiculesParCategorie.values) {
       for (final poste in categorie) {
         if (poste.quantite > 0) {
-          final emission = calculerTotalEmission(
-            poste,
-            {poste.nomEquipement: poste.facteurEmission},
-            {poste.nomEquipement: poste.dureeAmortissement},
-          );
+          final emission = calculerTotalEmissionVehicule(poste);
           await ApiService.savePoste({
             "Code_Individu": "BASILE",
             "Type_Temps": "Réel",
@@ -80,7 +82,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
             "Facteur_Emission": poste.facteurEmission,
             "Emission_Calculee": emission,
             "Mode_Calcul": "Amorti",
-            "Annee_Achat": poste.anneeConstruction,
+            "Annee_Achat": poste.anneesConstruction,
             "Duree_Amortissement": poste.dureeAmortissement,
           });
         }
@@ -89,52 +91,100 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
     Navigator.pop(context);
   }
 
-  Widget buildVehiculeRow(PosteBienImmobilier poste) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  Widget buildVehiculeRow(PosteVehicule poste) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(child: Text(poste.nomEquipement, style: const TextStyle(fontSize: 12))),
+        // Ligne du nom + boutons +/- + champ quantité
         Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            IconButton(
-              icon: const Icon(Icons.remove, size: 14),
-              onPressed: () => setState(() => poste.quantite = (poste.quantite - 1).clamp(0, 99)),
-            ),
-            SizedBox(
-              width: 32,
-              child: TextFormField(
-                initialValue: poste.quantite.toString(),
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 12),
-                keyboardType: TextInputType.number,
-                onChanged: (val) {
-                  final parsed = int.tryParse(val);
-                  if (parsed != null) setState(() => poste.quantite = parsed);
-                },
-              ),
-            ),
-            IconButton(icon: const Icon(Icons.add, size: 14), onPressed: () => setState(() => poste.quantite += 1)),
-            const SizedBox(width: 4),
-            SizedBox(
-              width: 50,
-              child: TextFormField(
-                initialValue: poste.anneeConstruction.toString(),
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 12),
-                keyboardType: TextInputType.number,
-                onChanged: (val) {
-                  final parsed = int.tryParse(val);
-                  if (parsed != null) setState(() => poste.anneeConstruction = parsed);
-                },
-              ),
+            Expanded(child: Text(poste.nomEquipement, style: const TextStyle(fontSize: 12))),
+            Row(
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.remove, size: 14),
+                  onPressed: () {
+                    setState(() {
+                      if (poste.anneesConstruction.isNotEmpty) {
+                        poste.anneesConstruction.removeLast();
+                      }
+                    });
+                  },
+                ),
+                SizedBox(
+                  width: 32,
+                  child: TextFormField(
+                    initialValue: poste.quantite.toString(),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 12),
+                    keyboardType: TextInputType.number,
+                    onChanged: (val) {
+                      final parsed = int.tryParse(val);
+                      if (parsed != null && parsed >= 0) {
+                        setState(() {
+                          // ajuster la longueur de la liste
+                          final current = poste.anneesConstruction;
+                          if (parsed > current.length) {
+                            current.addAll(List.generate(parsed - current.length, (_) => DateTime.now().year));
+                          } else if (parsed < current.length) {
+                            current.removeRange(parsed, current.length);
+                          }
+                        });
+                      }
+                    },
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.add, size: 14),
+                  onPressed: () {
+                    setState(() {
+                      poste.anneesConstruction.add(DateTime.now().year);
+                    });
+                  },
+                ),
+              ],
             ),
           ],
         ),
+
+        const SizedBox(height: 4),
+
+        // Champs d'année pour chaque véhicule
+        Wrap(
+          spacing: 8,
+          runSpacing: 4,
+          children: List.generate(poste.anneesConstruction.length, (index) {
+            return SizedBox(
+              width: 60,
+              child: TextFormField(
+                initialValue: poste.anneesConstruction[index].toString(),
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 11),
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(
+                  isDense: true,
+                  contentPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 6),
+                  border: OutlineInputBorder(),
+                ),
+                onChanged: (val) {
+                  final parsed = int.tryParse(val);
+                  if (parsed != null) {
+                    setState(() {
+                      poste.anneesConstruction[index] = parsed;
+                    });
+                  }
+                },
+              ),
+            );
+          }),
+        ),
+        const SizedBox(height: 12),
       ],
     );
   }
 
-  Widget buildCategorieCard(String titre, List<PosteBienImmobilier> vehicules) {
+  Widget buildCategorieCard(String titre, List<PosteVehicule> vehicules) {
     return CustomCard(
       padding: const EdgeInsets.all(12),
       child: Column(
@@ -142,7 +192,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
         children: [
           Text(titre, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
           const SizedBox(height: 8),
-          ...vehicules.map(buildVehiculeRow).toList(),
+          ...vehicules.map((v) => buildVehiculeRow(v)).toList(),
         ],
       ),
     );
