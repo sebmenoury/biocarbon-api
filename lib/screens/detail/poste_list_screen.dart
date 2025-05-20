@@ -214,27 +214,30 @@ class _PosteListScreenState extends State<PosteListScreen> {
             }
 
             if (widget.sousCategorie == "Véhicules") {
-              if (postes.isEmpty) {
-                // Aucune déclaration : accès direct au formulaire de déclaration
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const VehiculeScreen()));
-              } else {
-                // Déclarations existantes : accès à la liste avec possibilité d’ajouter
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder:
-                        (context) => PosteListScreen(
-                          sousCategorie: "Véhicules",
-                          codeIndividu: "BASILE",
-                          valeurTemps: "2025",
-                          onAddPressed: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => const VehiculeScreen()));
-                          },
-                        ),
-                  ),
-                );
-              }
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (postes.isEmpty) {
+                  // Aucune déclaration : accès direct au formulaire
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const VehiculeScreen()));
+                } else {
+                  // Déclarations existantes : accès à la liste avec possibilité d’ajouter
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) => PosteListScreen(
+                            sousCategorie: "Véhicules",
+                            codeIndividu: "BASILE",
+                            valeurTemps: "2025",
+                            onAddPressed: () {
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => const VehiculeScreen()));
+                            },
+                          ),
+                    ),
+                  );
+                }
+              });
             }
+
             if (!avecBien) {
               if (postes.isEmpty) {
                 return CustomCard(
