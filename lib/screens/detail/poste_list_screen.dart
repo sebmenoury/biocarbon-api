@@ -11,6 +11,7 @@ import '../logement/construction_screen.dart';
 import '../logement/dialogs_type_bien.dart';
 import '../vehicules/vehicule_screen.dart';
 import 'poste_list_screen.dart';
+import '../../data/classes/poste_list_wrapper_screen.dart';
 
 class PosteListScreen extends StatefulWidget {
   final String sousCategorie;
@@ -223,15 +224,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder:
-                          (context) => PosteListScreen(
-                            sousCategorie: "Véhicules",
-                            codeIndividu: "BASILE",
-                            valeurTemps: "2025",
-                            onAddPressed: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => const VehiculeScreen()));
-                            },
-                          ),
+                      builder: (_) => PosteVehiculeEntryPoint(codeIndividu: "BASILE", valeurTemps: "2025"),
                     ),
                   );
                 }

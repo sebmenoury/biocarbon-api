@@ -1,5 +1,4 @@
 import 'poste.dart';
-import '../services/api_service.dart';
 
 class PosteVehicule {
   final String nomEquipement;
