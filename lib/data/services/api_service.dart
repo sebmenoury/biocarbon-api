@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../models/poste.dart';
+import '../postes/poste.dart';
 
 class ApiService {
   static const String baseUrl = "https://biocarbon-api.onrender.com";
@@ -53,38 +53,23 @@ class ApiService {
   // ---------------------------------------------------------------------------
 
   static Future<List<dynamic>> getRefPays() async {
-    final response = await http.get(
-      Uri.parse('$baseUrl/api/ref/aeroports/pays'),
-    );
+    final response = await http.get(Uri.parse('$baseUrl/api/ref/aeroports/pays'));
     return _handleResponse(response);
   }
 
   static Future<List<dynamic>> getRefVilles(String pays) async {
-    final response = await http.get(
-      Uri.parse('$baseUrl/api/ref/aeroports/villes?pays=$pays'),
-    );
+    final response = await http.get(Uri.parse('$baseUrl/api/ref/aeroports/villes?pays=$pays'));
     return _handleResponse(response);
   }
 
-  static Future<List<dynamic>> getRefAeroports(
-    String pays,
-    String ville,
-  ) async {
-    final response = await http.get(
-      Uri.parse('$baseUrl/api/ref/aeroports/noms?pays=$pays&ville=$ville'),
-    );
+  static Future<List<dynamic>> getRefAeroports(String pays, String ville) async {
+    final response = await http.get(Uri.parse('$baseUrl/api/ref/aeroports/noms?pays=$pays&ville=$ville'));
     return _handleResponse(response);
   }
 
-  static Future<Map<String, dynamic>> getRefAeroportDetails(
-    String pays,
-    String ville,
-    String aeroport,
-  ) async {
+  static Future<Map<String, dynamic>> getRefAeroportDetails(String pays, String ville, String aeroport) async {
     final response = await http.get(
-      Uri.parse(
-        '$baseUrl/api/ref/aeroports/details?pays=$pays&ville=$ville&aeroport=$aeroport',
-      ),
+      Uri.parse('$baseUrl/api/ref/aeroports/details?pays=$pays&ville=$ville&aeroport=$aeroport'),
     );
     return _handleResponse(response);
   }
@@ -93,9 +78,7 @@ class ApiService {
   // ---------------------------------------------------------------------------
 
   static Future<List<dynamic>> getBiens(String codeIndividu) async {
-    final response = await http.get(
-      Uri.parse('$baseUrl/api/uc/biens?code_individu=$codeIndividu'),
-    );
+    final response = await http.get(Uri.parse('$baseUrl/api/uc/biens?code_individu=$codeIndividu'));
     return _handleResponse(response);
   }
 
@@ -120,10 +103,7 @@ class ApiService {
     return _handleResponse(response);
   }
 
-  static Future<Map<String, dynamic>> updateBien(
-    String idBien,
-    Map<String, dynamic> data,
-  ) async {
+  static Future<Map<String, dynamic>> updateBien(String idBien, Map<String, dynamic> data) async {
     final response = await http.patch(
       Uri.parse('$baseUrl/api/uc/biens/$idBien'),
       headers: {'Content-Type': 'application/json'},
@@ -133,9 +113,7 @@ class ApiService {
   }
 
   static Future<Map<String, dynamic>> deleteBien(String idBien) async {
-    final response = await http.delete(
-      Uri.parse('$baseUrl/api/uc/biens/$idBien'),
-    );
+    final response = await http.delete(Uri.parse('$baseUrl/api/uc/biens/$idBien'));
     return _handleResponse(response);
   }
 
@@ -143,9 +121,7 @@ class ApiService {
   // 📦 UC - POSTES en écriture
   // ---------------------------------------------------------------------------
 
-  static Future<Map<String, dynamic>> addUCPoste(
-    Map<String, dynamic> data,
-  ) async {
+  static Future<Map<String, dynamic>> addUCPoste(Map<String, dynamic> data) async {
     final response = await http.post(
       Uri.parse('$baseUrl/api/uc/postes'),
       headers: {'Content-Type': 'application/json'},
@@ -154,10 +130,7 @@ class ApiService {
     return _handleResponse(response);
   }
 
-  static Future<Map<String, dynamic>> updateUCPoste(
-    String id,
-    Map<String, dynamic> data,
-  ) async {
+  static Future<Map<String, dynamic>> updateUCPoste(String id, Map<String, dynamic> data) async {
     final response = await http.patch(
       Uri.parse('$baseUrl/api/uc/postes/$id'),
       headers: {'Content-Type': 'application/json'},
@@ -179,9 +152,7 @@ class ApiService {
     );
 
     if (response.statusCode != 200) {
-      throw Exception(
-        "Erreur lors de l'enregistrement du poste : ${response.body}",
-      );
+      throw Exception("Erreur lors de l'enregistrement du poste : ${response.body}");
     }
   }
 
@@ -192,14 +163,9 @@ class ApiService {
   // récupère l'ensemble des données d'un individu pour un bilan (année ou simulation)
   // ---------------------------------------------------------------------------
 
-  static Future<List<Map<String, dynamic>>> getUCPostes(
-    String codeIndividu,
-    String valeurTemps,
-  ) async {
+  static Future<List<Map<String, dynamic>>> getUCPostes(String codeIndividu, String valeurTemps) async {
     final response = await http.get(
-      Uri.parse(
-        "$baseUrl/api/uc/postes?code_individu=$codeIndividu&valeur_temps=$valeurTemps",
-      ),
+      Uri.parse("$baseUrl/api/uc/postes?code_individu=$codeIndividu&valeur_temps=$valeurTemps"),
     );
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(response.body);
@@ -212,15 +178,9 @@ class ApiService {
   // récupère les données par Type Catégories
   // ---------------------------------------------------------------------------
 
-  static Future<List<Poste>> getPostesByCategorie(
-    String typeCategorie,
-    String codeIndividu,
-    String valeurTemps,
-  ) async {
+  static Future<List<Poste>> getPostesByCategorie(String typeCategorie, String codeIndividu, String valeurTemps) async {
     final response = await http.get(
-      Uri.parse(
-        '$baseUrl/api/uc/postes?code_individu=$codeIndividu&valeur_temps=$valeurTemps',
-      ),
+      Uri.parse('$baseUrl/api/uc/postes?code_individu=$codeIndividu&valeur_temps=$valeurTemps'),
     );
 
     if (response.statusCode == 200) {
@@ -237,16 +197,12 @@ class ApiService {
   // récupère les données par Type de poste
   // ---------------------------------------------------------------------------
 
-  static Future<Map<String, Map<String, double>>>
-  getEmissionsByTypeAndYearAndUser(
+  static Future<Map<String, Map<String, double>>> getEmissionsByTypeAndYearAndUser(
     String filtre, // 'Tous', 'Usages', 'Equipements'
     String codeIndividu,
     String valeurTemps,
   ) async {
-    List<Map<String, dynamic>> allData = await getUCPostes(
-      codeIndividu,
-      valeurTemps,
-    );
+    List<Map<String, dynamic>> allData = await getUCPostes(codeIndividu, valeurTemps);
 
     if (filtre != 'Tous') {
       allData = allData.where((item) => item['Type_Poste'] == filtre).toList();
@@ -261,8 +217,7 @@ class ApiService {
       if (!result.containsKey(typeCategorie)) {
         result[typeCategorie] = {"total": 0};
       }
-      result[typeCategorie]!["total"] =
-          result[typeCategorie]!["total"]! + emission / 1000;
+      result[typeCategorie]!["total"] = result[typeCategorie]!["total"]! + emission / 1000;
     }
 
     return result;
@@ -277,8 +232,7 @@ class ApiService {
     String valeurTemps,
   ) async {
     // Fonction de normalisation (accents, majuscules)
-    String normalize(String s) =>
-        s.toLowerCase().replaceAll('é', 'e').replaceAll('è', 'e').trim();
+    String normalize(String s) => s.toLowerCase().replaceAll('é', 'e').replaceAll('è', 'e').trim();
 
     final allData = await getUCPostes(codeIndividu, valeurTemps);
 
@@ -294,15 +248,11 @@ class ApiService {
   // récupère les données par Type Catégorie et sous Catégorie
   // ---------------------------------------------------------------------------
 
-  static Future<Map<String, Map<String, double>>>
-  getEmissionsByCategoryAndSousCategorie(
+  static Future<Map<String, Map<String, double>>> getEmissionsByCategoryAndSousCategorie(
     String codeIndividu,
     String valeurTemps,
   ) async {
-    final List<Map<String, dynamic>> allData = await getUCPostes(
-      codeIndividu,
-      valeurTemps,
-    );
+    final List<Map<String, dynamic>> allData = await getUCPostes(codeIndividu, valeurTemps);
 
     final Map<String, Map<String, double>> result = {};
 
@@ -312,8 +262,7 @@ class ApiService {
       final emission = (item['Emission_Calculee'] ?? 0).toDouble();
 
       result.putIfAbsent(typeCategorie, () => {});
-      result[typeCategorie]![sousCategorie] =
-          (result[typeCategorie]![sousCategorie] ?? 0) + emission / 1000;
+      result[typeCategorie]![sousCategorie] = (result[typeCategorie]![sousCategorie] ?? 0) + emission / 1000;
     }
 
     return result;
@@ -322,8 +271,7 @@ class ApiService {
   // récupère les données par Type poste et Type Catégorie
   // ---------------------------------------------------------------------------
 
-  static Future<Map<String, Map<String, double>>>
-  getEmissionsFilteredByTypePosteGroupedByCategorie(
+  static Future<Map<String, Map<String, double>>> getEmissionsFilteredByTypePosteGroupedByCategorie(
     String typePoste, // "Usage", "Equipement"
     String codeIndividu,
     String valeurTemps,
@@ -331,8 +279,7 @@ class ApiService {
     final allData = await getUCPostes(codeIndividu, valeurTemps);
 
     // Filtrer par Type_Poste
-    final filtered =
-        allData.where((item) => item['Type_Poste'] == typePoste).toList();
+    final filtered = allData.where((item) => item['Type_Poste'] == typePoste).toList();
 
     final Map<String, Map<String, double>> result = {};
 
@@ -341,8 +288,7 @@ class ApiService {
       final emission = (item['Emission_Calculee'] ?? 0).toDouble();
 
       result.putIfAbsent(categorie, () => {});
-      result[categorie]!['total'] =
-          (result[categorie]!['total'] ?? 0) + emission / 1000;
+      result[categorie]!['total'] = (result[categorie]!['total'] ?? 0) + emission / 1000;
     }
 
     return result;
