@@ -92,6 +92,47 @@ class _PosteListScreenState extends State<PosteListScreen> {
     );
   }
 
+  // Ajout logique de redirection par sous-categorie sans bien
+  void handleRedirection(Poste poste) {
+    switch (widget.sousCategorie) {
+      case "Véhicules":
+        Navigator.push(context, MaterialPageRoute(builder: (context) => const VehiculeScreen()));
+        break;
+      case "Services publics":
+      case "Numérique":
+      case "Loisirs":
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text("Écran en cours de construction"), duration: Duration(seconds: 2)));
+        break;
+      default:
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Aucune redirection définie pour cette sous-catégorie"),
+            duration: Duration(seconds: 2),
+          ),
+        );
+    }
+  }
+
+  bool isNavigated = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    if (widget.sousCategorie == "Véhicules" && !isNavigated) {
+      isNavigated = true;
+      postesFuture.then((postes) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (postes.isEmpty) {
+            Navigator.push(context, MaterialPageRoute(builder: (_) => const VehiculeScreen()));
+          }
+        });
+      });
+    }
+  }
+
   void openConstructionScreen(Map<String, dynamic> bien) {
     final poste = PosteBienImmobilier(
       nomEquipement: bien['Nom_Equipement'] ?? '',
@@ -153,6 +194,39 @@ class _PosteListScreenState extends State<PosteListScreen> {
 
             final postes = snapshot.data ?? [];
 
+            if (!avecBien && widget.sousCategorie == "Véhicules") {
+              final total = postes.fold<double>(0, (sum, p) => sum + (p.emissionCalculee ?? 0));
+
+              return Column(
+                children: [
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => const VehiculeScreen()));
+                    },
+                    child: CustomCard(
+                      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text("Véhicules", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                          Row(
+                            children: [
+                              Text(
+                                "\${total.round()} kgCO₂",
+                                style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(width: 4),
+                              const Icon(Icons.chevron_right, size: 14),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            }
+
             if (widget.sousCategorie == 'Alimentation') {
               final Map<String, List<Poste>> postesParSousCat = {};
               for (var poste in postes) {
@@ -212,30 +286,6 @@ class _PosteListScreenState extends State<PosteListScreen> {
                       );
                     }).toList(),
               );
-            }
-
-            bool hasNavigated = false;
-
-            @override
-            void didChangeDependencies() {
-              super.didChangeDependencies();
-
-              if (widget.sousCategorie == "Véhicules" && !hasNavigated) {
-                hasNavigated = true; // 🔒 Verrouillage pour éviter les appels multiples
-
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  if (postes.isEmpty) {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => const VehiculeScreen()));
-                  } else {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => PosteVehiculeEntryPoint(codeIndividu: "BASILE", valeurTemps: "2025"),
-                      ),
-                    );
-                  }
-                });
-              }
             }
 
             if (!avecBien) {
