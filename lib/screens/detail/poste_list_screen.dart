@@ -214,21 +214,28 @@ class _PosteListScreenState extends State<PosteListScreen> {
               );
             }
 
-            if (widget.sousCategorie == "Véhicules") {
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                if (postes.isEmpty) {
-                  // Aucune déclaration : accès direct au formulaire
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const VehiculeScreen()));
-                } else {
-                  // Déclarations existantes : accès à la liste avec possibilité d’ajouter
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => PosteVehiculeEntryPoint(codeIndividu: "BASILE", valeurTemps: "2025"),
-                    ),
-                  );
-                }
-              });
+            bool hasNavigated = false;
+
+            @override
+            void didChangeDependencies() {
+              super.didChangeDependencies();
+
+              if (widget.sousCategorie == "Véhicules" && !hasNavigated) {
+                hasNavigated = true; // 🔒 Verrouillage pour éviter les appels multiples
+
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (postes.isEmpty) {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const VehiculeScreen()));
+                  } else {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => PosteVehiculeEntryPoint(codeIndividu: "BASILE", valeurTemps: "2025"),
+                      ),
+                    );
+                  }
+                });
+              }
             }
 
             if (!avecBien) {
