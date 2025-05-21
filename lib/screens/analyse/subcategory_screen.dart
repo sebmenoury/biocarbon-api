@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../ui/layout/base_screen.dart';
 import '../../data/services/api_service.dart';
 import '../../core/constants/app_icons.dart';
-import '../../data/classes/poste.dart';
+import '../../data/classes/poste_postes.dart';
 import '../../ui/widgets/post_list_card.dart';
 import '../../ui/layout/custom_card.dart';
 

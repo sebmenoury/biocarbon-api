@@ -1,10 +1,10 @@
 // vehicule_screen.dart
 import 'package:flutter/material.dart';
-import '../../ui/layout/base_screen.dart';
-import '../../ui/layout/custom_card.dart';
-import '../../data/services/api_service.dart';
-import '../../data/classes/poste_vehicule.dart';
-import '../../data/fonctions/emission_calculator_vehicules.dart';
+import '../../../ui/layout/base_screen.dart';
+import '../../../ui/layout/custom_card.dart';
+import '../../../data/services/api_service.dart';
+import '../../../data/classes/poste_vehicule.dart';
+import 'emission_calculator_vehicules.dart';
 
 class VehiculeScreen extends StatefulWidget {
   const VehiculeScreen({super.key});

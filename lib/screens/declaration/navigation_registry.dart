@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 // Importe ici tous tes écrans de déclaration
-import '../screens/alimentation/alimentation_screen.dart';
-import '../screens/logement/usages_gaz_fioul_screen.dart';
-import '../screens/deplacements/vehicule_screen.dart';
+import 'usage_alimentation/alimentation_screen.dart';
+import 'eqt_bien_immobilier/usages_gaz_fioul_screen.dart';
+import 'eqt_vehicules/vehicule_screen.dart';
 // etc...
 
 /// Cette fonction retourne l’écran Flutter approprié

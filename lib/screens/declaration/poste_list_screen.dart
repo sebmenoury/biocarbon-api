@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import '../logement/construction_screen.dart';
-import '../logement/dialogs_type_bien.dart';
-import '../deplacements/vehicule_screen.dart';
+import 'eqt_bien_immobilier/construction_screen.dart';
+import 'eqt_bien_immobilier/dialogs_type_bien.dart';
+import 'eqt_vehicules/vehicule_screen.dart';
 import '../../ui/layout/base_screen.dart';
 import '../../ui/layout/custom_card.dart';
 import '../../ui/widgets/post_list_card.dart';
 import '../../ui/widgets/post_list_section_card.dart';
 import '../../data/services/api_service.dart';
-import '../../data/classes/poste.dart';
-import '../../data/parametres/sous_categorie_avec_bien.dart';
-import '../../data/classes/bien_immobilier.dart';
-import '../../data/classes/poste_bien_immobilier.dart';
-import '../../navigation/navigation_registry.dart';
+import '../../data/classes/poste_postes.dart';
+import 'sous_categorie_avec_bien.dart';
+import 'eqt_bien_immobilier/bien_immobilier.dart';
+import 'eqt_bien_immobilier/poste_bien_immobilier.dart';
+import 'navigation_registry.dart';
 
 class PosteListScreen extends StatefulWidget {
   final String typeCategorie;

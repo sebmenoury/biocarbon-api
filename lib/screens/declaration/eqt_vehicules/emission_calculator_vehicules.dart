@@ -1,4 +1,4 @@
-import '../classes/poste_vehicule.dart';
+import '../../../data/classes/poste_vehicule.dart';
 
 double calculerTotalEmissionVehicule(PosteVehicule poste) {
   final quantite = poste.quantite;

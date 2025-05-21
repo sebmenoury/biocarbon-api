@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../ui/layout/base_screen.dart';
-import '../../ui/layout/custom_card.dart';
-import '../../data/services/api_service.dart';
+import '../../../ui/layout/base_screen.dart';
+import '../../../ui/layout/custom_card.dart';
+import '../../../data/services/api_service.dart';
 
 class VehiculesScreen extends StatefulWidget {
   const VehiculesScreen({super.key});

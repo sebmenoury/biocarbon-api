@@ -1,5 +1,5 @@
-import '../classes/poste_bien_immobilier.dart';
-import '../parametres/const_construction.dart';
+import 'poste_bien_immobilier.dart';
+import 'const_construction.dart';
 
 double calculerTotalEmission(
   PosteBienImmobilier bien,

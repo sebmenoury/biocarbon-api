@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import '../../ui/layout/base_screen.dart';
 import '../../ui/layout/custom_card.dart';
 import '../../core/constants/app_icons.dart';
-import '../detail/poste_list_screen.dart';
-import '../../data/parametres/ref_type_category.dart';
+import '../declaration/poste_list_screen.dart';
+import '../declaration/ref_type_category.dart';
 
 class MesDonneesScreen extends StatefulWidget {
   const MesDonneesScreen({super.key});
