@@ -203,7 +203,19 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
     if (isLoading) return const Center(child: CircularProgressIndicator());
 
     return BaseScreen(
-      title: const Text("Déclaration des véhicules", style: TextStyle(fontSize: 14)),
+      title: Row(
+        children: [
+          IconButton(
+            icon: const Icon(Icons.arrow_back),
+            iconSize: 18,
+            onPressed: () => Navigator.pop(context),
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+          ),
+          const SizedBox(width: 8),
+          Text("Véhicules", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+        ],
+      ),
       children: [
         CustomCard(
           padding: const EdgeInsets.all(12),

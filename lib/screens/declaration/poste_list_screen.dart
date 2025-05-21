@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'eqt_bien_immobilier/construction_screen.dart';
-import 'eqt_bien_immobilier/dialogs_type_bien.dart';
-import 'eqt_vehicules/vehicule_screen.dart';
 import '../../ui/layout/base_screen.dart';
 import '../../ui/layout/custom_card.dart';
+import '../../core/constants/app_icons.dart';
 import '../../ui/widgets/post_list_card.dart';
 import '../../ui/widgets/post_list_section_card.dart';
 import '../../data/services/api_service.dart';
@@ -11,6 +9,9 @@ import '../../data/classes/poste_postes.dart';
 import 'sous_categorie_avec_bien.dart';
 import 'eqt_bien_immobilier/bien_immobilier.dart';
 import 'eqt_bien_immobilier/poste_bien_immobilier.dart';
+import 'eqt_bien_immobilier/construction_screen.dart';
+import 'eqt_bien_immobilier/dialogs_type_bien.dart';
+import 'eqt_vehicules/vehicule_screen.dart';
 import 'navigation_registry.dart';
 
 class PosteListScreen extends StatefulWidget {
@@ -145,6 +146,9 @@ class _PosteListScreenState extends State<PosteListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final icon = sousCategorieIcons[widget.sousCategorie] ?? Icons.help_outline;
+    final color = souscategoryColors[widget.sousCategorie] ?? Colors.grey;
+
     return BaseScreen(
       title: Row(
         children: [
@@ -156,10 +160,25 @@ class _PosteListScreenState extends State<PosteListScreen> {
             constraints: const BoxConstraints(),
           ),
           const SizedBox(width: 8),
-          Text(widget.sousCategorie, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+          Text("Sélection d'un poste à déclarer", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
         ],
       ),
       children: [
+        CustomCard(
+          padding: const EdgeInsets.all(12),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Icon(icon, size: 14, color: color),
+              const SizedBox(height: 4),
+              Text(
+                "Vue d'ensemble des postes ${widget.sousCategorie} déclarés",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+              ),
+            ],
+          ),
+        ),
+
         FutureBuilder<List<Poste>>(
           future: postesFuture,
           builder: (context, snapshot) {

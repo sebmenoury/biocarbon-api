@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'usage_alimentation/alimentation_screen.dart';
 import 'eqt_bien_immobilier/usages_gaz_fioul_screen.dart';
 import 'eqt_vehicules/vehicule_screen.dart';
+import 'eqt_vehicules/saisie_vehicules.dart';
 // etc...
 
 /// Cette fonction retourne l’écran Flutter approprié
@@ -15,14 +16,14 @@ Widget? getEcranEdition(String typeCategorie, String sousCategorie) {
       return const AlimentationScreen();
 
     case "Logement":
-      if (sousCategorie == "Gaz et fioul") {
+      if (sousCategorie == "Gaz et Fioul") {
         return const UsagesGazFioulScreen();
       }
       break;
 
     case "Déplacements":
       if (sousCategorie == "Véhicules") {
-        return const VehiculeScreen();
+        return const VehiculesScreen();
       }
     // Ajoute ici d’autres cas au besoin :
     // case "Biens":
