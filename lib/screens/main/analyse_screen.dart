@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../ui/layout/base_screen.dart';
 import '../../ui/layout/custom_card.dart';
-import '../../ui/widgets/dashboard_gauge.dart';
+import '../../ui/graphs/dashboard_gauge.dart';
 import '../../ui/widgets/category_list_card.dart';
 import '../../data/services/api_service.dart';
 

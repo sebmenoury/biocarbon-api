@@ -113,7 +113,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                         Text("${total.toStringAsFixed(0)} kgCO₂/an", style: const TextStyle(fontSize: 12)),
                       ],
                     ),
-                    const SizedBox(height: 18),
+                    const Divider(height: 8),
 
                     /// Dénomination
                     Row(

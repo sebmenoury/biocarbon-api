@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../ui/layout/base_screen.dart';
 import '../../ui/layout/custom_card.dart';
-import '../../ui/widgets/waterfall_chart.dart';
+import '../../ui/graphs/waterfall_chart.dart';
 import '../../data/services/api_service.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_text.dart';
