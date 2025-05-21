@@ -19,7 +19,7 @@ class DashboardGauge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double maxValue = valeur > 10000 ? valeur * 1.1 : 10000;
+    final double maxValue = valeur > 9500 ? valeur * 1.1 : 10000;
     return CustomPaint(
       size: const Size(280, 160),
       //size: Size(MediaQuery.of(context).size.width - 64, 160), pour l'adapter à la taille de l'écran
@@ -76,13 +76,7 @@ class _GaugePainter extends CustomPainter {
 
     for (var seg in segments) {
       paint.color = seg["color"] as Color;
-      canvas.drawArc(
-        Rect.fromCircle(center: center, radius: radius),
-        start,
-        seg["angle"] as double,
-        false,
-        paint,
-      );
+      canvas.drawArc(Rect.fromCircle(center: center, radius: radius), start, seg["angle"] as double, false, paint);
 
       // Séparations blanches
       canvas.drawArc(
@@ -117,10 +111,7 @@ class _GaugePainter extends CustomPainter {
             center.dx + baseWidth * cos(pi - valeurAngle + 0.06),
             center.dy - baseWidth * sin(pi - valeurAngle + 0.06),
           )
-          ..lineTo(
-            center.dx + needleLength * cos(pi - valeurAngle),
-            center.dy - needleLength * sin(pi - valeurAngle),
-          )
+          ..lineTo(center.dx + needleLength * cos(pi - valeurAngle), center.dy - needleLength * sin(pi - valeurAngle))
           ..lineTo(
             center.dx + baseWidth * cos(pi - valeurAngle - 0.06),
             center.dy - baseWidth * sin(pi - valeurAngle - 0.06),
@@ -133,22 +124,14 @@ class _GaugePainter extends CustomPainter {
     final label = (valeur / 1000).toStringAsFixed(2);
     final textPainter = TextPainter(textDirection: TextDirection.ltr);
     textPainter.text = TextSpan(
-      style: const TextStyle(
-        fontSize: 12,
-        fontWeight: FontWeight.bold,
-        color: Colors.black,
-      ),
+      style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.black),
       children: [TextSpan(text: '$label t\n')],
     );
     textPainter.layout();
 
     final labelOffset = Offset(
-      center.dx +
-          (needleLength - 4) * cos(pi - valeurAngle) -
-          textPainter.width / 2,
-      center.dy -
-          (needleLength - 4) * sin(pi - valeurAngle) -
-          textPainter.height / 2,
+      center.dx + (needleLength - 4) * cos(pi - valeurAngle) - textPainter.width / 2,
+      center.dy - (needleLength - 4) * sin(pi - valeurAngle) - textPainter.height / 2,
     );
     textPainter.paint(canvas, labelOffset);
 
@@ -165,19 +148,13 @@ class _GaugePainter extends CustomPainter {
       final dx = center.dx + labelRadius * cos(pi - angle);
       final dy = center.dy - labelRadius * sin(pi - angle);
       final labelPainter = TextPainter(
-        text: TextSpan(
-          text: entry["text"] as String,
-          style: const TextStyle(fontSize: 10, color: Colors.black),
-        ),
+        text: TextSpan(text: entry["text"] as String, style: const TextStyle(fontSize: 10, color: Colors.black)),
         textAlign: TextAlign.center,
         textDirection: TextDirection.ltr,
       );
       labelPainter.layout();
       canvas.save();
-      canvas.translate(
-        dx - labelPainter.width / 2,
-        dy - labelPainter.height / 2,
-      );
+      canvas.translate(dx - labelPainter.width / 2, dy - labelPainter.height / 2);
       labelPainter.paint(canvas, Offset.zero);
       canvas.restore();
     }
