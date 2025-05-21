@@ -12,7 +12,7 @@ final Map<String, String> refTypeCategorie = {
   "Gaz et Fioul": "Logement",
   "Déchets et Eau": "Logement",
   "Alimentation": "Alimentation",
-  "Loisirs": "Services",
+  "Loisirs": "Biens et services",
   "Habillement": "Biens et services",
   "Banque et Assurances": "Biens et services",
   "Déplacements Avion": "Déplacements",
@@ -21,3 +21,7 @@ final Map<String, String> refTypeCategorie = {
   "Déplacements Autres": "Déplacements",
   "Services publics": "Services publics",
 };
+
+String? getTypeCategorieFromLabel(String label) {
+  return refTypeCategorie[label];
+}
