@@ -27,10 +27,19 @@ class PostListSectionCard extends StatelessWidget {
                 onTap: onTap,
                 behavior: HitTestBehavior.translucent,
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("${total.round()} kgCO₂", style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
-                    const SizedBox(width: 4),
-                    const Icon(Icons.chevron_right, size: 14),
+                    Text(sousCat, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                    Row(
+                      children: [
+                        Text(
+                          "${total.round()} kgCO₂",
+                          style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(width: 4),
+                        const Icon(Icons.chevron_right, size: 14),
+                      ],
+                    ),
                   ],
                 ),
               ),

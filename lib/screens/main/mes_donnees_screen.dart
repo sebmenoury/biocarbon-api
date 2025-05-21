@@ -98,7 +98,7 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
             crossAxisCount: 2,
             crossAxisSpacing: 12,
             mainAxisSpacing: 12,
-            childAspectRatio: 1.5,
+            childAspectRatio: 1.8,
           ),
           itemCount: currentLabels.length,
           itemBuilder: (context, index) {
@@ -115,7 +115,7 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
                   ),
                 );
               },
-              backgroundColor: color.withOpacity(0.2),
+              backgroundColor: color.withOpacity(0.05),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
