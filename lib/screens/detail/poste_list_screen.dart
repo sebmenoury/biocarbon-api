@@ -197,7 +197,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
 
             final postes = snapshot.data ?? [];
 
-            if (!avecBien && widget.sousCategorie == "Véhicules") {
+            if (!avecBien && widget.sousCategorie == "Véhicules" || widget.typeCategorie == "Alimentation") {
               final Map<String, List<Poste>> postesParSousCat = {};
               for (var poste in postes) {
                 final key = poste.sousCategorie;
@@ -208,44 +208,6 @@ class _PosteListScreenState extends State<PosteListScreen> {
               }
 
               // Affichage par sous-catégorie
-              return Column(
-                children:
-                    postesParSousCat.entries.map((entry) {
-                      final sousCat = entry.key;
-                      final postes = entry.value;
-                      final total = postes.fold<double>(0, (sum, p) => sum + (p.emissionCalculee ?? 0));
-
-                      postes.sort((a, b) => (b.emissionCalculee ?? 0).compareTo(a.emissionCalculee ?? 0));
-
-                      return PostListSectionCard(
-                        sousCat: sousCat,
-                        postes: postes,
-                        total: total,
-                        onTap: () {
-                          final screen = getEcranEdition(widget.typeCategorie, sousCat);
-                          if (screen != null) {
-                            Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
-                          } else {
-                            ScaffoldMessenger.of(
-                              context,
-                            ).showSnackBar(SnackBar(content: Text("Aucun écran défini pour $sousCat")));
-                          }
-                        },
-                      );
-                    }).toList(),
-              );
-            }
-
-            if (widget.sousCategorie == 'Alimentation') {
-              final Map<String, List<Poste>> postesParSousCat = {};
-              for (var poste in postes) {
-                final key = poste.sousCategorie;
-                if (!postesParSousCat.containsKey(key)) {
-                  postesParSousCat[key] = [];
-                }
-                postesParSousCat[key]!.add(poste);
-              }
-
               return Column(
                 children:
                     postesParSousCat.entries.map((entry) {

@@ -38,6 +38,7 @@ class _PosteVehiculeEntryPointState extends State<PosteVehiculeEntryPoint> {
             MaterialPageRoute(
               builder:
                   (_) => PosteListScreen(
+                    typeCategorie: "Déplacements",
                     sousCategorie: "Véhicules",
                     codeIndividu: widget.codeIndividu,
                     valeurTemps: widget.valeurTemps,

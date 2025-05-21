@@ -3,6 +3,7 @@ import '../../ui/layout/base_screen.dart';
 import '../../ui/layout/custom_card.dart';
 import '../../core/constants/app_icons.dart';
 import '../detail/poste_list_screen.dart';
+import '../../data/parametres/ref_type_category.dart';
 
 class MesDonneesScreen extends StatefulWidget {
   const MesDonneesScreen({super.key});
@@ -103,6 +104,7 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
           itemCount: currentLabels.length,
           itemBuilder: (context, index) {
             final label = currentLabels[index];
+            final typeCategorie = getTypeCategorieFromLabel(label)!;
             final icon = sousCategorieIcons[label] ?? Icons.help_outline;
             final color = souscategoryColors[label] ?? Colors.grey;
 
@@ -111,7 +113,13 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (_) => PosteListScreen(sousCategorie: label, codeIndividu: 'BASILE', valeurTemps: '2025'),
+                    builder:
+                        (_) => PosteListScreen(
+                          typeCategorie: typeCategorie,
+                          sousCategorie: label,
+                          codeIndividu: 'BASILE',
+                          valeurTemps: '2025',
+                        ),
                   ),
                 );
               },
