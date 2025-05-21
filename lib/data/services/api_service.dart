@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../classes/poste.dart';
+import '../classes/poste_postes.dart';
 
 class ApiService {
   static const String baseUrl = "https://biocarbon-api.onrender.com";

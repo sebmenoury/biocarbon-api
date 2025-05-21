@@ -23,15 +23,7 @@ class PostListCard extends StatelessWidget {
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.normal,
-                  ),
-                ),
-              ],
+              children: [Text(title, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.normal))],
             ),
           ),
           Padding(

@@ -20,7 +20,7 @@ Widget? getEcranEdition(String typeCategorie, String sousCategorie) {
       }
       break;
 
-    case "Véhicules":
+    case "Déplacements":
       if (sousCategorie == "Véhicules") {
         return const VehiculeScreen();
       }

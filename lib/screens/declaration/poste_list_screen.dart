@@ -94,29 +94,6 @@ class _PosteListScreenState extends State<PosteListScreen> {
     );
   }
 
-  // Ajout logique de redirection par sous-categorie sans bien
-  void handleRedirection(Poste poste) {
-    switch (widget.sousCategorie) {
-      case "Véhicules":
-        Navigator.push(context, MaterialPageRoute(builder: (context) => const VehiculeScreen()));
-        break;
-      case "Services publics":
-      case "Numérique":
-      case "Loisirs":
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text("Écran en cours de construction"), duration: Duration(seconds: 2)));
-        break;
-      default:
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Aucune redirection définie pour cette sous-catégorie"),
-            duration: Duration(seconds: 2),
-          ),
-        );
-    }
-  }
-
   bool isNavigated = false;
 
   @override

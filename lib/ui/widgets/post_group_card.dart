@@ -8,12 +8,7 @@ class PostData {
   final VoidCallback onEdit;
   final VoidCallback onDelete;
 
-  PostData({
-    required this.title,
-    required this.emission,
-    required this.onEdit,
-    required this.onDelete,
-  });
+  PostData({required this.title, required this.emission, required this.onEdit, required this.onDelete});
 }
 
 class PostGroupCard extends StatelessWidget {
@@ -32,19 +27,14 @@ class PostGroupCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final totalEmission = posts.fold<double>(0.0, (sum, p) => sum + p.emission);
     final pourcentage =
-        totalCategorieEmission > 0
-            ? (totalEmission / totalCategorieEmission * 100).toStringAsFixed(1)
-            : "0";
+        totalCategorieEmission > 0 ? (totalEmission / totalCategorieEmission * 100).toStringAsFixed(1) : "0";
 
     return CustomCard(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            "$sousCategorie ($pourcentage%)",
-            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-          ),
+          Text("$sousCategorie ($pourcentage%)", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
           const Divider(height: 8),
           ...posts.map(
             (post) => PostListCard(

@@ -1,4 +1,4 @@
-import 'package:carbone_web/screens/detail/subcategory_screen.dart';
+import 'package:carbone_web/screens/analyse/subcategory_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:carbone_web/core/constants/app_icons.dart';
 
@@ -40,24 +40,12 @@ class CategoryListCard extends StatelessWidget {
                   size: 16,
                   color: categoryColors[category] ?? Colors.grey[700],
                 ),
-                title: Text(
-                  category,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                subtitle: Text(
-                  "$percentage%",
-                  style: const TextStyle(fontSize: 10),
-                ),
+                title: Text(category, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                subtitle: Text("$percentage%", style: const TextStyle(fontSize: 10)),
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(
-                      "${emissions.toStringAsFixed(2)} tCO₂e",
-                      style: const TextStyle(fontSize: 11),
-                    ),
+                    Text("${emissions.toStringAsFixed(2)} tCO₂e", style: const TextStyle(fontSize: 11)),
                     const SizedBox(width: 4),
                     const Icon(Icons.chevron_right, size: 14),
                   ],

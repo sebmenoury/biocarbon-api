@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../layout/custom_card.dart'; // adapte selon ton import réel
 import 'post_list_card.dart'; // adapte selon ton import réel
-import '../../data/classes/poste.dart'; // adapte selon le type réel
+import '../../data/classes/poste_postes.dart'; // adapte selon le type réel
 
 class PostListSectionCard extends StatelessWidget {
   final String sousCat;
