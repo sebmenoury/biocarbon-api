@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
+import 'edition_generique_screen.dart';
+import '../alimentation/alimentation_screen.dart';
+import '../logement/construction_screen.dart';
+import '../logement/dialogs_type_bien.dart';
+import '../deplacements/vehicule_screen.dart';
 import '../../ui/layout/base_screen.dart';
 import '../../ui/layout/custom_card.dart';
 import '../../ui/widgets/post_list_card.dart';
+import '../../ui/widgets/post_list_section_card.dart';
 import '../../data/services/api_service.dart';
 import '../../data/classes/poste.dart';
 import '../../data/parametres/sous_categorie_avec_bien.dart';
 import '../../data/classes/bien_immobilier.dart';
 import '../../data/classes/poste_bien_immobilier.dart';
-import '../logement/construction_screen.dart';
-import '../logement/dialogs_type_bien.dart';
-import '../vehicules/vehicule_screen.dart';
-import 'poste_list_screen.dart';
-import '../../data/classes/poste_list_wrapper_screen.dart';
 
 class PosteListScreen extends StatefulWidget {
   final String sousCategorie;
@@ -195,35 +196,42 @@ class _PosteListScreenState extends State<PosteListScreen> {
             final postes = snapshot.data ?? [];
 
             if (!avecBien && widget.sousCategorie == "Véhicules") {
-              final total = postes.fold<double>(0, (sum, p) => sum + (p.emissionCalculee ?? 0));
+              final Map<String, List<Poste>> postesParSousCat = {};
+              for (var poste in postes) {
+                final key = poste.sousCategorie;
+                if (!postesParSousCat.containsKey(key)) {
+                  postesParSousCat[key] = [];
+                }
+                postesParSousCat[key]!.add(poste);
+              }
 
+              // Affichage par sous-catégorie
               return Column(
-                children: [
-                  InkWell(
-                    onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (_) => const VehiculeScreen()));
-                    },
-                    child: CustomCard(
-                      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text("Véhicules", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-                          Row(
-                            children: [
-                              Text(
-                                "\${total.round()} kgCO₂",
-                                style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
-                              ),
-                              const SizedBox(width: 4),
-                              const Icon(Icons.chevron_right, size: 14),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
+                children:
+                    postesParSousCat.entries.map((entry) {
+                      final sousCat = entry.key;
+                      final postes = entry.value;
+                      final total = postes.fold<double>(0, (sum, p) => sum + (p.emissionCalculee ?? 0));
+
+                      postes.sort((a, b) => (b.emissionCalculee ?? 0).compareTo(a.emissionCalculee ?? 0));
+
+                      return PostListSectionCard(
+                        sousCat: sousCat,
+                        postes: postes,
+                        total: total,
+                        onTap: () {
+                          // Route vers le bon écran selon la sous-catégorie
+                          if (sousCat == "Vehicules") {
+                            Navigator.push(context, MaterialPageRoute(builder: (_) => VehiculeScreen()));
+                          } else {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (_) => EditionGeneriqueScreen(sousCategorie: sousCat)),
+                            );
+                          }
+                        },
+                      );
+                    }).toList(),
               );
             }
 
@@ -246,43 +254,21 @@ class _PosteListScreenState extends State<PosteListScreen> {
 
                       postes.sort((a, b) => (b.emissionCalculee ?? 0).compareTo(a.emissionCalculee ?? 0));
 
-                      return CustomCard(
-                        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(sousCat, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-                                Row(
-                                  children: [
-                                    Text(
-                                      "${total.round()} kgCO₂",
-                                      style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
-                                    ),
-                                    const SizedBox(width: 4),
-                                    const Icon(Icons.chevron_right, size: 14),
-                                  ],
-                                ),
-                              ],
-                            ),
-                            const Divider(height: 8),
-                            ...List.generate(postes.length * 2 - 1, (index) {
-                              if (index.isEven) {
-                                final poste = postes[index ~/ 2];
-                                return PostListCard(
-                                  title: poste.nomPoste ?? 'Sans nom',
-                                  emission: "${poste.emissionCalculee?.round() ?? 0} kgCO₂",
-                                  onEdit: () {},
-                                  onDelete: () {},
-                                );
-                              } else {
-                                return const Divider(height: 1, thickness: 0.2, color: Colors.grey);
-                              }
-                            }),
-                          ],
-                        ),
+                      return PostListSectionCard(
+                        sousCat: sousCat,
+                        postes: postes,
+                        total: total,
+                        onTap: () {
+                          // Route vers le bon écran selon la sous-catégorie
+                          if (sousCat == "Alimentation") {
+                            Navigator.push(context, MaterialPageRoute(builder: (_) => AlimentationScreen()));
+                          } else {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (_) => EditionGeneriqueScreen(sousCategorie: sousCat)),
+                            );
+                          }
+                        },
                       );
                     }).toList(),
               );

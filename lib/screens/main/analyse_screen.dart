@@ -114,15 +114,21 @@ class _AnalyseScreenState extends State<AnalyseScreen> {
                         ),
                         const SizedBox(height: 30),
                         DashboardGauge(valeur: total * 1000),
-                        const SizedBox(height: 12),
-                        const Text(
-                          "Niveau d'émission carbone",
-                          style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.black87),
-                        ),
-                        const SizedBox(height: 1),
-                        const Text(
-                          "Données annuelles en kg CO₂e / personne",
-                          style: TextStyle(fontSize: 8, color: Colors.black54),
+                        Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Text(
+                                "Niveau d'émission carbone",
+                                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.black87),
+                              ),
+                              const SizedBox(height: 1),
+                              const Text(
+                                "Données annuelles en kg CO₂e / personne",
+                                style: TextStyle(fontSize: 8, color: Colors.black54),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),

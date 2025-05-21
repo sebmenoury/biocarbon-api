@@ -72,7 +72,12 @@ class _ObjectifsScreenState extends State<ObjectifsScreen> {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      Text("Total : ${total.toStringAsFixed(2)} tCO₂e/an", style: const TextStyle(fontSize: 10)),
+                      Center(
+                        child: Text(
+                          "Total : ${total.toStringAsFixed(2)} tCO₂e/an",
+                          style: const TextStyle(fontSize: 10),
+                        ),
+                      ),
                     ],
                   ),
                 ),

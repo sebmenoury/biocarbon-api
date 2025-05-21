@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
 import '../../screens/detail/poste_list_screen.dart';
-import '../../screens/vehicules/vehicule_screen.dart';
+import '../../screens/deplacements/vehicule_screen.dart';
 
 class PosteVehiculeEntryPoint extends StatefulWidget {
   final String codeIndividu;
