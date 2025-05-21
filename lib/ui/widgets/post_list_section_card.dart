@@ -29,7 +29,6 @@ class PostListSectionCard extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(sousCat, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                     Row(
                       children: [
                         Text(

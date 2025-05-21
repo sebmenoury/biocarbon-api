@@ -12,8 +12,10 @@ import '../../data/classes/poste.dart';
 import '../../data/parametres/sous_categorie_avec_bien.dart';
 import '../../data/classes/bien_immobilier.dart';
 import '../../data/classes/poste_bien_immobilier.dart';
+import '../../navigation/navigation_registry.dart';
 
 class PosteListScreen extends StatefulWidget {
+  final String typeCategorie;
   final String sousCategorie;
   final String codeIndividu;
   final String valeurTemps;
@@ -21,6 +23,7 @@ class PosteListScreen extends StatefulWidget {
 
   const PosteListScreen({
     super.key,
+    required this.typeCategorie,
     required this.sousCategorie,
     required this.codeIndividu,
     required this.valeurTemps,
@@ -219,11 +222,13 @@ class _PosteListScreenState extends State<PosteListScreen> {
                         postes: postes,
                         total: total,
                         onTap: () {
-                          // Route vers le bon écran selon la sous-catégorie
-                          if (sousCat == "Vehicules") {
-                            Navigator.push(context, MaterialPageRoute(builder: (_) => VehiculeScreen()));
+                          final screen = getEcranEdition(widget.typeCategorie, sousCat);
+                          if (screen != null) {
+                            Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
                           } else {
-                            // Ne rien faire pour le moment
+                            ScaffoldMessenger.of(
+                              context,
+                            ).showSnackBar(SnackBar(content: Text("Aucun écran défini pour $sousCat")));
                           }
                         },
                       );
@@ -255,11 +260,13 @@ class _PosteListScreenState extends State<PosteListScreen> {
                         postes: postes,
                         total: total,
                         onTap: () {
-                          // Route vers le bon écran selon la sous-catégorie
-                          if (sousCat == "Alimentation") {
-                            Navigator.push(context, MaterialPageRoute(builder: (_) => AlimentationScreen()));
+                          final screen = getEcranEdition(widget.typeCategorie, sousCat);
+                          if (screen != null) {
+                            Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
                           } else {
-                            // Ne rien faire pour le moment
+                            ScaffoldMessenger.of(
+                              context,
+                            ).showSnackBar(SnackBar(content: Text("Aucun écran défini pour $sousCat")));
                           }
                         },
                       );
