@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../alimentation/alimentation_screen.dart';
 import '../logement/construction_screen.dart';
 import '../logement/dialogs_type_bien.dart';
 import '../deplacements/vehicule_screen.dart';
