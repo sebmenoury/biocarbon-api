@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'edition_generique_screen.dart';
 import '../alimentation/alimentation_screen.dart';
 import '../logement/construction_screen.dart';
 import '../logement/dialogs_type_bien.dart';
@@ -224,10 +223,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                           if (sousCat == "Vehicules") {
                             Navigator.push(context, MaterialPageRoute(builder: (_) => VehiculeScreen()));
                           } else {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (_) => EditionGeneriqueScreen(sousCategorie: sousCat)),
-                            );
+                            // Ne rien faire pour le moment
                           }
                         },
                       );
@@ -263,10 +259,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                           if (sousCat == "Alimentation") {
                             Navigator.push(context, MaterialPageRoute(builder: (_) => AlimentationScreen()));
                           } else {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (_) => EditionGeneriqueScreen(sousCategorie: sousCat)),
-                            );
+                            // Ne rien faire pour le moment
                           }
                         },
                       );
