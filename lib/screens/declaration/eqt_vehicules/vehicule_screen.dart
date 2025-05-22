@@ -31,15 +31,16 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
 
     for (final eq in equipements) {
       if (eq['Type_Categorie'] == 'Déplacements' && eq['Sous_Categorie'] == 'Véhicules') {
-        final nom = eq['Nom_Equipement'];
+        final nom = eq['Nom_Equipement'].toString();
         final facteur = double.tryParse(eq['Valeur_Emission_Grise'].toString()) ?? 0;
         final duree = int.tryParse(eq['Duree_Amortissement'].toString()) ?? 1;
-        final type = (eq['Type_Equipement'] ?? '').toString().toLowerCase();
 
+        // ⚠️ On catégorise maintenant à partir du NOM
+        final nomLower = nom.toLowerCase();
         String categorie;
-        if (type.contains('voitures')) {
+        if (nomLower.startsWith('Voitures')) {
           categorie = 'Voitures';
-        } else if (type.contains('2-roues')) {
+        } else if (nomLower.startsWith('2-roues')) {
           categorie = '2-roues';
         } else {
           categorie = 'Autres';
@@ -58,7 +59,6 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
         poste.dureeAmortissement = duree;
 
         result[categorie]!.add(poste);
-        print("Ajout de '${poste.nomEquipement}' dans la catégorie : $categorie");
       }
     }
 
