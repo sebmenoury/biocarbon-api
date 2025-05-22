@@ -38,7 +38,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
         // ⚠️ On catégorise maintenant à partir du NOM
         final nomLower = nom.toLowerCase();
         String categorie;
-        if (nomLower.startsWith('Voitures')) {
+        if (nomLower.startsWith('voitures')) {
           categorie = 'Voitures';
         } else if (nomLower.startsWith('2-roues')) {
           categorie = '2-roues';
