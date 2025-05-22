@@ -13,7 +13,7 @@ class VehiculeScreen extends StatefulWidget {
 }
 
 class _VehiculeScreenState extends State<VehiculeScreen> {
-  Map<String, List<PosteVehicule>> vehiculesParCategorie = {'Voiture': [], '2-roues': [], 'Autres': []};
+  Map<String, List<PosteVehicule>> vehiculesParCategorie = {'Voitures': [], '2-roues': [], 'Autres': []};
   bool isLoading = true;
   double totalEmission = 0;
 
@@ -27,7 +27,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
     final equipements = await ApiService.getRefEquipements();
     final postes = await ApiService.getPostesBysousCategorie("Véhicules", "BASILE", "2025");
 
-    final Map<String, List<PosteVehicule>> result = {'Voiture': [], '2-roues': [], 'Autres': []};
+    final Map<String, List<PosteVehicule>> result = {'Voitures': [], '2-roues': [], 'Autres': []};
 
     for (final eq in equipements) {
       if (eq['Type_Categorie'] == 'Déplacements' && eq['Sous_Categorie'] == 'Véhicules') {
@@ -35,11 +35,10 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
         final facteur = double.tryParse(eq['Valeur_Emission_Grise'].toString()) ?? 0;
         final duree = int.tryParse(eq['Duree_Amortissement'].toString()) ?? 1;
 
-        // Catégorisation robuste
         final type = (eq['Type_Equipement'] ?? '').toString().toLowerCase();
         String categorie;
         if (type.contains('voiture')) {
-          categorie = 'Voiture';
+          categorie = 'Voitures';
         } else if (type.contains('2-roues') || type.contains('moto') || type.contains('scoot')) {
           categorie = '2-roues';
         } else {
@@ -53,12 +52,13 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
         final poste = PosteVehicule(
           nomEquipement: nom,
           anneesConstruction: annees,
-          quantite: postesPourCetEquipement.isEmpty ? 0 : postesPourCetEquipement.length,
+          quantite: postesPourCetEquipement.length,
         );
         poste.facteurEmission = facteur;
         poste.dureeAmortissement = duree;
 
-        result[categorie]?.add(poste);
+        result[categorie] ??= [];
+        result[categorie]!.add(poste);
       }
     }
 
@@ -98,94 +98,76 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
   }
 
   Widget buildVehiculeRow(PosteVehicule poste) {
-    String libelle = poste.nomEquipement.replaceFirst(RegExp(r'^(Voitures?|2-roues|Autres)\s*-\s*'), '');
+    String libelle = poste.nomEquipement.replaceFirst(RegExp(r'^(Voitures|2-roues|Autres)\s*-\s*'), '');
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(child: Text(libelle, style: const TextStyle(fontSize: 12))),
-          Column(
+          SizedBox(width: 120, child: Text(libelle, style: const TextStyle(fontSize: 12))),
+          Row(
             children: [
-              GestureDetector(
-                onTap: () {
-                  setState(() {
-                    if (poste.anneesConstruction.isNotEmpty) {
-                      poste.anneesConstruction.removeLast();
-                      poste.quantite = poste.anneesConstruction.length;
-                    }
-                  });
-                },
-                child: const Icon(Icons.arrow_drop_down, size: 20),
-              ),
               SizedBox(
                 width: 32,
                 height: 28,
-                child: TextFormField(
-                  initialValue: poste.quantite.toString(),
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 12),
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(isDense: true, contentPadding: EdgeInsets.all(4)),
-                  onChanged: (val) {
-                    final parsed = int.tryParse(val);
-                    if (parsed != null && parsed >= 0) {
-                      setState(() {
-                        final current = poste.anneesConstruction;
-                        if (parsed > current.length) {
-                          current.addAll(List.generate(parsed - current.length, (_) => DateTime.now().year));
-                        } else if (parsed < current.length) {
-                          current.removeRange(parsed, current.length);
-                        }
-                        poste.quantite = current.length;
-                      });
-                    }
-                  },
-                ),
+                child: Center(child: Text('${poste.quantite}', style: const TextStyle(fontSize: 12))),
               ),
-              GestureDetector(
-                onTap: () {
-                  setState(() {
-                    poste.anneesConstruction.add(DateTime.now().year);
-                    poste.quantite = poste.anneesConstruction.length;
-                  });
-                },
-                child: const Icon(Icons.arrow_drop_up, size: 20),
+              Column(
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        poste.anneesConstruction.add(DateTime.now().year);
+                        poste.quantite = poste.anneesConstruction.length;
+                      });
+                    },
+                    child: const Icon(Icons.arrow_drop_up, size: 20),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        if (poste.anneesConstruction.isNotEmpty) {
+                          poste.anneesConstruction.removeLast();
+                          poste.quantite = poste.anneesConstruction.length;
+                        }
+                      });
+                    },
+                    child: const Icon(Icons.arrow_drop_down, size: 20),
+                  ),
+                ],
               ),
             ],
           ),
           const SizedBox(width: 12),
           if (poste.quantite > 0)
-            Expanded(
-              child: Wrap(
-                spacing: 8,
-                runSpacing: 4,
-                children: List.generate(poste.anneesConstruction.length, (index) {
-                  return SizedBox(
-                    width: 60,
-                    child: TextFormField(
-                      initialValue: poste.anneesConstruction[index].toString(),
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(fontSize: 11),
-                      keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
-                        isDense: true,
-                        contentPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 6),
-                        border: OutlineInputBorder(),
-                      ),
-                      onChanged: (val) {
-                        final parsed = int.tryParse(val);
-                        if (parsed != null) {
-                          setState(() {
-                            poste.anneesConstruction[index] = parsed;
-                          });
-                        }
-                      },
+            Wrap(
+              spacing: 8,
+              runSpacing: 4,
+              children: List.generate(poste.anneesConstruction.length, (index) {
+                return SizedBox(
+                  width: 60,
+                  child: TextFormField(
+                    initialValue: poste.anneesConstruction[index].toString(),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 11),
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(
+                      isDense: true,
+                      contentPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 6),
+                      border: OutlineInputBorder(),
                     ),
-                  );
-                }),
-              ),
+                    onChanged: (val) {
+                      final parsed = int.tryParse(val);
+                      if (parsed != null) {
+                        setState(() {
+                          poste.anneesConstruction[index] = parsed;
+                        });
+                      }
+                    },
+                  ),
+                );
+              }),
             ),
         ],
       ),
@@ -239,7 +221,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
           ),
         ),
         const SizedBox(height: 6),
-        ...['Voiture', '2-roues', 'Autres'].map((groupe) {
+        ...['Voitures', '2-roues', 'Autres'].map((groupe) {
           final items = vehiculesParCategorie[groupe]!;
           if (items.isNotEmpty) return buildCategorieCard(groupe, items);
           return const SizedBox.shrink();
