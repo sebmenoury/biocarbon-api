@@ -160,21 +160,10 @@ class _PosteListScreenState extends State<PosteListScreen> {
             constraints: const BoxConstraints(),
           ),
           const SizedBox(width: 8),
-          Text("Mes données", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+          Text("", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
         ],
       ),
       children: [
-        CustomCard(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Icon(icon, size: 12, color: color),
-              Text("Eléments déclarés", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-            ],
-          ),
-        ),
-
         FutureBuilder<List<Poste>>(
           future: postesFuture,
           builder: (context, snapshot) {
