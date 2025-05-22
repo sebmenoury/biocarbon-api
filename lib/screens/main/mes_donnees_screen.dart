@@ -123,13 +123,13 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
                   ),
                 );
               },
-              backgroundColor: color,
+              backgroundColor: color.withOpacity(0.1),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(icon, size: 22, color: color),
                   const SizedBox(height: 4),
-                  Text(label, textAlign: TextAlign.center, style: const TextStyle(fontSize: 12, color: Colors.white)),
+                  Text(label, textAlign: TextAlign.center, style: const TextStyle(fontSize: 12)),
                 ],
               ),
             );

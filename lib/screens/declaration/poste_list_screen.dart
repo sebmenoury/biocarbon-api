@@ -164,6 +164,20 @@ class _PosteListScreenState extends State<PosteListScreen> {
         ],
       ),
       children: [
+        CustomCard(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Icon(icon, size: 12, color: color),
+              Text(
+                "Empreinte annuelle individuelle associée à l'amortissement de l'énergie nécessaire à la construction du bien",
+                style: TextStyle(fontSize: 12),
+              ),
+            ],
+          ),
+        ),
+
         FutureBuilder<List<Poste>>(
           future: postesFuture,
           builder: (context, snapshot) {
@@ -256,7 +270,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                               Row(
                                 children: [
                                   Text(
-                                    "${total.round()} kgCO₂",
+                                    "${total.round()} XX kgCO₂",
                                     style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
                                   ),
                                   const SizedBox(width: 4),
