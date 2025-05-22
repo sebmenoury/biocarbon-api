@@ -98,6 +98,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
 
   Widget buildVehiculeLine(PosteVehicule poste) {
     String libelle = poste.nomEquipement.replaceFirst(RegExp(r'^(Voitures|2-roues|Autres)\s*-\s*'), '');
+    final colorBloc = poste.quantite > 0 ? Colors.white : Colors.grey.shade100;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
@@ -105,8 +106,9 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
         children: [
           Expanded(flex: 2, child: Text(libelle, style: const TextStyle(fontSize: 12))),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-            decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(8)),
+            height: 32,
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            decoration: BoxDecoration(color: colorBloc, borderRadius: BorderRadius.circular(8)),
             child: Row(
               children: [
                 GestureDetector(
@@ -137,19 +139,19 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
             ),
           ),
           const SizedBox(width: 8),
-          if (poste.quantite > 0)
-            Wrap(
-              spacing: 6,
-              children:
-                  poste.anneesConstruction.map((annee) {
-                    return Container(
-                      width: 60,
-                      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
-                      decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(8)),
-                      child: Center(child: Text('$annee', style: const TextStyle(fontSize: 12))),
-                    );
-                  }).toList(),
-            ),
+          Wrap(
+            spacing: 6,
+            children:
+                poste.anneesConstruction.map((annee) {
+                  return Container(
+                    height: 32,
+                    width: 60,
+                    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+                    decoration: BoxDecoration(color: colorBloc, borderRadius: BorderRadius.circular(8)),
+                    child: Center(child: Text('$annee', style: const TextStyle(fontSize: 12))),
+                  );
+                }).toList(),
+          ),
         ],
       ),
     );
