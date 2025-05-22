@@ -79,8 +79,8 @@ class _VehiculesScreenState extends State<VehiculesScreen> {
   }
 
   List<String> getVehiculesByGroupe(String groupe) {
-    if (groupe == 'Voiture') {
-      return facteursEmission.keys.where((k) => k.startsWith('Voiture')).toList();
+    if (groupe == 'Voitures') {
+      return facteursEmission.keys.where((k) => k.startsWith('Voitures')).toList();
     } else if (groupe == '2-roues') {
       return facteursEmission.keys.where((k) => k.contains('2-roues')).toList();
     } else {

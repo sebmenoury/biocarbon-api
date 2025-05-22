@@ -1,9 +1,10 @@
+// vehicule_screen.dart
 import 'package:flutter/material.dart';
 import '../../../ui/layout/base_screen.dart';
 import '../../../ui/layout/custom_card.dart';
 import '../../../data/services/api_service.dart';
 import '../../../data/classes/poste_vehicule.dart';
-import 'emission_calculator_vehicules.dart';
+import '../eqt_vehicules/emission_calculator_vehicules.dart';
 
 class VehiculeScreen extends StatefulWidget {
   const VehiculeScreen({super.key});
@@ -13,7 +14,8 @@ class VehiculeScreen extends StatefulWidget {
 }
 
 class _VehiculeScreenState extends State<VehiculeScreen> {
-  Map<String, List<PosteVehicule>> vehiculesParCategorie = {'Voitures': [], '2-roues': [], 'Autres': []};
+  List<Map<String, dynamic>> refEquipements = [];
+  Map<String, List<PosteVehicule>> vehiculesParCategorie = {};
   bool isLoading = true;
   double totalEmission = 0;
 
@@ -27,38 +29,30 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
     final equipements = await ApiService.getRefEquipements();
     final postes = await ApiService.getPostesBysousCategorie("Véhicules", "BASILE", "2025");
 
-    final Map<String, List<PosteVehicule>> result = {'Voitures': [], '2-roues': [], 'Autres': []};
+    final Map<String, List<PosteVehicule>> result = {'Voiture': [], '2-roues': [], 'Autres': []};
 
     for (final eq in equipements) {
       if (eq['Type_Categorie'] == 'Déplacements' && eq['Sous_Categorie'] == 'Véhicules') {
         final nom = eq['Nom_Equipement'];
         final facteur = double.tryParse(eq['Valeur_Emission_Grise'].toString()) ?? 0;
         final duree = int.tryParse(eq['Duree_Amortissement'].toString()) ?? 1;
-        final type = (eq['Type_Equipement'] ?? '').toString().toLowerCase();
 
-        String categorie;
-        if (type.contains('voitures')) {
-          categorie = 'Voitures';
-        } else if (type.contains('2-roues')) {
-          categorie = '2-roues';
-        } else {
-          categorie = 'Autres';
-        }
-
+        // Cherche tous les postes UC correspondant à ce véhicule
         final postesPourCetEquipement = postes.where((p) => p.nomPoste == nom).toList();
+
+        // Récupère les années ou initialise vide
         final annees = postesPourCetEquipement.map((p) => p.anneeAchat ?? DateTime.now().year).toList();
+
+        // S'il n’y a rien de déclaré, on met une seule ligne vide
         if (annees.isEmpty) annees.add(DateTime.now().year);
 
-        final poste = PosteVehicule(
-          nomEquipement: nom,
-          anneesConstruction: annees,
-          quantite: postesPourCetEquipement.length,
-        );
+        final poste = PosteVehicule(nomEquipement: nom, anneesConstruction: annees);
+
         poste.facteurEmission = facteur;
         poste.dureeAmortissement = duree;
 
-        result[categorie]!.add(poste);
-        print("Ajout de '${poste.nomEquipement}' dans la catégorie : $categorie");
+        final categorie = eq['Type_Equipement'] ?? 'Autres';
+        result[categorie]?.add(poste);
       }
     }
 
@@ -80,7 +74,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
             "Valeur_Temps": "2025",
             "Date_enregistrement": DateTime.now().toIso8601String(),
             "Type_Poste": "Equipement",
-            "Type_Categorie": "Déplacements",
+            "Type_Categorie": "Logement",
             "Sous_Categorie": "Véhicules",
             "Nom_Poste": poste.nomEquipement,
             "Quantite": poste.quantite,
@@ -97,72 +91,96 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
     Navigator.pop(context);
   }
 
-  Widget buildVehiculeLine(PosteVehicule poste) {
-    String libelle = poste.nomEquipement.replaceFirst(RegExp(r'^(Voitures|2-roues|Autres)\s*-\s*'), '');
-    final colorBloc = poste.quantite > 0 ? Colors.white : Colors.grey.shade100;
-
-    List<int> anneesAAfficher;
-    if (poste.anneesConstruction.isNotEmpty) {
-      final max = poste.quantite > 0 ? poste.quantite : 1;
-      anneesAAfficher = poste.anneesConstruction.take(max).toList();
-    } else {
-      anneesAAfficher = [DateTime.now().year];
-    }
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        children: [
-          Expanded(flex: 2, child: Text(libelle, style: const TextStyle(fontSize: 12))),
-          Container(
-            height: 32,
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            decoration: BoxDecoration(color: colorBloc, borderRadius: BorderRadius.circular(8)),
-            child: Row(
+  Widget buildVehiculeRow(PosteVehicule poste) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Ligne du nom + boutons +/- + champ quantité
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(child: Text(poste.nomEquipement, style: const TextStyle(fontSize: 12))),
+            Row(
               children: [
-                GestureDetector(
-                  onTap: () {
+                IconButton(
+                  icon: const Icon(Icons.remove, size: 14),
+                  onPressed: () {
                     setState(() {
-                      if (poste.quantite > 0) {
+                      if (poste.anneesConstruction.isNotEmpty) {
                         poste.anneesConstruction.removeLast();
-                        poste.quantite--;
                       }
                     });
                   },
-                  child: const Icon(Icons.remove, size: 14),
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: Text('${poste.quantite}', style: const TextStyle(fontSize: 12)),
+                SizedBox(
+                  width: 32,
+                  child: TextFormField(
+                    initialValue: poste.quantite.toString(),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 12),
+                    keyboardType: TextInputType.number,
+                    onChanged: (val) {
+                      final parsed = int.tryParse(val);
+                      if (parsed != null && parsed >= 0) {
+                        setState(() {
+                          // ajuster la longueur de la liste
+                          final current = poste.anneesConstruction;
+                          if (parsed > current.length) {
+                            current.addAll(List.generate(parsed - current.length, (_) => DateTime.now().year));
+                          } else if (parsed < current.length) {
+                            current.removeRange(parsed, current.length);
+                          }
+                        });
+                      }
+                    },
+                  ),
                 ),
-                GestureDetector(
-                  onTap: () {
+                IconButton(
+                  icon: const Icon(Icons.add, size: 14),
+                  onPressed: () {
                     setState(() {
                       poste.anneesConstruction.add(DateTime.now().year);
-                      poste.quantite++;
                     });
                   },
-                  child: const Icon(Icons.add, size: 14),
                 ),
               ],
             ),
-          ),
-          const SizedBox(width: 8),
-          Wrap(
-            spacing: 6,
-            children:
-                anneesAAfficher.map((annee) {
-                  return Container(
-                    height: 32,
-                    width: 60,
-                    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
-                    decoration: BoxDecoration(color: colorBloc, borderRadius: BorderRadius.circular(8)),
-                    child: Center(child: Text('$annee', style: const TextStyle(fontSize: 12))),
-                  );
-                }).toList(),
-          ),
-        ],
-      ),
+          ],
+        ),
+
+        const SizedBox(height: 4),
+
+        // Champs d'année pour chaque véhicule
+        Wrap(
+          spacing: 8,
+          runSpacing: 4,
+          children: List.generate(poste.anneesConstruction.length, (index) {
+            return SizedBox(
+              width: 60,
+              child: TextFormField(
+                initialValue: poste.anneesConstruction[index].toString(),
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 11),
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(
+                  isDense: true,
+                  contentPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 6),
+                  border: OutlineInputBorder(),
+                ),
+                onChanged: (val) {
+                  final parsed = int.tryParse(val);
+                  if (parsed != null) {
+                    setState(() {
+                      poste.anneesConstruction[index] = parsed;
+                    });
+                  }
+                },
+              ),
+            );
+          }),
+        ),
+        const SizedBox(height: 12),
+      ],
     );
   }
 
@@ -174,7 +192,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
         children: [
           Text(titre, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
           const SizedBox(height: 8),
-          ...vehicules.map(buildVehiculeLine),
+          ...vehicules.map((v) => buildVehiculeRow(v)).toList(),
         ],
       ),
     );
@@ -185,39 +203,24 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
     if (isLoading) return const Center(child: CircularProgressIndicator());
 
     return BaseScreen(
-      title: Row(
-        children: [
-          IconButton(
-            icon: const Icon(Icons.arrow_back),
-            iconSize: 18,
-            onPressed: () => Navigator.pop(context),
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(),
-          ),
-          const SizedBox(width: 8),
-          const Text("Vue d'ensemble Véhicules déclarés", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-        ],
-      ),
+      title: const Text("Déclaration des véhicules", style: TextStyle(fontSize: 14)),
       children: [
         CustomCard(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          padding: const EdgeInsets.all(12),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text("Synthèse", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-              Text(
-                "${totalEmission.toStringAsFixed(0)} kgCO₂",
-                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-              ),
+              const Text("Synthèse", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+              Text("${totalEmission.toStringAsFixed(0)} kgCO₂", style: const TextStyle(fontSize: 12)),
             ],
           ),
         ),
         const SizedBox(height: 6),
-        ...['Voitures', '2-roues', 'Autres'].map((groupe) {
-          final items = vehiculesParCategorie[groupe]!;
-          if (items.isNotEmpty) return buildCategorieCard(groupe, items);
-          return const SizedBox.shrink();
-        }),
+        if (vehiculesParCategorie['Voiture']!.isNotEmpty)
+          buildCategorieCard("Voiture", vehiculesParCategorie['Voiture']!),
+        if (vehiculesParCategorie['2-roues']!.isNotEmpty)
+          buildCategorieCard("Scoot/Moto/Vélo", vehiculesParCategorie['2-roues']!),
+        if (vehiculesParCategorie['Autres']!.isNotEmpty) buildCategorieCard("Autres", vehiculesParCategorie['Autres']!),
         const SizedBox(height: 12),
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
