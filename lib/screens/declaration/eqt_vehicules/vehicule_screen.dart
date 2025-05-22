@@ -34,8 +34,8 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
         final nom = eq['Nom_Equipement'];
         final facteur = double.tryParse(eq['Valeur_Emission_Grise'].toString()) ?? 0;
         final duree = int.tryParse(eq['Duree_Amortissement'].toString()) ?? 1;
-
         final type = (eq['Type_Equipement'] ?? '').toString().toLowerCase();
+
         String categorie;
         if (type.contains('voiture')) {
           categorie = 'Voitures';
@@ -57,7 +57,6 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
         poste.facteurEmission = facteur;
         poste.dureeAmortissement = duree;
 
-        result[categorie] ??= [];
         result[categorie]!.add(poste);
       }
     }
@@ -97,77 +96,59 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
     Navigator.pop(context);
   }
 
-  Widget buildVehiculeRow(PosteVehicule poste) {
+  Widget buildVehiculeLine(PosteVehicule poste) {
     String libelle = poste.nomEquipement.replaceFirst(RegExp(r'^(Voitures|2-roues|Autres)\s*-\s*'), '');
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
+      padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(width: 120, child: Text(libelle, style: const TextStyle(fontSize: 12))),
-          Row(
-            children: [
-              SizedBox(
-                width: 32,
-                height: 28,
-                child: Center(child: Text('${poste.quantite}', style: const TextStyle(fontSize: 12))),
-              ),
-              Column(
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        poste.anneesConstruction.add(DateTime.now().year);
-                        poste.quantite = poste.anneesConstruction.length;
-                      });
-                    },
-                    child: const Icon(Icons.arrow_drop_up, size: 20),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        if (poste.anneesConstruction.isNotEmpty) {
-                          poste.anneesConstruction.removeLast();
-                          poste.quantite = poste.anneesConstruction.length;
-                        }
-                      });
-                    },
-                    child: const Icon(Icons.arrow_drop_down, size: 20),
-                  ),
-                ],
-              ),
-            ],
+          Expanded(flex: 2, child: Text(libelle, style: const TextStyle(fontSize: 12))),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+            decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(8)),
+            child: Row(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      if (poste.quantite > 0) {
+                        poste.anneesConstruction.removeLast();
+                        poste.quantite--;
+                      }
+                    });
+                  },
+                  child: const Icon(Icons.remove, size: 14),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: Text('${poste.quantite}', style: const TextStyle(fontSize: 12)),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      poste.anneesConstruction.add(DateTime.now().year);
+                      poste.quantite++;
+                    });
+                  },
+                  child: const Icon(Icons.add, size: 14),
+                ),
+              ],
+            ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 8),
           if (poste.quantite > 0)
             Wrap(
-              spacing: 8,
-              runSpacing: 4,
-              children: List.generate(poste.anneesConstruction.length, (index) {
-                return SizedBox(
-                  width: 60,
-                  child: TextFormField(
-                    initialValue: poste.anneesConstruction[index].toString(),
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 11),
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                      isDense: true,
-                      contentPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 6),
-                      border: OutlineInputBorder(),
-                    ),
-                    onChanged: (val) {
-                      final parsed = int.tryParse(val);
-                      if (parsed != null) {
-                        setState(() {
-                          poste.anneesConstruction[index] = parsed;
-                        });
-                      }
-                    },
-                  ),
-                );
-              }),
+              spacing: 6,
+              children:
+                  poste.anneesConstruction.map((annee) {
+                    return Container(
+                      width: 60,
+                      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+                      decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(8)),
+                      child: Center(child: Text('$annee', style: const TextStyle(fontSize: 12))),
+                    );
+                  }).toList(),
             ),
         ],
       ),
@@ -182,7 +163,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
         children: [
           Text(titre, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
           const SizedBox(height: 8),
-          ...vehicules.map(buildVehiculeRow).toList(),
+          ...vehicules.map(buildVehiculeLine),
         ],
       ),
     );
