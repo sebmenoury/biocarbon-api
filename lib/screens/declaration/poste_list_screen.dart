@@ -164,17 +164,6 @@ class _PosteListScreenState extends State<PosteListScreen> {
         ],
       ),
       children: [
-        CustomCard(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Icon(icon, size: 12, color: color),
-              Text(" ${widget.sousCategorie} : Mes données déclarées", style: TextStyle(fontSize: 12)),
-            ],
-          ),
-        ),
-
         FutureBuilder<List<Poste>>(
           future: postesFuture,
           builder: (context, snapshot) {

@@ -22,7 +22,7 @@ class PostListSectionCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text("Empreinte : $sousCat", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+              Text("$sousCat", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
               GestureDetector(
                 onTap: onTap,
                 behavior: HitTestBehavior.translucent,

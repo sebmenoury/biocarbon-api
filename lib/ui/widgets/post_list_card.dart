@@ -16,6 +16,9 @@ class PostListCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Supprime "Voitures -", "2-roues -" ou "Autres -"
+    final displayTitle = title.replaceFirst(RegExp(r'^(Voitures|2-roues|Autres)\s*-\s*'), '');
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       child: Row(
@@ -23,7 +26,14 @@ class PostListCard extends StatelessWidget {
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [Text(title, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.normal))],
+              children: [
+                Text(
+                  displayTitle,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                  style: const TextStyle(fontSize: 11, fontWeight: FontWeight.normal),
+                ),
+              ],
             ),
           ),
           Padding(
