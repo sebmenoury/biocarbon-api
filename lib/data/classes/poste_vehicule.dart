@@ -5,12 +5,14 @@ class PosteVehicule {
   List<int> anneesConstruction;
   double facteurEmission;
   int dureeAmortissement;
+  int quantite;
 
   PosteVehicule({
     required this.nomEquipement,
     required this.anneesConstruction,
     this.facteurEmission = 0,
     this.dureeAmortissement = 1,
+    this.quantite = 0, // <= AJOUT
   });
 
   int get quantite => anneesConstruction.length;

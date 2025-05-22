@@ -170,10 +170,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Icon(icon, size: 12, color: color),
-              Text(
-                "Empreinte annuelle individuelle associée à l'amortissement de l'énergie nécessaire à la construction du bien",
-                style: TextStyle(fontSize: 12),
-              ),
+              Text(" ${widget.sousCategorie} : Mes données déclarées", style: TextStyle(fontSize: 12)),
             ],
           ),
         ),

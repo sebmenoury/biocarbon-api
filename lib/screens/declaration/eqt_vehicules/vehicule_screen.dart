@@ -1,4 +1,3 @@
-// vehicule_screen.dart
 import 'package:flutter/material.dart';
 import '../../../ui/layout/base_screen.dart';
 import '../../../ui/layout/custom_card.dart';
@@ -14,8 +13,7 @@ class VehiculeScreen extends StatefulWidget {
 }
 
 class _VehiculeScreenState extends State<VehiculeScreen> {
-  List<Map<String, dynamic>> refEquipements = [];
-  Map<String, List<PosteVehicule>> vehiculesParCategorie = {};
+  Map<String, List<PosteVehicule>> vehiculesParCategorie = {'Voiture': [], '2-roues': [], 'Autres': []};
   bool isLoading = true;
   double totalEmission = 0;
 
@@ -23,6 +21,10 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
   void initState() {
     super.initState();
     loadData();
+  }
+
+  List<String> getVehiculesByGroupe(String groupe) {
+    return vehiculesParCategorie[groupe]?.map((v) => v.nomEquipement).toList() ?? [];
   }
 
   Future<void> loadData() async {
@@ -36,23 +38,21 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
         final nom = eq['Nom_Equipement'];
         final facteur = double.tryParse(eq['Valeur_Emission_Grise'].toString()) ?? 0;
         final duree = int.tryParse(eq['Duree_Amortissement'].toString()) ?? 1;
+        final type = eq['Type_Equipement'] ?? 'Autres';
 
-        // Cherche tous les postes UC correspondant à ce véhicule
         final postesPourCetEquipement = postes.where((p) => p.nomPoste == nom).toList();
-
-        // Récupère les années ou initialise vide
         final annees = postesPourCetEquipement.map((p) => p.anneeAchat ?? DateTime.now().year).toList();
-
-        // S'il n’y a rien de déclaré, on met une seule ligne vide
         if (annees.isEmpty) annees.add(DateTime.now().year);
 
-        final poste = PosteVehicule(nomEquipement: nom, anneesConstruction: annees);
-
+        final poste = PosteVehicule(
+          nomEquipement: nom,
+          anneesConstruction: annees,
+          quantite: postesPourCetEquipement.isEmpty ? 0 : postesPourCetEquipement.length,
+        );
         poste.facteurEmission = facteur;
         poste.dureeAmortissement = duree;
 
-        final categorie = eq['Type_Equipement'] ?? 'Autres';
-        result[categorie]?.add(poste);
+        result[type]?.add(poste);
       }
     }
 
@@ -92,95 +92,96 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
   }
 
   Widget buildVehiculeRow(PosteVehicule poste) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Ligne du nom + boutons +/- + champ quantité
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(child: Text(poste.nomEquipement, style: const TextStyle(fontSize: 12))),
-            Row(
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.remove, size: 14),
-                  onPressed: () {
-                    setState(() {
-                      if (poste.anneesConstruction.isNotEmpty) {
-                        poste.anneesConstruction.removeLast();
-                      }
-                    });
-                  },
-                ),
-                SizedBox(
-                  width: 32,
-                  child: TextFormField(
-                    initialValue: poste.quantite.toString(),
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 12),
-                    keyboardType: TextInputType.number,
-                    onChanged: (val) {
-                      final parsed = int.tryParse(val);
-                      if (parsed != null && parsed >= 0) {
-                        setState(() {
-                          // ajuster la longueur de la liste
-                          final current = poste.anneesConstruction;
-                          if (parsed > current.length) {
-                            current.addAll(List.generate(parsed - current.length, (_) => DateTime.now().year));
-                          } else if (parsed < current.length) {
-                            current.removeRange(parsed, current.length);
-                          }
-                        });
-                      }
+    String libelle = poste.nomEquipement.replaceFirst(RegExp(r'^(Voitures?|2-roues|Autres)\s*-\s*'), '');
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(child: Text(libelle, style: const TextStyle(fontSize: 12))),
+              Row(
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        if (poste.anneesConstruction.isNotEmpty) {
+                          poste.anneesConstruction.removeLast();
+                          poste.quantite = poste.anneesConstruction.length;
+                        }
+                      });
                     },
+                    child: const Icon(Icons.arrow_drop_down, size: 20),
                   ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.add, size: 14),
-                  onPressed: () {
-                    setState(() {
-                      poste.anneesConstruction.add(DateTime.now().year);
-                    });
+                  SizedBox(
+                    width: 32,
+                    child: TextFormField(
+                      initialValue: poste.quantite.toString(),
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontSize: 12),
+                      keyboardType: TextInputType.number,
+                      onChanged: (val) {
+                        final parsed = int.tryParse(val);
+                        if (parsed != null && parsed >= 0) {
+                          setState(() {
+                            final current = poste.anneesConstruction;
+                            if (parsed > current.length) {
+                              current.addAll(List.generate(parsed - current.length, (_) => DateTime.now().year));
+                            } else if (parsed < current.length) {
+                              current.removeRange(parsed, current.length);
+                            }
+                            poste.quantite = current.length;
+                          });
+                        }
+                      },
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        poste.anneesConstruction.add(DateTime.now().year);
+                        poste.quantite = poste.anneesConstruction.length;
+                      });
+                    },
+                    child: const Icon(Icons.arrow_drop_up, size: 20),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Wrap(
+            spacing: 8,
+            runSpacing: 4,
+            children: List.generate(poste.anneesConstruction.length, (index) {
+              return SizedBox(
+                width: 60,
+                child: TextFormField(
+                  initialValue: poste.anneesConstruction[index].toString(),
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 11),
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    isDense: true,
+                    contentPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 6),
+                    border: OutlineInputBorder(),
+                  ),
+                  onChanged: (val) {
+                    final parsed = int.tryParse(val);
+                    if (parsed != null) {
+                      setState(() {
+                        poste.anneesConstruction[index] = parsed;
+                      });
+                    }
                   },
                 ),
-              ],
-            ),
-          ],
-        ),
-
-        const SizedBox(height: 4),
-
-        // Champs d'année pour chaque véhicule
-        Wrap(
-          spacing: 8,
-          runSpacing: 4,
-          children: List.generate(poste.anneesConstruction.length, (index) {
-            return SizedBox(
-              width: 60,
-              child: TextFormField(
-                initialValue: poste.anneesConstruction[index].toString(),
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 11),
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  isDense: true,
-                  contentPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 6),
-                  border: OutlineInputBorder(),
-                ),
-                onChanged: (val) {
-                  final parsed = int.tryParse(val);
-                  if (parsed != null) {
-                    setState(() {
-                      poste.anneesConstruction[index] = parsed;
-                    });
-                  }
-                },
-              ),
-            );
-          }),
-        ),
-        const SizedBox(height: 12),
-      ],
+              );
+            }),
+          ),
+        ],
+      ),
     );
   }
 
@@ -192,7 +193,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
         children: [
           Text(titre, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
           const SizedBox(height: 8),
-          ...vehicules.map((v) => buildVehiculeRow(v)).toList(),
+          ...vehicules.map(buildVehiculeRow).toList(),
         ],
       ),
     );
@@ -213,26 +214,29 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
             constraints: const BoxConstraints(),
           ),
           const SizedBox(width: 8),
-          Text("Véhicules", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+          const Text("Vue d'ensemble Véhicules déclarés", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
         ],
       ),
       children: [
         CustomCard(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text("Synthèse", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-              Text("${totalEmission.toStringAsFixed(0)} kgCO₂", style: const TextStyle(fontSize: 12)),
+              const Text("Synthèse", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+              Text(
+                "${totalEmission.toStringAsFixed(0)} kgCO₂",
+                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+              ),
             ],
           ),
         ),
         const SizedBox(height: 6),
-        if (vehiculesParCategorie['Voiture']!.isNotEmpty)
-          buildCategorieCard("Voiture", vehiculesParCategorie['Voiture']!),
-        if (vehiculesParCategorie['2-roues']!.isNotEmpty)
-          buildCategorieCard("Scoot/Moto/Vélo", vehiculesParCategorie['2-roues']!),
-        if (vehiculesParCategorie['Autres']!.isNotEmpty) buildCategorieCard("Autres", vehiculesParCategorie['Autres']!),
+        ...['Voiture', '2-roues', 'Autres'].map((groupe) {
+          final items = vehiculesParCategorie[groupe]!;
+          if (items.isNotEmpty) return buildCategorieCard(groupe, items);
+          return const SizedBox.shrink();
+        }),
         const SizedBox(height: 12),
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
