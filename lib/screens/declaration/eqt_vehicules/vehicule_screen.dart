@@ -37,9 +37,9 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
         final type = (eq['Type_Equipement'] ?? '').toString().toLowerCase();
 
         String categorie;
-        if (type.contains('voiture')) {
+        if (type.contains('Voitures')) {
           categorie = 'Voitures';
-        } else if (type.contains('2-roues') || type.contains('moto') || type.contains('scoot')) {
+        } else if (type.contains('2-roues')) {
           categorie = '2-roues';
         } else {
           categorie = 'Autres';
@@ -58,6 +58,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
         poste.dureeAmortissement = duree;
 
         result[categorie]!.add(poste);
+        print("Ajout de '${poste.nomEquipement}' dans la catégorie : $categorie");
       }
     }
 
@@ -79,7 +80,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
             "Valeur_Temps": "2025",
             "Date_enregistrement": DateTime.now().toIso8601String(),
             "Type_Poste": "Equipement",
-            "Type_Categorie": "Logement",
+            "Type_Categorie": "Déplacements",
             "Sous_Categorie": "Véhicules",
             "Nom_Poste": poste.nomEquipement,
             "Quantite": poste.quantite,
@@ -139,19 +140,24 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
             ),
           ),
           const SizedBox(width: 8),
-          Wrap(
-            spacing: 6,
-            children:
-                poste.anneesConstruction.map((annee) {
-                  return Container(
-                    height: 32,
-                    width: 60,
-                    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
-                    decoration: BoxDecoration(color: colorBloc, borderRadius: BorderRadius.circular(8)),
-                    child: Center(child: Text('$annee', style: const TextStyle(fontSize: 12))),
-                  );
-                }).toList(),
-          ),
+          poste.quantite == 0
+              ? const SizedBox.shrink()
+              : Wrap(
+                spacing: 6,
+                children:
+                    poste.anneesConstruction
+                        .take(poste.quantite)
+                        .map(
+                          (annee) => Container(
+                            height: 32,
+                            width: 60,
+                            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+                            decoration: BoxDecoration(color: colorBloc, borderRadius: BorderRadius.circular(8)),
+                            child: Center(child: Text('$annee', style: const TextStyle(fontSize: 12))),
+                          ),
+                        )
+                        .toList(),
+              ),
         ],
       ),
     );
