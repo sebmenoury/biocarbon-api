@@ -15,13 +15,11 @@ class PosteVehicule {
     this.quantite = 0, // <= AJOUT
   });
 
-  int get quantite => anneesConstruction.length;
-
   /// Méthode statique : retourne la sous-catégorie en fonction du nom
   static String getSousCategorieFromNom(String nom) {
     final nomMin = nom.toLowerCase();
 
-    if (nomMin.contains("voiture")) {
+    if (nomMin.contains("Voitures")) {
       return "Voitures";
     } else if (nomMin.contains("2-roues") || nomMin.contains("moto") || nomMin.contains("scooter")) {
       return "2 roues";
