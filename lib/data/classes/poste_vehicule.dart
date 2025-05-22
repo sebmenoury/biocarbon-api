@@ -13,39 +13,32 @@ class PosteVehicule {
     this.dureeAmortissement = 1,
   });
 
-  // ✅ Ajoute ce getter :
   int get quantite => anneesConstruction.length;
 
-  String getSousCategorieFromNom(String nomEquipement) {
-    final nom = nomEquipement.toLowerCase();
+  /// Méthode statique : retourne la sous-catégorie en fonction du nom
+  static String getSousCategorieFromNom(String nom) {
+    final nomMin = nom.toLowerCase();
 
-    if (nom.contains("voiture") || nom.contains("suv")) {
-      return "Voiture";
-    } else if (nom.contains("scooter") || nom.contains("moto") || nom.contains("vélo") || nom.contains("velo")) {
+    if (nomMin.contains("voiture")) {
+      return "Voitures";
+    } else if (nomMin.contains("2-roues") || nomMin.contains("moto") || nomMin.contains("scooter")) {
       return "2 roues";
     } else {
       return "Autres";
     }
   }
 
-  /// Conversion vers une liste de Postes (1 par véhicule déclaré)
-  List<Poste> toPostes({required String codeIndividu, required double facteurEmission}) {
-    return anneesConstruction.map((annee) {
-      return Poste(
-        idUsage: "", // généré plus tard (ou par backend)
-        typeCategorie: "Véhicules",
-        sousCategorie: getSousCategorieFromNom(nomEquipement),
-        typePoste: "Equipement",
-        nomPoste: nomEquipement,
-        idBien: null,
-        typeBien: null,
-        quantite: 1,
-        unite: "unité",
-        emissionCalculee: facteurEmission, // déjà au format total par unité
-        frequence: facteurEmission.toString(), // ou autre usage
-        anneeAchat: annee,
-        dureeAmortissement: null,
-      );
-    }).toList();
+  /// Regroupe une liste de postes en Map<sousCat, liste>
+  static Map<String, List<Poste>> groupBySousCategorie(List<Poste> postes) {
+    final Map<String, List<Poste>> grouped = {};
+
+    for (var poste in postes) {
+      final nom = poste.nomPoste ?? "";
+      final sousCat = getSousCategorieFromNom(nom);
+
+      grouped.putIfAbsent(sousCat, () => []).add(poste);
+    }
+
+    return grouped;
   }
 }

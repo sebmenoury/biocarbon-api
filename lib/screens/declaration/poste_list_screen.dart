@@ -160,21 +160,17 @@ class _PosteListScreenState extends State<PosteListScreen> {
             constraints: const BoxConstraints(),
           ),
           const SizedBox(width: 8),
-          Text("Sélection d'un poste à déclarer", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+          Text("Mes données", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
         ],
       ),
       children: [
         CustomCard(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Icon(icon, size: 14, color: color),
-              const SizedBox(height: 4),
-              Text(
-                "Vue d'ensemble des postes ${widget.sousCategorie} déclarés",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-              ),
+              Icon(icon, size: 12, color: color),
+              Text("Eléments déclarés", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
             ],
           ),
         ),
