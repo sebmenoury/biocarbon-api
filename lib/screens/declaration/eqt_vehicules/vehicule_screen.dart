@@ -115,10 +115,16 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
         children: [
           Expanded(flex: 2, child: Text(libelle, style: const TextStyle(fontSize: 12))),
           Container(
+            width: 60,
             height: 28,
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(color: colorBloc, borderRadius: BorderRadius.circular(8)),
+            padding: const EdgeInsets.symmetric(horizontal: 6),
+            decoration: BoxDecoration(
+              color: poste.quantite > 0 ? Colors.white : Colors.grey.shade100,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.grey.shade400),
+            ),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 GestureDetector(
                   onTap: () {
@@ -131,10 +137,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
                   },
                   child: const Icon(Icons.remove, size: 14),
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  child: Text('${poste.quantite}', style: const TextStyle(fontSize: 12)),
-                ),
+                Text('${poste.quantite}', style: const TextStyle(fontSize: 12)),
                 GestureDetector(
                   onTap: () {
                     setState(() {
@@ -152,8 +155,6 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
             spacing: 6,
             children: List.generate(anneesAAfficher.length, (index) {
               final annee = anneesAAfficher[index];
-              final isActif = poste.quantite > 0;
-              final colorBloc = isActif ? Colors.white : Colors.grey.shade100;
 
               return SizedBox(
                 width: 58,
@@ -164,9 +165,9 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
                   style: const TextStyle(fontSize: 11),
                   decoration: InputDecoration(
                     filled: true,
-                    fillColor: colorBloc,
-                    contentPadding: const EdgeInsets.symmetric(vertical: 4),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(6)),
+                    fillColor: poste.quantite > 0 ? Colors.white : Colors.grey.shade100,
+                    contentPadding: const EdgeInsets.symmetric(vertical: 6),
+                    border: InputBorder.none,
                     isDense: true,
                   ),
                   keyboardType: TextInputType.number,
