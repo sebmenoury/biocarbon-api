@@ -35,7 +35,6 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
         final facteur = double.tryParse(eq['Valeur_Emission_Grise'].toString()) ?? 0;
         final duree = int.tryParse(eq['Duree_Amortissement'].toString()) ?? 1;
 
-        // ⚠️ On catégorise maintenant à partir du NOM
         final nomLower = nom.toLowerCase();
         String categorie;
         if (nomLower.startsWith('voitures')) {
@@ -64,9 +63,15 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
 
     setState(() {
       vehiculesParCategorie = result;
-      totalEmission = result.values.expand((e) => e).fold(0.0, (sum, p) => sum + calculerTotalEmissionVehicule(p));
+      recalculerTotal();
       isLoading = false;
     });
+  }
+
+  void recalculerTotal() {
+    totalEmission = vehiculesParCategorie.values
+        .expand((v) => v)
+        .fold(0.0, (sum, p) => sum + calculerTotalEmissionVehicule(p));
   }
 
   Future<void> saveData() async {
@@ -119,7 +124,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
             height: 28,
             padding: const EdgeInsets.symmetric(horizontal: 6),
             decoration: BoxDecoration(
-              color: poste.quantite > 0 ? Colors.white : Colors.grey.shade100,
+              color: colorBloc,
               borderRadius: BorderRadius.circular(8),
               boxShadow: [BoxShadow(color: Colors.grey.shade200, blurRadius: 1, offset: const Offset(0, 1))],
             ),
@@ -132,6 +137,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
                       if (poste.quantite > 0) {
                         poste.anneesConstruction.removeLast();
                         poste.quantite--;
+                        recalculerTotal();
                       }
                     });
                   },
@@ -143,6 +149,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
                     setState(() {
                       poste.anneesConstruction.add(DateTime.now().year);
                       poste.quantite++;
+                      recalculerTotal();
                     });
                   },
                   child: const Icon(Icons.add, size: 14),
@@ -174,6 +181,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
                         onTap: () {
                           setState(() {
                             poste.anneesConstruction[index] = poste.anneesConstruction[index] - 1;
+                            recalculerTotal();
                           });
                         },
                         child: const Icon(Icons.remove, size: 14),
@@ -197,6 +205,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
                             if (an != null) {
                               setState(() {
                                 poste.anneesConstruction[index] = an;
+                                recalculerTotal();
                               });
                             }
                           },
@@ -206,6 +215,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
                         onTap: () {
                           setState(() {
                             poste.anneesConstruction[index] = poste.anneesConstruction[index] + 1;
+                            recalculerTotal();
                           });
                         },
                         child: const Icon(Icons.add, size: 14),
@@ -250,7 +260,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
             constraints: const BoxConstraints(),
           ),
           const SizedBox(width: 8),
-          const Text("Vue d'ensemble Véhicules déclarés", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+          const Text("Synthèse Véhicules déclarés", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
         ],
       ),
       children: [
@@ -259,7 +269,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text("Synthèse", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+              const Text("Empreinte annuelle", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
               Text(
                 "${totalEmission.toStringAsFixed(0)} kgCO₂",
                 style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
