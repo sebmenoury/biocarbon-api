@@ -22,7 +22,19 @@ class _BienListScreenState extends State<BienListScreen> {
   @override
   Widget build(BuildContext context) {
     return BaseScreen(
-      title: const Text("Mes biens immobiliers", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+      title: Row(
+        children: [
+          IconButton(
+            icon: const Icon(Icons.arrow_back),
+            iconSize: 18,
+            onPressed: () => Navigator.pop(context),
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+          ),
+          const SizedBox(width: 8),
+          Text("Mes biens immobiliers", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+        ],
+      ),
       children: [
         FutureBuilder<List<Map<String, dynamic>>>(
           future: biensFuture,
@@ -51,7 +63,7 @@ class _BienListScreenState extends State<BienListScreen> {
 
                     return CustomCard(
                       padding: const EdgeInsets.all(12),
-                      margin: const EdgeInsets.only(bottom: 12),
+                      // margin: const EdgeInsets.only(bottom: 12),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -65,7 +77,7 @@ class _BienListScreenState extends State<BienListScreen> {
                           const SizedBox(height: 8),
                           Text("Dénomination : $denom", style: const TextStyle(fontSize: 12)),
                           Text("Adresse : $adresse", style: const TextStyle(fontSize: 12)),
-                          Text("Propriétaires : $nbProp", style: const TextStyle(fontSize: 12)),
+                          Text("Nombre Propriétaires : $nbProp", style: const TextStyle(fontSize: 12)),
                           if (inclure)
                             const Text(
                               "Inclus dans le bilan",

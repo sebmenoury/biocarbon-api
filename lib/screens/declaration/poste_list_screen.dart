@@ -160,7 +160,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
             constraints: const BoxConstraints(),
           ),
           const SizedBox(width: 8),
-          Text("", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+          Text(widget.sousCategorie, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
         ],
       ),
       children: [
