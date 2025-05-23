@@ -121,7 +121,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
             decoration: BoxDecoration(
               color: poste.quantite > 0 ? Colors.white : Colors.grey.shade100,
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.grey.shade400),
+              boxShadow: [BoxShadow(color: Colors.grey.shade200, blurRadius: 1, offset: const Offset(0, 1))],
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -166,8 +166,9 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
                   decoration: InputDecoration(
                     filled: true,
                     fillColor: poste.quantite > 0 ? Colors.white : Colors.grey.shade100,
-                    contentPadding: const EdgeInsets.symmetric(vertical: 6),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 8),
                     border: InputBorder.none,
+
                     isDense: true,
                   ),
                   keyboardType: TextInputType.number,
