@@ -152,17 +152,22 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
             spacing: 6,
             children: List.generate(anneesAAfficher.length, (index) {
               final annee = anneesAAfficher[index];
+              final isActif = poste.quantite > 0;
+              final colorBloc = isActif ? Colors.white : Colors.grey.shade100;
+
               return SizedBox(
-                width: 60,
+                width: 58,
                 height: 28,
                 child: TextFormField(
                   initialValue: annee.toString(),
                   textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 12),
+                  style: const TextStyle(fontSize: 11),
                   decoration: InputDecoration(
+                    filled: true,
+                    fillColor: colorBloc,
+                    contentPadding: const EdgeInsets.symmetric(vertical: 4),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(6)),
                     isDense: true,
-                    contentPadding: const EdgeInsets.symmetric(vertical: 2),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                   ),
                   keyboardType: TextInputType.number,
                   onChanged: (value) {
