@@ -151,35 +151,66 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
             ),
           ),
           const SizedBox(width: 4),
-          Wrap(
-            spacing: 6,
+          Row(
             children: List.generate(anneesAAfficher.length, (index) {
               final annee = anneesAAfficher[index];
+              final colorBloc = poste.quantite > 0 ? Colors.white : Colors.grey.shade100;
 
-              return SizedBox(
-                width: 58,
-                height: 28,
-                child: TextFormField(
-                  initialValue: annee.toString(),
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 11),
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: poste.quantite > 0 ? Colors.white : Colors.grey.shade100,
-                    contentPadding: const EdgeInsets.symmetric(vertical: 8),
-                    border: InputBorder.none,
-
-                    isDense: true,
+              return Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: Container(
+                  width: 90,
+                  height: 28,
+                  padding: const EdgeInsets.symmetric(horizontal: 6),
+                  decoration: BoxDecoration(
+                    color: colorBloc,
+                    borderRadius: BorderRadius.circular(8),
+                    boxShadow: [BoxShadow(color: Colors.grey.shade200, blurRadius: 1, offset: const Offset(0, 1))],
                   ),
-                  keyboardType: TextInputType.number,
-                  onChanged: (value) {
-                    final an = int.tryParse(value);
-                    if (an != null) {
-                      setState(() {
-                        poste.anneesConstruction[index] = an;
-                      });
-                    }
-                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            poste.anneesConstruction[index] = poste.anneesConstruction[index] - 1;
+                          });
+                        },
+                        child: const Icon(Icons.remove, size: 14),
+                      ),
+                      SizedBox(
+                        width: 40,
+                        height: 24,
+                        child: TextFormField(
+                          initialValue: annee.toString(),
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(fontSize: 12),
+                          decoration: const InputDecoration(
+                            border: InputBorder.none,
+                            isDense: true,
+                            contentPadding: EdgeInsets.zero,
+                          ),
+                          keyboardType: TextInputType.number,
+                          onChanged: (val) {
+                            final an = int.tryParse(val);
+                            if (an != null) {
+                              setState(() {
+                                poste.anneesConstruction[index] = an;
+                              });
+                            }
+                          },
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            poste.anneesConstruction[index] = poste.anneesConstruction[index] + 1;
+                          });
+                        },
+                        child: const Icon(Icons.add, size: 14),
+                      ),
+                    ],
+                  ),
                 ),
               );
             }),
