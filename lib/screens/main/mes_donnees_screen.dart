@@ -18,7 +18,7 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
 
   final List<String> equipementLabels = [
     'Biens Immobiliers',
-    'Détail Bien immobiliers',
+    'Détail Biens Immobiliers',
     'Equipements Confort',
     'Equipements Ménager',
     'Equipements Bricolage',

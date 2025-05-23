@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 // Importe ici tous tes écrans de déclaration
 import 'usage_alimentation/alimentation_screen.dart';
-import 'eqt_bien_immobilier/usages_gaz_fioul_screen.dart';
+import 'usage_logement/usages_gaz_fioul_screen.dart';
 import 'eqt_vehicules/vehicule_screen.dart';
 // etc...
 
