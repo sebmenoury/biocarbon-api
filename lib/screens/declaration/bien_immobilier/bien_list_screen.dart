@@ -16,8 +16,7 @@ class _BienListScreenState extends State<BienListScreen> {
   @override
   void initState() {
     super.initState();
-    final api = ApiService();
-    biensFuture = api.getBiens("BASILE");
+    biensFuture = ApiService.getBiens("BASILE");
   }
 
   @override
