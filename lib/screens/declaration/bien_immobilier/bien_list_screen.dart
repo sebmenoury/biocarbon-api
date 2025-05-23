@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import '../../../ui/layout/base_screen.dart';
 import '../../../ui/layout/custom_card.dart';
 import '../../../data/services/api_service.dart';
+import 'construction_screen.dart';
+import 'dialogs_type_bien.dart';
+import 'bien_immobilier.dart';
+import '../eqt_bien_immobilier/poste_bien_immobilier.dart';
 
 class BienListScreen extends StatefulWidget {
   const BienListScreen({super.key});
@@ -49,7 +53,30 @@ class _BienListScreenState extends State<BienListScreen> {
 
             final biens = snapshot.data ?? [];
             if (biens.isEmpty) {
-              return const Padding(padding: EdgeInsets.all(16), child: Text("Aucun bien immobilier déclaré."));
+              return CustomCard(
+                padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+                child: InkWell(
+                  onTap: () {
+                    showChoixTypeBienDialog(context, (String typeChoisi) {
+                      final bien = BienImmobilier(
+                        idBien: "BASILE-${DateTime.now().millisecondsSinceEpoch}", // ou un ID UUID
+                        typeBien: typeChoisi,
+                        nomLogement: "", // ou une valeur par défaut
+                        poste: PosteBienImmobilier(), // avec ses valeurs par défaut si besoin
+                      );
+
+                      Navigator.of(context).push(MaterialPageRoute(builder: (_) => ConstructionScreen(bien: bien)));
+                    });
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: const [
+                      Text("Ajouter un bien immobilier", style: TextStyle(fontSize: 12)),
+                      Icon(Icons.chevron_right, size: 14),
+                    ],
+                  ),
+                ),
+              );
             }
 
             return Column(

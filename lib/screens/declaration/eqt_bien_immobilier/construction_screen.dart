@@ -3,7 +3,7 @@ import '../../../core/constants/app_icons.dart';
 import '../../../ui/layout/base_screen.dart';
 import '../../../ui/layout/custom_card.dart';
 import '../../../data/services/api_service.dart';
-import 'bien_immobilier.dart';
+import '../bien_immobilier/bien_immobilier.dart';
 import 'poste_bien_immobilier.dart';
 import 'emission_calculator_immobilier.dart';
 
