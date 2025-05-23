@@ -182,6 +182,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
                         width: 40,
                         height: 24,
                         child: TextFormField(
+                          key: ValueKey(annee),
                           initialValue: annee.toString(),
                           textAlign: TextAlign.center,
                           style: const TextStyle(fontSize: 12),
