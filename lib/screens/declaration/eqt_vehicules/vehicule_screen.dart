@@ -40,7 +40,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
         if (nomLower.startsWith('voitures')) {
           categorie = 'Voitures';
         } else if (nomLower.startsWith('2-roues')) {
-          categorie = '2-roues';
+          categorie = '2-Roues';
         } else {
           categorie = 'Autres';
         }
@@ -197,7 +197,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
                           decoration: const InputDecoration(
                             border: InputBorder.none,
                             isDense: true,
-                            contentPadding: EdgeInsets.zero,
+                            contentPadding: EdgeInsets.symmetric(horizontal: 6),
                           ),
                           keyboardType: TextInputType.number,
                           onChanged: (val) {

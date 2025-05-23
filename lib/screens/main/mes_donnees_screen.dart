@@ -4,6 +4,7 @@ import '../../ui/layout/custom_card.dart';
 import '../../core/constants/app_icons.dart';
 import '../declaration/poste_list_screen.dart';
 import '../declaration/ref_type_category.dart';
+import '../declaration/bien_immobilier/bien_list_screen.dart';
 
 class MesDonneesScreen extends StatefulWidget {
   const MesDonneesScreen({super.key});
@@ -17,6 +18,7 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
 
   final List<String> equipementLabels = [
     'Biens Immobiliers',
+    'Détail Bien immobiliers',
     'Equipements Confort',
     'Equipements Ménager',
     'Equipements Bricolage',
@@ -111,17 +113,21 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
             return CustomCard(
               padding: const EdgeInsets.all(8),
               onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder:
-                        (_) => PosteListScreen(
-                          typeCategorie: typeCategorie,
-                          sousCategorie: label,
-                          codeIndividu: 'BASILE',
-                          valeurTemps: '2025',
-                        ),
-                  ),
-                );
+                if (label == 'Biens Immobiliers') {
+                  Navigator.of(context).push(MaterialPageRoute(builder: (_) => const BienListScreen()));
+                } else {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder:
+                          (_) => PosteListScreen(
+                            typeCategorie: typeCategorie,
+                            sousCategorie: label,
+                            codeIndividu: 'BASILE',
+                            valeurTemps: '2025',
+                          ),
+                    ),
+                  );
+                }
               },
               backgroundColor: color.withOpacity(0.1),
               child: Column(

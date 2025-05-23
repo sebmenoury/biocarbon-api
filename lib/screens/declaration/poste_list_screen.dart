@@ -60,7 +60,8 @@ class _PosteListScreenState extends State<PosteListScreen> {
     }
 
     if (avecBien) {
-      biensFuture = ApiService.getBiens(widget.codeIndividu).then((biens) => biens.cast<Map<String, dynamic>>());
+      final api = ApiService();
+      biensFuture = api.getBiens(widget.codeIndividu).then((biens) => biens.cast<Map<String, dynamic>>());
     }
   }
 

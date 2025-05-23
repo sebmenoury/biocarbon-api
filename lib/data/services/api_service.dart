@@ -76,11 +76,13 @@ class ApiService {
   // ---------------------------------------------------------------------------
   // 📦 UC - BIENS IMMOBILIERS
   // ---------------------------------------------------------------------------
-
-  static Future<List<dynamic>> getBiens(String codeIndividu) async {
-    final response = await http.get(Uri.parse('$baseUrl/api/uc/biens?code_individu=$codeIndividu'));
-    return _handleResponse(response);
+class ApiService {
+  static Future<List<Map<String, dynamic>>> getBiens(String codeIndividu) async {
+    final response = await http.get(...); // ta logique
+    final data = jsonDecode(response.body);
+    return List<Map<String, dynamic>>.from(data);
   }
+}
 
   static Future<Map<String, dynamic>> addBien({
     required String codeIndividu,
