@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../ui/layout/base_screen.dart';
 import '../../../ui/layout/custom_card.dart';
 import '../../../data/services/api_service.dart';
-import 'construction_screen.dart';
+import '../eqt_bien_immobilier/construction_screen.dart';
 import 'dialogs_type_bien.dart';
 import 'bien_immobilier.dart';
 import '../eqt_bien_immobilier/poste_bien_immobilier.dart';
@@ -96,15 +96,19 @@ class _BienListScreenState extends State<BienListScreen> {
                         children: [
                           Row(
                             children: [
-                              const Icon(Icons.home, size: 16),
+                              const Icon(Icons.home, size: 16, color: Colors.teal),
                               const SizedBox(width: 6),
                               Text(type, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                              const SizedBox(width: 4),
+                              const Icon(Icons.chevron_right, size: 14),
                             ],
                           ),
-                          const SizedBox(height: 8),
+
+                          const Divider(height: 8),
                           Text("Dénomination : $denom", style: const TextStyle(fontSize: 12)),
+                          if (adresse.isNotEmpty) Text("Adresse : $adresse", style: const TextStyle(fontSize: 12)),
                           Text("Adresse : $adresse", style: const TextStyle(fontSize: 12)),
-                          Text("Nombre Propriétaires : $nbProp", style: const TextStyle(fontSize: 12)),
+                          Text("Nombre financeurs : $nbProp", style: const TextStyle(fontSize: 12)),
                           if (inclure)
                             const Text(
                               "Inclus dans le bilan",

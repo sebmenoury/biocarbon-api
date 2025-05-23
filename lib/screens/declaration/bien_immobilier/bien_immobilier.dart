@@ -1,4 +1,4 @@
-import 'poste_bien_immobilier.dart';
+import '../eqt_bien_immobilier/poste_bien_immobilier.dart';
 
 class BienImmobilier {
   final String? idBien;
