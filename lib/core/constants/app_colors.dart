@@ -27,7 +27,7 @@ class AppColors {
     "Déplacements Autres": Color.fromARGB(255, 148, 208, 237),
 
     // Logement (violets/roses)
-    "Biens Immobiliers": Color.fromARGB(255, 81, 2, 73),
+    "Construction": Color.fromARGB(255, 81, 2, 73),
     "Equipements Confort": Color.fromARGB(255, 134, 10, 129),
     "Gaz et Fioul": Color.fromARGB(255, 152, 43, 147),
     "Électricité": Color.fromARGB(255, 184, 114, 184),
