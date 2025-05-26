@@ -10,7 +10,7 @@ class BienDeclarationScreen extends StatefulWidget {
 }
 
 class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
-  String typeBien = 'Maison principale';
+  String typeBien = 'Logement principal';
   String denomination = '';
   String adresse = '';
   bool inclureDansBilan = true;
@@ -45,10 +45,10 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
                   Expanded(
                     child: DropdownButton<String>(
                       value: typeBien,
-                      onChanged: (val) => setState(() => typeBien = val ?? 'Maison principale'),
+                      onChanged: (val) => setState(() => typeBien = val ?? 'Logement principal'),
                       items: const [
-                        DropdownMenuItem(value: 'Maison principale', child: Text('Maison principale')),
-                        DropdownMenuItem(value: 'Maison secondaire', child: Text('Maison secondaire')),
+                        DropdownMenuItem(value: 'Logement principal', child: Text('Logement principal')),
+                        DropdownMenuItem(value: 'Logement secondaire', child: Text('Logement secondaire')),
                       ],
                     ),
                   ),

@@ -90,7 +90,6 @@ class _BienListScreenState extends State<BienListScreen> {
 
                     return CustomCard(
                       padding: const EdgeInsets.all(12),
-                      // margin: const EdgeInsets.only(bottom: 12),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -99,16 +98,14 @@ class _BienListScreenState extends State<BienListScreen> {
                               const Icon(Icons.home, size: 16, color: Colors.teal),
                               const SizedBox(width: 6),
                               Text(type, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-                              const SizedBox(width: 4),
+                              const Spacer(),
                               const Icon(Icons.chevron_right, size: 14),
                             ],
                           ),
-
                           const Divider(height: 8),
                           Text("Dénomination : $denom", style: const TextStyle(fontSize: 12)),
-                          if (adresse.isNotEmpty) Text("Adresse : $adresse", style: const TextStyle(fontSize: 12)),
                           Text("Adresse : $adresse", style: const TextStyle(fontSize: 12)),
-                          Text("Nombre financeurs : $nbProp", style: const TextStyle(fontSize: 12)),
+                          Text("Nombre propriétaires : $nbProp", style: const TextStyle(fontSize: 12)),
                           if (inclure)
                             const Text(
                               "Inclus dans le bilan",

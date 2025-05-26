@@ -82,7 +82,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
 
     final nouveauBien = BienImmobilier(
       idBien: idBien,
-      typeBien: 'Maison principale',
+      typeBien: 'Logement principal',
       nomLogement: '',
       adresse: '',
       inclureDansBilan: true,

@@ -188,7 +188,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                     DropdownButtonFormField<String>(
                       value: facteursEmission.keys.contains(poste.nomEquipement) ? poste.nomEquipement : null,
                       decoration: const InputDecoration(
-                        labelText: "Type de maison/appartement",
+                        labelText: "Type de logement",
                         labelStyle: TextStyle(fontSize: 10),
                         isDense: true,
                         contentPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),

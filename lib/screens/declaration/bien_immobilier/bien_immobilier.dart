@@ -2,7 +2,7 @@ import '../eqt_bien_immobilier/poste_bien_immobilier.dart';
 
 class BienImmobilier {
   final String? idBien;
-  String typeBien; // "Maison principale", "Maison secondaire", "Appartement locatif"
+  String typeBien; // "Logement principal", "Logement secondair", "Bien locatif"
   String nomLogement;
   String? adresse;
   bool inclureDansBilan;
@@ -11,7 +11,7 @@ class BienImmobilier {
 
   BienImmobilier({
     this.idBien,
-    this.typeBien = "Maison principale",
+    this.typeBien = "Logement principal",
     this.nomLogement = "Mon logement",
     this.adresse,
     this.inclureDansBilan = true,
