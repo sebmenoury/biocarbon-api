@@ -5,6 +5,7 @@ import '../../../data/services/api_service.dart';
 import '../eqt_bien_immobilier/construction_screen.dart';
 import 'dialogs_type_bien.dart';
 import 'bien_immobilier.dart';
+import 'bien_declaration_screen.dart';
 import '../eqt_bien_immobilier/poste_bien_immobilier.dart';
 
 class BienListScreen extends StatefulWidget {
@@ -99,10 +100,19 @@ class _BienListScreenState extends State<BienListScreen> {
                               const SizedBox(width: 6),
                               Text(type, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                               const Spacer(),
-                              const Icon(Icons.chevron_right, size: 14),
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => BienDeclarationScreen()),
+                                  );
+                                },
+                                child: const Icon(Icons.chevron_right, size: 14),
+                              ),
                             ],
                           ),
                           const Divider(height: 8),
+                          const SizedBox(height: 8),
                           Text("Dénomination : $denom", style: const TextStyle(fontSize: 12)),
                           Text("Adresse : $adresse", style: const TextStyle(fontSize: 12)),
                           Text("Nombre propriétaires : $nbProp", style: const TextStyle(fontSize: 12)),

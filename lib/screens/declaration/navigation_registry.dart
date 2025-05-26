@@ -18,6 +18,9 @@ Widget? getEcranEdition(String typeCategorie, String sousCategorie) {
       if (sousCategorie == "Gaz et Fioul") {
         return const UsagesGazFioulScreen();
       }
+      if (sousCategorie == "Biens Immobiliers") {
+        return const UsagesGazFioulScreen();
+      }
       break;
 
     case "Déplacements":
