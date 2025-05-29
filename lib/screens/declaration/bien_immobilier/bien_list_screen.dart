@@ -115,14 +115,21 @@ class _BienListScreenState extends State<BienListScreen> {
                           const Divider(height: 8),
                           const SizedBox(height: 8),
                           Text("Dénomination : $denom", style: const TextStyle(fontSize: 12)),
-                          const Divider(height: 4, thickness: 0.2, color: Colors.grey),
+                          const Divider(height: 8, thickness: 0.2, color: Colors.grey),
                           Text("Adresse : $adresse", style: const TextStyle(fontSize: 12)),
-                          const Divider(height: 4, thickness: 0.2, color: Colors.grey),
+                          const Divider(height: 8, thickness: 0.2, color: Colors.grey),
                           Text("Nombre propriétaires : $nbProp", style: const TextStyle(fontSize: 12)),
-                          if (inclure) const Divider(height: 4, thickness: 0.2, color: Colors.grey),
-                          const Text(
-                            "Inclus dans le bilan",
-                            style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
+                          const Divider(height: 8, thickness: 0.2, color: Colors.grey),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: Text(
+                              inclure ? "Inclus dans le bilan" : "Non inclus dans le bilan",
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontStyle: FontStyle.italic,
+                                color: inclure ? Colors.green : Colors.grey,
+                              ),
+                            ),
                           ),
                         ],
                       ),
