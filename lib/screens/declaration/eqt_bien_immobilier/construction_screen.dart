@@ -9,13 +9,9 @@ import 'emission_calculator_immobilier.dart';
 
 class ConstructionScreen extends StatefulWidget {
   final BienImmobilier bien;
-  final VoidCallback? onSave; // ✅ ajoute cette ligne
+  final VoidCallback onSave;
 
-  const ConstructionScreen({
-    super.key,
-    required this.bien,
-    this.onSave, // ✅ ici aussi dans le constructeur
-  });
+  const ConstructionScreen({Key? key, required this.bien, required this.onSave}) : super(key: key);
 
   @override
   State<ConstructionScreen> createState() => _ConstructionScreenState();
@@ -28,7 +24,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
   String? errorMsg;
 
   BienImmobilier get bien => widget.bien;
-  PosteBienImmobilier get poste => widget.poste;
+  PosteBienImmobilier get poste => widget.bien.poste;
 
   bool showGarage = false;
   bool showPiscine = false;
