@@ -123,12 +123,8 @@ class _BienListScreenState extends State<BienListScreen> {
                           Align(
                             alignment: Alignment.centerRight,
                             child: Text(
-                              inclure ? "Inclus dans le bilan" : "Non inclus dans le bilan",
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontStyle: FontStyle.italic,
-                                color: inclure ? Colors.green : Colors.grey,
-                              ),
+                              bien['Inclure_dans_Bilan'] == true ? "Inclus dans le bilan" : "Non inclus dans le bilan",
+                              style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic, color: Colors.grey),
                             ),
                           ),
                         ],
