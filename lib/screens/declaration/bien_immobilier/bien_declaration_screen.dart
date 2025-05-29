@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../ui/layout/base_screen.dart';
 import '../../../ui/layout/custom_card.dart';
+import 'bien_immobilier.dart';
 
 class BienDeclarationScreen extends StatefulWidget {
   const BienDeclarationScreen({super.key});
@@ -15,6 +16,7 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
   String adresse = '';
   bool inclureDansBilan = true;
   int nbProprietaires = 2;
+  late BienImmobilier bien;
 
   void incrementProprietaires() {
     setState(() {
@@ -29,50 +31,129 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+
+    bien = BienImmobilier(
+      idBien: 'TEMP-${DateTime.now().millisecondsSinceEpoch}', // ou autre identifiant
+      typeBien: typeBien,
+      nomLogement: denomination,
+      adresse: adresse,
+      inclureDansBilan: inclureDansBilan,
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BaseScreen(
-      title: const Text("Bien immobilier", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+      title: Stack(
+        alignment: Alignment.center,
+        children: [
+          Center(
+            child: Text("Type et propriété du logement", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+          ),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              iconSize: 18,
+              onPressed: () => Navigator.pop(context),
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(),
+            ),
+          ),
+        ],
+      ),
       children: [
         CustomCard(
           padding: const EdgeInsets.all(12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              DropdownButtonFormField<String>(
+                value: typeBien,
+                decoration: const InputDecoration(
+                  labelText: "Type de logement",
+                  labelStyle: TextStyle(fontSize: 10),
+                  isDense: true,
+                  contentPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                ),
+                isExpanded: true,
+                style: const TextStyle(fontSize: 11),
+                items: const [
+                  DropdownMenuItem(
+                    value: 'Logement principal',
+                    child: Text('Logement principal', style: TextStyle(fontSize: 11)),
+                  ),
+                  DropdownMenuItem(
+                    value: 'Logement secondaire',
+                    child: Text('Logement secondaire', style: TextStyle(fontSize: 11)),
+                  ),
+                ],
+                onChanged: (val) => setState(() => typeBien = val ?? 'Logement principal'),
+              ),
+              const SizedBox(height: 12),
+
+              /// Dénomination
               Row(
                 children: [
-                  const Icon(Icons.home, size: 16),
-                  const SizedBox(width: 6),
+                  const Expanded(flex: 2, child: Text("Dénomination", style: TextStyle(fontSize: 11))),
                   Expanded(
-                    child: DropdownButton<String>(
-                      value: typeBien,
-                      onChanged: (val) => setState(() => typeBien = val ?? 'Logement principal'),
-                      items: const [
-                        DropdownMenuItem(value: 'Logement principal', child: Text('Logement principal')),
-                        DropdownMenuItem(value: 'Logement secondaire', child: Text('Logement secondaire')),
-                      ],
+                    flex: 3,
+                    child: TextFormField(
+                      initialValue: bien.nomLogement,
+                      onChanged: (val) => setState(() => bien.nomLogement = val),
+                      style: const TextStyle(fontSize: 12),
+                      decoration: const InputDecoration(
+                        isDense: true,
+                        contentPadding: EdgeInsets.only(bottom: 6),
+                        border: UnderlineInputBorder(),
+                      ),
                     ),
                   ),
                 ],
               ),
               const SizedBox(height: 12),
-              TextFormField(
-                initialValue: denomination,
-                onChanged: (val) => setState(() => denomination = val),
-                decoration: const InputDecoration(labelText: "Dénomination"),
-              ),
-              const SizedBox(height: 8),
-              TextFormField(
-                initialValue: adresse,
-                onChanged: (val) => setState(() => adresse = val),
-                decoration: const InputDecoration(labelText: "Adresse"),
-              ),
-              const SizedBox(height: 8),
+
+              /// Adresse
               Row(
                 children: [
-                  Checkbox(value: inclureDansBilan, onChanged: (val) => setState(() => inclureDansBilan = val ?? true)),
-                  const Text("Inclure dans le bilan"),
+                  const Expanded(flex: 2, child: Text("Adresse", style: TextStyle(fontSize: 11))),
+                  Expanded(
+                    flex: 3,
+                    child: TextFormField(
+                      initialValue: bien.adresse ?? '',
+                      onChanged: (val) => setState(() => bien.adresse = val),
+                      style: const TextStyle(fontSize: 11),
+                      decoration: const InputDecoration(
+                        isDense: true,
+                        contentPadding: EdgeInsets.only(bottom: 6),
+                        border: UnderlineInputBorder(),
+                      ),
+                    ),
+                  ),
                 ],
               ),
+              const SizedBox(height: 12),
+
+              /// Inclure dans le bilan
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Transform.scale(
+                    scale: 0.8,
+                    child: Checkbox(
+                      value: bien.inclureDansBilan ?? true,
+                      visualDensity: VisualDensity.compact,
+                      onChanged: (v) => setState(() => bien.inclureDansBilan = v ?? true),
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  const Text("Inclure dans le bilan", style: TextStyle(fontSize: 11)),
+                ],
+              ),
+              const SizedBox(height: 8),
             ],
           ),
         ),

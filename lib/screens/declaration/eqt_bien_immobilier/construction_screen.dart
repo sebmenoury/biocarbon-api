@@ -9,9 +9,13 @@ import 'emission_calculator_immobilier.dart';
 
 class ConstructionScreen extends StatefulWidget {
   final BienImmobilier bien;
-  final VoidCallback? onSave;
+  final VoidCallback? onSave; // ✅ ajoute cette ligne
 
-  const ConstructionScreen({super.key, required this.bien, this.onSave});
+  const ConstructionScreen({
+    super.key,
+    required this.bien,
+    this.onSave, // ✅ ici aussi dans le constructeur
+  });
 
   @override
   State<ConstructionScreen> createState() => _ConstructionScreenState();
@@ -24,7 +28,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
   String? errorMsg;
 
   BienImmobilier get bien => widget.bien;
-  PosteBienImmobilier get poste => widget.bien.poste;
+  PosteBienImmobilier get poste => widget.poste;
 
   bool showGarage = false;
   bool showPiscine = false;
@@ -93,92 +97,6 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              /// INFOS DU BIEN IMMOBILIER (fusionné)
-              CustomCard(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    /// Ligne type de bien + émission
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(sousCategorieIcons['Biens Immobiliers'] ?? Icons.home, size: 12),
-                            const SizedBox(width: 8),
-                            Text(bien.typeBien, style: const TextStyle(fontSize: 12)),
-                          ],
-                        ),
-                        Text("${total.toStringAsFixed(0)} kgCO₂/an", style: const TextStyle(fontSize: 12)),
-                      ],
-                    ),
-                    const Divider(height: 8),
-
-                    /// Dénomination
-                    Row(
-                      children: [
-                        const Expanded(flex: 2, child: Text("Dénomination", style: TextStyle(fontSize: 11))),
-                        Expanded(
-                          flex: 3,
-                          child: TextFormField(
-                            initialValue: bien.nomLogement,
-                            onChanged: (val) => bien.nomLogement = val,
-                            style: const TextStyle(fontSize: 12),
-                            decoration: const InputDecoration(
-                              isDense: true,
-                              contentPadding: EdgeInsets.only(bottom: 6),
-                              border: UnderlineInputBorder(),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-
-                    /// Adresse
-                    Row(
-                      children: [
-                        const Expanded(flex: 2, child: Text("Adresse", style: TextStyle(fontSize: 11))),
-                        Expanded(
-                          flex: 3,
-                          child: TextFormField(
-                            initialValue: bien.adresse ?? '',
-                            onChanged: (val) => bien.adresse = val,
-                            style: const TextStyle(fontSize: 11),
-                            decoration: const InputDecoration(
-                              isDense: true,
-                              contentPadding: EdgeInsets.only(bottom: 6),
-                              border: UnderlineInputBorder(),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-
-                    /// Inclure dans le bilan
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Transform.scale(
-                          scale: 0.75,
-                          child: Checkbox(
-                            value: bien.inclureDansBilan ?? true,
-                            visualDensity: VisualDensity.compact,
-                            onChanged: (v) => setState(() => bien.inclureDansBilan = v ?? true),
-                          ),
-                        ),
-                        const SizedBox(width: 4),
-                        const Text("Inclure dans le bilan", style: TextStyle(fontSize: 11)),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 3),
-
               /// DESCRIPTIF DU BIEN
               CustomCard(
                 padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
@@ -188,7 +106,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                     DropdownButtonFormField<String>(
                       value: facteursEmission.keys.contains(poste.nomEquipement) ? poste.nomEquipement : null,
                       decoration: const InputDecoration(
-                        labelText: "Type de logement",
+                        labelText: "Type de construction",
                         labelStyle: TextStyle(fontSize: 10),
                         isDense: true,
                         contentPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),

@@ -6,7 +6,6 @@ import '../eqt_bien_immobilier/construction_screen.dart';
 import 'dialogs_type_bien.dart';
 import 'bien_immobilier.dart';
 import 'bien_declaration_screen.dart';
-import '../eqt_bien_immobilier/poste_bien_immobilier.dart';
 
 class BienListScreen extends StatefulWidget {
   const BienListScreen({super.key});
@@ -27,17 +26,20 @@ class _BienListScreenState extends State<BienListScreen> {
   @override
   Widget build(BuildContext context) {
     return BaseScreen(
-      title: Row(
+      title: Stack(
+        alignment: Alignment.center,
         children: [
-          IconButton(
-            icon: const Icon(Icons.arrow_back),
-            iconSize: 18,
-            onPressed: () => Navigator.pop(context),
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(),
+          Center(child: Text("Mes biens immobiliers", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold))),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              iconSize: 18,
+              onPressed: () => Navigator.pop(context),
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(),
+            ),
           ),
-          const SizedBox(width: 8),
-          Text("Mes biens immobiliers", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
         ],
       ),
       children: [
@@ -63,10 +65,9 @@ class _BienListScreenState extends State<BienListScreen> {
                         idBien: "BASILE-${DateTime.now().millisecondsSinceEpoch}", // ou un ID UUID
                         typeBien: typeChoisi,
                         nomLogement: "", // ou une valeur par défaut
-                        poste: PosteBienImmobilier(), // avec ses valeurs par défaut si besoin
                       );
 
-                      Navigator.of(context).push(MaterialPageRoute(builder: (_) => ConstructionScreen(bien: bien)));
+                      Navigator.of(context).push(MaterialPageRoute(builder: (_) => BienDeclarationScreen()));
                     });
                   },
                   child: Row(
@@ -114,13 +115,15 @@ class _BienListScreenState extends State<BienListScreen> {
                           const Divider(height: 8),
                           const SizedBox(height: 8),
                           Text("Dénomination : $denom", style: const TextStyle(fontSize: 12)),
+                          const Divider(height: 4, thickness: 0.2, color: Colors.grey),
                           Text("Adresse : $adresse", style: const TextStyle(fontSize: 12)),
+                          const Divider(height: 4, thickness: 0.2, color: Colors.grey),
                           Text("Nombre propriétaires : $nbProp", style: const TextStyle(fontSize: 12)),
-                          if (inclure)
-                            const Text(
-                              "Inclus dans le bilan",
-                              style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
-                            ),
+                          if (inclure) const Divider(height: 4, thickness: 0.2, color: Colors.grey),
+                          const Text(
+                            "Inclus dans le bilan",
+                            style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
+                          ),
                         ],
                       ),
                     );

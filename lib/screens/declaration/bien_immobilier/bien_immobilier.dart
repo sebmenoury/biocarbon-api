@@ -1,13 +1,12 @@
 import '../eqt_bien_immobilier/poste_bien_immobilier.dart';
 
 class BienImmobilier {
-  final String? idBien;
-  String typeBien; // "Logement principal", "Logement secondair", "Bien locatif"
+  String? idBien;
+  String typeBien;
   String nomLogement;
   String? adresse;
   bool inclureDansBilan;
-
-  PosteBienImmobilier poste; // 🔁 association directe avec le descriptif technique
+  PosteBienImmobilier poste;
 
   BienImmobilier({
     this.idBien,
@@ -15,6 +14,6 @@ class BienImmobilier {
     this.nomLogement = "Mon logement",
     this.adresse,
     this.inclureDansBilan = true,
-    required this.poste, // 👈 il devient obligatoire ici
-  });
+    PosteBienImmobilier? poste,
+  }) : poste = poste ?? PosteBienImmobilier();
 }

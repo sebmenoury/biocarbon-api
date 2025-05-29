@@ -403,9 +403,18 @@ class _PosteListScreenState extends State<PosteListScreen> {
                               poste: PosteBienImmobilier(), // avec ses valeurs par défaut si besoin
                             );
 
-                            Navigator.of(
-                              context,
-                            ).push(MaterialPageRoute(builder: (_) => ConstructionScreen(bien: bien)));
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder:
+                                    (_) => ConstructionScreen(
+                                      bien: bien,
+                                      onSave:
+                                          () => setState(() {
+                                            // Optionnel : mettre ici ce que tu veux rafraîchir
+                                          }),
+                                    ),
+                              ),
+                            );
                           });
                         },
                         child: Row(
