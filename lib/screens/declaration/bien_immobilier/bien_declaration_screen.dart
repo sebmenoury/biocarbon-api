@@ -11,11 +11,11 @@ class BienDeclarationScreen extends StatefulWidget {
 }
 
 class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
-  String typeBien = 'Logement principal';
+  String typeBien = '';
   String denomination = '';
   String adresse = '';
   bool inclureDansBilan = true;
-  int nbProprietaires = 2;
+  int nbProprietaires = 1;
   late BienImmobilier bien;
 
   void incrementProprietaires() {
@@ -83,11 +83,17 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
                 items: const [
                   DropdownMenuItem(
                     value: 'Logement principal',
-                    child: Text('Logement principal', style: TextStyle(fontSize: 11)),
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: Text('Logement principal', textAlign: TextAlign.right, style: TextStyle(fontSize: 11)),
+                    ),
                   ),
                   DropdownMenuItem(
                     value: 'Logement secondaire',
-                    child: Text('Logement secondaire', style: TextStyle(fontSize: 11)),
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: Text('Logement secondaire', textAlign: TextAlign.right, style: TextStyle(fontSize: 11)),
+                    ),
                   ),
                 ],
                 onChanged: (val) => setState(() => typeBien = val ?? 'Logement principal'),
@@ -153,22 +159,22 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
                   const Text("Inclure dans le bilan", style: TextStyle(fontSize: 11)),
                 ],
               ),
-              const SizedBox(height: 8),
             ],
           ),
         ),
         const SizedBox(height: 8),
         CustomCard(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text("Nombre de propriétaires", style: TextStyle(fontSize: 12)),
               const SizedBox(height: 8),
               Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   IconButton(icon: const Icon(Icons.remove), onPressed: decrementProprietaires),
-                  Text("$nbProprietaires", style: const TextStyle(fontSize: 14)),
+                  Text("$nbProprietaires", style: const TextStyle(fontSize: 12)),
                   IconButton(icon: const Icon(Icons.add), onPressed: incrementProprietaires),
                 ],
               ),
