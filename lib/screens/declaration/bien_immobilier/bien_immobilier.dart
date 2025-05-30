@@ -6,6 +6,7 @@ class BienImmobilier {
   String nomLogement;
   String? adresse;
   bool inclureDansBilan;
+  int nbProprietaires; // 👈 ajouté ici
   PosteBienImmobilier poste;
 
   BienImmobilier({
@@ -14,6 +15,7 @@ class BienImmobilier {
     this.nomLogement = "Mon logement",
     this.adresse,
     this.inclureDansBilan = true,
+    this.nbProprietaires = 1, // 👈 valeur par défaut
     PosteBienImmobilier? poste,
   }) : poste = poste ?? PosteBienImmobilier();
 }

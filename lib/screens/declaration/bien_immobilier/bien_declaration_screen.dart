@@ -6,9 +6,10 @@ import '../../../ui/widgets/custom_dropdown_compact.dart';
 import '../eqt_bien_immobilier/poste_bien_immobilier.dart';
 
 class BienDeclarationScreen extends StatefulWidget {
+  final BienImmobilier? bienExistant;
   final String? typeBienInitial;
 
-  const BienDeclarationScreen({Key? key, this.typeBienInitial}) : super(key: key);
+  const BienDeclarationScreen({Key? key, this.bienExistant, this.typeBienInitial}) : super(key: key);
 
   @override
   State<BienDeclarationScreen> createState() => _BienDeclarationScreenState();
@@ -38,16 +39,35 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
   void initState() {
     super.initState();
 
-    typeBien = widget.typeBienInitial ?? 'Logement principal'; // injecte la valeur transmise ou fallback
+    if (widget.bienExistant != null) {
+      bien = widget.bienExistant!;
+      typeBien = bien.typeBien;
+      denomination = bien.nomLogement;
+      adresse = bien.adresse ?? '';
+      inclureDansBilan = bien.inclureDansBilan;
+      nbProprietaires = bien.nbProprietaires;
+    } else {
+      typeBien = widget.typeBienInitial ?? 'Logement principal';
+      bien = BienImmobilier(
+        idBien: 'TEMP-${DateTime.now().millisecondsSinceEpoch}',
+        typeBien: typeBien,
+        nomLogement: denomination,
+        adresse: adresse,
+        inclureDansBilan: inclureDansBilan,
+        poste: PosteBienImmobilier(),
+        nbProprietaires: nbProprietaires,
+      );
+    }
+  }
 
-    bien = BienImmobilier(
-      idBien: 'TEMP-${DateTime.now().millisecondsSinceEpoch}',
-      typeBien: typeBien,
-      nomLogement: denomination,
-      adresse: adresse,
-      inclureDansBilan: inclureDansBilan,
-      poste: PosteBienImmobilier(), // utile si tu gères les postes ensuite
-    );
+  void enregistrerBien() {
+    // TODO: implémenter l'enregistrement réel
+    print("✅ Enregistrer : ${bien.typeBien} - ${bien.nomLogement}");
+  }
+
+  void updateBien() {
+    // TODO: implémenter la mise à jour réelle
+    print("✏️ Mise à jour du bien : ${bien.idBien}");
   }
 
   @override
@@ -56,7 +76,7 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
       title: Stack(
         alignment: Alignment.center,
         children: [
-          Center(
+          const Center(
             child: Text("Type et propriété du logement", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
           ),
           Align(
@@ -77,11 +97,17 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              /// Type de bien
               CustomDropdownCompact(
                 value: typeBien,
                 items: const ['Logement principal', 'Logement secondaire'],
                 label: "Type de logement",
-                onChanged: (val) => setState(() => typeBien = val ?? 'Logement principal'),
+                onChanged: (val) {
+                  setState(() {
+                    typeBien = val ?? 'Logement principal';
+                    bien.typeBien = typeBien;
+                  });
+                },
               ),
               const SizedBox(height: 12),
 
@@ -135,7 +161,7 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
                   Transform.scale(
                     scale: 0.8,
                     child: Checkbox(
-                      value: bien.inclureDansBilan ?? true,
+                      value: bien.inclureDansBilan,
                       visualDensity: VisualDensity.compact,
                       onChanged: (v) => setState(() => bien.inclureDansBilan = v ?? true),
                     ),
@@ -148,6 +174,8 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
           ),
         ),
         const SizedBox(height: 8),
+
+        /// Nombre de propriétaires
         CustomCard(
           padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
           child: Column(
@@ -178,6 +206,23 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
                 ],
               ),
             ],
+          ),
+        ),
+
+        const SizedBox(height: 24),
+
+        /// Bouton final
+        Center(
+          child: ElevatedButton(
+            onPressed: () {
+              bien.nbProprietaires = nbProprietaires;
+              if (widget.bienExistant != null) {
+                updateBien();
+              } else {
+                enregistrerBien();
+              }
+            },
+            child: Text(widget.bienExistant != null ? "Mettre à jour" : "Enregistrer"),
           ),
         ),
       ],
