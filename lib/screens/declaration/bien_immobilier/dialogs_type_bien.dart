@@ -11,7 +11,7 @@ void showChoixTypeBienDialog(BuildContext context, void Function(String) onSelec
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            for (var type in ["Logement Principal", "Logement Secondaire"])
+            for (var type in ["Logement principal", "Logement secondaire"])
               ListTile(
                 title: Text(
                   type,
