@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../ui/layout/base_screen.dart';
 import '../../../ui/layout/custom_card.dart';
 import 'bien_immobilier.dart';
+import '../../../ui/widgets/custom_dropdown_compact.dart';
 
 class BienDeclarationScreen extends StatefulWidget {
   const BienDeclarationScreen({super.key});
@@ -70,33 +71,12 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              DropdownButtonFormField<String>(
+              CustomDropdownCompact(
                 value: typeBien,
-                decoration: const InputDecoration(
-                  labelText: "Type de logement",
-                  labelStyle: TextStyle(fontSize: 10),
-                  isDense: true,
-                  contentPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                ),
-                isExpanded: true,
-                style: const TextStyle(fontSize: 11),
-                items: const [
-                  DropdownMenuItem(
-                    value: 'Logement principal',
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: Text('Logement principal', textAlign: TextAlign.right, style: TextStyle(fontSize: 11)),
-                    ),
-                  ),
-                  DropdownMenuItem(
-                    value: 'Logement secondaire',
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: Text('Logement secondaire', textAlign: TextAlign.right, style: TextStyle(fontSize: 11)),
-                    ),
-                  ),
-                ],
+                items: const ['Logement principal', 'Logement secondaire'],
+                label: "Type de logement",
                 onChanged: (val) => setState(() => typeBien = val ?? 'Logement principal'),
+                width: double.infinity, // pour prendre toute la largeur dispo dans la card
               ),
               const SizedBox(height: 12),
 
@@ -168,14 +148,28 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text("Nombre de propriétaires", style: TextStyle(fontSize: 12)),
-              const SizedBox(height: 8),
               Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  IconButton(icon: const Icon(Icons.remove), onPressed: decrementProprietaires),
-                  Text("$nbProprietaires", style: const TextStyle(fontSize: 12)),
-                  IconButton(icon: const Icon(Icons.add), onPressed: incrementProprietaires),
+                  const Text("Nombre de propriétaires", style: TextStyle(fontSize: 12)),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.remove),
+                        onPressed: decrementProprietaires,
+                        visualDensity: VisualDensity.compact,
+                        iconSize: 20,
+                      ),
+                      Text("$nbProprietaires", style: const TextStyle(fontSize: 12)),
+                      IconButton(
+                        icon: const Icon(Icons.add),
+                        onPressed: incrementProprietaires,
+                        visualDensity: VisualDensity.compact,
+                        iconSize: 20,
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ],
