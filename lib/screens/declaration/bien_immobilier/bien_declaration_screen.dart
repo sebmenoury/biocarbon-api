@@ -11,7 +11,7 @@ class BienDeclarationScreen extends StatefulWidget {
 }
 
 class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
-  String typeBien = '';
+  String typeBien = 'Logement principal';
   String denomination = '';
   String adresse = '';
   bool inclureDansBilan = true;
