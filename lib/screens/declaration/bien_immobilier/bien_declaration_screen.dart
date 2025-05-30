@@ -76,7 +76,6 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
                 items: const ['Logement principal', 'Logement secondaire'],
                 label: "Type de logement",
                 onChanged: (val) => setState(() => typeBien = val ?? 'Logement principal'),
-                width: double.infinity, // pour prendre toute la largeur dispo dans la card
               ),
               const SizedBox(height: 12),
 
