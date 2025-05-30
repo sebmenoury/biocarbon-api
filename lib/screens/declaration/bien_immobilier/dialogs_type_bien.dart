@@ -7,15 +7,15 @@ void showChoixTypeBienDialog(BuildContext context, void Function(String) onSelec
       return AlertDialog(
         backgroundColor: Colors.white.withOpacity(0.95), // fond blanc translucide
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text("Quel type de bien ?", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+        title: const Text("Quel type de logement ?", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            for (var type in ["Logement Principal", "Logement Secondaire", "Bien locatif"])
+            for (var type in ["Logement Principal", "Logement Secondaire"])
               ListTile(
                 title: Text(
                   type,
-                  style: const TextStyle(fontSize: 12), // taille 12
+                  style: const TextStyle(fontSize: 11), // taille 12
                 ),
                 onTap: () {
                   Navigator.of(context).pop();

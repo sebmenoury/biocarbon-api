@@ -3,9 +3,12 @@ import '../../../ui/layout/base_screen.dart';
 import '../../../ui/layout/custom_card.dart';
 import 'bien_immobilier.dart';
 import '../../../ui/widgets/custom_dropdown_compact.dart';
+import '../eqt_bien_immobilier/poste_bien_immobilier.dart';
 
 class BienDeclarationScreen extends StatefulWidget {
-  const BienDeclarationScreen({super.key});
+  final String? typeBienInitial;
+
+  const BienDeclarationScreen({Key? key, this.typeBienInitial}) : super(key: key);
 
   @override
   State<BienDeclarationScreen> createState() => _BienDeclarationScreenState();
@@ -35,12 +38,15 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
   void initState() {
     super.initState();
 
+    typeBien = widget.typeBienInitial ?? 'Logement principal'; // injecte la valeur transmise ou fallback
+
     bien = BienImmobilier(
-      idBien: 'TEMP-${DateTime.now().millisecondsSinceEpoch}', // ou autre identifiant
+      idBien: 'TEMP-${DateTime.now().millisecondsSinceEpoch}',
       typeBien: typeBien,
       nomLogement: denomination,
       adresse: adresse,
       inclureDansBilan: inclureDansBilan,
+      poste: PosteBienImmobilier(), // utile si tu gères les postes ensuite
     );
   }
 
@@ -150,7 +156,7 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text("Nombre de propriétaires", style: TextStyle(fontSize: 12)),
+                  const Text("Nombre de propriétaires", style: TextStyle(fontSize: 11)),
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [

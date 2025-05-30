@@ -60,14 +60,11 @@ class _BienListScreenState extends State<BienListScreen> {
                 padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
                 child: InkWell(
                   onTap: () {
-                    showChoixTypeBienDialog(context, (String typeChoisi) {
-                      final bien = BienImmobilier(
-                        idBien: "BASILE-${DateTime.now().millisecondsSinceEpoch}", // ou un ID UUID
-                        typeBien: typeChoisi,
-                        nomLogement: "", // ou une valeur par défaut
+                    showChoixTypeBienDialog(context, (selectedType) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => BienDeclarationScreen(typeBienInitial: selectedType)),
                       );
-
-                      Navigator.of(context).push(MaterialPageRoute(builder: (_) => BienDeclarationScreen()));
                     });
                   },
                   child: Row(
