@@ -45,10 +45,11 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
       typeBien = bien.typeBien;
       denomination = bien.nomLogement;
       adresse = bien.adresse ?? '';
-      inclureDansBilan = bien.inclureDansBilan;
-      nbProprietaires = bien.nbProprietaires;
+      inclureDansBilan = bien.inclureDansBilan ?? true; // 👈 valeur par défaut
+      nbProprietaires = bien.nbProprietaires ?? 1;
     } else {
       typeBien = widget.typeBienInitial ?? 'Logement principal';
+      inclureDansBilan = true; // 👈 valeur par défaut
       bien = BienImmobilier(
         idBien: 'TEMP-${DateTime.now().millisecondsSinceEpoch}',
         typeBien: typeBien,
@@ -64,7 +65,7 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
   void enregistrerBien() async {
     try {
       final result = await ApiService.addBien(
-        codeIndividu: 'SEBASTIEN', // ou dynamiquement
+        codeIndividu: 'BASILE', // ou dynamiquement
         typeBien: bien.typeBien,
         description: bien.nomLogement,
         adresse: bien.adresse ?? '',
@@ -83,7 +84,7 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
 
   void updateBien() async {
     try {
-      final data = bien.toMap('SEBASTIEN'); // au cas où tu veux tout envoyer
+      final data = bien.toMap('BASILE'); // au cas où tu veux tout envoyer
       final result = await ApiService.updateBien(bien.idBien!, data);
 
       print('🟠 Bien mis à jour : $result');
@@ -187,7 +188,7 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
                   Transform.scale(
                     scale: 0.8,
                     child: Checkbox(
-                      value: bien.inclureDansBilan,
+                      value: bien.inclureDansBilan ?? true, // 👈 fallback si null
                       visualDensity: VisualDensity.compact,
                       onChanged: (v) => setState(() => bien.inclureDansBilan = v ?? true),
                     ),
@@ -203,7 +204,7 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
 
         /// Nombre de propriétaires
         CustomCard(
-          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+          padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -220,7 +221,7 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
                         visualDensity: VisualDensity.compact,
                         iconSize: 20,
                       ),
-                      Text("$nbProprietaires", style: const TextStyle(fontSize: 12)),
+                      Text("$nbProprietaires", style: const TextStyle(fontSize: 11)),
                       IconButton(
                         icon: const Icon(Icons.add),
                         onPressed: incrementProprietaires,
@@ -248,7 +249,10 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
                 enregistrerBien();
               }
             },
-            child: Text(widget.bienExistant != null ? "Mettre à jour" : "Enregistrer"),
+            child: Text(
+              widget.bienExistant != null ? "Mettre à jour" : "Enregistrer",
+              style: const TextStyle(fontSize: 11),
+            ),
           ),
         ),
       ],

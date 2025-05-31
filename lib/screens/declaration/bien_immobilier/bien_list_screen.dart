@@ -55,8 +55,10 @@ class _BienListScreenState extends State<BienListScreen> {
             }
 
             final biens = snapshot.data ?? [];
-            if (biens.isEmpty) {
-              return CustomCard(
+
+            List<Widget> widgets = [
+              /// 👇 Ce bloc est maintenant toujours ajouté
+              CustomCard(
                 padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
                 child: InkWell(
                   onTap: () {
@@ -75,62 +77,63 @@ class _BienListScreenState extends State<BienListScreen> {
                     ],
                   ),
                 ),
+              ),
+            ];
+
+            if (biens.isNotEmpty) {
+              widgets.addAll(
+                biens.map((bien) {
+                  final type = bien['Type_Bien'] ?? '';
+                  final denom = bien['Dénomination'] ?? '';
+                  final adresse = bien['Adresse'] ?? '';
+                  final nbProp = bien['Nb_Proprietaires']?.toString() ?? '-';
+                  final bienObj = BienImmobilier.fromMap(bien); // 👈 transforme le map en vrai objet
+
+                  return CustomCard(
+                    padding: const EdgeInsets.all(12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            const Icon(Icons.home, size: 16, color: Colors.teal),
+                            const SizedBox(width: 6),
+                            Text(type, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                            const Spacer(),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => BienDeclarationScreen(bienExistant: bienObj)),
+                                );
+                              },
+                              child: const Icon(Icons.chevron_right, size: 14),
+                            ),
+                          ],
+                        ),
+                        const Divider(height: 8),
+                        const SizedBox(height: 8),
+                        Text("Dénomination : $denom", style: const TextStyle(fontSize: 12)),
+                        const Divider(height: 8, thickness: 0.2, color: Colors.grey),
+                        Text("Adresse : $adresse", style: const TextStyle(fontSize: 12)),
+                        const Divider(height: 8, thickness: 0.2, color: Colors.grey),
+                        Text("Nombre propriétaires : $nbProp", style: const TextStyle(fontSize: 12)),
+                        const Divider(height: 8, thickness: 0.2, color: Colors.grey),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: Text(
+                            bien['Inclure_dans_bilan'] == true ? "Inclus dans le bilan" : "Non inclus dans le bilan",
+                            style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic, color: Colors.grey),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }),
               );
             }
 
-            return Column(
-              children:
-                  biens.map((bien) {
-                    final type = bien['Type_Bien'] ?? '';
-                    final denom = bien['Dénomination'] ?? '';
-                    final adresse = bien['Adresse'] ?? '';
-                    final nbProp = bien['Nb_Proprietaires']?.toString() ?? '-';
-                    final bienObj = BienImmobilier.fromMap(bien); // 👈 transforme le map en vrai objet
-
-                    return CustomCard(
-                      padding: const EdgeInsets.all(12),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              const Icon(Icons.home, size: 16, color: Colors.teal),
-                              const SizedBox(width: 6),
-                              Text(type, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-                              const Spacer(),
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => BienDeclarationScreen(bienExistant: bienObj),
-                                    ),
-                                  );
-                                },
-                                child: const Icon(Icons.chevron_right, size: 14),
-                              ),
-                            ],
-                          ),
-                          const Divider(height: 8),
-                          const SizedBox(height: 8),
-                          Text("Dénomination : $denom", style: const TextStyle(fontSize: 12)),
-                          const Divider(height: 8, thickness: 0.2, color: Colors.grey),
-                          Text("Adresse : $adresse", style: const TextStyle(fontSize: 12)),
-                          const Divider(height: 8, thickness: 0.2, color: Colors.grey),
-                          Text("Nombre propriétaires : $nbProp", style: const TextStyle(fontSize: 12)),
-                          const Divider(height: 8, thickness: 0.2, color: Colors.grey),
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: Text(
-                              bien['Inclure_dans_bilan'] == true ? "Inclus dans le bilan" : "Non inclus dans le bilan",
-                              style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic, color: Colors.grey),
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-            );
+            return Column(children: widgets);
           },
         ),
       ],
