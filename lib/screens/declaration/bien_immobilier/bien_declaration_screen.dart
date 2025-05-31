@@ -65,6 +65,7 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
   void enregistrerBien() async {
     try {
       final result = await ApiService.addBien(
+        idBien: bien.idBien!,
         codeIndividu: 'BASILE', // ou dynamiquement
         typeBien: bien.typeBien,
         description: bien.nomLogement,
