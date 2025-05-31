@@ -67,7 +67,7 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
     // 🔍 Ajoute cette ligne AVANT l'appel à l'API
     print(
       jsonEncode({
-        'ID_Usage': bien.idBien,
+        'ID_Bien': bien.idBien,
         'Code_Individu': 'BASILE',
         'Type_Bien': bien.typeBien,
         'Dénomination': bien.nomLogement,
@@ -82,6 +82,7 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
         typeBien: bien.typeBien,
         description: bien.nomLogement,
         adresse: bien.adresse ?? '',
+        nbProprietaires: bien.nbProprietaires,
         inclureDansBilan: bien.inclureDansBilan ? 'TRUE' : 'FALSE',
       );
 

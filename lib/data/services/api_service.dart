@@ -93,6 +93,7 @@ class ApiService {
     required String typeBien,
     required String description,
     required String adresse,
+    required int nbProprietaires,
     required String inclureDansBilan,
   }) async {
     final response = await http.post(
@@ -102,8 +103,9 @@ class ApiService {
         'ID_Bien': idBien, // 👈 important !
         'Code_Individu': codeIndividu,
         'Type_Bien': typeBien,
-        'Description': description,
+        'Dénomination': description,
         'Adresse': adresse,
+        'Nb_Proprietaires': nbProprietaires,
         'Inclure_dans_bilan': inclureDansBilan,
       }),
     );
