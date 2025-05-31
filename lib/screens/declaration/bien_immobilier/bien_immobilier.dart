@@ -33,4 +33,16 @@ class BienImmobilier {
       poste: PosteBienImmobilier(), // À adapter si tu veux aussi le charger
     );
   }
+
+  Map<String, dynamic> toMap(String codeIndividu) {
+    return {
+      'Code_Individu': codeIndividu,
+      'ID_Bien': idBien,
+      'Type_Bien': typeBien,
+      'Nb_Proprietaires': nbProprietaires,
+      'Dénomination': nomLogement,
+      'Adresse': adresse,
+      'Inclure_dans_Bilan': inclureDansBilan ? 'TRUE' : 'FALSE',
+    };
+  }
 }

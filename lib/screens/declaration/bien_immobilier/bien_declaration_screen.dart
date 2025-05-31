@@ -4,6 +4,7 @@ import '../../../ui/layout/custom_card.dart';
 import 'bien_immobilier.dart';
 import '../../../ui/widgets/custom_dropdown_compact.dart';
 import '../eqt_bien_immobilier/poste_bien_immobilier.dart';
+import '../../../data/services/api_service.dart';
 
 class BienDeclarationScreen extends StatefulWidget {
   final BienImmobilier? bienExistant;
@@ -60,14 +61,39 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
     }
   }
 
-  void enregistrerBien() {
-    // TODO: implémenter l'enregistrement réel
-    print("✅ Enregistrer : ${bien.typeBien} - ${bien.nomLogement}");
+  void enregistrerBien() async {
+    try {
+      final result = await ApiService.addBien(
+        codeIndividu: 'SEBASTIEN', // ou dynamiquement
+        typeBien: bien.typeBien,
+        description: bien.nomLogement,
+        adresse: bien.adresse ?? '',
+        inclureDansBilan: bien.inclureDansBilan ? 'TRUE' : 'FALSE',
+      );
+
+      print('✅ Bien enregistré : $result');
+      Navigator.pop(context);
+    } catch (e) {
+      print('❌ Erreur enregistrement : $e');
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Erreur lors de l\'enregistrement du bien')));
+    }
   }
 
-  void updateBien() {
-    // TODO: implémenter la mise à jour réelle
-    print("✏️ Mise à jour du bien : ${bien.idBien}");
+  void updateBien() async {
+    try {
+      final data = bien.toMap('SEBASTIEN'); // au cas où tu veux tout envoyer
+      final result = await ApiService.updateBien(bien.idBien!, data);
+
+      print('🟠 Bien mis à jour : $result');
+      Navigator.pop(context);
+    } catch (e) {
+      print('❌ Erreur mise à jour : $e');
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Erreur lors de la mise à jour du bien')));
+    }
   }
 
   @override

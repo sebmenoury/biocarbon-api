@@ -85,7 +85,6 @@ class _BienListScreenState extends State<BienListScreen> {
                     final denom = bien['Dénomination'] ?? '';
                     final adresse = bien['Adresse'] ?? '';
                     final nbProp = bien['Nb_Proprietaires']?.toString() ?? '-';
-                    final inclure = bien['Inclure_dans_Bilan'] == true;
                     final bienObj = BienImmobilier.fromMap(bien); // 👈 transforme le map en vrai objet
 
                     return CustomCard(

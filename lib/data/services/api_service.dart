@@ -298,4 +298,12 @@ class ApiService {
 
     return result;
   }
+
+  static Map<String, dynamic> _handleResponse(http.Response response) {
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Erreur serveur : ${response.statusCode}');
+    }
+  }
 }
