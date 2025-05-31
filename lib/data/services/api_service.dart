@@ -99,7 +99,7 @@ class ApiService {
       Uri.parse('$baseUrl/api/uc/biens'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
-        'ID_Usage': idBien, // 👈 important !
+        'ID_Bien': idBien, // 👈 important !
         'Code_Individu': codeIndividu,
         'Type_Bien': typeBien,
         'Description': description,

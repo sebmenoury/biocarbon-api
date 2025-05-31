@@ -36,9 +36,8 @@ class BienImmobilier {
 
   Map<String, dynamic> toMap(String codeIndividu) {
     return {
-      "ID_Usage": idBien,
+      "ID_Bien": idBien,
       'Code_Individu': codeIndividu,
-      'ID_Bien': idBien,
       'Type_Bien': typeBien,
       'Nb_Proprietaires': nbProprietaires,
       'Dénomination': nomLogement,
