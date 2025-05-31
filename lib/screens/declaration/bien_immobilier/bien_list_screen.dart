@@ -55,31 +55,11 @@ class _BienListScreenState extends State<BienListScreen> {
             }
 
             final biens = snapshot.data ?? [];
+            final bool hasLogementPrincipal = biens.any((b) => b['Type_Bien'] == 'Logement principal');
 
-            List<Widget> widgets = [
-              /// 👇 Ce bloc est maintenant toujours ajouté
-              CustomCard(
-                padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-                child: InkWell(
-                  onTap: () {
-                    showChoixTypeBienDialog(context, (selectedType) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => BienDeclarationScreen(typeBienInitial: selectedType)),
-                      );
-                    });
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
-                      Text("Ajouter un bien immobilier", style: TextStyle(fontSize: 12)),
-                      Icon(Icons.chevron_right, size: 14),
-                    ],
-                  ),
-                ),
-              ),
-            ];
+            List<Widget> widgets = [];
 
+            // 👉 Cartes des biens existants
             if (biens.isNotEmpty) {
               widgets.addAll(
                 biens.map((bien) {
@@ -87,7 +67,7 @@ class _BienListScreenState extends State<BienListScreen> {
                   final denom = bien['Dénomination'] ?? '';
                   final adresse = bien['Adresse'] ?? '';
                   final nbProp = bien['Nb_Proprietaires']?.toString() ?? '-';
-                  final bienObj = BienImmobilier.fromMap(bien); // 👈 transforme le map en vrai objet
+                  final bienObj = BienImmobilier.fromMap(bien); // 👈 transforme le map en objet
 
                   return CustomCard(
                     padding: const EdgeInsets.all(12),
@@ -132,6 +112,41 @@ class _BienListScreenState extends State<BienListScreen> {
                 }),
               );
             }
+
+            /// 👇 Bouton ajouter (toujours affiché)
+            widgets.add(
+              CustomCard(
+                padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+                child: InkWell(
+                  onTap: () {
+                    showChoixTypeBienDialog(
+                      context,
+                      (selectedType) {
+                        if (selectedType == 'Logement principal' && hasLogementPrincipal) {
+                          ScaffoldMessenger.of(
+                            context,
+                          ).showSnackBar(const SnackBar(content: Text("Un logement principal est déjà déclaré.")));
+                          return;
+                        }
+
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => BienDeclarationScreen(typeBienInitial: selectedType)),
+                        );
+                      },
+                      hasLogementPrincipal: hasLogementPrincipal, // 👈 facultatif si tu filtres le choix en amont
+                    );
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: const [
+                      Text("Ajouter un bien immobilier", style: TextStyle(fontSize: 12)),
+                      Icon(Icons.chevron_right, size: 14),
+                    ],
+                  ),
+                ),
+              ),
+            );
 
             return Column(children: widgets);
           },

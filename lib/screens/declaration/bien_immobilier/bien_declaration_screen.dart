@@ -147,7 +147,7 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
                     child: TextFormField(
                       initialValue: bien.nomLogement,
                       onChanged: (val) => setState(() => bien.nomLogement = val),
-                      style: const TextStyle(fontSize: 12),
+                      style: const TextStyle(fontSize: 11),
                       decoration: const InputDecoration(
                         isDense: true,
                         contentPadding: EdgeInsets.only(bottom: 6),
@@ -251,7 +251,7 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
             },
             child: Text(
               widget.bienExistant != null ? "Mettre à jour" : "Enregistrer",
-              style: const TextStyle(fontSize: 11),
+              style: const TextStyle(fontSize: 12),
             ),
           ),
         ),
