@@ -86,6 +86,7 @@ class _BienListScreenState extends State<BienListScreen> {
                     final adresse = bien['Adresse'] ?? '';
                     final nbProp = bien['Nb_Proprietaires']?.toString() ?? '-';
                     final inclure = bien['Inclure_dans_Bilan'] == true;
+                    final bienObj = BienImmobilier.fromMap(bien); // 👈 transforme le map en vrai objet
 
                     return CustomCard(
                       padding: const EdgeInsets.all(12),
@@ -102,7 +103,9 @@ class _BienListScreenState extends State<BienListScreen> {
                                 onTap: () {
                                   Navigator.push(
                                     context,
-                                    MaterialPageRoute(builder: (context) => BienDeclarationScreen()),
+                                    MaterialPageRoute(
+                                      builder: (context) => BienDeclarationScreen(bienExistant: bienObj),
+                                    ),
                                   );
                                 },
                                 child: const Icon(Icons.chevron_right, size: 14),

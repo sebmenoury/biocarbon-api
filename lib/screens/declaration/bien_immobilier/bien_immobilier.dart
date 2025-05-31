@@ -18,4 +18,19 @@ class BienImmobilier {
     this.nbProprietaires = 1, // 👈 valeur par défaut
     PosteBienImmobilier? poste,
   }) : poste = poste ?? PosteBienImmobilier();
+
+  factory BienImmobilier.fromMap(Map<String, dynamic> map) {
+    return BienImmobilier(
+      idBien: map['ID_Bien'],
+      typeBien: map['Type_Bien'] ?? 'Logement principal',
+      nomLogement: map['Dénomination'] ?? '',
+      adresse: map['Adresse'] ?? '',
+      inclureDansBilan: map['Inclure_dans_Bilan'] == true || map['Inclure_dans_Bilan'] == 'TRUE',
+      nbProprietaires:
+          map['Nb_Proprietaires'] is int
+              ? map['Nb_Proprietaires']
+              : int.tryParse(map['Nb_Proprietaires'].toString()) ?? 1,
+      poste: PosteBienImmobilier(), // À adapter si tu veux aussi le charger
+    );
+  }
 }
