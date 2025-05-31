@@ -88,6 +88,7 @@ class ApiService {
   }
 
   static Future<Map<String, dynamic>> addBien({
+    required String idBien, // 👈 ajouter cet argument
     required String codeIndividu,
     required String typeBien,
     required String description,
@@ -98,6 +99,7 @@ class ApiService {
       Uri.parse('$baseUrl/api/uc/biens'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
+        'ID_Usage': idBien, // 👈 important !
         'Code_Individu': codeIndividu,
         'Type_Bien': typeBien,
         'Description': description,

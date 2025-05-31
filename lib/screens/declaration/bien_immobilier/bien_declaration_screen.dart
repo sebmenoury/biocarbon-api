@@ -5,6 +5,7 @@ import 'bien_immobilier.dart';
 import '../../../ui/widgets/custom_dropdown_compact.dart';
 import '../eqt_bien_immobilier/poste_bien_immobilier.dart';
 import '../../../data/services/api_service.dart';
+import 'dart:convert';
 
 class BienDeclarationScreen extends StatefulWidget {
   final BienImmobilier? bienExistant;
@@ -63,6 +64,17 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
   }
 
   void enregistrerBien() async {
+    // 🔍 Ajoute cette ligne AVANT l'appel à l'API
+    print(
+      jsonEncode({
+        'ID_Usage': bien.idBien,
+        'Code_Individu': 'BASILE',
+        'Type_Bien': bien.typeBien,
+        'Dénomination': bien.nomLogement,
+        'Adresse': bien.adresse ?? '',
+        'Inclure_dans_bilan': bien.inclureDansBilan ? 'TRUE' : 'FALSE',
+      }),
+    );
     try {
       final result = await ApiService.addBien(
         idBien: bien.idBien!,
