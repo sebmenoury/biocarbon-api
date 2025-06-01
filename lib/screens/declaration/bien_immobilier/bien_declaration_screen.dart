@@ -64,22 +64,10 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
   }
 
   void enregistrerBien() async {
-    // 🔍 Ajoute cette ligne AVANT l'appel à l'API
-    print(
-      jsonEncode({
-        'ID_Bien': bien.idBien,
-        'Code_Individu': 'BASILE',
-        'Type_Bien': bien.typeBien,
-        'Dénomination': bien.nomLogement,
-        'Adresse': bien.adresse ?? '',
-        'nbPriopriétaires': bien.nbProprietaires,
-        'Inclure_dans_bilan': bien.inclureDansBilan ? 'TRUE' : 'FALSE',
-      }),
-    );
     try {
       final result = await ApiService.addBien(
         idBien: bien.idBien!,
-        codeIndividu: 'BASILE', // ou dynamiquement
+        codeIndividu: 'BASILE',
         typeBien: bien.typeBien,
         description: bien.nomLogement,
         adresse: bien.adresse ?? '',
@@ -88,7 +76,7 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
       );
 
       print('✅ Bien enregistré : $result');
-      Navigator.pop(context);
+      Navigator.pop(context, true); // Retourne true pour indiquer un rafraîchissement
     } catch (e) {
       print('❌ Erreur enregistrement : $e');
       ScaffoldMessenger.of(
@@ -203,7 +191,7 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
                   Transform.scale(
                     scale: 0.8,
                     child: Checkbox(
-                      value: ['TRUE', true].contains(bien.inclureDansBilan), // 👈 fallback si null
+                      value: bien.inclureDansBilan ?? true,
                       visualDensity: VisualDensity.compact,
                       onChanged: (v) => setState(() => bien.inclureDansBilan = v ?? true),
                     ),
