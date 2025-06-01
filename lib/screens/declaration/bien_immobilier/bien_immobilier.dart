@@ -25,7 +25,7 @@ class BienImmobilier {
       typeBien: map['Type_Bien'] ?? 'Logement principal',
       nomLogement: map['Dénomination'] ?? '',
       adresse: map['Adresse'] ?? '',
-      inclureDansBilan: ['TRUE', true, 'true'].contains(map['Inclure_dans_Bilan']),
+      inclureDansBilan: map['Inclure_dans_bilan'] == 'TRUE' || map['Inclure_dans_bilan'] == true,
       nbProprietaires:
           map['Nb_Proprietaires'] is int
               ? map['Nb_Proprietaires']
