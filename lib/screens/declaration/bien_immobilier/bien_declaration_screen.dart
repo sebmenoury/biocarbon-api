@@ -203,7 +203,7 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
                   Transform.scale(
                     scale: 0.8,
                     child: Checkbox(
-                      value: bien.inclureDansBilan ?? true, // 👈 fallback si null
+                      value: ['TRUE', true].contains(bien.inclureDansBilan), // 👈 fallback si null
                       visualDensity: VisualDensity.compact,
                       onChanged: (v) => setState(() => bien.inclureDansBilan = v ?? true),
                     ),

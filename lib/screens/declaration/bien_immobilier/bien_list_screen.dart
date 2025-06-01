@@ -102,7 +102,9 @@ class _BienListScreenState extends State<BienListScreen> {
                         Align(
                           alignment: Alignment.centerRight,
                           child: Text(
-                            bien['Inclure_dans_bilan'] == true ? "Inclus dans le bilan" : "Non inclus dans le bilan",
+                            ['TRUE', true].contains(bien['Inclure_dans_bilan'])
+                                ? "Inclus dans le bilan"
+                                : "Non inclus dans le bilan",
                             style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic, color: Colors.grey),
                           ),
                         ),
@@ -132,7 +134,9 @@ class _BienListScreenState extends State<BienListScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (_) => BienDeclarationScreen(typeBienInitial: selectedType)),
-                        );
+                        ).then((_) {
+                          setState(() {});
+                        });
                       },
                       hasLogementPrincipal: hasLogementPrincipal, // 👈 facultatif si tu filtres le choix en amont
                     );
