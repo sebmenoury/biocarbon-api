@@ -24,6 +24,7 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
   bool inclureDansBilan = true;
   int nbProprietaires = 1;
   late BienImmobilier bien;
+  bool showSuccessMessage = false;
 
   void incrementProprietaires() {
     setState(() {
@@ -46,12 +47,11 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
       typeBien = bien.typeBien;
       denomination = bien.nomLogement;
       adresse = bien.adresse ?? '';
-      inclureDansBilan = bien.inclureDansBilan ?? true; // 👈 valeur par défaut
+      inclureDansBilan = bien.inclureDansBilan ?? true;
       nbProprietaires = bien.nbProprietaires ?? 1;
-      print('💬 inclureDansBilan (init depuis bien existant) = ${bien.inclureDansBilan}'); // 👈 ICI
     } else {
       typeBien = widget.typeBienInitial ?? 'Logement principal';
-      inclureDansBilan = true; // 👈 valeur par défaut
+      inclureDansBilan = true;
       bien = BienImmobilier(
         idBien: 'TEMP-${DateTime.now().millisecondsSinceEpoch}',
         typeBien: typeBien,
@@ -77,7 +77,10 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
       );
 
       print('✅ Bien enregistré : $result');
-      Navigator.pop(context); // Retour classique sans rafraîchissement
+
+      setState(() {
+        showSuccessMessage = true;
+      });
     } catch (e) {
       print('❌ Erreur enregistrement : $e');
       ScaffoldMessenger.of(
@@ -88,7 +91,7 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
 
   void updateBien() async {
     try {
-      final data = bien.toMap('BASILE'); // au cas où tu veux tout envoyer
+      final data = bien.toMap('BASILE');
       final result = await ApiService.updateBien(bien.idBien!, data);
 
       print('🟠 Bien mis à jour : $result');
@@ -115,7 +118,7 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
             child: IconButton(
               icon: const Icon(Icons.arrow_back),
               iconSize: 18,
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => Navigator.pop(context, true), // ✅ indique au parent de rafraîchir
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(),
             ),
@@ -123,12 +126,20 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
         ],
       ),
       children: [
+        if (showSuccessMessage)
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              'Enregistrement effectué ✅',
+              style: TextStyle(color: Colors.green.shade700, fontSize: 12),
+              textAlign: TextAlign.center,
+            ),
+          ),
         CustomCard(
           padding: const EdgeInsets.all(12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              /// Type de bien
               CustomDropdownCompact(
                 value: typeBien,
                 items: const ['Logement principal', 'Logement secondaire'],
@@ -141,8 +152,6 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
                 },
               ),
               const SizedBox(height: 12),
-
-              /// Dénomination
               Row(
                 children: [
                   const Expanded(flex: 2, child: Text("Dénomination", style: TextStyle(fontSize: 11))),
@@ -162,8 +171,6 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
                 ],
               ),
               const SizedBox(height: 12),
-
-              /// Adresse
               Row(
                 children: [
                   const Expanded(flex: 2, child: Text("Adresse", style: TextStyle(fontSize: 11))),
@@ -183,8 +190,6 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
                 ],
               ),
               const SizedBox(height: 12),
-
-              /// Inclure dans le bilan
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -205,8 +210,6 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
           ),
         ),
         const SizedBox(height: 8),
-
-        /// Nombre de propriétaires
         CustomCard(
           padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
           child: Column(
@@ -239,10 +242,7 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
             ],
           ),
         ),
-
         const SizedBox(height: 24),
-
-        /// Bouton final
         Center(
           child: ElevatedButton(
             onPressed: () {
