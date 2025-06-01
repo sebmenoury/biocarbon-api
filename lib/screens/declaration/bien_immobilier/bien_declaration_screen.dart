@@ -48,6 +48,7 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
       adresse = bien.adresse ?? '';
       inclureDansBilan = bien.inclureDansBilan ?? true; // 👈 valeur par défaut
       nbProprietaires = bien.nbProprietaires ?? 1;
+      print('💬 inclureDansBilan (init depuis bien existant) = ${bien.inclureDansBilan}'); // 👈 ICI
     } else {
       typeBien = widget.typeBienInitial ?? 'Logement principal';
       inclureDansBilan = true; // 👈 valeur par défaut
