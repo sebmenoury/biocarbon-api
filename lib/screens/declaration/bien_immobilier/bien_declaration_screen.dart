@@ -72,6 +72,7 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
         'Type_Bien': bien.typeBien,
         'Dénomination': bien.nomLogement,
         'Adresse': bien.adresse ?? '',
+        'nbPriopriétaires': bien.nbProprietaires,
         'Inclure_dans_bilan': bien.inclureDansBilan ? 'TRUE' : 'FALSE',
       }),
     );

@@ -9,7 +9,7 @@ bp_uc_biens = Blueprint("uc_biens", __name__)
 def add_biens():
     data = request.get_json()
 
-    required_fields = ["Code_Individu", "ID_Bien", "Type_Bien", "Nb_Proprietaires" "Dénomination", "Adresse", "Inclure_dans_bilan"]
+    required_fields = ["Code_Individu", "ID_Bien", "Type_Bien", "Nb_Proprietaires", "Dénomination", "Adresse", "Inclure_dans_bilan"]
     if not all(field in data for field in required_fields):
         return jsonify({"error": "Champs manquants dans la requête"}), 400
 
