@@ -77,7 +77,7 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
       );
 
       print('✅ Bien enregistré : $result');
-      Navigator.pop(context, true); // Retourne true pour indiquer un rafraîchissement
+      Navigator.pop(context); // Retour classique sans rafraîchissement
     } catch (e) {
       print('❌ Erreur enregistrement : $e');
       ScaffoldMessenger.of(

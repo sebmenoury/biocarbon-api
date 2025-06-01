@@ -134,10 +134,8 @@ class _BienListScreenState extends State<BienListScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (_) => BienDeclarationScreen(typeBienInitial: selectedType)),
-                        ).then((shouldRefresh) {
-                          if (shouldRefresh == true) {
-                            setState(() {}); // Rafraîchit la liste des biens
-                          }
+                        ).then((_) {
+                          // ne fait rien ici volontairement
                         });
                       },
                       hasLogementPrincipal: hasLogementPrincipal, // 👈 facultatif si tu filtres le choix en amont
