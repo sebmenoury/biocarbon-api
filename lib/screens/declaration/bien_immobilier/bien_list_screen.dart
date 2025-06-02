@@ -54,7 +54,11 @@ class _BienListScreenState extends State<BienListScreen> {
               return Padding(padding: const EdgeInsets.all(16), child: Text("Erreur : ${snapshot.error}"));
             }
 
-            final biens = snapshot.data ?? [];
+            final biens =
+                (snapshot.data ?? [])..sort((a, b) {
+                  final ordre = {'Logement principal': 0, 'Logement secondaire': 1};
+                  return (ordre[a['Type_Bien']] ?? 2).compareTo(ordre[b['Type_Bien']] ?? 2);
+                });
             final bool hasLogementPrincipal = biens.any((b) => b['Type_Bien'] == 'Logement principal');
 
             List<Widget> widgets = [];

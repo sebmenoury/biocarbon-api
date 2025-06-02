@@ -79,8 +79,12 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
 
       print('✅ Bien enregistré : $result');
 
-      setState(() {
-        showSuccessMessage = true;
+      // Affiche le message
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('✅ Enregistrement effectué')));
+
+      // Attend un peu puis retourne à la liste avec mise à jour
+      Future.delayed(const Duration(milliseconds: 300), () {
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const BienListScreen()));
       });
     } catch (e) {
       print('❌ Erreur enregistrement : $e');
@@ -132,15 +136,6 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
         ],
       ),
       children: [
-        if (showSuccessMessage)
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              'Enregistrement effectué ✅',
-              style: TextStyle(color: Colors.green.shade700, fontSize: 12),
-              textAlign: TextAlign.center,
-            ),
-          ),
         CustomCard(
           padding: const EdgeInsets.all(12),
           child: Column(
