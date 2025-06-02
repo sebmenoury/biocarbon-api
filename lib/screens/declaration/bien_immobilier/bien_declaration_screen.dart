@@ -113,15 +113,31 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
   }
 
   void supprimerBien() async {
+    // ⛔️ Empêche la suppression si c'est un logement principal
+    if (bien.typeBien == 'Logement principal') {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('❌ Vous ne pouvez pas supprimer le logement principal, uniquement le modifier.')),
+      );
+      return;
+    }
     final confirm = await showDialog<bool>(
       context: context,
       builder:
           (context) => AlertDialog(
-            title: const Text("Confirmer la suppression"),
-            content: const Text("Souhaitez-vous vraiment supprimer ce bien ?"),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            title: const Text("Confirmer la suppression", style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+            content: const Text("Souhaitez-vous vraiment supprimer ce bien ?", style: TextStyle(fontSize: 11)),
+            actionsPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             actions: [
-              TextButton(onPressed: () => Navigator.pop(context, false), child: const Text("Annuler")),
-              TextButton(onPressed: () => Navigator.pop(context, true), child: const Text("Supprimer")),
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text("Annuler", style: TextStyle(fontSize: 11)),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: const Text("Supprimer", style: TextStyle(fontSize: 11)),
+              ),
             ],
           ),
     );
@@ -277,7 +293,7 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 ElevatedButton(
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red.shade700),
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
                   onPressed: supprimerBien,
                   child: const Text("Supprimer", style: TextStyle(fontSize: 12)),
                 ),
