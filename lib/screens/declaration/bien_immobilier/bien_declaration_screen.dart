@@ -95,8 +95,11 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
       final data = bien.toMap('BASILE');
       final result = await ApiService.updateBien(bien.idBien!, data);
 
-      print('🟠 Bien mis à jour : $result');
-      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('✅ Mise à jour effectuée')));
+
+      Future.delayed(const Duration(milliseconds: 300), () {
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const BienListScreen()));
+      });
     } catch (e) {
       print('❌ Erreur mise à jour : $e');
       ScaffoldMessenger.of(
@@ -249,7 +252,16 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
         Center(
           child: ElevatedButton(
             onPressed: () {
+              // Vérifie que la dénomination est bien remplie
+              if (bien.nomLogement.trim().isEmpty) {
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(const SnackBar(content: Text('⚠️ Merci de saisir une dénomination')));
+                return; // Empêche de continuer si vide
+              }
+
               bien.nbProprietaires = nbProprietaires;
+
               if (widget.bienExistant != null) {
                 updateBien();
               } else {
