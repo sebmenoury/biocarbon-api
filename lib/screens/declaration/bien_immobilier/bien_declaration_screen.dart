@@ -112,6 +112,34 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
     }
   }
 
+  void supprimerBien() async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: const Text("Confirmer la suppression"),
+            content: const Text("Souhaitez-vous vraiment supprimer ce bien ?"),
+            actions: [
+              TextButton(onPressed: () => Navigator.pop(context, false), child: const Text("Annuler")),
+              TextButton(onPressed: () => Navigator.pop(context, true), child: const Text("Supprimer")),
+            ],
+          ),
+    );
+
+    if (confirm == true) {
+      try {
+        await ApiService.deleteBien(bien.idBien!);
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("✅ Bien supprimé")));
+        Future.delayed(const Duration(milliseconds: 300), () {
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const BienListScreen()));
+        });
+      } catch (e) {
+        print('❌ Erreur suppression : $e');
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Erreur lors de la suppression")));
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BaseScreen(
@@ -244,31 +272,47 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
           ),
         ),
         const SizedBox(height: 24),
-        Center(
-          child: ElevatedButton(
-            onPressed: () {
-              // Vérifie que la dénomination est bien remplie
-              if (bien.nomLogement.trim().isEmpty) {
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(const SnackBar(content: Text('⚠️ Merci de saisir une dénomination')));
-                return; // Empêche de continuer si vide
-              }
+        widget.bienExistant != null
+            ? Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red.shade700),
+                  onPressed: supprimerBien,
+                  child: const Text("Supprimer", style: TextStyle(fontSize: 12)),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    if (bien.nomLogement.trim().isEmpty) {
+                      ScaffoldMessenger.of(
+                        context,
+                      ).showSnackBar(const SnackBar(content: Text('⚠️ Merci de saisir une dénomination')));
+                      return;
+                    }
 
-              bien.nbProprietaires = nbProprietaires;
+                    bien.nbProprietaires = nbProprietaires;
+                    updateBien();
+                  },
+                  child: const Text("Mettre à jour", style: TextStyle(fontSize: 12)),
+                ),
+              ],
+            )
+            : Center(
+              child: ElevatedButton(
+                onPressed: () {
+                  if (bien.nomLogement.trim().isEmpty) {
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(const SnackBar(content: Text('⚠️ Merci de saisir une dénomination')));
+                    return;
+                  }
 
-              if (widget.bienExistant != null) {
-                updateBien();
-              } else {
-                enregistrerBien();
-              }
-            },
-            child: Text(
-              widget.bienExistant != null ? "Mettre à jour" : "Enregistrer",
-              style: const TextStyle(fontSize: 12),
+                  bien.nbProprietaires = nbProprietaires;
+                  enregistrerBien();
+                },
+                child: const Text("Enregistrer", style: TextStyle(fontSize: 12)),
+              ),
             ),
-          ),
-        ),
       ],
     );
   }
