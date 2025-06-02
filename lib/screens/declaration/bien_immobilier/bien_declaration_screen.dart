@@ -5,6 +5,7 @@ import 'bien_immobilier.dart';
 import '../../../ui/widgets/custom_dropdown_compact.dart';
 import '../eqt_bien_immobilier/poste_bien_immobilier.dart';
 import '../../../data/services/api_service.dart';
+import 'bien_list_screen.dart';
 import 'dart:convert';
 
 class BienDeclarationScreen extends StatefulWidget {
@@ -118,7 +119,9 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
             child: IconButton(
               icon: const Icon(Icons.arrow_back),
               iconSize: 18,
-              onPressed: () => Navigator.pop(context, true), // ✅ indique au parent de rafraîchir
+              onPressed: () {
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const BienListScreen()));
+              },
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(),
             ),
