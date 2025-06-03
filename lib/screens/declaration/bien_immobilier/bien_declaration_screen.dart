@@ -116,7 +116,9 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
     // ⛔️ Empêche la suppression si c'est un logement principal
     if (bien.typeBien == 'Logement principal') {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('❌ Vous ne pouvez pas supprimer le logement principal, uniquement le modifier.')),
+        const SnackBar(
+          content: Text('❌ Vous ne pouvez pas supprimer le logement principal, vous pouvez uniquement le modifier.'),
+        ),
       );
       return;
     }

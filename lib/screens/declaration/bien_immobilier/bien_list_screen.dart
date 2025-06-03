@@ -6,6 +6,7 @@ import '../eqt_bien_immobilier/construction_screen.dart';
 import 'dialogs_type_bien.dart';
 import 'bien_immobilier.dart';
 import 'bien_declaration_screen.dart';
+import '../../main/mes_donnees_screen.dart';
 
 class BienListScreen extends StatefulWidget {
   const BienListScreen({super.key});
@@ -35,7 +36,13 @@ class _BienListScreenState extends State<BienListScreen> {
             child: IconButton(
               icon: const Icon(Icons.arrow_back),
               iconSize: 18,
-              onPressed: () => Navigator.pop(context),
+              onPressed: () {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (_) => const MesDonneesScreen()), // ⬅️ remplace avec ton écran de départ
+                  (route) => false, // ⬅️ supprime tous les écrans précédents
+                );
+              },
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(),
             ),

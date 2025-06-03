@@ -1,37 +1,35 @@
 import 'package:flutter/material.dart';
 
-// Importe ici tous tes écrans de déclaration
+// Importe ici tous tes écrans
 import 'usage_alimentation/alimentation_screen.dart';
 import 'usage_logement/usages_gaz_fioul_screen.dart';
 import 'eqt_vehicules/vehicule_screen.dart';
-// etc...
+import 'bien_immobilier/bien_declaration_screen.dart'
 
-/// Cette fonction retourne l’écran Flutter approprié
-/// en fonction du type de catégorie et de la sous-catégorie.
+/// Classe représentant une entrée de la registry : écran + titre
+class ScreenRegistryEntry {
+  final Widget Function() builder;
+  final String titre;
 
-Widget? getEcranEdition(String typeCategorie, String sousCategorie) {
-  switch (typeCategorie) {
-    case "Alimentation":
-      return const AlimentationScreen();
+  const ScreenRegistryEntry({required this.builder, required this.titre});
+}
 
-    case "Logement":
-      if (sousCategorie == "Gaz et Fioul") {
-        return const UsagesGazFioulScreen();
-      }
-      if (sousCategorie == "Biens Immobiliers") {
-        return const UsagesGazFioulScreen();
-      }
-      break;
+/// Map des écrans par Type_Categorie et Sous_Categorie
+final Map<String, Map<String, ScreenRegistryEntry>> screenRegistry = {
+  "Alimentation": {
+    "Général": ScreenRegistryEntry(builder: () => const AlimentationScreen(), titre: "Déclaration alimentation"),
+  },
+  "Logement": {
+    "Gaz et Fioul": ScreenRegistryEntry(builder: () => const UsagesGazFioulScreen(), titre: "Gaz et Fioul"),
+    "Biens Immobiliers": ScreenRegistryEntry(
+      builder: () => const BienDeclarationScreen(), // à adapter si besoin
+      titre: "Biens immobiliers",
+    ),
+  },
+  "Déplacements": {"Véhicules": ScreenRegistryEntry(builder: () => const VehiculeScreen(), titre: "Mes véhicules")},
+};
 
-    case "Déplacements":
-      if (sousCategorie == "Véhicules") {
-        return const VehiculeScreen();
-      }
-    // Ajoute ici d’autres cas au besoin :
-    // case "Biens":
-    //   return const BiensScreen();
-
-    default:
-      return null;
-  }
+/// Fonction utilitaire pour récupérer l'écran et le titre
+ScreenRegistryEntry? getEcranEtTitre(String typeCategorie, String sousCategorie) {
+  return screenRegistry[typeCategorie]?[sousCategorie];
 }

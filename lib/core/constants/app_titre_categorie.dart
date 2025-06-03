@@ -1,0 +1,22 @@
+/// Référentiel des titres par sous-catégorie
+const Map<String, String> titreParSousCategorie = {
+  'Déplacements Voiture': 'Mes déplacements voiture',
+  'Déplacements Train/Métro/Bus': 'Mes déplacements train/métro/bus',
+  'Déplacements Avion': 'Mes déplacements avion',
+  'Déplacements Autres': 'Mes autres déplacements',
+  'Gaz et Fioul': 'Ma consommation gaz / fioul par logement',
+  'Véhicules': 'Mes véhicules personnels',
+  'Biens Immobiliers': 'Mes biens immobiliers',
+  'Alimentation': 'Mon alimentation',
+  'Construction': 'Les caractéristiques de construction / travaux par logement',
+  'Equipements Confort': 'Mes équipements de confort par logement',
+  'Equipements Ménager': 'Mes équipements ménagers par logement',
+  'Equipements Bricolage': 'Mes équipements de bricolage par logement',
+  'Equipements Multi-média': 'Mes équipements multi-média',
+  'Habillement': 'Mes vêtements et accessoires',
+  'Loisirs': 'Mes loisirs',
+  'Banques et assurances': 'Mes banques et assurances',
+  'Déchets et Eau': 'Ma consommation d’eau et de déchets par logement',
+  'Services publics': 'Les services publics qui me sont attribués',
+  'Électricité': 'Ma consommation d’électricité par logement',
+};

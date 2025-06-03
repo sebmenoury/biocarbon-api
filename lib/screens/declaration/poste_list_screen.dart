@@ -12,6 +12,7 @@ import 'eqt_bien_immobilier/poste_bien_immobilier.dart';
 import 'eqt_bien_immobilier/construction_screen.dart';
 import 'bien_immobilier/dialogs_type_bien.dart';
 import 'eqt_vehicules/vehicule_screen.dart';
+import '../../core/constants/app_titre_categorie.dart';
 import 'navigation_registry.dart';
 
 class PosteListScreen extends StatefulWidget {
@@ -150,17 +151,26 @@ class _PosteListScreenState extends State<PosteListScreen> {
     final color = souscategoryColors[widget.sousCategorie] ?? Colors.grey;
 
     return BaseScreen(
-      title: Row(
+      title: Stack(
+        alignment: Alignment.center,
         children: [
-          IconButton(
-            icon: const Icon(Icons.arrow_back),
-            iconSize: 18,
-            onPressed: () => Navigator.pop(context),
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(),
+          Center(
+            child: Text(
+              titreParSousCategorie[widget.sousCategorie] ?? widget.sousCategorie,
+              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
           ),
-          const SizedBox(width: 8),
-          Text(widget.sousCategorie, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              iconSize: 18,
+              onPressed: () => Navigator.pop(context),
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(),
+            ),
+          ),
         ],
       ),
       children: [
@@ -202,7 +212,8 @@ class _PosteListScreenState extends State<PosteListScreen> {
                         postes: postes,
                         total: total,
                         onTap: () {
-                          final screen = getEcranEdition(widget.typeCategorie, sousCat);
+                          final entry = getEcranEtTitre(widget.typeCategorie, sousCat);
+                          final screen = entry?.builder();
                           if (screen != null) {
                             Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
                           } else {
