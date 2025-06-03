@@ -96,8 +96,8 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 12),
           child: Text(
             selectedIndex == 0
-                ? "⚙️ Calcul : Amortissement annuel de l’énergie grise de construction sur la durée théorique de vie de l’équipement, divisé par le nombre de propriétaires."
-                : "⚙️ Calcul : Valeur associée à la consommation sur une année, divisée par le nombre de propriétaires pour les usages liés au logement.",
+                ? "⚙️ Calcul de l'empreinte des équipements : correspond à l’Amortissement annuel de l’énergie grise de construction sur la durée théorique de vie de l’équipement, divisé par le nombre de propriétaires."
+                : "⚙️ Calcul de l'empreinte des usages : correspond à la valeur d'émission associée à la consommation de cet usage sur une année, divisée par le nombre de propriétaires pour les usages liés au logement.",
             style: const TextStyle(fontSize: 11, fontStyle: FontStyle.italic),
             textAlign: TextAlign.justify,
           ),

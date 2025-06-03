@@ -10,7 +10,6 @@ import 'sous_categorie_avec_bien.dart';
 import 'bien_immobilier/bien_immobilier.dart';
 import 'eqt_bien_immobilier/poste_bien_immobilier.dart';
 import 'eqt_bien_immobilier/construction_screen.dart';
-import 'bien_immobilier/dialogs_type_bien.dart';
 import 'eqt_vehicules/vehicule_screen.dart';
 import '../../core/constants/app_titre_categorie.dart';
 import 'navigation_registry.dart';
@@ -22,14 +21,7 @@ class PosteListScreen extends StatefulWidget {
   final String valeurTemps;
   final VoidCallback? onAddPressed;
 
-  const PosteListScreen({
-    super.key,
-    required this.typeCategorie,
-    required this.sousCategorie,
-    required this.codeIndividu,
-    required this.valeurTemps,
-    this.onAddPressed,
-  });
+  const PosteListScreen({super.key, required this.typeCategorie, required this.sousCategorie, required this.codeIndividu, required this.valeurTemps, this.onAddPressed});
 
   @override
   State<PosteListScreen> createState() => _PosteListScreenState();
@@ -40,10 +32,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
   late Future<List<Map<String, dynamic>>> biensFuture;
   bool avecBien = false;
 
-  final Map<String, String> sousCategorieRedirigeeParType = {
-    "Alimentation": "Alimentation",
-    "Services publics": "Services publics",
-  };
+  final Map<String, String> sousCategorieRedirigeeParType = {"Alimentation": "Alimentation", "Services publics": "Services publics"};
 
   @override
   void initState() {
@@ -51,11 +40,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
     avecBien = sousCategoriesAvecBien.contains(widget.sousCategorie);
 
     if (sousCategorieRedirigeeParType.containsKey(widget.sousCategorie)) {
-      postesFuture = ApiService.getPostesByCategorie(
-        sousCategorieRedirigeeParType[widget.sousCategorie]!,
-        widget.codeIndividu,
-        widget.valeurTemps,
-      );
+      postesFuture = ApiService.getPostesByCategorie(sousCategorieRedirigeeParType[widget.sousCategorie]!, widget.codeIndividu, widget.valeurTemps);
     } else {
       postesFuture = ApiService.getPostesBysousCategorie(widget.sousCategorie, widget.codeIndividu, widget.valeurTemps);
     }
@@ -81,19 +66,9 @@ class _PosteListScreenState extends State<PosteListScreen> {
       surfaceAbriEtSerre: 0,
     );
 
-    final nouveauBien = BienImmobilier(
-      idBien: idBien,
-      typeBien: 'Logement principal',
-      nomLogement: '',
-      adresse: '',
-      inclureDansBilan: true,
-      poste: nouveauPoste,
-    );
+    final nouveauBien = BienImmobilier(idBien: idBien, typeBien: 'Logement principal', nomLogement: '', adresse: '', inclureDansBilan: true, poste: nouveauPoste);
 
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => ConstructionScreen(bien: nouveauBien, onSave: () => setState(() {}))),
-    );
+    Navigator.push(context, MaterialPageRoute(builder: (context) => ConstructionScreen(bien: nouveauBien, onSave: () => setState(() {}))));
   }
 
   bool isNavigated = false;
@@ -139,10 +114,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
       poste: poste,
     );
 
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => ConstructionScreen(bien: bienObj, onSave: () => setState(() {}))),
-    );
+    Navigator.push(context, MaterialPageRoute(builder: (context) => ConstructionScreen(bien: bienObj, onSave: () => setState(() {}))));
   }
 
   @override
@@ -154,22 +126,10 @@ class _PosteListScreenState extends State<PosteListScreen> {
       title: Stack(
         alignment: Alignment.center,
         children: [
-          Center(
-            child: Text(
-              titreParSousCategorie[widget.sousCategorie] ?? widget.sousCategorie,
-              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
-            ),
-          ),
+          Center(child: Text(titreParSousCategorie[widget.sousCategorie] ?? widget.sousCategorie, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold), textAlign: TextAlign.center)),
           Align(
             alignment: Alignment.centerLeft,
-            child: IconButton(
-              icon: const Icon(Icons.arrow_back),
-              iconSize: 18,
-              onPressed: () => Navigator.pop(context),
-              padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(),
-            ),
+            child: IconButton(icon: const Icon(Icons.arrow_back), iconSize: 18, onPressed: () => Navigator.pop(context), padding: EdgeInsets.zero, constraints: const BoxConstraints()),
           ),
         ],
       ),
@@ -217,9 +177,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                           if (screen != null) {
                             Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
                           } else {
-                            ScaffoldMessenger.of(
-                              context,
-                            ).showSnackBar(SnackBar(content: Text("Aucun écran défini pour $sousCat")));
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Aucun écran défini pour $sousCat")));
                           }
                         },
                       );
@@ -231,13 +189,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
               if (postes.isEmpty) {
                 return CustomCard(
                   padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-                  child: const Center(
-                    child: Text(
-                      "Merci de déclarer un bien immobilier",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
-                    ),
-                  ),
+                  child: const Center(child: Text("Merci de déclarer un bien immobilier", textAlign: TextAlign.center, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500))),
                 );
               }
 
@@ -257,16 +209,10 @@ class _PosteListScreenState extends State<PosteListScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                widget.sousCategorie,
-                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-                              ),
+                              Text(widget.sousCategorie, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                               Row(
                                 children: [
-                                  Text(
-                                    "${total.round()} kgCO₂",
-                                    style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
-                                  ),
+                                  Text("${total.round()} kgCO₂", style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
                                   const SizedBox(width: 4),
                                   const Icon(Icons.chevron_right, size: 14),
                                 ],
@@ -277,12 +223,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                           ...List.generate(postes.length * 2 - 1, (index) {
                             if (index.isEven) {
                               final poste = postes[index ~/ 2];
-                              return PostListCard(
-                                title: poste.nomPoste ?? 'Sans nom',
-                                emission: "${poste.emissionCalculee?.round() ?? 0} kgCO₂",
-                                onEdit: () {},
-                                onDelete: () {},
-                              );
+                              return PostListCard(title: poste.nomPoste ?? 'Sans nom', emission: "${poste.emissionCalculee?.round() ?? 0} kgCO₂", onEdit: () {}, onDelete: () {});
                             } else {
                               return const Divider(height: 1, thickness: 0.2, color: Colors.grey);
                             }
@@ -298,10 +239,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                 future: biensFuture,
                 builder: (context, biensSnapshot) {
                   if (biensSnapshot.connectionState == ConnectionState.waiting) {
-                    return const Padding(
-                      padding: EdgeInsets.all(32),
-                      child: Center(child: CircularProgressIndicator()),
-                    );
+                    return const Padding(padding: EdgeInsets.all(32), child: Center(child: CircularProgressIndicator()));
                   }
 
                   if (biensSnapshot.hasError) {
@@ -324,10 +262,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                           children: [
                             Padding(
                               padding: const EdgeInsets.only(right: 3, left: 12),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [Text(bien['Type_Bien'] ?? '', style: const TextStyle(fontSize: 12))],
-                              ),
+                              child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text(bien['Type_Bien'] ?? '', style: const TextStyle(fontSize: 12))]),
                             ),
                             CustomCard(
                               padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
@@ -339,16 +274,10 @@ class _PosteListScreenState extends State<PosteListScreen> {
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Text(
-                                          widget.sousCategorie,
-                                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-                                        ),
+                                        Text(widget.sousCategorie, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                                         Row(
                                           children: [
-                                            Text(
-                                              "${total.round()} kgCO₂",
-                                              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
-                                            ),
+                                            Text("${total.round()} XX kgCO₂", style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
                                             const SizedBox(width: 4),
                                             const Icon(Icons.chevron_right, size: 14),
                                           ],
@@ -359,12 +288,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                                     ...List.generate(postesPourCeBien.length * 2 - 1, (index) {
                                       if (index.isEven) {
                                         final poste = postesPourCeBien[index ~/ 2];
-                                        return PostListCard(
-                                          title: poste.nomPoste ?? 'Sans nom',
-                                          emission: "${poste.emissionCalculee?.round() ?? 0} kgCO₂",
-                                          onEdit: () {},
-                                          onDelete: () {},
-                                        );
+                                        return PostListCard(title: poste.nomPoste ?? 'Sans nom', emission: "${poste.emissionCalculee?.round() ?? 0} kgCO₂", onEdit: () {}, onDelete: () {});
                                       } else {
                                         return const Divider(height: 1, thickness: 0.2, color: Colors.grey);
                                       }
@@ -384,13 +308,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                             onTap: () => handleAdd(bien['ID_Bien']),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "Ajouter une déclaration pour ${bien['Dénomination'] ?? ''}",
-                                  style: const TextStyle(fontSize: 12),
-                                ),
-                                const Icon(Icons.chevron_right, size: 14),
-                              ],
+                              children: [Text("Ajouter une déclaration pour ${bien['Dénomination'] ?? ''}", style: const TextStyle(fontSize: 12)), const Icon(Icons.chevron_right, size: 14)],
                             ),
                           ),
                         ),
