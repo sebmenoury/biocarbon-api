@@ -231,14 +231,11 @@ class _PosteListScreenState extends State<PosteListScreen> {
               if (postes.isEmpty) {
                 return CustomCard(
                   padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-                  child: InkWell(
-                    onTap: handleAdd,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const [
-                        Text("Déclarer mes premiers éléments concernant ce thème", style: TextStyle(fontSize: 12)),
-                        Icon(Icons.chevron_right, size: 14),
-                      ],
+                  child: const Center(
+                    child: Text(
+                      "Merci de déclarer un bien immobilier",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
                     ),
                   ),
                 );
@@ -267,7 +264,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                               Row(
                                 children: [
                                   Text(
-                                    "${total.round()} XX kgCO₂",
+                                    "${total.round()} kgCO₂",
                                     style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
                                   ),
                                   const SizedBox(width: 4),
@@ -400,44 +397,6 @@ class _PosteListScreenState extends State<PosteListScreen> {
                       );
                     }
                   }
-
-                  widgets.add(
-                    CustomCard(
-                      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-                      child: InkWell(
-                        onTap: () {
-                          showChoixTypeBienDialog(context, (String typeChoisi) {
-                            final bien = BienImmobilier(
-                              idBien: "BASILE-${DateTime.now().millisecondsSinceEpoch}", // ou un ID UUID
-                              typeBien: typeChoisi,
-                              nomLogement: "", // ou une valeur par défaut
-                              poste: PosteBienImmobilier(), // avec ses valeurs par défaut si besoin
-                            );
-
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder:
-                                    (_) => ConstructionScreen(
-                                      bien: bien,
-                                      onSave:
-                                          () => setState(() {
-                                            // Optionnel : mettre ici ce que tu veux rafraîchir
-                                          }),
-                                    ),
-                              ),
-                            );
-                          });
-                        },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: const [
-                            Text("Ajouter un bien immobilier", style: TextStyle(fontSize: 12)),
-                            Icon(Icons.chevron_right, size: 14),
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
 
                   return Column(children: widgets);
                 },
