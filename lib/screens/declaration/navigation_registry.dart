@@ -17,20 +17,22 @@ class ScreenRegistryEntry {
 /// Map des écrans par Type_Categorie et Sous_Categorie
 final Map<String, Map<String, ScreenRegistryEntry>> screenRegistry = {
   "Alimentation": {
-    "Général": ScreenRegistryEntry(builder: () => const AlimentationScreen(), titre: "Déclaration alimentation"),
+    "Général": ScreenRegistryEntry(builder: () => const AlimentationScreen(), titre: "Déclaration de l'alimentation"),
   },
   "Logement": {
-    "Gaz et Fioul": ScreenRegistryEntry(builder: () => const UsagesGazFioulScreen(), titre: "Gaz et Fioul"),
+    "Gaz et Fioul": ScreenRegistryEntry(builder: () => const UsagesGazFioulScreen(), titre: "Déclaration Gaz et Fioul"),
     "Biens Immobiliers": ScreenRegistryEntry(
       builder: () => const BienDeclarationScreen(), // à adapter si besoin
       titre: "Type et propriété du logement",
     ),
     "Construction": ScreenRegistryEntry(
       builder: () => const BienDeclarationScreen(), // à adapter si besoin
-      titre: "Construction",
+      titre: "Déclaration de la construction, et travaux associés au logement",
     ),
   },
-  "Déplacements": {"Véhicules": ScreenRegistryEntry(builder: () => const VehiculeScreen(), titre: "Mes véhicules")},
+  "Déplacements": {
+    "Véhicules": ScreenRegistryEntry(builder: () => const VehiculeScreen(), titre: "Déclaration des véhicules"),
+  },
 };
 
 /// Fonction utilitaire pour récupérer l'écran et le titre
