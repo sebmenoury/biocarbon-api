@@ -68,9 +68,7 @@ class ApiService {
   }
 
   static Future<Map<String, dynamic>> getRefAeroportDetails(String pays, String ville, String aeroport) async {
-    final response = await http.get(
-      Uri.parse('$baseUrl/api/ref/aeroports/details?pays=$pays&ville=$ville&aeroport=$aeroport'),
-    );
+    final response = await http.get(Uri.parse('$baseUrl/api/ref/aeroports/details?pays=$pays&ville=$ville&aeroport=$aeroport'));
     return _handleResponse(response);
   }
   // ---------------------------------------------------------------------------
@@ -94,6 +92,7 @@ class ApiService {
     required String description,
     required String adresse,
     required int nbProprietaires,
+    required double nbHabitants,
     required String inclureDansBilan,
   }) async {
     final response = await http.post(
@@ -106,6 +105,7 @@ class ApiService {
         'Dénomination': description,
         'Adresse': adresse,
         'Nb_Proprietaires': nbProprietaires,
+        'Nb_Habitants': nbHabitants,
         'Inclure_dans_bilan': inclureDansBilan,
       }),
     );
@@ -113,11 +113,7 @@ class ApiService {
   }
 
   static Future<Map<String, dynamic>> updateBien(String idBien, Map<String, dynamic> data) async {
-    final response = await http.patch(
-      Uri.parse('$baseUrl/api/uc/biens/$idBien'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(data),
-    );
+    final response = await http.patch(Uri.parse('$baseUrl/api/uc/biens/$idBien'), headers: {'Content-Type': 'application/json'}, body: jsonEncode(data));
     return _handleResponse(response);
   }
 
@@ -131,20 +127,12 @@ class ApiService {
   // ---------------------------------------------------------------------------
 
   static Future<Map<String, dynamic>> addUCPoste(Map<String, dynamic> data) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/api/uc/postes'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(data),
-    );
+    final response = await http.post(Uri.parse('$baseUrl/api/uc/postes'), headers: {'Content-Type': 'application/json'}, body: jsonEncode(data));
     return _handleResponse(response);
   }
 
   static Future<Map<String, dynamic>> updateUCPoste(String id, Map<String, dynamic> data) async {
-    final response = await http.patch(
-      Uri.parse('$baseUrl/api/uc/postes/$id'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(data),
-    );
+    final response = await http.patch(Uri.parse('$baseUrl/api/uc/postes/$id'), headers: {'Content-Type': 'application/json'}, body: jsonEncode(data));
     return _handleResponse(response);
   }
 
@@ -173,9 +161,7 @@ class ApiService {
   // ---------------------------------------------------------------------------
 
   static Future<List<Map<String, dynamic>>> getUCPostes(String codeIndividu, String valeurTemps) async {
-    final response = await http.get(
-      Uri.parse("$baseUrl/api/uc/postes?code_individu=$codeIndividu&valeur_temps=$valeurTemps"),
-    );
+    final response = await http.get(Uri.parse("$baseUrl/api/uc/postes?code_individu=$codeIndividu&valeur_temps=$valeurTemps"));
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(response.body);
       return data.cast<Map<String, dynamic>>();
@@ -188,16 +174,11 @@ class ApiService {
   // ---------------------------------------------------------------------------
 
   static Future<List<Poste>> getPostesByCategorie(String typeCategorie, String codeIndividu, String valeurTemps) async {
-    final response = await http.get(
-      Uri.parse('$baseUrl/api/uc/postes?code_individu=$codeIndividu&valeur_temps=$valeurTemps'),
-    );
+    final response = await http.get(Uri.parse('$baseUrl/api/uc/postes?code_individu=$codeIndividu&valeur_temps=$valeurTemps'));
 
     if (response.statusCode == 200) {
       final List<dynamic> jsonList = jsonDecode(response.body);
-      return jsonList
-          .map((json) => Poste.fromJson(json))
-          .where((poste) => poste.typeCategorie == typeCategorie)
-          .toList();
+      return jsonList.map((json) => Poste.fromJson(json)).where((poste) => poste.typeCategorie == typeCategorie).toList();
     } else {
       throw Exception("Erreur lors de la récupération des postes");
     }
@@ -235,11 +216,7 @@ class ApiService {
   // récupère les données par sous Catégorie
   // ---------------------------------------------------------------------------
 
-  static Future<List<Poste>> getPostesBysousCategorie(
-    String sousCategorie,
-    String codeIndividu,
-    String valeurTemps,
-  ) async {
+  static Future<List<Poste>> getPostesBysousCategorie(String sousCategorie, String codeIndividu, String valeurTemps) async {
     // Fonction de normalisation (accents, majuscules)
     String normalize(String s) => s.toLowerCase().replaceAll('é', 'e').replaceAll('è', 'e').trim();
 
@@ -257,10 +234,7 @@ class ApiService {
   // récupère les données par Type Catégorie et sous Catégorie
   // ---------------------------------------------------------------------------
 
-  static Future<Map<String, Map<String, double>>> getEmissionsByCategoryAndSousCategorie(
-    String codeIndividu,
-    String valeurTemps,
-  ) async {
+  static Future<Map<String, Map<String, double>>> getEmissionsByCategoryAndSousCategorie(String codeIndividu, String valeurTemps) async {
     final List<Map<String, dynamic>> allData = await getUCPostes(codeIndividu, valeurTemps);
 
     final Map<String, Map<String, double>> result = {};

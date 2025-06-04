@@ -24,6 +24,7 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
   String adresse = '';
   bool inclureDansBilan = true;
   int nbProprietaires = 1;
+  double nbHabitants = 1.0;
   late BienImmobilier bien;
   bool showSuccessMessage = false;
 
@@ -39,6 +40,18 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
     });
   }
 
+  void incrementHabitants() {
+    setState(() {
+      nbHabitants++;
+    });
+  }
+
+  void decrementHabitants() {
+    setState(() {
+      if (nbHabitants > 1) nbHabitants--;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -50,6 +63,7 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
       adresse = bien.adresse ?? '';
       inclureDansBilan = bien.inclureDansBilan ?? true;
       nbProprietaires = bien.nbProprietaires ?? 1;
+      nbHabitants = bien.nbHabitants ?? 1.0;
     } else {
       typeBien = widget.typeBienInitial ?? 'Logement principal';
       inclureDansBilan = true;
@@ -61,6 +75,7 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
         inclureDansBilan: inclureDansBilan,
         poste: PosteBienImmobilier(),
         nbProprietaires: nbProprietaires,
+        nbHabitants: nbHabitants, // Initialisation de nbHabitants
       );
     }
   }
@@ -74,6 +89,7 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
         description: bien.nomLogement,
         adresse: bien.adresse ?? '',
         nbProprietaires: bien.nbProprietaires,
+        nbHabitants: bien.nbHabitants, // Ajout de nbHabitants
         inclureDansBilan: bien.inclureDansBilan ? 'TRUE' : 'FALSE',
       );
 
@@ -88,9 +104,7 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
       });
     } catch (e) {
       print('❌ Erreur enregistrement : $e');
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Erreur lors de l\'enregistrement du bien')));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Erreur lors de l\'enregistrement du bien')));
     }
   }
 
@@ -106,20 +120,14 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
       });
     } catch (e) {
       print('❌ Erreur mise à jour : $e');
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Erreur lors de la mise à jour du bien')));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Erreur lors de la mise à jour du bien')));
     }
   }
 
   void supprimerBien() async {
     // ⛔️ Empêche la suppression si c'est un logement principal
     if (bien.typeBien == 'Logement principal') {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('❌ Vous ne pouvez pas supprimer le logement principal, vous pouvez uniquement le modifier.'),
-        ),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('❌ Vous ne pouvez pas supprimer le logement principal, vous pouvez uniquement le modifier.')));
       return;
     }
     final confirm = await showDialog<bool>(
@@ -132,14 +140,8 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
             content: const Text("Souhaitez-vous vraiment supprimer ce bien ?", style: TextStyle(fontSize: 11)),
             actionsPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context, false),
-                child: const Text("Annuler", style: TextStyle(fontSize: 11)),
-              ),
-              TextButton(
-                onPressed: () => Navigator.pop(context, true),
-                child: const Text("Supprimer", style: TextStyle(fontSize: 11)),
-              ),
+              TextButton(onPressed: () => Navigator.pop(context, false), child: const Text("Annuler", style: TextStyle(fontSize: 11))),
+              TextButton(onPressed: () => Navigator.pop(context, true), child: const Text("Supprimer", style: TextStyle(fontSize: 11))),
             ],
           ),
     );
@@ -164,9 +166,7 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
       title: Stack(
         alignment: Alignment.center,
         children: [
-          const Center(
-            child: Text("Type et propriété du logement", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-          ),
+          const Center(child: Text("Type et propriété du logement", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold))),
           Align(
             alignment: Alignment.centerLeft,
             child: IconButton(
@@ -208,11 +208,7 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
                       initialValue: bien.nomLogement,
                       onChanged: (val) => setState(() => bien.nomLogement = val),
                       style: const TextStyle(fontSize: 11),
-                      decoration: const InputDecoration(
-                        isDense: true,
-                        contentPadding: EdgeInsets.only(bottom: 6),
-                        border: UnderlineInputBorder(),
-                      ),
+                      decoration: const InputDecoration(isDense: true, contentPadding: EdgeInsets.only(bottom: 6), border: UnderlineInputBorder()),
                     ),
                   ),
                 ],
@@ -227,11 +223,7 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
                       initialValue: bien.adresse ?? '',
                       onChanged: (val) => setState(() => bien.adresse = val),
                       style: const TextStyle(fontSize: 11),
-                      decoration: const InputDecoration(
-                        isDense: true,
-                        contentPadding: EdgeInsets.only(bottom: 6),
-                        border: UnderlineInputBorder(),
-                      ),
+                      decoration: const InputDecoration(isDense: true, contentPadding: EdgeInsets.only(bottom: 6), border: UnderlineInputBorder()),
                     ),
                   ),
                 ],
@@ -243,11 +235,7 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
                 children: [
                   Transform.scale(
                     scale: 0.8,
-                    child: Checkbox(
-                      value: bien.inclureDansBilan == true,
-                      visualDensity: VisualDensity.compact,
-                      onChanged: (v) => setState(() => bien.inclureDansBilan = v ?? true),
-                    ),
+                    child: Checkbox(value: bien.inclureDansBilan == true, visualDensity: VisualDensity.compact, onChanged: (v) => setState(() => bien.inclureDansBilan = v ?? true)),
                   ),
                   const SizedBox(width: 4),
                   const Text("Inclure dans le bilan", style: TextStyle(fontSize: 11)),
@@ -269,19 +257,32 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      IconButton(
-                        icon: const Icon(Icons.remove),
-                        onPressed: decrementProprietaires,
-                        visualDensity: VisualDensity.compact,
-                        iconSize: 20,
-                      ),
+                      IconButton(icon: const Icon(Icons.remove), onPressed: decrementProprietaires, visualDensity: VisualDensity.compact, iconSize: 20),
                       Text("$nbProprietaires", style: const TextStyle(fontSize: 11)),
-                      IconButton(
-                        icon: const Icon(Icons.add),
-                        onPressed: incrementProprietaires,
-                        visualDensity: VisualDensity.compact,
-                        iconSize: 20,
-                      ),
+                      IconButton(icon: const Icon(Icons.add), onPressed: incrementProprietaires, visualDensity: VisualDensity.compact, iconSize: 20),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 8),
+        CustomCard(
+          padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text("Nombre d'habitants", style: TextStyle(fontSize: 11)),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(icon: const Icon(Icons.remove), onPressed: decrementHabitants, visualDensity: VisualDensity.compact, iconSize: 20),
+                      Text("$nbHabitants", style: const TextStyle(fontSize: 11)),
+                      IconButton(icon: const Icon(Icons.add), onPressed: incrementHabitants, visualDensity: VisualDensity.compact, iconSize: 20),
                     ],
                   ),
                 ],
@@ -294,17 +295,11 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
             ? Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
-                  onPressed: supprimerBien,
-                  child: const Text("Supprimer", style: TextStyle(fontSize: 12)),
-                ),
+                ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: Colors.white), onPressed: supprimerBien, child: const Text("Supprimer", style: TextStyle(fontSize: 12))),
                 ElevatedButton(
                   onPressed: () {
                     if (bien.nomLogement.trim().isEmpty) {
-                      ScaffoldMessenger.of(
-                        context,
-                      ).showSnackBar(const SnackBar(content: Text('⚠️ Merci de saisir une dénomination')));
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('⚠️ Merci de saisir une dénomination')));
                       return;
                     }
 
@@ -319,9 +314,7 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
               child: ElevatedButton(
                 onPressed: () {
                   if (bien.nomLogement.trim().isEmpty) {
-                    ScaffoldMessenger.of(
-                      context,
-                    ).showSnackBar(const SnackBar(content: Text('⚠️ Merci de saisir une dénomination')));
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('⚠️ Merci de saisir une dénomination')));
                     return;
                   }
 

@@ -7,6 +7,7 @@ class BienImmobilier {
   String? adresse;
   bool inclureDansBilan;
   int nbProprietaires; // 👈 ajouté ici
+  double nbHabitants;
   PosteBienImmobilier poste;
 
   BienImmobilier({
@@ -16,6 +17,8 @@ class BienImmobilier {
     this.adresse,
     this.inclureDansBilan = true,
     this.nbProprietaires = 1, // 👈 valeur par défaut
+    this.nbHabitants = 1.0, // 👈 valeur par défaut
+
     PosteBienImmobilier? poste,
   }) : poste = poste ?? PosteBienImmobilier();
 
@@ -26,10 +29,8 @@ class BienImmobilier {
       nomLogement: map['Dénomination'] ?? '',
       adresse: map['Adresse'] ?? '',
       inclureDansBilan: map['Inclure_dans_bilan'] == 'TRUE' || map['Inclure_dans_bilan'] == true,
-      nbProprietaires:
-          map['Nb_Proprietaires'] is int
-              ? map['Nb_Proprietaires']
-              : int.tryParse(map['Nb_Proprietaires'].toString()) ?? 1,
+      nbProprietaires: map['Nb_Proprietaires'] is int ? map['Nb_Proprietaires'] : int.tryParse(map['Nb_Proprietaires'].toString()) ?? 1,
+      nbHabitants: map['Nb_Habitants'] is double ? map['Nb_Habitants'] : double.tryParse(map['Nb_Habitants'].toString()) ?? 1.0,
       poste: PosteBienImmobilier(), // À adapter si tu veux aussi le charger
     );
   }
@@ -40,6 +41,7 @@ class BienImmobilier {
       'Code_Individu': codeIndividu,
       'Type_Bien': typeBien,
       'Nb_Proprietaires': nbProprietaires,
+      'Nb_Habitants': nbHabitants,
       'Dénomination': nomLogement,
       'Adresse': adresse,
       'Inclure_dans_Bilan': inclureDansBilan ? 'TRUE' : 'FALSE',

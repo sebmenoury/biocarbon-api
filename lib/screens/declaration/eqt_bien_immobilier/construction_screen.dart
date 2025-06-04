@@ -77,7 +77,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
         children: [
           IconButton(icon: const Icon(Icons.arrow_back), iconSize: 18, onPressed: () => Navigator.pop(context), padding: EdgeInsets.zero, constraints: const BoxConstraints()),
           const SizedBox(width: 8),
-          Center(child: Text("Déclaration construction, et travaux associés au logements", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold))),
+          Center(child: Text("Construction et rénovations associées au logement", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold))),
         ],
       ),
 
