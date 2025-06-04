@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../../../ui/layout/base_screen.dart';
 import '../../../ui/layout/custom_card.dart';
 import 'bien_immobilier.dart';
@@ -82,6 +83,7 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
 
   void enregistrerBien() async {
     try {
+      final nbHabitantsFormate = NumberFormat("0.##", "en_US").format(bien.nbHabitants); // 👈 ici
       final result = await ApiService.addBien(
         idBien: bien.idBien!,
         codeIndividu: 'BASILE',
@@ -89,7 +91,7 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
         description: bien.nomLogement,
         adresse: bien.adresse ?? '',
         nbProprietaires: bien.nbProprietaires,
-        nbHabitants: bien.nbHabitants.toString().replaceAll(',', '.'),
+        nbHabitants: nbHabitantsFormate, // 👈 ici, en string bien formatée
         inclureDansBilan: bien.inclureDansBilan ? 'TRUE' : 'FALSE',
       );
 
@@ -111,6 +113,7 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
   void updateBien() async {
     try {
       final data = bien.toMap('BASILE');
+      data['Nb_Habitants'] = NumberFormat("0.##", "en_US").format(bien.nbHabitants); // 👈 ici
       final result = await ApiService.updateBien(bien.idBien!, data);
 
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('✅ Mise à jour effectuée')));
