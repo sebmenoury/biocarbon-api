@@ -95,6 +95,19 @@ class ApiService {
     required String nbHabitants,
     required String inclureDansBilan,
   }) async {
+    print("📤 Envoi de données à l'API addBien :");
+    print(
+      jsonEncode({
+        'ID_Bien': idBien,
+        'Code_Individu': codeIndividu,
+        'Type_Bien': typeBien,
+        'Dénomination': description,
+        'Adresse': adresse,
+        'Nb_Proprietaires': nbProprietaires,
+        'Nb_Habitants': nbHabitants,
+        'Inclure_dans_bilan': inclureDansBilan,
+      }),
+    );
     final response = await http.post(
       Uri.parse('$baseUrl/api/uc/biens'),
       headers: {'Content-Type': 'application/json'},
