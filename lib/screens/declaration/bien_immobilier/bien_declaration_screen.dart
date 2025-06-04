@@ -89,7 +89,7 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
         description: bien.nomLogement,
         adresse: bien.adresse ?? '',
         nbProprietaires: bien.nbProprietaires,
-        nbHabitants: bien.nbHabitants, // Ajout de nbHabitants
+        nbHabitants: double.parse(bien.nbHabitants.toString().replaceAll(',', '.')),
         inclureDansBilan: bien.inclureDansBilan ? 'TRUE' : 'FALSE',
       );
 

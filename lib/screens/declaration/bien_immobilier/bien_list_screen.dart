@@ -76,10 +76,8 @@ class _BienListScreenState extends State<BienListScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 child: Text(
                   "🏠 Ici, vous déclarez les biens immobiliers que vous possédez ou que vous louez. \n"
-                  "Le nombre de propriétaires correspond au nombre de financeurs du bien ou de la location. "
-                  "Le nombre d'habitants correspond au nombre de personnes qui y vivent. \n"
-                  "Le nombre de propriétaires est utilisé pour répartir par individu propriétaire l'énergie grise des équipements associés à ces biens. "
-                  "Le nombre d'habitants est quant à lui utilisé pour répartir l'énergie d'usage des équipements associés à ces biens.",
+                  "Le nombre de propriétaires correspond au nombre de financeurs du bien ou de la location, et est utilisé pour répartir par individu propriétaire l'énergie grise des équipements associés à ces biens. \n"
+                  "Le nombre d'habitants correspond au nombre de personnes qui y vivent, et utilisé pour répartir l'énergie d'usage des équipements associés à ces biens.",
                   style: const TextStyle(fontSize: 11, fontStyle: FontStyle.italic),
                   textAlign: TextAlign.justify,
                 ),
