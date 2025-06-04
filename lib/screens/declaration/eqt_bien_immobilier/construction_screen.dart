@@ -75,15 +75,9 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
     return BaseScreen(
       title: Row(
         children: [
-          IconButton(
-            icon: const Icon(Icons.arrow_back),
-            iconSize: 18,
-            onPressed: () => Navigator.pop(context),
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(),
-          ),
+          IconButton(icon: const Icon(Icons.arrow_back), iconSize: 18, onPressed: () => Navigator.pop(context), padding: EdgeInsets.zero, constraints: const BoxConstraints()),
           const SizedBox(width: 8),
-          const Text("Bien immobilier", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+          Center(child: Text("Déclaration construction, et travaux associés au logements", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold))),
         ],
       ),
 
@@ -112,9 +106,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                       items:
                           facteursEmission.keys
                               .where((k) => k.contains("Maison") || k.contains("Appartement"))
-                              .map(
-                                (t) => DropdownMenuItem(value: t, child: Text(t, style: const TextStyle(fontSize: 11))),
-                              )
+                              .map((t) => DropdownMenuItem(value: t, child: Text(t, style: const TextStyle(fontSize: 11))))
                               .toList(),
                       onChanged: (val) => setState(() => poste.nomEquipement = val!),
                     ),
@@ -185,10 +177,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                               constraints: const BoxConstraints(),
                               onPressed:
                                   () => setState(() {
-                                    poste.anneeConstruction = (poste.anneeConstruction - 1).clamp(
-                                      1800,
-                                      DateTime.now().year,
-                                    );
+                                    poste.anneeConstruction = (poste.anneeConstruction - 1).clamp(1800, DateTime.now().year);
                                   }),
                             ),
                             SizedBox(
@@ -216,10 +205,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                               constraints: const BoxConstraints(),
                               onPressed:
                                   () => setState(() {
-                                    poste.anneeConstruction = (poste.anneeConstruction + 1).clamp(
-                                      1800,
-                                      DateTime.now().year,
-                                    );
+                                    poste.anneeConstruction = (poste.anneeConstruction + 1).clamp(1800, DateTime.now().year);
                                   }),
                             ),
                           ],
@@ -250,11 +236,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                                 textAlign: TextAlign.center,
                                 style: const TextStyle(fontSize: 11),
                                 keyboardType: TextInputType.number,
-                                decoration: const InputDecoration(
-                                  isDense: true,
-                                  contentPadding: EdgeInsets.symmetric(vertical: 4),
-                                  border: InputBorder.none,
-                                ),
+                                decoration: const InputDecoration(isDense: true, contentPadding: EdgeInsets.symmetric(vertical: 4), border: InputBorder.none),
                                 onChanged: (val) {
                                   final parsed = int.tryParse(val);
                                   if (parsed != null && parsed >= 1) {
@@ -385,9 +367,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                                       (t) => DropdownMenuItem(
                                         value: t,
                                         child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                            vertical: 2,
-                                          ), // <-- réduit l'espacement vertical
+                                          padding: const EdgeInsets.symmetric(vertical: 2), // <-- réduit l'espacement vertical
                                           child: Text(t, style: const TextStyle(fontSize: 11)),
                                         ),
                                       ),

@@ -308,13 +308,24 @@ class _PosteListScreenState extends State<PosteListScreen> {
                               padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
                               child: InkWell(
                                 onTap: () {
-                                  final entry = getEcranEtTitre(widget.typeCategorie, widget.sousCategorie);
-                                  final screen = entry?.builder();
+                                  if (widget.sousCategorie == "Construction") {
+                                    final bien = BienImmobilier(
+                                      idBien: "BASILE-${DateTime.now().millisecondsSinceEpoch}",
+                                      typeBien: "Logement secondaire",
+                                      nomLogement: "",
+                                      poste: PosteBienImmobilier(),
+                                    );
 
-                                  if (screen != null) {
-                                    Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
+                                    Navigator.push(context, MaterialPageRoute(builder: (_) => ConstructionScreen(bien: bien, onSave: () => setState(() {}))));
                                   } else {
-                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Aucun écran défini pour ${widget.sousCategorie}")));
+                                    final entry = getEcranEtTitre(widget.typeCategorie, widget.sousCategorie);
+                                    final screen = entry?.builder();
+
+                                    if (screen != null) {
+                                      Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
+                                    } else {
+                                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Aucun écran défini pour ${widget.sousCategorie}")));
+                                    }
                                   }
                                 },
                                 child: Column(

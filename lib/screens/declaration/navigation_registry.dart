@@ -1,3 +1,4 @@
+import 'package:carbone_web/screens/declaration/eqt_bien_immobilier/construction_screen.dart';
 import 'package:flutter/material.dart';
 
 // Importe ici tous tes écrans
@@ -5,6 +6,7 @@ import 'usage_alimentation/alimentation_screen.dart';
 import 'usage_logement/usages_gaz_fioul_screen.dart';
 import 'eqt_vehicules/vehicule_screen.dart';
 import 'bien_immobilier/bien_declaration_screen.dart';
+import '../declaration/eqt_bien_immobilier/construction_screen.dart';
 
 /// Classe représentant une entrée de la registry : écran + titre
 class ScreenRegistryEntry {
@@ -16,23 +18,15 @@ class ScreenRegistryEntry {
 
 /// Map des écrans par Type_Categorie et Sous_Categorie
 final Map<String, Map<String, ScreenRegistryEntry>> screenRegistry = {
-  "Alimentation": {
-    "Général": ScreenRegistryEntry(builder: () => const AlimentationScreen(), titre: "Déclaration de l'alimentation"),
-  },
+  "Alimentation": {"Général": ScreenRegistryEntry(builder: () => const AlimentationScreen(), titre: "Déclaration de l'alimentation")},
   "Logement": {
     "Gaz et Fioul": ScreenRegistryEntry(builder: () => const UsagesGazFioulScreen(), titre: "Déclaration Gaz et Fioul"),
     "Biens Immobiliers": ScreenRegistryEntry(
       builder: () => const BienDeclarationScreen(), // à adapter si besoin
       titre: "Type et propriété du logement",
     ),
-    "Construction": ScreenRegistryEntry(
-      builder: () => const BienDeclarationScreen(), // à adapter si besoin
-      titre: "Déclaration de la construction, et travaux associés au logement",
-    ),
   },
-  "Déplacements": {
-    "Véhicules": ScreenRegistryEntry(builder: () => const VehiculeScreen(), titre: "Déclaration des véhicules"),
-  },
+  "Déplacements": {"Véhicules": ScreenRegistryEntry(builder: () => const VehiculeScreen(), titre: "Déclaration des véhicules")},
 };
 
 /// Fonction utilitaire pour récupérer l'écran et le titre
