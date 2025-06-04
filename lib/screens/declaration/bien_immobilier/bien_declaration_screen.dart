@@ -42,13 +42,13 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
 
   void incrementHabitants() {
     setState(() {
-      nbHabitants++;
+      nbHabitants += 0.25;
     });
   }
 
   void decrementHabitants() {
     setState(() {
-      if (nbHabitants > 1) nbHabitants--;
+      if (nbHabitants > 0.25) nbHabitants -= 0.25;
     });
   }
 
@@ -281,7 +281,7 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       IconButton(icon: const Icon(Icons.remove), onPressed: decrementHabitants, visualDensity: VisualDensity.compact, iconSize: 20),
-                      Text("$nbHabitants", style: const TextStyle(fontSize: 11)),
+                      Text(nbHabitants.toStringAsFixed(2), style: const TextStyle(fontSize: 11)),
                       IconButton(icon: const Icon(Icons.add), onPressed: incrementHabitants, visualDensity: VisualDensity.compact, iconSize: 20),
                     ],
                   ),
