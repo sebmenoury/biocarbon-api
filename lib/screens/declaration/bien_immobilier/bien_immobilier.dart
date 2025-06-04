@@ -30,7 +30,7 @@ class BienImmobilier {
       adresse: map['Adresse'] ?? '',
       inclureDansBilan: map['Inclure_dans_bilan'] == 'TRUE' || map['Inclure_dans_bilan'] == true,
       nbProprietaires: map['Nb_Proprietaires'] is int ? map['Nb_Proprietaires'] : int.tryParse(map['Nb_Proprietaires'].toString()) ?? 1,
-      nbHabitants: map['Nb_Habitants'] is double ? map['Nb_Habitants'] : double.tryParse(map['Nb_Habitants'].toString()) ?? 1.0,
+      nbHabitants: double.tryParse(map['Nb_Habitants']?.toString().replaceAll(',', '.') ?? '') ?? 1.0,
       poste: PosteBienImmobilier(), // À adapter si tu veux aussi le charger
     );
   }

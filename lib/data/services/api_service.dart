@@ -92,7 +92,7 @@ class ApiService {
     required String description,
     required String adresse,
     required int nbProprietaires,
-    required double nbHabitants,
+    required String nbHabitants,
     required String inclureDansBilan,
   }) async {
     final response = await http.post(

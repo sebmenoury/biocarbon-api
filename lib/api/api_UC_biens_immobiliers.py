@@ -22,7 +22,7 @@ def add_biens():
         id_bien,
         data["Type_Bien"],
         data["Nb_Proprietaires"],
-        data["Nb_Habitants"],
+        float(data["Nb_Habitants"]),
         data["Dénomination"],
         data["Adresse"],
         data["Inclure_dans_bilan"]
