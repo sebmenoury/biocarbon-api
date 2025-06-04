@@ -212,7 +212,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
               if (postes.isEmpty) {
                 return CustomCard(
                   padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-                  child: const Center(child: Text("Merci de déclarer un bien immobilier", textAlign: TextAlign.center, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500))),
+                  child: const Center(child: Text("Ajouter une déclaration", textAlign: TextAlign.center, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500))),
                 );
               }
 
@@ -227,7 +227,16 @@ class _PosteListScreenState extends State<PosteListScreen> {
               return Column(
                 children: [
                   InkWell(
-                    onTap: handleAdd,
+                    onTap: () {
+                      final entry = getEcranEtTitre(widget.typeCategorie, widget.sousCategorie);
+                      final screen = entry?.builder();
+
+                      if (screen != null) {
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Aucun écran défini pour ${widget.sousCategorie}")));
+                      }
+                    },
                     child: CustomCard(
                       padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
                       child: Column(
@@ -239,7 +248,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                               Text(widget.sousCategorie, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                               Row(
                                 children: [
-                                  Text("${total.round()} XX kgCO₂", style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                                  Text("${total.round()} kgCO₂", style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
                                   const SizedBox(width: 4),
                                   const Icon(Icons.chevron_right, size: 14),
                                 ],
@@ -250,7 +259,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                           ...List.generate(postes.length * 2 - 1, (index) {
                             if (index.isEven) {
                               final poste = postes[index ~/ 2];
-                              return PostListCard(title: poste.nomPoste ?? 'Sans nom', emission: "${poste.emissionCalculee?.round() ?? 0} XX kgCO₂", onEdit: () {}, onDelete: () {});
+                              return PostListCard(title: poste.nomPoste ?? 'Sans nom', emission: "${poste.emissionCalculee?.round() ?? 0} kgCO₂", onEdit: () {}, onDelete: () {});
                             } else {
                               return const Divider(height: 1, thickness: 0.2, color: Colors.grey);
                             }
@@ -261,6 +270,10 @@ class _PosteListScreenState extends State<PosteListScreen> {
                   ),
                 ],
               );
+
+              // ----------------------------------------------------
+              // Affichage pour les cas impliquant un bien immobilier
+              // ----------------------------------------------------
             } else {
               return FutureBuilder<List<Map<String, dynamic>>>(
                 future: biensFuture,
@@ -294,7 +307,16 @@ class _PosteListScreenState extends State<PosteListScreen> {
                             CustomCard(
                               padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
                               child: InkWell(
-                                onTap: () => openConstructionScreen(bien),
+                                onTap: () {
+                                  final entry = getEcranEtTitre(widget.typeCategorie, widget.sousCategorie);
+                                  final screen = entry?.builder();
+
+                                  if (screen != null) {
+                                    Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Aucun écran défini pour ${widget.sousCategorie}")));
+                                  }
+                                },
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -304,7 +326,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                                         Text(widget.sousCategorie, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                                         Row(
                                           children: [
-                                            Text("${total.round()} YY kgCO₂", style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                                            Text("${total.round()} kgCO₂", style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
                                             const SizedBox(width: 4),
                                             const Icon(Icons.chevron_right, size: 14),
                                           ],
@@ -315,7 +337,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                                     ...List.generate(postesPourCeBien.length * 2 - 1, (index) {
                                       if (index.isEven) {
                                         final poste = postesPourCeBien[index ~/ 2];
-                                        return PostListCard(title: poste.nomPoste ?? 'Sans nom', emission: "${poste.emissionCalculee?.round() ?? 0} YY kgCO₂", onEdit: () {}, onDelete: () {});
+                                        return PostListCard(title: poste.nomPoste ?? 'Sans nom', emission: "${poste.emissionCalculee?.round() ?? 0} kgCO₂", onEdit: () {}, onDelete: () {});
                                       } else {
                                         return const Divider(height: 1, thickness: 0.2, color: Colors.grey);
                                       }
