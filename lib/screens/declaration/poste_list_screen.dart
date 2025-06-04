@@ -27,6 +27,10 @@ class PosteListScreen extends StatefulWidget {
   State<PosteListScreen> createState() => _PosteListScreenState();
 }
 
+// ---------------------------------------------------------------
+// Gestion des cas particuliers pour Alimentation et Services publics
+// ---------------------------------------------------------------
+
 class _PosteListScreenState extends State<PosteListScreen> {
   late Future<List<Poste>> postesFuture;
   late Future<List<Map<String, dynamic>>> biensFuture;
@@ -50,6 +54,9 @@ class _PosteListScreenState extends State<PosteListScreen> {
     }
   }
 
+  // ---------------------------------------------------------------
+  // Intialisation des valeurs pour construction screen à remplacer
+  // ---------------------------------------------------------------
   void handleAdd([String? idBien]) {
     final nouveauPoste = PosteBienImmobilier(
       nomEquipement: '',
@@ -89,6 +96,10 @@ class _PosteListScreenState extends State<PosteListScreen> {
     }
   }
 
+  // ---------------------------------------------------------------
+  // Intialisation des valeurs pour construction screen à remplacer
+  // ---------------------------------------------------------------
+
   void openConstructionScreen(Map<String, dynamic> bien) {
     final poste = PosteBienImmobilier(
       nomEquipement: bien['Nom_Equipement'] ?? '',
@@ -123,6 +134,9 @@ class _PosteListScreenState extends State<PosteListScreen> {
     final color = souscategoryColors[widget.sousCategorie] ?? Colors.grey;
 
     return BaseScreen(
+      // ----------------------------------------------------
+      // Affichage des titres et icônes
+      // ----------------------------------------------------
       title: Stack(
         alignment: Alignment.center,
         children: [
@@ -133,6 +147,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
           ),
         ],
       ),
+
       children: [
         FutureBuilder<List<Poste>>(
           future: postesFuture,
@@ -146,6 +161,10 @@ class _PosteListScreenState extends State<PosteListScreen> {
             }
 
             final postes = snapshot.data ?? [];
+
+            // ----------------------------------------------------
+            // Cas particulier pour les véhicules et l'alimentation
+            // ----------------------------------------------------
 
             if (!avecBien && widget.sousCategorie == "Véhicules" || widget.typeCategorie == "Alimentation") {
               final Map<String, List<Poste>> postesParSousCat = {};
@@ -185,6 +204,10 @@ class _PosteListScreenState extends State<PosteListScreen> {
               );
             }
 
+            // ----------------------------------------------------
+            // A retravailler - Ne fonctionne pas pour les biens immobiliers
+            // ----------------------------------------------------
+
             if (!avecBien) {
               if (postes.isEmpty) {
                 return CustomCard(
@@ -196,6 +219,10 @@ class _PosteListScreenState extends State<PosteListScreen> {
               final total = postes.fold<double>(0, (sum, p) => sum + (p.emissionCalculee ?? 0));
 
               postes.sort((a, b) => (b.emissionCalculee ?? 0).compareTo(a.emissionCalculee ?? 0));
+
+              // ----------------------------------------------------
+              // Affichage pour les cas sans bien immobilier
+              // ----------------------------------------------------
 
               return Column(
                 children: [
@@ -212,7 +239,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                               Text(widget.sousCategorie, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                               Row(
                                 children: [
-                                  Text("${total.round()} kgCO₂", style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                                  Text("${total.round()} XX kgCO₂", style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
                                   const SizedBox(width: 4),
                                   const Icon(Icons.chevron_right, size: 14),
                                 ],
@@ -223,7 +250,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                           ...List.generate(postes.length * 2 - 1, (index) {
                             if (index.isEven) {
                               final poste = postes[index ~/ 2];
-                              return PostListCard(title: poste.nomPoste ?? 'Sans nom', emission: "${poste.emissionCalculee?.round() ?? 0} kgCO₂", onEdit: () {}, onDelete: () {});
+                              return PostListCard(title: poste.nomPoste ?? 'Sans nom', emission: "${poste.emissionCalculee?.round() ?? 0} XX kgCO₂", onEdit: () {}, onDelete: () {});
                             } else {
                               return const Divider(height: 1, thickness: 0.2, color: Colors.grey);
                             }
@@ -277,7 +304,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                                         Text(widget.sousCategorie, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                                         Row(
                                           children: [
-                                            Text("${total.round()} XX kgCO₂", style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                                            Text("${total.round()} YY kgCO₂", style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
                                             const SizedBox(width: 4),
                                             const Icon(Icons.chevron_right, size: 14),
                                           ],
@@ -288,7 +315,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                                     ...List.generate(postesPourCeBien.length * 2 - 1, (index) {
                                       if (index.isEven) {
                                         final poste = postesPourCeBien[index ~/ 2];
-                                        return PostListCard(title: poste.nomPoste ?? 'Sans nom', emission: "${poste.emissionCalculee?.round() ?? 0} kgCO₂", onEdit: () {}, onDelete: () {});
+                                        return PostListCard(title: poste.nomPoste ?? 'Sans nom', emission: "${poste.emissionCalculee?.round() ?? 0} YY kgCO₂", onEdit: () {}, onDelete: () {});
                                       } else {
                                         return const Divider(height: 1, thickness: 0.2, color: Colors.grey);
                                       }

@@ -49,6 +49,7 @@ class _BienListScreenState extends State<BienListScreen> {
           ),
         ],
       ),
+
       children: [
         FutureBuilder<List<Map<String, dynamic>>>(
           future: biensFuture,
@@ -69,6 +70,19 @@ class _BienListScreenState extends State<BienListScreen> {
             final bool hasLogementPrincipal = biens.any((b) => b['Type_Bien'] == 'Logement principal');
 
             List<Widget> widgets = [];
+            // 💡 Texte explicatif toujours affiché
+            widgets.add(
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                child: Text(
+                  "🏠 Ici, vous déclarez les biens immobiliers que vous possédez ou que vous louez. "
+                  "Le nombre de propriétaires correspond au nombre de financeurs du bien ou de la location. "
+                  "Il est utilisé pour répartir par individu propriétaire l'énergie grise et l'énergie d'usage des équipements associés à ces biens.",
+                  style: const TextStyle(fontSize: 11, fontStyle: FontStyle.italic),
+                  textAlign: TextAlign.justify,
+                ),
+              ),
+            );
 
             // 👉 Cartes des biens existants
             if (biens.isNotEmpty) {
@@ -93,10 +107,7 @@ class _BienListScreenState extends State<BienListScreen> {
                             const Spacer(),
                             GestureDetector(
                               onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => BienDeclarationScreen(bienExistant: bienObj)),
-                                );
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => BienDeclarationScreen(bienExistant: bienObj)));
                               },
                               child: const Icon(Icons.chevron_right, size: 14),
                             ),
@@ -113,9 +124,7 @@ class _BienListScreenState extends State<BienListScreen> {
                         Align(
                           alignment: Alignment.centerRight,
                           child: Text(
-                            ['TRUE', true].contains(bien['Inclure_dans_bilan'])
-                                ? "Inclus dans le bilan"
-                                : "Non inclus dans le bilan",
+                            ['TRUE', true].contains(bien['Inclure_dans_bilan']) ? "Inclus dans le bilan" : "Non inclus dans le bilan",
                             style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic, color: Colors.grey),
                           ),
                         ),
@@ -136,16 +145,11 @@ class _BienListScreenState extends State<BienListScreen> {
                       context,
                       (selectedType) {
                         if (selectedType == 'Logement principal' && hasLogementPrincipal) {
-                          ScaffoldMessenger.of(
-                            context,
-                          ).showSnackBar(const SnackBar(content: Text("Un logement principal est déjà déclaré.")));
+                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Un logement principal est déjà déclaré.")));
                           return;
                         }
 
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => BienDeclarationScreen(typeBienInitial: selectedType)),
-                        ).then((_) {
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => BienDeclarationScreen(typeBienInitial: selectedType))).then((_) {
                           // ne fait rien ici volontairement
                         });
                       },
@@ -154,10 +158,7 @@ class _BienListScreenState extends State<BienListScreen> {
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
-                      Text("Ajouter un bien immobilier", style: TextStyle(fontSize: 12)),
-                      Icon(Icons.chevron_right, size: 14),
-                    ],
+                    children: const [Text("Ajouter un bien immobilier", style: TextStyle(fontSize: 12)), Icon(Icons.chevron_right, size: 14)],
                   ),
                 ),
               ),
