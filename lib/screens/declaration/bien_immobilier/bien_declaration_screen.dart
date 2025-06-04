@@ -304,6 +304,7 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
                     }
 
                     bien.nbProprietaires = nbProprietaires;
+                    bien.nbHabitants = nbHabitants; // 👈 ajoute ceci
                     updateBien();
                   },
                   child: const Text("Mettre à jour", style: TextStyle(fontSize: 12)),
@@ -319,6 +320,7 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
                   }
 
                   bien.nbProprietaires = nbProprietaires;
+                  bien.nbHabitants = nbHabitants; // 👈 ajoute ceci
                   enregistrerBien();
                 },
                 child: const Text("Enregistrer", style: TextStyle(fontSize: 12)),
