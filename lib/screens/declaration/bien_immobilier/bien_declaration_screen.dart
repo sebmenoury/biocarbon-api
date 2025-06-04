@@ -83,7 +83,7 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
 
   void enregistrerBien() async {
     try {
-      final nbHabitantsFormate = "'${NumberFormat("0.##", "en_US").format(bien.nbHabitants)}'";
+      final nbHabitantsFormate = NumberFormat("0.##", "en_US").format(bien.nbHabitants);
       final result = await ApiService.addBien(
         idBien: bien.idBien!,
         codeIndividu: 'BASILE',
