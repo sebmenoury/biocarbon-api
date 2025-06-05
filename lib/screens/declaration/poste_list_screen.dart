@@ -289,6 +289,30 @@ class _PosteListScreenState extends State<PosteListScreen> {
                   final biens = biensSnapshot.data ?? [];
                   final widgets = <Widget>[];
 
+                  // ----------------------------------------------------
+                  // texte pour la liste construction immobilière
+                  // ----------------------------------------------------
+                  if (texteParSousCategorie.containsKey(widget.sousCategorie)) {
+                    widgets.add(
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        child: Container(
+                          decoration: BoxDecoration(color: Colors.blueGrey.shade50, borderRadius: BorderRadius.circular(12)),
+                          padding: const EdgeInsets.all(12),
+                          child: Text(texteParSousCategorie[widget.sousCategorie]!, style: const TextStyle(fontSize: 11, height: 1.4), textAlign: TextAlign.justify),
+                        ),
+                      ),
+                    );
+                  }
+
+                  // 🖼️ Image explicative si définie
+                  if (imageParSousCategorie.containsKey(widget.sousCategorie)) {
+                    widgets.add(Padding(padding: const EdgeInsets.symmetric(horizontal: 12), child: Image.asset(imageParSousCategorie[widget.sousCategorie]!, fit: BoxFit.contain)));
+                  }
+
+                  // ----------------------------------------------------
+                  // tsuite du code pour afficher les biens immobiliers
+                  // ----------------------------------------------------
                   for (var bien in biens) {
                     final idBien = bien['ID_Bien'];
                     final postesPourCeBien = postes.where((p) => p.idBien == idBien).toList();

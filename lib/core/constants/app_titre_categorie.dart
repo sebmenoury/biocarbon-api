@@ -23,23 +23,22 @@ const Map<String, String> titreParSousCategorie = {
 
 /// Référentiel des textes explicatifs par sous-catégorie
 const Map<String, String> texteParSousCategorie = {
-  'Construction':
-      "🏗️ On retrouve ici l'amortissement de l'énergie grise qui a été nécessaire à la construction "
-      "(ou aux travaux de rénovation) des biens concernés. \n\n"
-      "Ces émissions sont calculées selon la formule suivante :\n"
-      "Émissions énergie grise [type de logement] par m² × Surface du bien × "
-      "Facteur de pondération (selon la période ou la technologie de construction), "
-      "le tout divisé par le nombre de propriétaires.",
-
   'Equipements Confort':
       "🛋️ Ces équipements sont amortis annuellement en fonction de leur durée de vie. "
       "Le calcul tient compte de leur énergie grise de fabrication et du nombre de propriétaires du logement associé.",
+
+  'Construction':
+      "🧱 On retrouve ici l'amortissement de l'énergie grise qui a été nécessaire à la construction (ou aux travaux de rénovation) des biens concernés.\n\n"
+      "💡 Ces émissions sont calculées selon la formule suivante :\n"
+      "Émissions énergie grise [type de logement] par m² \n × Surface du bien \n  "
+      "× Facteur de pondération (selon la période ou la technologie de construction), \n "
+      "le tout divisé par le nombre de propriétaires.",
 
   'Electricité': "🔌 Vous déclarez ici la consommation annuelle d’électricité par logement, qui est répartie entre les co-propriétaires.",
 };
 
 /// Référentiel des images explicatives par sous-catégorie
 const Map<String, String> imageParSousCategorie = {
-  'Construction': 'assets/images/emission_grise_construction.png',
+  'Construction': 'assets/images/emission_construction.png',
   // Ajoute d’autres cas si besoin
 };

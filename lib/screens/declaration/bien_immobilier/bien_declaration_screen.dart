@@ -185,38 +185,6 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
       ),
 
       children: [
-        // 📘 Explication du calcul de l’énergie grise pour la construction
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                "🧱 On retrouve ici l'amortissement de l'énergie grise qui a été nécessaire à la construction (ou aux travaux de rénovation) des biens concernés.",
-                style: TextStyle(fontSize: 11),
-              ),
-              const SizedBox(height: 6),
-              const Text("💡 Ces émissions sont calculées selon la formule suivante :", style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 4),
-              const Text(
-                "Émissions énergie grise [type de logement] par m² × Surface du bien × "
-                "Facteur de pondération (selon la période ou la technologie de construction), "
-                "le tout divisé par le nombre de propriétaires.",
-                style: TextStyle(fontSize: 11),
-              ),
-              const SizedBox(height: 12),
-
-              // 🖼️ Illustration
-              ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: Image.asset(
-                  'assets/images/emission_construction.png', // Assure-toi d’avoir copié ton image ici
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ],
-          ),
-        ),
         const SizedBox(height: 8),
         CustomCard(
           padding: const EdgeInsets.all(12),
