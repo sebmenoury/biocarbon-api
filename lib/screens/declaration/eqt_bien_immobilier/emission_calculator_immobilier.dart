@@ -1,39 +1,32 @@
 import 'poste_bien_immobilier.dart';
 import 'const_construction.dart';
+import '../bien_immobilier/bien_immobilier.dart';
 
 double calculerTotalEmission(
-  PosteBienImmobilier bien,
+  PosteBienImmobilier poste,
   Map<String, double> facteursEmission,
-  Map<String, int> dureesAmortissement,
-) {
-  final reduction = reductionParAnnee(bien.anneeConstruction);
+  Map<String, int> dureesAmortissement, {
+  required int nbProprietaires, // 👈 injecté depuis BienImmobilier
+}) {
+  final reduction = reductionParAnnee(poste.anneeConstruction);
   double total = 0.0;
 
-  total +=
-      (bien.surface * (facteursEmission[bien.nomEquipement] ?? 0) * reduction) /
-      (dureesAmortissement[bien.nomEquipement] ?? 1) /
-      bien.nbProprietaires;
+  // 🔨 Équipement principal (maison / appart)
+  total += (poste.surface * (facteursEmission[poste.nomEquipement] ?? 0) * reduction) / (dureesAmortissement[poste.nomEquipement] ?? 1) / nbProprietaires;
 
-  if (bien.garage) {
-    total +=
-        (bien.surfaceGarage * (facteursEmission['Garage béton'] ?? 0) * reduction) /
-        (dureesAmortissement['Garage béton'] ?? 1) /
-        bien.nbProprietaires;
+  // 🏠 Garage (si surface > 0)
+  if (poste.surfaceGarage > 0) {
+    total += (poste.surfaceGarage * (facteursEmission['Garage béton'] ?? 0) * reduction) / (dureesAmortissement['Garage béton'] ?? 1) / nbProprietaires;
   }
 
-  if (bien.piscine) {
-    final surfacePiscine = bien.piscineLargeur * bien.piscineLongueur;
-    total +=
-        (surfacePiscine * (facteursEmission[bien.typePiscine] ?? 0) * reduction) /
-        (dureesAmortissement[bien.typePiscine] ?? 1) /
-        bien.nbProprietaires;
+  // 🏊‍♂️ Piscine (si surface > 0)
+  if (poste.surfacePiscine > 0) {
+    total += (poste.surfacePiscine * (facteursEmission[poste.typePiscine] ?? 0) * reduction) / (dureesAmortissement[poste.typePiscine] ?? 1) / nbProprietaires;
   }
 
-  if (bien.abriEtSerre) {
-    total +=
-        (bien.surfaceAbriEtSerre * (facteursEmission['Abri de jardin bois'] ?? 0) * reduction) /
-        (dureesAmortissement['Abri de jardin bois'] ?? 1) /
-        bien.nbProprietaires;
+  // 🌿 Abri ou serre (si surface > 0)
+  if (poste.surfaceAbriEtSerre > 0) {
+    total += (poste.surfaceAbriEtSerre * (facteursEmission['Abri de jardin bois'] ?? 0) * reduction) / (dureesAmortissement['Abri de jardin bois'] ?? 1) / nbProprietaires;
   }
 
   return total;

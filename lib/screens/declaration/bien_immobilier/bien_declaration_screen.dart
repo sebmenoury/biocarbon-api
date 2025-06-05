@@ -206,6 +206,7 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const SizedBox(height: 4),
               Row(
                 children: [
                   const Expanded(flex: 2, child: Text("Dénomination", style: TextStyle(fontSize: 11))),
@@ -235,6 +236,7 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
                   ),
                 ],
               ),
+              const SizedBox(height: 4),
             ],
           ),
         ),

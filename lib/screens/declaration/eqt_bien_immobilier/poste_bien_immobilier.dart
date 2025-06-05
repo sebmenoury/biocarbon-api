@@ -2,15 +2,13 @@ class PosteBienImmobilier {
   String nomEquipement; // "Maison Classique", "Appartement BBC", etc.
   double surface;
   int anneeConstruction;
-  int nbProprietaires;
 
   bool garage;
   double surfaceGarage;
 
   bool piscine;
   String typePiscine;
-  double piscineLongueur;
-  double piscineLargeur;
+  double surfacePiscine; // ✅ Nouveau champ (remplace longueur x largeur)
 
   bool abriEtSerre;
   double surfaceAbriEtSerre;
@@ -19,13 +17,14 @@ class PosteBienImmobilier {
     this.nomEquipement = "",
     this.surface = 100,
     this.anneeConstruction = 2010,
-    this.nbProprietaires = 1,
+
     this.garage = false,
     this.surfaceGarage = 30,
+
     this.piscine = false,
     this.typePiscine = "Piscine béton",
-    this.piscineLongueur = 4,
-    this.piscineLargeur = 2.5,
+    this.surfacePiscine = 10, // ✅ Valeur par défaut
+
     this.abriEtSerre = false,
     this.surfaceAbriEtSerre = 10,
   });
