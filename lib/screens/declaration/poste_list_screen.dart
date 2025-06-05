@@ -306,8 +306,14 @@ class _PosteListScreenState extends State<PosteListScreen> {
                   }
 
                   // 🖼️ Image explicative si définie
+                  // 🖼️ Image explicative si définie
                   if (imageParSousCategorie.containsKey(widget.sousCategorie)) {
-                    widgets.add(Padding(padding: const EdgeInsets.symmetric(horizontal: 12), child: Image.asset(imageParSousCategorie[widget.sousCategorie]!, fit: BoxFit.contain)));
+                    widgets.add(
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20), // 👈 padding réduit
+                        child: Image.asset(imageParSousCategorie[widget.sousCategorie]!, fit: BoxFit.contain),
+                      ),
+                    );
                   }
 
                   // ----------------------------------------------------
