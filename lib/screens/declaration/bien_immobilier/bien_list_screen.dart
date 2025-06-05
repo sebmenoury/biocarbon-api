@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../../ui/layout/base_screen.dart';
 import '../../../ui/layout/custom_card.dart';
 import '../../../data/services/api_service.dart';
-import '../eqt_bien_immobilier/construction_screen.dart';
 import 'dialogs_type_bien.dart';
 import 'bien_immobilier.dart';
 import 'bien_declaration_screen.dart';

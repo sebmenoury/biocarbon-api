@@ -7,7 +7,6 @@ import '../../../ui/widgets/custom_dropdown_compact.dart';
 import '../eqt_bien_immobilier/poste_bien_immobilier.dart';
 import '../../../data/services/api_service.dart';
 import 'bien_list_screen.dart';
-import 'dart:convert';
 
 class BienDeclarationScreen extends StatefulWidget {
   final BienImmobilier? bienExistant;
@@ -184,24 +183,29 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
           ),
         ],
       ),
+
       children: [
+        CustomCard(
+          padding: const EdgeInsets.all(12),
+          child: CustomDropdownCompact(
+            value: typeBien,
+            items: const ['Logement principal', 'Logement secondaire'],
+            label: "Type de logement",
+            onChanged: (val) {
+              setState(() {
+                typeBien = val ?? 'Logement principal';
+                bien.typeBien = typeBien;
+              });
+            },
+          ),
+        ),
+        const SizedBox(height: 8),
+        // Carte 2 : Dénomination et Adresse
         CustomCard(
           padding: const EdgeInsets.all(12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CustomDropdownCompact(
-                value: typeBien,
-                items: const ['Logement principal', 'Logement secondaire'],
-                label: "Type de logement",
-                onChanged: (val) {
-                  setState(() {
-                    typeBien = val ?? 'Logement principal';
-                    bien.typeBien = typeBien;
-                  });
-                },
-              ),
-              const SizedBox(height: 12),
               Row(
                 children: [
                   const Expanded(flex: 2, child: Text("Dénomination", style: TextStyle(fontSize: 11))),
@@ -231,22 +235,10 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Transform.scale(
-                    scale: 0.8,
-                    child: Checkbox(value: bien.inclureDansBilan == true, visualDensity: VisualDensity.compact, onChanged: (v) => setState(() => bien.inclureDansBilan = v ?? true)),
-                  ),
-                  const SizedBox(width: 4),
-                  const Text("Inclure dans le bilan", style: TextStyle(fontSize: 11)),
-                ],
-              ),
             ],
           ),
         ),
+
         const SizedBox(height: 8),
         CustomCard(
           padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
@@ -293,6 +285,23 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
             ],
           ),
         ),
+        // Carte 3 : Inclure dans le bilan
+        CustomCard(
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Transform.scale(
+                scale: 0.8,
+                child: Checkbox(value: bien.inclureDansBilan == true, visualDensity: VisualDensity.compact, onChanged: (v) => setState(() => bien.inclureDansBilan = v ?? true)),
+              ),
+              const SizedBox(width: 4),
+              const Text("Inclure dans le bilan", style: TextStyle(fontSize: 11)),
+            ],
+          ),
+        ),
+
         const SizedBox(height: 24),
         widget.bienExistant != null
             ? Row(
