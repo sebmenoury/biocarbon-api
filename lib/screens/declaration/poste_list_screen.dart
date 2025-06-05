@@ -306,18 +306,17 @@ class _PosteListScreenState extends State<PosteListScreen> {
                   }
 
                   // 🖼️ Image explicative si définie
-                  // 🖼️ Image explicative si définie
                   if (imageParSousCategorie.containsKey(widget.sousCategorie)) {
                     widgets.add(
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20), // 👈 padding réduit
+                        padding: const EdgeInsets.symmetric(horizontal: 80), // 👈 padding réduit
                         child: Image.asset(imageParSousCategorie[widget.sousCategorie]!, fit: BoxFit.contain),
                       ),
                     );
                   }
 
                   // ----------------------------------------------------
-                  // tsuite du code pour afficher les biens immobiliers
+                  // suite du code pour afficher les biens immobiliers
                   // ----------------------------------------------------
                   for (var bien in biens) {
                     final idBien = bien['ID_Bien'];
