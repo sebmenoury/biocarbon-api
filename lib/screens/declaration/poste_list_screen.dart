@@ -297,16 +297,16 @@ class _PosteListScreenState extends State<PosteListScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const Text(
-                              "🧱 On retrouve ici l'amortissement de l'énergie grise nécessaire à la construction (ou aux rénovations).",
+                              "On retrouve ici l'amortissement de l'énergie grise nécessaire à la construction (ou aux rénovations).",
                               style: TextStyle(fontSize: 11),
                               textAlign: TextAlign.justify,
                             ),
                             const SizedBox(height: 6),
-                            const Text("💡 Ces émissions sont calculées selon la formule :", style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                            const Text("📐 Ces émissions sont calculées selon la formule :", style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
                             const SizedBox(height: 8),
                             const Center(
                               child: Text(
-                                "📐 Émissions énergie grise construction (/m²)\n"
+                                "Émissions énergie grise construction (/m²)\n"
                                 "× Surface du bien (en m²)\n"
                                 "× Facteur de pondération (période de construction)\n"
                                 "/ Nombre de propriétaires",
@@ -315,6 +315,16 @@ class _PosteListScreenState extends State<PosteListScreen> {
                               ),
                             ),
                           ],
+                        ),
+                      ),
+                    );
+
+                    widgets.add(
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 40), // 👈 padding ajusté
+                        child: Container(
+                          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12), boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10, offset: Offset(0, 4))]),
+                          child: ClipRRect(borderRadius: BorderRadius.circular(12), child: Image.asset(imageParSousCategorie[widget.sousCategorie]!, fit: BoxFit.contain)),
                         ),
                       ),
                     );
@@ -327,22 +337,6 @@ class _PosteListScreenState extends State<PosteListScreen> {
                         child: Text(texteParSousCategorie[widget.sousCategorie]!, style: const TextStyle(fontSize: 11, height: 1.4), textAlign: TextAlign.justify),
                       ),
                     );
-                  }
-                  if (texteParSousCategorie.containsKey(widget.sousCategorie)) {
-                    widgets.add(
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                        child: Container(
-                          decoration: BoxDecoration(color: Colors.blueGrey.shade50, borderRadius: BorderRadius.circular(12)),
-                          padding: const EdgeInsets.all(12),
-                          child: Text(texteParSousCategorie[widget.sousCategorie]!, style: const TextStyle(fontSize: 11, height: 1.4), textAlign: TextAlign.justify),
-                        ),
-                      ),
-                    );
-                  }
-
-                  // 🖼️ Image explicative si définie
-                  if (imageParSousCategorie.containsKey(widget.sousCategorie)) {
                     widgets.add(
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 60), // 👈 padding réduit

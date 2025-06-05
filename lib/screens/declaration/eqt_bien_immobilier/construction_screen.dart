@@ -85,7 +85,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
             children: [
               /// DESCRIPTIF DU BIEN
               CustomCard(
-                padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
+                padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -95,7 +95,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                         labelText: "Type de construction",
                         labelStyle: TextStyle(fontSize: 10),
                         isDense: true,
-                        contentPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                        contentPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 30),
                       ),
                       isExpanded: true,
                       style: const TextStyle(fontSize: 11),
@@ -115,7 +115,16 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                         const Text("Surface (m²)", style: TextStyle(fontSize: 11)),
                         Row(
                           children: [
-                            IconButton(icon: const Icon(Icons.remove), iconSize: 11, onPressed: () => setState(() => poste.surface = (poste.surface - 1).clamp(0, 10000))),
+                            IconButton(
+                              icon: const Icon(Icons.remove),
+                              iconSize: 11,
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(),
+                              onPressed:
+                                  () => setState(() {
+                                    poste.surface = (poste.surface - 1).clamp(0, 10000); // limite basse 0
+                                  }),
+                            ),
                             SizedBox(
                               width: 40,
                               child: TextFormField(
@@ -123,20 +132,34 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                                 textAlign: TextAlign.center,
                                 style: const TextStyle(fontSize: 11),
                                 keyboardType: TextInputType.number,
-                                decoration: const InputDecoration(isDense: true, border: InputBorder.none),
+                                decoration: const InputDecoration(
+                                  isDense: true,
+                                  contentPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                                  border: InputBorder.none, // Supprime le trait
+                                ),
                                 onChanged: (val) {
                                   final parsed = double.tryParse(val);
                                   if (parsed != null) setState(() => poste.surface = parsed);
                                 },
                               ),
                             ),
-                            IconButton(icon: const Icon(Icons.add), iconSize: 11, onPressed: () => setState(() => poste.surface = (poste.surface + 1).clamp(0, 10000))),
+                            IconButton(
+                              icon: const Icon(Icons.add),
+                              iconSize: 11,
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(),
+                              onPressed:
+                                  () => setState(() {
+                                    poste.surface = (poste.surface + 1).clamp(0, 10000);
+                                  }),
+                            ),
                           ],
                         ),
                       ],
                     ),
                     const SizedBox(height: 12),
 
+                    /// ANNÉE DE CONSTRUCTION
                     /// ANNÉE DE CONSTRUCTION
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -147,7 +170,12 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                             IconButton(
                               icon: const Icon(Icons.remove),
                               iconSize: 11,
-                              onPressed: () => setState(() => poste.anneeConstruction = (poste.anneeConstruction - 1).clamp(1800, DateTime.now().year)),
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(),
+                              onPressed:
+                                  () => setState(() {
+                                    poste.anneeConstruction = (poste.anneeConstruction - 1).clamp(1800, DateTime.now().year);
+                                  }),
                             ),
                             SizedBox(
                               width: 50,
@@ -156,7 +184,11 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                                 textAlign: TextAlign.center,
                                 style: const TextStyle(fontSize: 11),
                                 keyboardType: TextInputType.number,
-                                decoration: const InputDecoration(isDense: true, border: InputBorder.none),
+                                decoration: const InputDecoration(
+                                  isDense: true,
+                                  contentPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                                  border: InputBorder.none, // Supprime le trait
+                                ),
                                 onChanged: (val) {
                                   final parsed = int.tryParse(val);
                                   if (parsed != null) setState(() => poste.anneeConstruction = parsed);
@@ -166,12 +198,18 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                             IconButton(
                               icon: const Icon(Icons.add),
                               iconSize: 11,
-                              onPressed: () => setState(() => poste.anneeConstruction = (poste.anneeConstruction + 1).clamp(1800, DateTime.now().year)),
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(),
+                              onPressed:
+                                  () => setState(() {
+                                    poste.anneeConstruction = (poste.anneeConstruction + 1).clamp(1800, DateTime.now().year);
+                                  }),
                             ),
                           ],
                         ),
                       ],
                     ),
+                    const SizedBox(height: 12),
                   ],
                 ),
               ),
@@ -180,7 +218,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
 
               /// GARAGE
               CustomCard(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -219,32 +257,42 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                     const Text("Surface piscine (m²)", style: TextStyle(fontSize: 11)),
                     const SizedBox(height: 6),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const SizedBox(width: 12),
-                        Row(
-                          children: [
-                            IconButton(icon: const Icon(Icons.remove), iconSize: 12, onPressed: () => setState(() => poste.surfacePiscine = (poste.surfacePiscine - 1).clamp(0, 500))),
-                            SizedBox(
-                              width: 50,
-                              child: TextFormField(
-                                initialValue: poste.surfacePiscine.toStringAsFixed(0),
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(fontSize: 12),
-                                keyboardType: TextInputType.number,
-                                decoration: const InputDecoration(isDense: true, border: InputBorder.none),
-                                onChanged: (val) {
-                                  final parsed = double.tryParse(val);
-                                  if (parsed != null) setState(() => poste.surfacePiscine = parsed);
-                                },
-                              ),
-                            ),
-                            IconButton(icon: const Icon(Icons.add), iconSize: 12, onPressed: () => setState(() => poste.surfacePiscine = (poste.surfacePiscine + 1).clamp(0, 500))),
-                          ],
+                        IconButton(
+                          icon: const Icon(Icons.remove),
+                          iconSize: 12,
+                          onPressed:
+                              () => setState(() {
+                                poste.surfacePiscine = (poste.surfacePiscine - 1).clamp(0, 500);
+                              }),
+                        ),
+                        SizedBox(
+                          width: 50,
+                          child: TextFormField(
+                            initialValue: poste.surfacePiscine.toStringAsFixed(0),
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(fontSize: 12),
+                            keyboardType: TextInputType.number,
+                            decoration: const InputDecoration(isDense: true, border: InputBorder.none),
+                            onChanged: (val) {
+                              final parsed = double.tryParse(val);
+                              if (parsed != null) {
+                                setState(() => poste.surfacePiscine = parsed);
+                              }
+                            },
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.add),
+                          iconSize: 12,
+                          onPressed:
+                              () => setState(() {
+                                poste.surfacePiscine = (poste.surfacePiscine + 1).clamp(0, 500);
+                              }),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 6),
+                    const SizedBox(height: 12),
                     CustomDropdownCompact(
                       value: poste.typePiscine,
                       items: const ["Piscine béton", "Piscine coque"],
@@ -254,11 +302,10 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                   ],
                 ),
               ),
-              const SizedBox(height: 3),
 
               /// ABRI / SERRE
               CustomCard(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
