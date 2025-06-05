@@ -199,10 +199,9 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
             },
           ),
         ),
-        const SizedBox(height: 8),
         // Carte 2 : Dénomination et Adresse
         CustomCard(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -239,7 +238,6 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
           ),
         ),
 
-        const SizedBox(height: 8),
         CustomCard(
           padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
           child: Column(
@@ -262,7 +260,7 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
             ],
           ),
         ),
-        const SizedBox(height: 8),
+
         CustomCard(
           padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
           child: Column(
@@ -287,17 +285,15 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
         ),
         // Carte 3 : Inclure dans le bilan
         CustomCard(
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+          padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              const Text("Inclure dans le bilan", style: TextStyle(fontSize: 11)),
               Transform.scale(
-                scale: 0.8,
+                scale: 0.85,
                 child: Checkbox(value: bien.inclureDansBilan == true, visualDensity: VisualDensity.compact, onChanged: (v) => setState(() => bien.inclureDansBilan = v ?? true)),
               ),
-              const SizedBox(width: 4),
-              const Text("Inclure dans le bilan", style: TextStyle(fontSize: 11)),
             ],
           ),
         ),
