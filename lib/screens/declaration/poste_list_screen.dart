@@ -288,6 +288,46 @@ class _PosteListScreenState extends State<PosteListScreen> {
                   // ----------------------------------------------------
                   // texte pour la liste construction immobilière
                   // ----------------------------------------------------
+
+                  if (widget.sousCategorie == 'Construction') {
+                    widgets.add(
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "🧱 On retrouve ici l'amortissement de l'énergie grise nécessaire à la construction (ou aux rénovations).",
+                              style: TextStyle(fontSize: 11),
+                              textAlign: TextAlign.justify,
+                            ),
+                            const SizedBox(height: 6),
+                            const Text("💡 Ces émissions sont calculées selon la formule :", style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                            const SizedBox(height: 8),
+                            const Center(
+                              child: Text(
+                                "📐 Émissions énergie grise construction (/m²)\n"
+                                "× Surface du bien (en m²)\n"
+                                "× Facteur de pondération (période de construction)\n"
+                                "/ Nombre de propriétaires",
+                                style: TextStyle(fontSize: 11),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }
+                  // 🔁 Tous les autres cas gérés via la map texteParSousCategorie
+                  else if (texteParSousCategorie.containsKey(widget.sousCategorie)) {
+                    widgets.add(
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        child: Text(texteParSousCategorie[widget.sousCategorie]!, style: const TextStyle(fontSize: 11, height: 1.4), textAlign: TextAlign.justify),
+                      ),
+                    );
+                  }
                   if (texteParSousCategorie.containsKey(widget.sousCategorie)) {
                     widgets.add(
                       Padding(
@@ -309,6 +349,9 @@ class _PosteListScreenState extends State<PosteListScreen> {
                         child: Image.asset(imageParSousCategorie[widget.sousCategorie]!, fit: BoxFit.contain),
                       ),
                     );
+
+                    // 👇 Espace sous l'image
+                    widgets.add(const SizedBox(height: 12));
                   }
 
                   // ----------------------------------------------------

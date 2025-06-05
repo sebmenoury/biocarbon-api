@@ -89,11 +89,22 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    CustomDropdownCompact(
-                      value: poste.nomEquipement,
-                      items: facteursEmission.keys.where((k) => k.contains("Maison") || k.contains("Appartement")).toList(),
-                      label: "Type de construction",
-                      onChanged: (val) => setState(() => poste.nomEquipement = val ?? ''),
+                    DropdownButtonFormField<String>(
+                      value: facteursEmission.keys.contains(poste.nomEquipement) ? poste.nomEquipement : null,
+                      decoration: const InputDecoration(
+                        labelText: "Type de construction",
+                        labelStyle: TextStyle(fontSize: 10),
+                        isDense: true,
+                        contentPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                      ),
+                      isExpanded: true,
+                      style: const TextStyle(fontSize: 11),
+                      items:
+                          facteursEmission.keys
+                              .where((k) => k.contains("Maison") || k.contains("Appartement"))
+                              .map((t) => DropdownMenuItem(value: t, child: Text(t, style: const TextStyle(fontSize: 11))))
+                              .toList(),
+                      onChanged: (val) => setState(() => poste.nomEquipement = val!),
                     ),
                     const SizedBox(height: 12),
 

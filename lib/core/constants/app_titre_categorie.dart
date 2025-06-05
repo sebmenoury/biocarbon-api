@@ -27,14 +27,6 @@ const Map<String, String> texteParSousCategorie = {
       "🛋️ Ces équipements sont amortis annuellement en fonction de leur durée de vie. "
       "Le calcul tient compte de leur énergie grise de fabrication et du nombre de propriétaires du logement associé.",
 
-  'Construction':
-      "🧱 On retrouve ici l'amortissement de l'énergie grise qui a été nécessaire à la construction (ou aux travaux de rénovation) des biens concernés.\n"
-      "💡 Ces émissions sont calculées selon la formule suivante par type de logement :\n"
-      "Émissions énergie grise constrution (/m²) \n"
-      "× Surface du bien (en m²) \n  "
-      "× Facteur de pondération (période de construction), \n "
-      "/ Nombre de propriétaires",
-
   'Electricité': "🔌 Vous déclarez ici la consommation annuelle d’électricité par logement, qui est répartie entre les co-propriétaires.",
 };
 
