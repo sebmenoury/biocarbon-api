@@ -62,15 +62,13 @@ class _PosteListScreenState extends State<PosteListScreen> {
       nomEquipement: '',
       surface: 100,
       anneeConstruction: 2010,
-      nbProprietaires: 1,
       garage: false,
-      surfaceGarage: 0,
+      surfaceGarage: 30,
       piscine: false,
       typePiscine: "Piscine béton",
-      piscineLongueur: 4,
-      piscineLargeur: 2.5,
+      surfacePiscine: 10,
       abriEtSerre: false,
-      surfaceAbriEtSerre: 0,
+      surfaceAbriEtSerre: 5,
     );
 
     final nouveauBien = BienImmobilier(idBien: idBien, typeBien: 'Logement principal', nomLogement: '', adresse: '', inclureDansBilan: true, poste: nouveauPoste);
@@ -105,13 +103,11 @@ class _PosteListScreenState extends State<PosteListScreen> {
       nomEquipement: bien['Nom_Equipement'] ?? '',
       surface: double.tryParse(bien['Surface']?.toString() ?? '100') ?? 100,
       anneeConstruction: int.tryParse(bien['Annee_Construction']?.toString() ?? '2000') ?? 2000,
-      nbProprietaires: int.tryParse(bien['Nb_Proprietaires']?.toString() ?? '2') ?? 2,
       garage: bien['Garage'] == true,
       surfaceGarage: double.tryParse(bien['Surface_Garage']?.toString() ?? '0') ?? 0,
       piscine: bien['Piscine'] == true,
       typePiscine: bien['Type_Piscine'] ?? "Piscine béton",
-      piscineLongueur: double.tryParse(bien['Piscine_Longueur']?.toString() ?? '0') ?? 0,
-      piscineLargeur: double.tryParse(bien['Piscine_Largeur']?.toString() ?? '0') ?? 0,
+      surfacePiscine: double.tryParse(bien['Surface_Piscine']?.toString() ?? '0') ?? 0,
       abriEtSerre: bien['AbriEtSerre'] == true,
       surfaceAbriEtSerre: double.tryParse(bien['Surface_AbriEtSerre']?.toString() ?? '0') ?? 0,
     );
