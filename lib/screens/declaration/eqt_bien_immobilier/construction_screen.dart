@@ -77,11 +77,14 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
               poste.typeBien = p['Type_Bien'] ?? bien.typeBien;
             } else if (nom.contains('Garage')) {
               poste.surfaceGarage = quantite;
+              poste.anneeGarage = annee;
             } else if (nom.contains('Abri')) {
               poste.surfaceAbriEtSerre = quantite;
+              poste.anneeAbri = annee;
             } else if (nom.contains('Piscine')) {
               poste.surfacePiscine = quantite;
               poste.typePiscine = nom;
+              poste.anneePiscine = annee;
             }
           }
         });
@@ -324,63 +327,127 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
               /// GARAGE
               CustomCard(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text("Surface garage béton (m²)", style: TextStyle(fontSize: 11)),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 4),
-                      decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(12)),
-                      child: Row(
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.remove),
-                            iconSize: 16,
-                            padding: EdgeInsets.zero,
-                            constraints: const BoxConstraints(),
-                            onPressed: () {
-                              setState(() {
-                                poste.surfaceGarage = (poste.surfaceGarage - 1).clamp(0, 500);
-                                garageController.text = poste.surfaceGarage.toStringAsFixed(0);
-                              });
-                            },
-                          ),
-                          SizedBox(
-                            width: 40,
-                            child: TextFormField(
-                              controller: garageController,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(fontSize: 12),
-                              keyboardType: TextInputType.number,
-                              decoration: const InputDecoration(isDense: true, border: InputBorder.none, contentPadding: EdgeInsets.symmetric(vertical: 6)),
-                              onChanged: (val) {
-                                final parsed = double.tryParse(val);
-                                if (parsed != null) {
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text("Surface garage béton (m²)", style: TextStyle(fontSize: 11)),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
+                          decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(12)),
+                          child: Row(
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.remove),
+                                iconSize: 16,
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                                onPressed: () {
                                   setState(() {
-                                    poste.surfaceGarage = parsed;
+                                    poste.surfaceGarage = (poste.surfaceGarage - 1).clamp(0, 500);
+                                    garageController.text = poste.surfaceGarage.toStringAsFixed(0);
                                   });
-                                }
-                              },
-                            ),
+                                },
+                              ),
+                              SizedBox(
+                                width: 40,
+                                child: TextFormField(
+                                  controller: garageController,
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(fontSize: 12),
+                                  keyboardType: TextInputType.number,
+                                  decoration: const InputDecoration(isDense: true, border: InputBorder.none, contentPadding: EdgeInsets.symmetric(vertical: 6)),
+                                  onChanged: (val) {
+                                    final parsed = double.tryParse(val);
+                                    if (parsed != null) {
+                                      setState(() {
+                                        poste.surfaceGarage = parsed;
+                                      });
+                                    }
+                                  },
+                                ),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.add),
+                                iconSize: 16,
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                                onPressed: () {
+                                  setState(() {
+                                    poste.surfaceGarage = (poste.surfaceGarage + 1).clamp(0, 500);
+                                    garageController.text = poste.surfaceGarage.toStringAsFixed(0);
+                                  });
+                                },
+                              ),
+                            ],
                           ),
-                          IconButton(
-                            icon: const Icon(Icons.add),
-                            iconSize: 16,
-                            padding: EdgeInsets.zero,
-                            constraints: const BoxConstraints(),
-                            onPressed: () {
-                              setState(() {
-                                poste.surfaceGarage = (poste.surfaceGarage + 1).clamp(0, 500);
-                                garageController.text = poste.surfaceGarage.toStringAsFixed(0);
-                              });
-                            },
+                        ),
+                      ],
+                    ),
+
+                    /// ANNÉE DE CONSTRUCTION
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text("Année de construction", style: TextStyle(fontSize: 11)),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
+                          decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(12)),
+                          child: Row(
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.remove),
+                                iconSize: 16,
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                                onPressed: () {
+                                  setState(() {
+                                    poste.anneeGarage = (poste.anneeGarage - 1).clamp(1900, DateTime.now().year);
+                                    anneeController.text = poste.anneeGarage.toStringAsFixed(0);
+                                  });
+                                },
+                              ),
+                              SizedBox(
+                                width: 40,
+                                child: TextFormField(
+                                  controller: anneeController,
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(fontSize: 12),
+                                  keyboardType: TextInputType.number,
+                                  decoration: const InputDecoration(isDense: true, border: InputBorder.none, contentPadding: EdgeInsets.symmetric(vertical: 6)),
+                                  onChanged: (val) {
+                                    final parsed = int.tryParse(val);
+                                    if (parsed != null) {
+                                      setState(() {
+                                        poste.anneeGarage = parsed.clamp(1900, DateTime.now().year);
+                                      });
+                                    }
+                                  },
+                                ),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.add),
+                                iconSize: 16,
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                                onPressed: () {
+                                  setState(() {
+                                    poste.anneeGarage = (poste.anneeGarage + 1).clamp(1900, DateTime.now().year);
+                                    anneeController.text = poste.anneeGarage.toStringAsFixed(0);
+                                  });
+                                },
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
               ),
+
               const SizedBox(height: 3),
 
               /// PISCINE
@@ -446,6 +513,64 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                         ),
                       ],
                     ),
+
+                    /// ANNÉE DE CONSTRUCTION
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text("Année de construction", style: TextStyle(fontSize: 11)),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
+                          decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(12)),
+                          child: Row(
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.remove),
+                                iconSize: 16,
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                                onPressed: () {
+                                  setState(() {
+                                    poste.anneePiscine = (poste.anneePiscine - 1).clamp(1900, DateTime.now().year);
+                                    anneeController.text = poste.anneePiscine.toStringAsFixed(0);
+                                  });
+                                },
+                              ),
+                              SizedBox(
+                                width: 40,
+                                child: TextFormField(
+                                  controller: anneeController,
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(fontSize: 12),
+                                  keyboardType: TextInputType.number,
+                                  decoration: const InputDecoration(isDense: true, border: InputBorder.none, contentPadding: EdgeInsets.symmetric(vertical: 6)),
+                                  onChanged: (val) {
+                                    final parsed = int.tryParse(val);
+                                    if (parsed != null) {
+                                      setState(() {
+                                        poste.anneePiscine = parsed.clamp(1900, DateTime.now().year);
+                                      });
+                                    }
+                                  },
+                                ),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.add),
+                                iconSize: 16,
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                                onPressed: () {
+                                  setState(() {
+                                    poste.anneePiscine = (poste.anneePiscine + 1).clamp(1900, DateTime.now().year);
+                                    anneeController.text = poste.anneePiscine.toStringAsFixed(0);
+                                  });
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                     const SizedBox(height: 12),
                     // Ligne type de piscine (dropdown)
                     Row(
@@ -469,59 +594,122 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
               /// ABRI / SERRE
               CustomCard(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text("Surface abri / serre bois (m²)", style: TextStyle(fontSize: 11)),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 4),
-                      decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(12)),
-                      child: Row(
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.remove),
-                            iconSize: 16,
-                            padding: EdgeInsets.zero,
-                            constraints: const BoxConstraints(),
-                            onPressed: () {
-                              setState(() {
-                                poste.surfaceAbriEtSerre = (poste.surfaceAbriEtSerre - 1).clamp(0, 400);
-                                abriController.text = poste.surfaceAbriEtSerre.toStringAsFixed(0);
-                              });
-                            },
-                          ),
-                          SizedBox(
-                            width: 40,
-                            child: TextFormField(
-                              controller: abriController,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(fontSize: 12),
-                              keyboardType: TextInputType.number,
-                              decoration: const InputDecoration(isDense: true, border: InputBorder.none, contentPadding: EdgeInsets.symmetric(vertical: 6)),
-                              onChanged: (val) {
-                                final parsed = double.tryParse(val);
-                                if (parsed != null) {
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text("Surface abri / serre bois (m²)", style: TextStyle(fontSize: 11)),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
+                          decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(12)),
+                          child: Row(
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.remove),
+                                iconSize: 16,
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                                onPressed: () {
                                   setState(() {
-                                    poste.surfaceAbriEtSerre = parsed;
+                                    poste.surfaceAbriEtSerre = (poste.surfaceAbriEtSerre - 1).clamp(0, 400);
+                                    abriController.text = poste.surfaceAbriEtSerre.toStringAsFixed(0);
                                   });
-                                }
-                              },
-                            ),
+                                },
+                              ),
+                              SizedBox(
+                                width: 40,
+                                child: TextFormField(
+                                  controller: abriController,
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(fontSize: 12),
+                                  keyboardType: TextInputType.number,
+                                  decoration: const InputDecoration(isDense: true, border: InputBorder.none, contentPadding: EdgeInsets.symmetric(vertical: 6)),
+                                  onChanged: (val) {
+                                    final parsed = double.tryParse(val);
+                                    if (parsed != null) {
+                                      setState(() {
+                                        poste.surfaceAbriEtSerre = parsed;
+                                      });
+                                    }
+                                  },
+                                ),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.add),
+                                iconSize: 16,
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                                onPressed: () {
+                                  setState(() {
+                                    poste.surfaceAbriEtSerre = (poste.surfaceAbriEtSerre + 1).clamp(0, 400);
+                                    abriController.text = poste.surfaceAbriEtSerre.toStringAsFixed(0);
+                                  });
+                                },
+                              ),
+                            ],
                           ),
-                          IconButton(
-                            icon: const Icon(Icons.add),
-                            iconSize: 16,
-                            padding: EdgeInsets.zero,
-                            constraints: const BoxConstraints(),
-                            onPressed: () {
-                              setState(() {
-                                poste.surfaceAbriEtSerre = (poste.surfaceAbriEtSerre + 1).clamp(0, 400);
-                                abriController.text = poste.surfaceAbriEtSerre.toStringAsFixed(0);
-                              });
-                            },
+                        ),
+                      ],
+                    ),
+
+                    /// ANNÉE DE CONSTRUCTION
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text("Année de construction", style: TextStyle(fontSize: 11)),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
+                          decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(12)),
+                          child: Row(
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.remove),
+                                iconSize: 16,
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                                onPressed: () {
+                                  setState(() {
+                                    poste.anneeAbri = (poste.anneeAbri - 1).clamp(1900, DateTime.now().year);
+                                    anneeController.text = poste.anneeAbri.toStringAsFixed(0);
+                                  });
+                                },
+                              ),
+                              SizedBox(
+                                width: 40,
+                                child: TextFormField(
+                                  controller: anneeController,
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(fontSize: 12),
+                                  keyboardType: TextInputType.number,
+                                  decoration: const InputDecoration(isDense: true, border: InputBorder.none, contentPadding: EdgeInsets.symmetric(vertical: 6)),
+                                  onChanged: (val) {
+                                    final parsed = int.tryParse(val);
+                                    if (parsed != null) {
+                                      setState(() {
+                                        poste.anneeAbri = parsed.clamp(1900, DateTime.now().year);
+                                      });
+                                    }
+                                  },
+                                ),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.add),
+                                iconSize: 16,
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                                onPressed: () {
+                                  setState(() {
+                                    poste.anneeAbri = (poste.anneeAbri + 1).clamp(1900, DateTime.now().year);
+                                    anneeController.text = poste.anneeAbri.toStringAsFixed(0);
+                                  });
+                                },
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
