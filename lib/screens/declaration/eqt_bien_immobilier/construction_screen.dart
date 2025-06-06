@@ -6,7 +6,6 @@ import '../../../ui/widgets/custom_dropdown_compact.dart';
 import '../../../data/services/api_service.dart';
 import '../bien_immobilier/bien_immobilier.dart';
 import 'poste_bien_immobilier.dart';
-import 'package:flutter/cupertino.dart';
 import 'emission_calculator_immobilier.dart';
 
 class ConstructionScreen extends StatefulWidget {
@@ -24,8 +23,6 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
   Map<String, int> dureesAmortissement = {};
   bool isLoading = true;
   String? errorMsg;
-
-  late String selectedPiscineType;
 
   BienImmobilier get bien => widget.bien;
   PosteBienImmobilier get poste => widget.bien.poste;
@@ -45,7 +42,6 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
     anneeController = TextEditingController(text: poste.anneeConstruction.toString());
     piscineController = TextEditingController(text: poste.surfacePiscine.toStringAsFixed(0));
     abriController = TextEditingController(text: poste.surfaceAbriEtSerre.toStringAsFixed(0));
-    selectedPiscineType = poste.typePiscine;
   }
 
   @override
@@ -83,54 +79,6 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
         isLoading = false;
       });
     }
-  }
-
-  // ------------------------------------------
-  // 🔽 METHODE ROULEAU POUR SELECTION LISTE
-  // ------------------------------------------
-
-  Widget buildPiscinePicker() {
-    List<String> typesPiscine = ["Piscine béton", "Piscine coque"];
-
-    return GestureDetector(
-      onTap: () {
-        showCupertinoModalPopup(
-          context: context,
-          builder:
-              (_) => Container(
-                height: 250,
-                padding: const EdgeInsets.only(top: 12),
-                color: Colors.white,
-                child: Column(
-                  children: [
-                    SizedBox(
-                      height: 200,
-                      child: CupertinoPicker(
-                        scrollController: FixedExtentScrollController(initialItem: typesPiscine.indexOf(poste.typePiscine)),
-                        itemExtent: 32.0,
-                        onSelectedItemChanged: (index) {
-                          setState(() {
-                            poste.typePiscine = typesPiscine[index];
-                          });
-                        },
-                        children: typesPiscine.map((e) => Text(e)).toList(),
-                      ),
-                    ),
-                    TextButton(child: const Text("Fermer", style: TextStyle(fontSize: 12)), onPressed: () => Navigator.pop(context)),
-                  ],
-                ),
-              ),
-        );
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(8)),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [Text("Type de piscine", style: TextStyle(fontSize: 11, color: Colors.grey.shade700)), Text(poste.typePiscine, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500))],
-        ),
-      ),
-    );
   }
 
   @override
@@ -369,7 +317,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
               /// PISCINE
               CustomCard(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                child: Column(
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text("Surface piscine (m²)", style: TextStyle(fontSize: 11)),
@@ -424,7 +372,12 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                       ),
                     ),
                     const SizedBox(height: 12),
-                    buildPiscinePicker(),
+                    CustomDropdownCompact(
+                      value: poste.typePiscine,
+                      items: const ["Piscine béton", "Piscine coque"],
+                      label: "Type de piscine",
+                      onChanged: (val) => setState(() => poste.typePiscine = val ?? ''),
+                    ),
                   ],
                 ),
               ),
