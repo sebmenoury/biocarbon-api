@@ -44,6 +44,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
     isEdition = widget.bien.poste.nomEquipement.isNotEmpty;
     loadEquipementsData();
     loadPosteConstruction(); // 👈 Ajoute ceci
+    loadBienImmobilier();
     garageController = TextEditingController(text: poste.surfaceGarage.toStringAsFixed(0));
     surfaceController = TextEditingController(text: poste.surface.toStringAsFixed(0));
     anneeController = TextEditingController(text: poste.anneeConstruction.toString());
@@ -67,6 +68,22 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
   double calculerEmissionUnitaire(double surface, double facteur, int? duree, int annee, int nbProprietaires) {
     final reduction = reductionParAnnee(annee);
     return (surface * facteur * reduction) / (duree ?? 1) / nbProprietaires;
+  }
+
+  Future<void> loadBienImmobilier() async {
+    try {
+      final biens = await ApiService.getBiens("BASILE");
+      final bienData = biens.firstWhere((b) => b['Nom_Logement'] == bien.nomLogement, orElse: () => {});
+
+      if (bienData.isNotEmpty) {
+        setState(() {
+          bien.nbProprietaires = int.tryParse(bienData['Nb_Proprietaires'].toString()) ?? 1;
+          bien.nbHabitants = double.tryParse(bienData['Nb_Habitants'].toString()) ?? 1;
+        });
+      }
+    } catch (e) {
+      debugPrint("❌ Erreur chargement UC-Bien : $e");
+    }
   }
 
   Future<void> loadPosteConstruction() async {
@@ -403,6 +420,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                         ),
                       ],
                     ),
+                    const SizedBox(height: 12),
 
                     /// ANNÉE DE CONSTRUCTION
                     Row(

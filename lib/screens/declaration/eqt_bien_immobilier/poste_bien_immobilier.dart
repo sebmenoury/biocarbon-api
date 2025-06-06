@@ -23,19 +23,19 @@ class PosteBienImmobilier {
     this.id, // 👈 ajouté
     this.nomEquipement = "",
     this.surface = 100,
-    this.anneeConstruction = 2010,
+    this.anneeConstruction = 2025,
 
     this.garage = false,
     this.surfaceGarage = 30,
-    this.anneeGarage = 2010,
+    this.anneeGarage = 2025,
 
     this.piscine = false,
-    this.typePiscine = "Piscine béton",
+    this.typePiscine = "",
     this.surfacePiscine = 10, // ✅ Valeur par défaut
-    this.anneePiscine = 2010,
+    this.anneePiscine = 2025,
 
     this.abriEtSerre = false,
     this.surfaceAbriEtSerre = 10,
-    this.anneeAbri = 2010,
+    this.anneeAbri = 2025,
   });
 }
