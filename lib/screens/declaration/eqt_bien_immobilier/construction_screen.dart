@@ -26,11 +26,19 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
 
   BienImmobilier get bien => widget.bien;
   PosteBienImmobilier get poste => widget.bien.poste;
+  late TextEditingController garageController;
 
   @override
   void initState() {
     super.initState();
     loadEquipementsData();
+    garageController = TextEditingController(text: poste.surfaceGarage.toStringAsFixed(0));
+  }
+
+  @override
+  void dispose() {
+    garageController.dispose();
+    super.dispose();
   }
 
   Future<void> loadEquipementsData() async {
@@ -218,55 +226,60 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
 
               /// GARAGE
               CustomCard(
-                padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text("Surface garage (m²)", style: TextStyle(fontSize: 11)),
-                        Container(
-                          height: 28, // 👈 assure une hauteur harmonieuse
-                          decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(8)),
-                          child: Row(
-                            children: [
-                              IconButton(
-                                icon: const Icon(Icons.remove),
-                                onPressed: () => setState(() => poste.surfaceGarage = (poste.surfaceGarage - 1).clamp(0, 500)),
-                                visualDensity: VisualDensity.compact,
-                                iconSize: 18,
-                                padding: EdgeInsets.zero,
-                                constraints: const BoxConstraints(),
-                              ),
-                              SizedBox(
-                                width: 40,
-                                child: TextFormField(
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(fontSize: 11),
-                                  initialValue: poste.surfaceGarage.toStringAsFixed(0),
-                                  keyboardType: TextInputType.number,
-                                  decoration: const InputDecoration(isDense: true, border: InputBorder.none, contentPadding: EdgeInsets.zero),
-                                  onChanged: (val) {
-                                    final parsed = double.tryParse(val);
-                                    if (parsed != null) {
-                                      setState(() => poste.surfaceGarage = parsed.clamp(0, 500));
-                                    }
-                                  },
-                                ),
-                              ),
-                              IconButton(
-                                icon: const Icon(Icons.add),
-                                onPressed: () => setState(() => poste.surfaceGarage = (poste.surfaceGarage + 1).clamp(0, 500)),
-                                visualDensity: VisualDensity.compact,
-                                iconSize: 18,
-                                padding: EdgeInsets.zero,
-                                constraints: const BoxConstraints(),
-                              ),
-                            ],
+                    const Text("Surface garage (m²)", style: TextStyle(fontSize: 11)),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(12)),
+                      child: Row(
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.remove),
+                            iconSize: 16,
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                            onPressed: () {
+                              setState(() {
+                                poste.surfaceGarage = (poste.surfaceGarage - 1).clamp(0, 1000);
+                                garageController.text = poste.surfaceGarage.toStringAsFixed(0);
+                              });
+                            },
                           ),
-                        ),
-                      ],
+                          SizedBox(
+                            width: 40,
+                            child: TextFormField(
+                              controller: garageController,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(fontSize: 12),
+                              keyboardType: TextInputType.number,
+                              decoration: const InputDecoration(isDense: true, border: InputBorder.none, contentPadding: EdgeInsets.symmetric(vertical: 6)),
+                              onChanged: (val) {
+                                final parsed = double.tryParse(val);
+                                if (parsed != null) {
+                                  setState(() {
+                                    poste.surfaceGarage = parsed;
+                                  });
+                                }
+                              },
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.add),
+                            iconSize: 16,
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                            onPressed: () {
+                              setState(() {
+                                poste.surfaceGarage = (poste.surfaceGarage + 1).clamp(0, 1000);
+                                garageController.text = poste.surfaceGarage.toStringAsFixed(0);
+                              });
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),

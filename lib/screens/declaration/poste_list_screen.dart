@@ -297,13 +297,13 @@ class _PosteListScreenState extends State<PosteListScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const Text(
-                              "On retrouve ici l'amortissement de l'énergie grise nécessaire à la construction (ou aux rénovations).",
+                              "On retrouve ici l'amortissement de l'énergie grise associée à la construction (ou aux rénovations).",
                               style: TextStyle(fontSize: 11),
                               textAlign: TextAlign.justify,
                             ),
                             const SizedBox(height: 6),
-                            const Text("Ces émissions sont calculées selon la formule :", style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
-                            const SizedBox(height: 8),
+                            const Text("Ces émissions sont calculées selon la formule :", style: TextStyle(fontSize: 11)),
+                            const SizedBox(height: 4),
                             const Center(
                               child: Text(
                                 "Émissions énergie grise construction (/m²)\n"
