@@ -39,6 +39,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
     super.initState();
     isEdition = widget.bien.poste.nomEquipement.isNotEmpty;
     loadEquipementsData();
+    loadPosteConstruction(); // 👈 Ajoute ceci
     garageController = TextEditingController(text: poste.surfaceGarage.toStringAsFixed(0));
     surfaceController = TextEditingController(text: poste.surface.toStringAsFixed(0));
     anneeController = TextEditingController(text: poste.anneeConstruction.toString());
@@ -53,6 +54,40 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
       poste.surfacePiscine = 0;
       poste.typePiscine = "Piscine béton";
       poste.surfaceAbriEtSerre = 0;
+    }
+  }
+
+  Future<void> loadPosteConstruction() async {
+    try {
+      final result = await ApiService.getUCPostes("BASILE", "2025"); // à adapter dynamiquement
+      final postesConstruction = result.where((p) => p['Nom_Logement'] == bien.nomLogement && p['Sous_Categorie'] == 'Construction').toList();
+
+      if (postesConstruction.isNotEmpty) {
+        setState(() {
+          for (final p in postesConstruction) {
+            final nom = p['Nom_Poste'] ?? '';
+            final quantite = double.tryParse(p['Quantite'].toString()) ?? 0;
+            final annee = int.tryParse(p['Annee_Achat'].toString()) ?? 2010;
+
+            if (nom.contains('Maison') || nom.contains('Appartement')) {
+              poste.id = p['ID_Usage']; // tu peux n'en retenir qu’un
+              poste.nomEquipement = nom;
+              poste.surface = quantite;
+              poste.anneeConstruction = annee;
+              poste.typeBien = p['Type_Bien'] ?? bien.typeBien;
+            } else if (nom.contains('Garage')) {
+              poste.surfaceGarage = quantite;
+            } else if (nom.contains('Abri')) {
+              poste.surfaceAbriEtSerre = quantite;
+            } else if (nom.contains('Piscine')) {
+              poste.surfacePiscine = quantite;
+              poste.typePiscine = nom;
+            }
+          }
+        });
+      }
+    } catch (e) {
+      debugPrint("❌ Erreur chargement UC-Poste Construction : $e");
     }
   }
 
