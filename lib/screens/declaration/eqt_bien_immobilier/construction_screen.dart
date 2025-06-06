@@ -81,49 +81,6 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
     }
   }
 
-  Widget buildInputCard(String label, TextEditingController controller, void Function() onMinus, void Function() onPlus) {
-    return CustomCard(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label, style: const TextStyle(fontSize: 11)),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 4),
-            decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(12)),
-            child: Row(
-              children: [
-                IconButton(icon: const Icon(Icons.remove), iconSize: 16, padding: EdgeInsets.zero, constraints: const BoxConstraints(), onPressed: onMinus),
-                SizedBox(
-                  width: 40,
-                  child: TextFormField(
-                    controller: controller,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 12),
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(isDense: true, border: InputBorder.none, contentPadding: EdgeInsets.symmetric(vertical: 6)),
-                    onChanged: (val) {
-                      final parsed = double.tryParse(val);
-                      if (parsed != null) {
-                        setState(() {
-                          if (controller == garageController) poste.surfaceGarage = parsed;
-                          if (controller == surfaceController) poste.surface = parsed;
-                          if (controller == piscineController) poste.surfacePiscine = parsed;
-                          if (controller == abriController) poste.surfaceAbriEtSerre = parsed;
-                        });
-                      }
-                    },
-                  ),
-                ),
-                IconButton(icon: const Icon(Icons.add), iconSize: 16, padding: EdgeInsets.zero, constraints: const BoxConstraints(), onPressed: onPlus),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final total = calculerTotalEmission(poste, facteursEmission, dureesAmortissement, nbProprietaires: bien.nbProprietaires);
@@ -138,99 +95,356 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
         children: [
           IconButton(icon: const Icon(Icons.arrow_back), iconSize: 18, onPressed: () => Navigator.pop(context), padding: EdgeInsets.zero, constraints: const BoxConstraints()),
           const SizedBox(width: 8),
-          const Text("Construction et rénovations associées au logement", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+          Center(child: Text("Construction et rénovations associées au logement", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold))),
         ],
       ),
       children: [
         SingleChildScrollView(
           padding: const EdgeInsets.all(12),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              /// DESCRIPTIF DU BIEN
               CustomCard(
-                padding: const EdgeInsets.all(12),
-                child: CustomDropdownCompact(
-                  value: poste.nomEquipement,
-                  items: facteursEmission.keys.where((k) => k.contains("Maison") || k.contains("Appartement")).toList(),
-                  label: "Type de construction",
-                  onChanged: (val) => setState(() => poste.nomEquipement = val ?? poste.nomEquipement),
+                padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    DropdownButtonFormField<String>(
+                      value: facteursEmission.keys.contains(poste.nomEquipement) ? poste.nomEquipement : null,
+                      decoration: const InputDecoration(
+                        labelText: "Type de construction",
+                        labelStyle: TextStyle(fontSize: 10),
+                        isDense: true,
+                        contentPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 30),
+                      ),
+                      isExpanded: true,
+                      style: const TextStyle(fontSize: 11),
+                      items:
+                          facteursEmission.keys
+                              .where((k) => k.contains("Maison") || k.contains("Appartement"))
+                              .map((t) => DropdownMenuItem(value: t, child: Text(t, style: const TextStyle(fontSize: 11))))
+                              .toList(),
+                      onChanged: (val) => setState(() => poste.nomEquipement = val!),
+                    ),
+                    const SizedBox(height: 12),
+
+                    /// SURFACE
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text("Surface (m²)", style: TextStyle(fontSize: 11)),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
+                          decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(12)),
+                          child: Row(
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.remove),
+                                iconSize: 16,
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                                onPressed: () {
+                                  setState(() {
+                                    poste.surface = (poste.surface - 1).clamp(0, 1000);
+                                    surfaceController.text = poste.surface.toStringAsFixed(0);
+                                  });
+                                },
+                              ),
+                              SizedBox(
+                                width: 40,
+                                child: TextFormField(
+                                  controller: surfaceController,
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(fontSize: 12),
+                                  keyboardType: TextInputType.number,
+                                  decoration: const InputDecoration(isDense: true, border: InputBorder.none, contentPadding: EdgeInsets.symmetric(vertical: 6)),
+                                  onChanged: (val) {
+                                    final parsed = double.tryParse(val);
+                                    if (parsed != null) {
+                                      setState(() {
+                                        poste.surface = parsed;
+                                      });
+                                    }
+                                  },
+                                ),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.add),
+                                iconSize: 16,
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                                onPressed: () {
+                                  setState(() {
+                                    poste.surface = (poste.surface + 1).clamp(0, 1000);
+                                    surfaceController.text = poste.surface.toStringAsFixed(0);
+                                  });
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+
+                    /// ANNÉE DE CONSTRUCTION
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text("Année de construction", style: TextStyle(fontSize: 11)),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
+                          decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(12)),
+                          child: Row(
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.remove),
+                                iconSize: 16,
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                                onPressed: () {
+                                  setState(() {
+                                    poste.anneeConstruction = (poste.anneeConstruction - 1).clamp(0, 1000);
+                                    anneeController.text = poste.anneeConstruction.toStringAsFixed(0);
+                                  });
+                                },
+                              ),
+                              SizedBox(
+                                width: 40,
+                                child: TextFormField(
+                                  controller: anneeController,
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(fontSize: 12),
+                                  keyboardType: TextInputType.number,
+                                  decoration: const InputDecoration(isDense: true, border: InputBorder.none, contentPadding: EdgeInsets.symmetric(vertical: 6)),
+                                  onChanged: (val) {
+                                    final parsed = int.tryParse(val);
+                                    if (parsed != null) {
+                                      setState(() {
+                                        poste.anneeConstruction = parsed;
+                                      });
+                                    }
+                                  },
+                                ),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.add),
+                                iconSize: 16,
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                                onPressed: () {
+                                  setState(() {
+                                    poste.anneeConstruction = (poste.anneeConstruction + 1).clamp(0, 1000);
+                                    anneeController.text = poste.anneeConstruction.toStringAsFixed(0);
+                                  });
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                  ],
                 ),
               ),
-              const SizedBox(height: 8),
-              buildInputCard(
-                "Surface (m²)",
-                surfaceController,
-                () => setState(() {
-                  poste.surface = (poste.surface - 1).clamp(0, 10000);
-                  surfaceController.text = poste.surface.toStringAsFixed(0);
-                }),
-                () => setState(() {
-                  poste.surface = (poste.surface + 1).clamp(0, 10000);
-                  surfaceController.text = poste.surface.toStringAsFixed(0);
-                }),
-              ),
+
               const SizedBox(height: 3),
-              buildInputCard(
-                "Année de construction",
-                anneeController,
-                () => setState(() {
-                  poste.anneeConstruction = (poste.anneeConstruction - 1).clamp(1800, DateTime.now().year);
-                  anneeController.text = poste.anneeConstruction.toString();
-                }),
-                () => setState(() {
-                  poste.anneeConstruction = (poste.anneeConstruction + 1).clamp(1800, DateTime.now().year);
-                  anneeController.text = poste.anneeConstruction.toString();
-                }),
-              ),
-              const SizedBox(height: 3),
-              buildInputCard(
-                "Surface garage (m²)",
-                garageController,
-                () => setState(() {
-                  poste.surfaceGarage = (poste.surfaceGarage - 1).clamp(0, 1000);
-                  garageController.text = poste.surfaceGarage.toStringAsFixed(0);
-                }),
-                () => setState(() {
-                  poste.surfaceGarage = (poste.surfaceGarage + 1).clamp(0, 1000);
-                  garageController.text = poste.surfaceGarage.toStringAsFixed(0);
-                }),
-              ),
-              const SizedBox(height: 3),
-              buildInputCard(
-                "Surface piscine (m²)",
-                piscineController,
-                () => setState(() {
-                  poste.surfacePiscine = (poste.surfacePiscine - 1).clamp(0, 500);
-                  piscineController.text = poste.surfacePiscine.toStringAsFixed(0);
-                }),
-                () => setState(() {
-                  poste.surfacePiscine = (poste.surfacePiscine + 1).clamp(0, 500);
-                  piscineController.text = poste.surfacePiscine.toStringAsFixed(0);
-                }),
-              ),
-              const SizedBox(height: 3),
+
+              /// GARAGE
               CustomCard(
-                padding: const EdgeInsets.all(12),
-                child: CustomDropdownCompact(
-                  value: poste.typePiscine,
-                  items: const ["Piscine béton", "Piscine coque"],
-                  label: "Type de piscine",
-                  onChanged: (val) => setState(() => poste.typePiscine = val ?? poste.typePiscine),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text("Surface garage (m²)", style: TextStyle(fontSize: 11)),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(12)),
+                      child: Row(
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.remove),
+                            iconSize: 16,
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                            onPressed: () {
+                              setState(() {
+                                poste.surfaceGarage = (poste.surfaceGarage - 1).clamp(0, 1000);
+                                garageController.text = poste.surfaceGarage.toStringAsFixed(0);
+                              });
+                            },
+                          ),
+                          SizedBox(
+                            width: 40,
+                            child: TextFormField(
+                              controller: garageController,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(fontSize: 12),
+                              keyboardType: TextInputType.number,
+                              decoration: const InputDecoration(isDense: true, border: InputBorder.none, contentPadding: EdgeInsets.symmetric(vertical: 6)),
+                              onChanged: (val) {
+                                final parsed = double.tryParse(val);
+                                if (parsed != null) {
+                                  setState(() {
+                                    poste.surfaceGarage = parsed;
+                                  });
+                                }
+                              },
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.add),
+                            iconSize: 16,
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                            onPressed: () {
+                              setState(() {
+                                poste.surfaceGarage = (poste.surfaceGarage + 1).clamp(0, 1000);
+                                garageController.text = poste.surfaceGarage.toStringAsFixed(0);
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(height: 3),
-              buildInputCard(
-                "Surface abri / serre (m²)",
-                abriController,
-                () => setState(() {
-                  poste.surfaceAbriEtSerre = (poste.surfaceAbriEtSerre - 1).clamp(0, 200);
-                  abriController.text = poste.surfaceAbriEtSerre.toStringAsFixed(0);
-                }),
-                () => setState(() {
-                  poste.surfaceAbriEtSerre = (poste.surfaceAbriEtSerre + 1).clamp(0, 200);
-                  abriController.text = poste.surfaceAbriEtSerre.toStringAsFixed(0);
-                }),
+
+              /// PISCINE
+              CustomCard(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text("Surface piscine (m²)", style: TextStyle(fontSize: 11)),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(12)),
+                      child: Row(
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.remove),
+                            iconSize: 16,
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                            onPressed: () {
+                              setState(() {
+                                poste.surfacePiscine = (poste.surfacePiscine - 1).clamp(0, 1000);
+                                piscineController.text = poste.surfacePiscine.toStringAsFixed(0);
+                              });
+                            },
+                          ),
+                          SizedBox(
+                            width: 40,
+                            child: TextFormField(
+                              controller: piscineController,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(fontSize: 12),
+                              keyboardType: TextInputType.number,
+                              decoration: const InputDecoration(isDense: true, border: InputBorder.none, contentPadding: EdgeInsets.symmetric(vertical: 6)),
+                              onChanged: (val) {
+                                final parsed = double.tryParse(val);
+                                if (parsed != null) {
+                                  setState(() {
+                                    poste.surfacePiscine = parsed;
+                                  });
+                                }
+                              },
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.add),
+                            iconSize: 16,
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                            onPressed: () {
+                              setState(() {
+                                poste.surfacePiscine = (poste.surfacePiscine + 1).clamp(0, 1000);
+                                piscineController.text = poste.surfacePiscine.toStringAsFixed(0);
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    CustomDropdownCompact(
+                      value: poste.typePiscine,
+                      items: const ["Piscine béton", "Piscine coque"],
+                      label: "Type de piscine",
+                      onChanged: (val) => setState(() => poste.typePiscine = val ?? ''),
+                    ),
+                  ],
+                ),
+              ),
+
+              /// ABRI / SERRE
+              CustomCard(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text("Surface abri / serre (m²)", style: TextStyle(fontSize: 11)),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(12)),
+                      child: Row(
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.remove),
+                            iconSize: 16,
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                            onPressed: () {
+                              setState(() {
+                                poste.surfaceAbriEtSerre = (poste.surfaceAbriEtSerre - 1).clamp(0, 1000);
+                                abriController.text = poste.surfaceAbriEtSerre.toStringAsFixed(0);
+                              });
+                            },
+                          ),
+                          SizedBox(
+                            width: 40,
+                            child: TextFormField(
+                              controller: abriController,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(fontSize: 12),
+                              keyboardType: TextInputType.number,
+                              decoration: const InputDecoration(isDense: true, border: InputBorder.none, contentPadding: EdgeInsets.symmetric(vertical: 6)),
+                              onChanged: (val) {
+                                final parsed = double.tryParse(val);
+                                if (parsed != null) {
+                                  setState(() {
+                                    poste.surfaceAbriEtSerre = parsed;
+                                  });
+                                }
+                              },
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.add),
+                            iconSize: 16,
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                            onPressed: () {
+                              setState(() {
+                                poste.surfaceAbriEtSerre = (poste.surfaceAbriEtSerre + 1).clamp(0, 1000);
+                                abriController.text = poste.surfaceAbriEtSerre.toStringAsFixed(0);
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
               const SizedBox(height: 12),
+
+              /// BOUTON
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -257,7 +471,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                       });
 
                       if (!mounted) return;
-                      widget.onSave();
+                      if (widget.onSave != null) widget.onSave!();
                       Navigator.of(context).pop();
                     },
                     icon: const Icon(Icons.save, size: 14),
