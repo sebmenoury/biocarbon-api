@@ -7,6 +7,7 @@ import '../../../data/services/api_service.dart';
 import '../bien_immobilier/bien_immobilier.dart';
 import 'poste_bien_immobilier.dart';
 import 'emission_calculator_immobilier.dart';
+import 'const_construction.dart';
 
 class ConstructionScreen extends StatefulWidget {
   final BienImmobilier bien;
@@ -32,6 +33,9 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
   late TextEditingController anneeController;
   late TextEditingController piscineController;
   late TextEditingController abriController;
+  late TextEditingController anneeGarageController;
+  late TextEditingController anneePiscineController;
+  late TextEditingController anneeAbriController;
   late bool isEdition;
 
   @override
@@ -45,6 +49,9 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
     anneeController = TextEditingController(text: poste.anneeConstruction.toString());
     piscineController = TextEditingController(text: poste.surfacePiscine.toStringAsFixed(0));
     abriController = TextEditingController(text: poste.surfaceAbriEtSerre.toStringAsFixed(0));
+    anneeGarageController = TextEditingController(text: poste.anneeGarage.toString());
+    anneePiscineController = TextEditingController(text: poste.anneePiscine.toString());
+    anneeAbriController = TextEditingController(text: poste.anneeAbri.toString());
 
     if (!isEdition) {
       poste.nomEquipement = "Maison Classique"; // par défaut
@@ -55,6 +62,11 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
       poste.typePiscine = "Piscine béton";
       poste.surfaceAbriEtSerre = 0;
     }
+  }
+
+  double calculerEmissionUnitaire(double surface, double facteur, int? duree, int annee, int nbProprietaires) {
+    final reduction = reductionParAnnee(annee);
+    return (surface * facteur * reduction) / (duree ?? 1) / nbProprietaires;
   }
 
   Future<void> loadPosteConstruction() async {
@@ -102,6 +114,9 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
     piscineController.dispose();
     abriController.dispose();
     super.dispose();
+    anneeGarageController.dispose();
+    anneePiscineController.dispose();
+    anneeAbriController.dispose();
   }
 
   Future<void> loadEquipementsData() async {
@@ -405,14 +420,14 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                                 onPressed: () {
                                   setState(() {
                                     poste.anneeGarage = (poste.anneeGarage - 1).clamp(1900, DateTime.now().year);
-                                    anneeController.text = poste.anneeGarage.toStringAsFixed(0);
+                                    anneeGarageController.text = poste.anneeGarage.toStringAsFixed(0);
                                   });
                                 },
                               ),
                               SizedBox(
                                 width: 40,
                                 child: TextFormField(
-                                  controller: anneeController,
+                                  controller: anneeGarageController,
                                   textAlign: TextAlign.center,
                                   style: const TextStyle(fontSize: 12),
                                   keyboardType: TextInputType.number,
@@ -435,7 +450,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                                 onPressed: () {
                                   setState(() {
                                     poste.anneeGarage = (poste.anneeGarage + 1).clamp(1900, DateTime.now().year);
-                                    anneeController.text = poste.anneeGarage.toStringAsFixed(0);
+                                    anneeGarageController.text = poste.anneeGarage.toStringAsFixed(0);
                                   });
                                 },
                               ),
@@ -532,14 +547,14 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                                 onPressed: () {
                                   setState(() {
                                     poste.anneePiscine = (poste.anneePiscine - 1).clamp(1900, DateTime.now().year);
-                                    anneeController.text = poste.anneePiscine.toStringAsFixed(0);
+                                    anneePiscineController.text = poste.anneePiscine.toStringAsFixed(0);
                                   });
                                 },
                               ),
                               SizedBox(
                                 width: 40,
                                 child: TextFormField(
-                                  controller: anneeController,
+                                  controller: anneePiscineController,
                                   textAlign: TextAlign.center,
                                   style: const TextStyle(fontSize: 12),
                                   keyboardType: TextInputType.number,
@@ -562,7 +577,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                                 onPressed: () {
                                   setState(() {
                                     poste.anneePiscine = (poste.anneePiscine + 1).clamp(1900, DateTime.now().year);
-                                    anneeController.text = poste.anneePiscine.toStringAsFixed(0);
+                                    anneePiscineController.text = poste.anneePiscine.toStringAsFixed(0);
                                   });
                                 },
                               ),
@@ -672,14 +687,14 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                                 onPressed: () {
                                   setState(() {
                                     poste.anneeAbri = (poste.anneeAbri - 1).clamp(1900, DateTime.now().year);
-                                    anneeController.text = poste.anneeAbri.toStringAsFixed(0);
+                                    anneeAbriController.text = poste.anneeAbri.toStringAsFixed(0);
                                   });
                                 },
                               ),
                               SizedBox(
                                 width: 40,
                                 child: TextFormField(
-                                  controller: anneeController,
+                                  controller: anneeAbriController,
                                   textAlign: TextAlign.center,
                                   style: const TextStyle(fontSize: 12),
                                   keyboardType: TextInputType.number,
@@ -702,7 +717,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                                 onPressed: () {
                                   setState(() {
                                     poste.anneeAbri = (poste.anneeAbri + 1).clamp(1900, DateTime.now().year);
-                                    anneeController.text = poste.anneeAbri.toStringAsFixed(0);
+                                    anneeAbriController.text = poste.anneeAbri.toStringAsFixed(0);
                                   });
                                 },
                               ),
@@ -737,24 +752,122 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                         onPressed: () async {
                           final emission = calculerTotalEmission(poste, facteursEmission, dureesAmortissement, nbProprietaires: bien.nbProprietaires);
 
-                          await ApiService.savePoste({
-                            "ID_Usage": poste.id,
-                            "Code_Individu": "BASILE",
-                            "Type_Temps": "Réel",
-                            "Valeur_Temps": "2025",
-                            "Date_enregistrement": DateTime.now().toIso8601String(),
-                            "Type_Poste": "Equipement",
-                            "Type_Categorie": "Logement",
-                            "Sous_Categorie": "Construction",
-                            "Nom_Poste": poste.nomEquipement,
-                            "Quantite": poste.surface,
-                            "Unite": "m²",
-                            "Facteur_Emission": facteursEmission[poste.nomEquipement],
-                            "Emission_Calculee": emission,
-                            "Mode_Calcul": "Amorti",
-                            "Annee_Achat": poste.anneeConstruction,
-                            "Duree_Amortissement": dureesAmortissement[poste.nomEquipement],
-                          });
+                          final maintenant = DateTime.now().toIso8601String();
+                          final codeIndividu = "BASILE";
+                          final typeTemps = "Réel";
+                          final valeurTemps = "2025";
+                          const typePoste = "Equipement";
+                          const typeCategorie = "Logement";
+                          const sousCategorie = "Construction";
+
+                          // LOGEMENT
+                          if (poste.surface > 0 && facteursEmission.containsKey(poste.nomEquipement)) {
+                            await ApiService.savePoste({
+                              "ID_Usage": poste.id,
+                              "Code_Individu": codeIndividu,
+                              "Type_Temps": typeTemps,
+                              "Valeur_Temps": valeurTemps,
+                              "Date_enregistrement": maintenant,
+                              "Type_Poste": typePoste,
+                              "Type_Categorie": typeCategorie,
+                              "Sous_Categorie": sousCategorie,
+                              "Nom_Poste": poste.nomEquipement,
+                              "Quantite": poste.surface,
+                              "Unite": "m²",
+                              "Facteur_Emission": facteursEmission[poste.nomEquipement],
+                              "Emission_Calculee": calculerEmissionUnitaire(
+                                poste.surface,
+                                facteursEmission[poste.nomEquipement]!,
+                                dureesAmortissement[poste.nomEquipement],
+                                poste.anneeConstruction,
+                                bien.nbProprietaires,
+                              ),
+                              "Mode_Calcul": "Amorti",
+                              "Annee_Achat": poste.anneeConstruction,
+                              "Duree_Amortissement": dureesAmortissement[poste.nomEquipement],
+                            });
+                          }
+
+                          // GARAGE
+                          if (poste.surfaceGarage > 0 && facteursEmission.containsKey("Garage béton")) {
+                            await ApiService.savePoste({
+                              "Code_Individu": codeIndividu,
+                              "Type_Temps": typeTemps,
+                              "Valeur_Temps": valeurTemps,
+                              "Date_enregistrement": maintenant,
+                              "Type_Poste": typePoste,
+                              "Type_Categorie": typeCategorie,
+                              "Sous_Categorie": sousCategorie,
+                              "Nom_Poste": "Garage béton",
+                              "Quantite": poste.surfaceGarage,
+                              "Unite": "m²",
+                              "Facteur_Emission": facteursEmission["Garage béton"],
+                              "Emission_Calculee": calculerEmissionUnitaire(
+                                poste.surfaceGarage,
+                                facteursEmission["Garage béton"]!,
+                                dureesAmortissement["Garage béton"],
+                                poste.anneeGarage,
+                                bien.nbProprietaires,
+                              ),
+                              "Mode_Calcul": "Amorti",
+                              "Annee_Achat": poste.anneeGarage,
+                              "Duree_Amortissement": dureesAmortissement["Garage béton"],
+                            });
+                          }
+
+                          // PISCINE
+                          if (poste.surfacePiscine > 0 && facteursEmission.containsKey(poste.typePiscine)) {
+                            await ApiService.savePoste({
+                              "Code_Individu": codeIndividu,
+                              "Type_Temps": typeTemps,
+                              "Valeur_Temps": valeurTemps,
+                              "Date_enregistrement": maintenant,
+                              "Type_Poste": typePoste,
+                              "Type_Categorie": typeCategorie,
+                              "Sous_Categorie": sousCategorie,
+                              "Nom_Poste": poste.typePiscine,
+                              "Quantite": poste.surfacePiscine,
+                              "Unite": "m²",
+                              "Facteur_Emission": facteursEmission[poste.typePiscine],
+                              "Emission_Calculee": calculerEmissionUnitaire(
+                                poste.surfacePiscine,
+                                facteursEmission[poste.typePiscine]!,
+                                dureesAmortissement[poste.typePiscine],
+                                poste.anneePiscine,
+                                bien.nbProprietaires,
+                              ),
+                              "Mode_Calcul": "Amorti",
+                              "Annee_Achat": poste.anneePiscine,
+                              "Duree_Amortissement": dureesAmortissement[poste.typePiscine],
+                            });
+                          }
+
+                          // ABRI / SERRE
+                          if (poste.surfaceAbriEtSerre > 0 && facteursEmission.containsKey("Abri de jardin bois")) {
+                            await ApiService.savePoste({
+                              "Code_Individu": codeIndividu,
+                              "Type_Temps": typeTemps,
+                              "Valeur_Temps": valeurTemps,
+                              "Date_enregistrement": maintenant,
+                              "Type_Poste": typePoste,
+                              "Type_Categorie": typeCategorie,
+                              "Sous_Categorie": sousCategorie,
+                              "Nom_Poste": "Abri de jardin bois",
+                              "Quantite": poste.surfaceAbriEtSerre,
+                              "Unite": "m²",
+                              "Facteur_Emission": facteursEmission["Abri de jardin bois"],
+                              "Emission_Calculee": calculerEmissionUnitaire(
+                                poste.surfaceAbriEtSerre,
+                                facteursEmission["Abri de jardin bois"]!,
+                                dureesAmortissement["Abri de jardin bois"],
+                                poste.anneeAbri,
+                                bien.nbProprietaires,
+                              ),
+                              "Mode_Calcul": "Amorti",
+                              "Annee_Achat": poste.anneeAbri,
+                              "Duree_Amortissement": dureesAmortissement["Abri de jardin bois"],
+                            });
+                          }
 
                           if (!mounted) return;
                           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("✅ Poste mis à jour")));
@@ -774,23 +887,122 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
 
                         final emission = calculerTotalEmission(poste, facteursEmission, dureesAmortissement, nbProprietaires: bien.nbProprietaires);
 
-                        await ApiService.savePoste({
-                          "Code_Individu": "BASILE",
-                          "Type_Temps": "Réel",
-                          "Valeur_Temps": "2025",
-                          "Date_enregistrement": DateTime.now().toIso8601String(),
-                          "Type_Poste": "Equipement",
-                          "Type_Categorie": "Logement",
-                          "Sous_Categorie": "Construction",
-                          "Nom_Poste": poste.nomEquipement,
-                          "Quantite": poste.surface,
-                          "Unite": "m²",
-                          "Facteur_Emission": facteursEmission[poste.nomEquipement],
-                          "Emission_Calculee": emission,
-                          "Mode_Calcul": "Amorti",
-                          "Annee_Achat": poste.anneeConstruction,
-                          "Duree_Amortissement": dureesAmortissement[poste.nomEquipement],
-                        });
+                        final maintenant = DateTime.now().toIso8601String();
+                        final codeIndividu = "BASILE";
+                        final typeTemps = "Réel";
+                        final valeurTemps = "2025";
+                        const typePoste = "Equipement";
+                        const typeCategorie = "Logement";
+                        const sousCategorie = "Construction";
+
+                        // LOGEMENT
+                        if (poste.surface > 0 && facteursEmission.containsKey(poste.nomEquipement)) {
+                          await ApiService.savePoste({
+                            "ID_Usage": poste.id,
+                            "Code_Individu": codeIndividu,
+                            "Type_Temps": typeTemps,
+                            "Valeur_Temps": valeurTemps,
+                            "Date_enregistrement": maintenant,
+                            "Type_Poste": typePoste,
+                            "Type_Categorie": typeCategorie,
+                            "Sous_Categorie": sousCategorie,
+                            "Nom_Poste": poste.nomEquipement,
+                            "Quantite": poste.surface,
+                            "Unite": "m²",
+                            "Facteur_Emission": facteursEmission[poste.nomEquipement],
+                            "Emission_Calculee": calculerEmissionUnitaire(
+                              poste.surface,
+                              facteursEmission[poste.nomEquipement]!,
+                              dureesAmortissement[poste.nomEquipement],
+                              poste.anneeConstruction,
+                              bien.nbProprietaires,
+                            ),
+                            "Mode_Calcul": "Amorti",
+                            "Annee_Achat": poste.anneeConstruction,
+                            "Duree_Amortissement": dureesAmortissement[poste.nomEquipement],
+                          });
+                        }
+
+                        // GARAGE
+                        if (poste.surfaceGarage > 0 && facteursEmission.containsKey("Garage béton")) {
+                          await ApiService.savePoste({
+                            "Code_Individu": codeIndividu,
+                            "Type_Temps": typeTemps,
+                            "Valeur_Temps": valeurTemps,
+                            "Date_enregistrement": maintenant,
+                            "Type_Poste": typePoste,
+                            "Type_Categorie": typeCategorie,
+                            "Sous_Categorie": sousCategorie,
+                            "Nom_Poste": "Garage béton",
+                            "Quantite": poste.surfaceGarage,
+                            "Unite": "m²",
+                            "Facteur_Emission": facteursEmission["Garage béton"],
+                            "Emission_Calculee": calculerEmissionUnitaire(
+                              poste.surfaceGarage,
+                              facteursEmission["Garage béton"]!,
+                              dureesAmortissement["Garage béton"],
+                              poste.anneeGarage,
+                              bien.nbProprietaires,
+                            ),
+                            "Mode_Calcul": "Amorti",
+                            "Annee_Achat": poste.anneeGarage,
+                            "Duree_Amortissement": dureesAmortissement["Garage béton"],
+                          });
+                        }
+
+                        // PISCINE
+                        if (poste.surfacePiscine > 0 && facteursEmission.containsKey(poste.typePiscine)) {
+                          await ApiService.savePoste({
+                            "Code_Individu": codeIndividu,
+                            "Type_Temps": typeTemps,
+                            "Valeur_Temps": valeurTemps,
+                            "Date_enregistrement": maintenant,
+                            "Type_Poste": typePoste,
+                            "Type_Categorie": typeCategorie,
+                            "Sous_Categorie": sousCategorie,
+                            "Nom_Poste": poste.typePiscine,
+                            "Quantite": poste.surfacePiscine,
+                            "Unite": "m²",
+                            "Facteur_Emission": facteursEmission[poste.typePiscine],
+                            "Emission_Calculee": calculerEmissionUnitaire(
+                              poste.surfacePiscine,
+                              facteursEmission[poste.typePiscine]!,
+                              dureesAmortissement[poste.typePiscine],
+                              poste.anneePiscine,
+                              bien.nbProprietaires,
+                            ),
+                            "Mode_Calcul": "Amorti",
+                            "Annee_Achat": poste.anneePiscine,
+                            "Duree_Amortissement": dureesAmortissement[poste.typePiscine],
+                          });
+                        }
+
+                        // ABRI / SERRE
+                        if (poste.surfaceAbriEtSerre > 0 && facteursEmission.containsKey("Abri de jardin bois")) {
+                          await ApiService.savePoste({
+                            "Code_Individu": codeIndividu,
+                            "Type_Temps": typeTemps,
+                            "Valeur_Temps": valeurTemps,
+                            "Date_enregistrement": maintenant,
+                            "Type_Poste": typePoste,
+                            "Type_Categorie": typeCategorie,
+                            "Sous_Categorie": sousCategorie,
+                            "Nom_Poste": "Abri de jardin bois",
+                            "Quantite": poste.surfaceAbriEtSerre,
+                            "Unite": "m²",
+                            "Facteur_Emission": facteursEmission["Abri de jardin bois"],
+                            "Emission_Calculee": calculerEmissionUnitaire(
+                              poste.surfaceAbriEtSerre,
+                              facteursEmission["Abri de jardin bois"]!,
+                              dureesAmortissement["Abri de jardin bois"],
+                              poste.anneeAbri,
+                              bien.nbProprietaires,
+                            ),
+                            "Mode_Calcul": "Amorti",
+                            "Annee_Achat": poste.anneeAbri,
+                            "Duree_Amortissement": dureesAmortissement["Abri de jardin bois"],
+                          });
+                        }
 
                         if (!mounted) return;
                         widget.onSave();

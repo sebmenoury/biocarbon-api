@@ -361,6 +361,14 @@ class _PosteListScreenState extends State<PosteListScreen> {
                     if (postesPourCeBien.isNotEmpty) {
                       final total = postesPourCeBien.fold<double>(0, (sum, p) => sum + (p.emissionCalculee ?? 0));
 
+                      // ✅ Bien existant reconstitué depuis les données disponibles
+                      final bienExistant = BienImmobilier(
+                        idBien: bien['ID_Bien'],
+                        typeBien: bien['Type_Bien'] ?? 'Logement principal',
+                        nomLogement: bien['Dénomination'] ?? '',
+                        poste: PosteBienImmobilier(), // 👈 sera enrichi dans ConstructionScreen via `loadPosteConstruction()`
+                      );
+
                       widgets.add(
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -374,14 +382,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                               child: InkWell(
                                 onTap: () {
                                   if (widget.sousCategorie == "Construction") {
-                                    final bien = BienImmobilier(
-                                      idBien: "BASILE-${DateTime.now().millisecondsSinceEpoch}",
-                                      typeBien: "Logement secondaire",
-                                      nomLogement: "",
-                                      poste: PosteBienImmobilier(),
-                                    );
-
-                                    Navigator.push(context, MaterialPageRoute(builder: (_) => ConstructionScreen(bien: bien, onSave: () => setState(() {}))));
+                                    Navigator.push(context, MaterialPageRoute(builder: (_) => ConstructionScreen(bien: bienExistant, onSave: () => setState(() {}))));
                                   } else {
                                     final entry = getEcranEtTitre(widget.typeCategorie, widget.sousCategorie);
                                     final screen = entry?.builder();
@@ -426,11 +427,20 @@ class _PosteListScreenState extends State<PosteListScreen> {
                         ),
                       );
                     } else {
+                      // 🆕 Ajout d’une déclaration à partir de zéro
+                      final bienModel = BienImmobilier(
+                        idBien: bien['ID_Bien'],
+                        typeBien: bien['Type_Bien'] ?? 'Logement secondaire',
+                        nomLogement: bien['Dénomination'] ?? '',
+                        poste: PosteBienImmobilier(),
+                      );
                       widgets.add(
                         CustomCard(
                           padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
                           child: InkWell(
-                            onTap: () => handleAdd(bien['ID_Bien']),
+                            onTap: () {
+                              Navigator.push(context, MaterialPageRoute(builder: (_) => ConstructionScreen(bien: bienModel, onSave: () => setState(() {}))));
+                            },
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [Text("Ajouter une déclaration pour ${bien['Dénomination'] ?? ''}", style: const TextStyle(fontSize: 12)), const Icon(Icons.chevron_right, size: 14)],
