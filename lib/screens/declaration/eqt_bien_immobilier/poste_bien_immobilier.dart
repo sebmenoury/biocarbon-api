@@ -1,6 +1,7 @@
 class PosteBienImmobilier {
   String? id; // 👈 ajouté
   String nomEquipement; // "Maison Classique", "Appartement BBC", etc.
+  String? typeBien; // "Logement principal", "Logement secondaire", etc.
   double surface;
   int anneeConstruction;
 
