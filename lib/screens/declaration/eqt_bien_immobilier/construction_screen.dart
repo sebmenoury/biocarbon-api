@@ -218,29 +218,54 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
 
               /// GARAGE
               CustomCard(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text("Surface garage (m²)", style: TextStyle(fontSize: 11)),
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        IconButton(icon: const Icon(Icons.remove), iconSize: 12, onPressed: () => setState(() => poste.surfaceGarage = (poste.surfaceGarage - 1).clamp(0, 500))),
-                        SizedBox(
-                          width: 50,
-                          child: TextFormField(
-                            initialValue: poste.surfaceGarage.toStringAsFixed(0),
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(fontSize: 12),
-                            keyboardType: TextInputType.number,
-                            decoration: const InputDecoration(isDense: true, border: InputBorder.none),
-                            onChanged: (val) {
-                              final parsed = double.tryParse(val);
-                              if (parsed != null) setState(() => poste.surfaceGarage = parsed);
-                            },
+                        const Text("Surface garage (m²)", style: TextStyle(fontSize: 11)),
+                        Container(
+                          height: 28, // 👈 assure une hauteur harmonieuse
+                          decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(8)),
+                          child: Row(
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.remove),
+                                onPressed: () => setState(() => poste.surfaceGarage = (poste.surfaceGarage - 1).clamp(0, 500)),
+                                visualDensity: VisualDensity.compact,
+                                iconSize: 18,
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                              ),
+                              SizedBox(
+                                width: 40,
+                                child: TextFormField(
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(fontSize: 11),
+                                  initialValue: poste.surfaceGarage.toStringAsFixed(0),
+                                  keyboardType: TextInputType.number,
+                                  decoration: const InputDecoration(isDense: true, border: InputBorder.none, contentPadding: EdgeInsets.zero),
+                                  onChanged: (val) {
+                                    final parsed = double.tryParse(val);
+                                    if (parsed != null) {
+                                      setState(() => poste.surfaceGarage = parsed.clamp(0, 500));
+                                    }
+                                  },
+                                ),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.add),
+                                onPressed: () => setState(() => poste.surfaceGarage = (poste.surfaceGarage + 1).clamp(0, 500)),
+                                visualDensity: VisualDensity.compact,
+                                iconSize: 18,
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                              ),
+                            ],
                           ),
                         ),
-                        IconButton(icon: const Icon(Icons.add), iconSize: 12, onPressed: () => setState(() => poste.surfaceGarage = (poste.surfaceGarage + 1).clamp(0, 500))),
                       ],
                     ),
                   ],

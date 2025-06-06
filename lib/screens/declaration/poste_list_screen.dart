@@ -302,7 +302,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                               textAlign: TextAlign.justify,
                             ),
                             const SizedBox(height: 6),
-                            const Text("📐 Ces émissions sont calculées selon la formule :", style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                            const Text("Ces émissions sont calculées selon la formule :", style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
                             const SizedBox(height: 8),
                             const Center(
                               child: Text(
@@ -310,7 +310,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                                 "× Surface du bien (en m²)\n"
                                 "× Facteur de pondération (période de construction)\n"
                                 "/ Nombre de propriétaires",
-                                style: TextStyle(fontSize: 11),
+                                style: TextStyle(fontSize: 10, fontStyle: FontStyle.italic),
                                 textAlign: TextAlign.center,
                               ),
                             ),
@@ -328,6 +328,9 @@ class _PosteListScreenState extends State<PosteListScreen> {
                         ),
                       ),
                     );
+
+                    // 👇 Espace sous l'image
+                    widgets.add(const SizedBox(height: 18));
                   }
                   // 🔁 Tous les autres cas gérés via la map texteParSousCategorie
                   else if (texteParSousCategorie.containsKey(widget.sousCategorie)) {
