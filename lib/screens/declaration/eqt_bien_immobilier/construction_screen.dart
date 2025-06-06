@@ -123,23 +123,32 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    DropdownButtonFormField<String>(
-                      value: facteursEmission.keys.contains(poste.nomEquipement) ? poste.nomEquipement : null,
-                      decoration: const InputDecoration(
-                        labelText: "Type de construction",
-                        labelStyle: TextStyle(fontSize: 10),
-                        isDense: true,
-                        contentPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 30),
-                      ),
-                      isExpanded: true,
-                      style: const TextStyle(fontSize: 11),
-                      items:
-                          facteursEmission.keys
-                              .where((k) => k.contains("Maison") || k.contains("Appartement"))
-                              .map((t) => DropdownMenuItem(value: t, child: Text(t, style: const TextStyle(fontSize: 11))))
-                              .toList(),
-                      onChanged: (val) => setState(() => poste.nomEquipement = val!),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        SizedBox(
+                          width: 180,
+                          child: DropdownButtonFormField<String>(
+                            value: facteursEmission.keys.contains(poste.nomEquipement) ? poste.nomEquipement : null,
+                            decoration: const InputDecoration(
+                              labelText: "Type de construction",
+                              labelStyle: TextStyle(fontSize: 10),
+                              isDense: true,
+                              contentPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 12),
+                            ),
+                            isExpanded: true,
+                            style: const TextStyle(fontSize: 11),
+                            items:
+                                facteursEmission.keys
+                                    .where((k) => k.contains("Maison") || k.contains("Appartement"))
+                                    .map((t) => DropdownMenuItem(value: t, child: Text(t, style: const TextStyle(fontSize: 11))))
+                                    .toList(),
+                            onChanged: (val) => setState(() => poste.nomEquipement = val!),
+                          ),
+                        ),
+                      ],
                     ),
+
                     const SizedBox(height: 12),
 
                     /// SURFACE
@@ -392,11 +401,19 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                     ),
                     const SizedBox(height: 12),
                     // Ligne type de piscine (dropdown)
-                    CustomDropdownCompact(
-                      value: poste.typePiscine,
-                      items: const ["Piscine béton", "Piscine coque"],
-                      label: "Type de piscine",
-                      onChanged: (val) => setState(() => poste.typePiscine = val ?? ''),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        SizedBox(
+                          width: 180, // ajuste si besoin
+                          child: CustomDropdownCompact(
+                            value: poste.typePiscine,
+                            items: const ["Piscine béton", "Piscine coque"],
+                            label: "Type de piscine",
+                            onChanged: (val) => setState(() => poste.typePiscine = val ?? ''),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
