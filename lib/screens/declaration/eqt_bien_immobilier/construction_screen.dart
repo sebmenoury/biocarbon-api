@@ -78,12 +78,14 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
         setState(() {
           for (final p in postesConstruction) {
             final nom = p['Nom_Poste'] ?? '';
+            final nomlogement = p['Nom_Logement'] ?? '';
             final quantite = double.tryParse(p['Quantite'].toString()) ?? 0;
             final annee = int.tryParse(p['Annee_Achat'].toString()) ?? 2010;
 
             if (nom.contains('Maison') || nom.contains('Appartement')) {
               poste.id = p['ID_Usage']; // tu peux n'en retenir qu’un
               poste.nomEquipement = nom;
+              poste.nomLogement = nomlogement;
               poste.surface = quantite;
               poste.anneeConstruction = annee;
               poste.typeBien = p['Type_Bien'] ?? bien.typeBien;
@@ -176,7 +178,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Row(children: [const Icon(Icons.home_work, size: 16), const SizedBox(width: 8), Text(bien.typeBien, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold))]),
+                    Row(children: [const Icon(Icons.home_work, size: 16), const SizedBox(width: 8), Text(bien.nomLogement, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold))]),
                     Text("${total.toStringAsFixed(0)} kg CO₂/an", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
                   ],
                 ),
@@ -528,6 +530,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                         ),
                       ],
                     ),
+                    const SizedBox(height: 12),
 
                     /// ANNÉE DE CONSTRUCTION
                     Row(
@@ -668,6 +671,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                         ),
                       ],
                     ),
+                    const SizedBox(height: 12),
 
                     /// ANNÉE DE CONSTRUCTION
                     Row(
@@ -772,6 +776,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                               "Type_Categorie": typeCategorie,
                               "Sous_Categorie": sousCategorie,
                               "Nom_Poste": poste.nomEquipement,
+                              "Nom_Logement": bien.nomLogement,
                               "Quantite": poste.surface,
                               "Unite": "m²",
                               "Facteur_Emission": facteursEmission[poste.nomEquipement],
@@ -799,6 +804,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                               "Type_Categorie": typeCategorie,
                               "Sous_Categorie": sousCategorie,
                               "Nom_Poste": "Garage béton",
+                              "Nom_Logement": bien.nomLogement,
                               "Quantite": poste.surfaceGarage,
                               "Unite": "m²",
                               "Facteur_Emission": facteursEmission["Garage béton"],
@@ -826,6 +832,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                               "Type_Categorie": typeCategorie,
                               "Sous_Categorie": sousCategorie,
                               "Nom_Poste": poste.typePiscine,
+                              "Nom_Logement": bien.nomLogement,
                               "Quantite": poste.surfacePiscine,
                               "Unite": "m²",
                               "Facteur_Emission": facteursEmission[poste.typePiscine],
@@ -853,6 +860,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                               "Type_Categorie": typeCategorie,
                               "Sous_Categorie": sousCategorie,
                               "Nom_Poste": "Abri de jardin bois",
+                              "Nom_Logement": bien.nomLogement,
                               "Quantite": poste.surfaceAbriEtSerre,
                               "Unite": "m²",
                               "Facteur_Emission": facteursEmission["Abri de jardin bois"],
@@ -907,6 +915,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                             "Type_Categorie": typeCategorie,
                             "Sous_Categorie": sousCategorie,
                             "Nom_Poste": poste.nomEquipement,
+                            "Nom_Logement": bien.nomLogement,
                             "Quantite": poste.surface,
                             "Unite": "m²",
                             "Facteur_Emission": facteursEmission[poste.nomEquipement],
@@ -934,6 +943,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                             "Type_Categorie": typeCategorie,
                             "Sous_Categorie": sousCategorie,
                             "Nom_Poste": "Garage béton",
+                            "Nom_Logement": bien.nomLogement,
                             "Quantite": poste.surfaceGarage,
                             "Unite": "m²",
                             "Facteur_Emission": facteursEmission["Garage béton"],
@@ -961,6 +971,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                             "Type_Categorie": typeCategorie,
                             "Sous_Categorie": sousCategorie,
                             "Nom_Poste": poste.typePiscine,
+                            "Nom_Logement": bien.nomLogement,
                             "Quantite": poste.surfacePiscine,
                             "Unite": "m²",
                             "Facteur_Emission": facteursEmission[poste.typePiscine],
@@ -988,6 +999,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                             "Type_Categorie": typeCategorie,
                             "Sous_Categorie": sousCategorie,
                             "Nom_Poste": "Abri de jardin bois",
+                            "Nom_Logement": bien.nomLogement,
                             "Quantite": poste.surfaceAbriEtSerre,
                             "Unite": "m²",
                             "Facteur_Emission": facteursEmission["Abri de jardin bois"],

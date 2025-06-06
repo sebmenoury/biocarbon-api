@@ -12,7 +12,7 @@ def add_poste():
 
     required_fields = [
         "Code_Individu", "Type_Temps", "Valeur_Temps", "Date_Enregistrement",
-        "Type_Poste", "Type_Categorie", "Sous_Categorie", "ID_Bien", "Type_Bien", "Nom_Poste", "Quantite", "Unite",
+        "Type_Poste", "Type_Categorie", "Sous_Categorie", "ID_Bien", "Type_Bien", "Nom_Poste", "Nom_Logement", "Quantite", "Unite",
         "Frequence", "Facteur_Emission", "Emission_Calculee", "Mode_Calcul", "Annee_Achat", "Duree_Amortissement"
     ]
 
@@ -36,6 +36,7 @@ def add_poste():
         data["ID_Bien"],
         data["Type_Bien"],
         data["Nom_Poste"],
+        data["Nom_Logement"],
         data["Quantite"],
         data["Unite"],
         data["Frequence"],
