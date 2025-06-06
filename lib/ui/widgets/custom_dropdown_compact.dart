@@ -6,13 +6,7 @@ class CustomDropdownCompact extends StatelessWidget {
   final String label;
   final ValueChanged<String?> onChanged;
 
-  const CustomDropdownCompact({
-    Key? key,
-    required this.value,
-    required this.items,
-    required this.label,
-    required this.onChanged,
-  }) : super(key: key);
+  const CustomDropdownCompact({Key? key, required this.value, required this.items, required this.label, required this.onChanged}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -29,12 +23,7 @@ class CustomDropdownCompact extends StatelessWidget {
             value: value,
             isExpanded: true,
             hint: Text("Sélectionner $label", style: const TextStyle(fontSize: 11)),
-            decoration: InputDecoration(
-              labelText: label,
-              labelStyle: const TextStyle(fontSize: 10),
-              isDense: true,
-              contentPadding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
-            ),
+            decoration: InputDecoration(labelText: label, labelStyle: const TextStyle(fontSize: 10), isDense: true, contentPadding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8)),
             style: const TextStyle(fontSize: 11),
             items:
                 items.map((item) {
@@ -42,10 +31,7 @@ class CustomDropdownCompact extends StatelessWidget {
                     value: item,
                     child: SizedBox(
                       height: 20, // Hauteur de ligne compacte
-                      child: Align(
-                        alignment: Alignment.centerRight,
-                        child: Text(item, textAlign: TextAlign.right, style: const TextStyle(fontSize: 11)),
-                      ),
+                      child: Align(alignment: Alignment.centerLeft, child: Text(item, textAlign: TextAlign.right, style: const TextStyle(fontSize: 11))),
                     ),
                   );
                 }).toList(),

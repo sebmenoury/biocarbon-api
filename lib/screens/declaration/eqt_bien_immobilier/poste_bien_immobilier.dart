@@ -1,4 +1,5 @@
 class PosteBienImmobilier {
+  String? id; // 👈 ajouté
   String nomEquipement; // "Maison Classique", "Appartement BBC", etc.
   double surface;
   int anneeConstruction;
@@ -14,6 +15,7 @@ class PosteBienImmobilier {
   double surfaceAbriEtSerre;
 
   PosteBienImmobilier({
+    this.id, // 👈 ajouté
     this.nomEquipement = "",
     this.surface = 100,
     this.anneeConstruction = 2010,

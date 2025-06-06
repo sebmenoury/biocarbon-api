@@ -32,16 +32,28 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
   late TextEditingController anneeController;
   late TextEditingController piscineController;
   late TextEditingController abriController;
+  late bool isEdition;
 
   @override
   void initState() {
     super.initState();
+    isEdition = widget.bien.poste.nomEquipement.isNotEmpty;
     loadEquipementsData();
     garageController = TextEditingController(text: poste.surfaceGarage.toStringAsFixed(0));
     surfaceController = TextEditingController(text: poste.surface.toStringAsFixed(0));
     anneeController = TextEditingController(text: poste.anneeConstruction.toString());
     piscineController = TextEditingController(text: poste.surfacePiscine.toStringAsFixed(0));
     abriController = TextEditingController(text: poste.surfaceAbriEtSerre.toStringAsFixed(0));
+
+    if (!isEdition) {
+      poste.nomEquipement = "Maison Classique"; // par défaut
+      poste.surface = 100;
+      poste.anneeConstruction = DateTime.now().year - 10;
+      poste.surfaceGarage = 0;
+      poste.surfacePiscine = 0;
+      poste.typePiscine = "Piscine béton";
+      poste.surfaceAbriEtSerre = 0;
+    }
   }
 
   @override
@@ -280,7 +292,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text("Surface garage (m²)", style: TextStyle(fontSize: 11)),
+                    const Text("Surface garage béton (m²)", style: TextStyle(fontSize: 11)),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 4),
                       decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(12)),
@@ -425,7 +437,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text("Surface abri / serre (m²)", style: TextStyle(fontSize: 11)),
+                    const Text("Surface abri / serre bois (m²)", style: TextStyle(fontSize: 11)),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 4),
                       decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(12)),
@@ -482,47 +494,86 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
               const SizedBox(height: 24),
 
               /// BOUTON
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  ElevatedButton.icon(
-                    onPressed: () async {
-                      final double emission = calculerTotalEmission(poste, facteursEmission, dureesAmortissement, nbProprietaires: bien.nbProprietaires);
-                      await ApiService.savePoste({
-                        "Code_Individu": "BASILE",
-                        "Type_Temps": "Réel",
-                        "Valeur_Temps": "2025",
-                        "Date_enregistrement": DateTime.now().toIso8601String(),
-                        "Type_Poste": "Equipement",
-                        "Type_Categorie": "Logement",
-                        "Sous_Categorie": "Habitat",
-                        "Nom_Poste": poste.nomEquipement,
-                        "Nom_Logement": bien.nomLogement,
-                        "Quantite": poste.surface,
-                        "Unite": "m²",
-                        "Facteur_Emission": facteursEmission[poste.nomEquipement],
-                        "Emission_Calculee": emission,
-                        "Mode_Calcul": "Amorti",
-                        "Annee_Achat": poste.anneeConstruction,
-                        "Duree_Amortissement": dureesAmortissement[poste.nomEquipement],
-                      });
+              const SizedBox(height: 24),
+              poste.nomEquipement.isNotEmpty
+                  ? Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
+                        onPressed: () async {
+                          await ApiService.deleteUCPoste(poste.id!); // 👈 Corrigé
+                          if (!mounted) return;
+                          Navigator.of(context).pop(); // retour à l'écran précédent
+                        },
+                        child: const Text("Supprimer", style: TextStyle(fontSize: 12, color: Colors.red)),
+                      ),
+                      ElevatedButton(
+                        onPressed: () async {
+                          final emission = calculerTotalEmission(poste, facteursEmission, dureesAmortissement, nbProprietaires: bien.nbProprietaires);
 
-                      if (!mounted) return;
-                      if (widget.onSave != null) widget.onSave!();
-                      Navigator.of(context).pop();
-                    },
-                    icon: const Icon(Icons.save, size: 14),
-                    label: const Text("Enregistrer", style: TextStyle(fontSize: 12)),
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: const Size(120, 36),
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      backgroundColor: Colors.green[100],
-                      foregroundColor: Colors.green[900],
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                          await ApiService.savePoste({
+                            "ID_Usage": poste.id,
+                            "Code_Individu": "BASILE",
+                            "Type_Temps": "Réel",
+                            "Valeur_Temps": "2025",
+                            "Date_enregistrement": DateTime.now().toIso8601String(),
+                            "Type_Poste": "Equipement",
+                            "Type_Categorie": "Logement",
+                            "Sous_Categorie": "Construction",
+                            "Nom_Poste": poste.nomEquipement,
+                            "Quantite": poste.surface,
+                            "Unite": "m²",
+                            "Facteur_Emission": facteursEmission[poste.nomEquipement],
+                            "Emission_Calculee": emission,
+                            "Mode_Calcul": "Amorti",
+                            "Annee_Achat": poste.anneeConstruction,
+                            "Duree_Amortissement": dureesAmortissement[poste.nomEquipement],
+                          });
+
+                          if (!mounted) return;
+                          widget.onSave();
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text("Mettre à jour", style: TextStyle(fontSize: 12)),
+                      ),
+                    ],
+                  )
+                  : Center(
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        if (poste.nomEquipement.trim().isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('⚠️ Merci de sélectionner un type de construction')));
+                          return;
+                        }
+
+                        final emission = calculerTotalEmission(poste, facteursEmission, dureesAmortissement, nbProprietaires: bien.nbProprietaires);
+
+                        await ApiService.savePoste({
+                          "Code_Individu": "BASILE",
+                          "Type_Temps": "Réel",
+                          "Valeur_Temps": "2025",
+                          "Date_enregistrement": DateTime.now().toIso8601String(),
+                          "Type_Poste": "Equipement",
+                          "Type_Categorie": "Logement",
+                          "Sous_Categorie": "Construction",
+                          "Nom_Poste": poste.nomEquipement,
+                          "Quantite": poste.surface,
+                          "Unite": "m²",
+                          "Facteur_Emission": facteursEmission[poste.nomEquipement],
+                          "Emission_Calculee": emission,
+                          "Mode_Calcul": "Amorti",
+                          "Annee_Achat": poste.anneeConstruction,
+                          "Duree_Amortissement": dureesAmortissement[poste.nomEquipement],
+                        });
+
+                        if (!mounted) return;
+                        widget.onSave();
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text("Enregistrer", style: TextStyle(fontSize: 12)),
                     ),
                   ),
-                ],
-              ),
             ],
           ),
         ),
