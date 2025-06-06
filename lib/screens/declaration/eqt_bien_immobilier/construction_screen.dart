@@ -502,9 +502,11 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
                         onPressed: () async {
-                          await ApiService.deleteUCPoste(poste.id!); // 👈 Corrigé
-                          if (!mounted) return;
-                          Navigator.of(context).pop(); // retour à l'écran précédent
+                          if (poste.id != null) {
+                            await ApiService.deleteUCPoste(poste.id!);
+                            if (!mounted) return;
+                            Navigator.of(context).pop(); // retour à l'écran précédent
+                          }
                         },
                         child: const Text("Supprimer", style: TextStyle(fontSize: 12, color: Colors.red)),
                       ),
@@ -532,8 +534,8 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                           });
 
                           if (!mounted) return;
-                          widget.onSave();
-                          Navigator.of(context).pop();
+                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("✅ Poste mis à jour")));
+                          Navigator.pop(context);
                         },
                         child: const Text("Mettre à jour", style: TextStyle(fontSize: 12)),
                       ),
