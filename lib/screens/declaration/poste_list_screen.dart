@@ -54,28 +54,6 @@ class _PosteListScreenState extends State<PosteListScreen> {
     }
   }
 
-  // ---------------------------------------------------------------
-  // Intialisation des valeurs pour construction screen à remplacer
-  // ---------------------------------------------------------------
-  void handleAdd([String? idBien]) {
-    final nouveauPoste = PosteBienImmobilier(
-      nomEquipement: '',
-      surface: 100,
-      anneeConstruction: 2010,
-      garage: false,
-      surfaceGarage: 30,
-      piscine: false,
-      typePiscine: "Piscine béton",
-      surfacePiscine: 10,
-      abriEtSerre: false,
-      surfaceAbriEtSerre: 5,
-    );
-
-    final nouveauBien = BienImmobilier(idBien: idBien, typeBien: 'Logement principal', nomLogement: '', adresse: '', inclureDansBilan: true, poste: nouveauPoste);
-
-    Navigator.push(context, MaterialPageRoute(builder: (context) => ConstructionScreen(bien: nouveauBien, onSave: () => setState(() {}))));
-  }
-
   bool isNavigated = false;
 
   @override
@@ -92,36 +70,6 @@ class _PosteListScreenState extends State<PosteListScreen> {
         });
       });
     }
-  }
-
-  // ---------------------------------------------------------------
-  // Intialisation des valeurs pour construction screen à remplacer
-  // ---------------------------------------------------------------
-
-  void openConstructionScreen(Map<String, dynamic> bien) {
-    final poste = PosteBienImmobilier(
-      nomEquipement: bien['Nom_Equipement'] ?? '',
-      surface: double.tryParse(bien['Surface']?.toString() ?? '100') ?? 100,
-      anneeConstruction: int.tryParse(bien['Annee_Construction']?.toString() ?? '2000') ?? 2000,
-      garage: bien['Garage'] == true,
-      surfaceGarage: double.tryParse(bien['Surface_Garage']?.toString() ?? '0') ?? 0,
-      piscine: bien['Piscine'] == true,
-      typePiscine: bien['Type_Piscine'] ?? "Piscine béton",
-      surfacePiscine: double.tryParse(bien['Surface_Piscine']?.toString() ?? '0') ?? 0,
-      abriEtSerre: bien['AbriEtSerre'] == true,
-      surfaceAbriEtSerre: double.tryParse(bien['Surface_AbriEtSerre']?.toString() ?? '0') ?? 0,
-    );
-
-    final bienObj = BienImmobilier(
-      idBien: bien['ID_Bien'],
-      typeBien: bien['Type_Bien'] ?? '',
-      nomLogement: bien['Dénomination'] ?? '',
-      adresse: bien['Adresse'] ?? '',
-      inclureDansBilan: bien['Inclure_dans_Bilan'] == true,
-      poste: poste,
-    );
-
-    Navigator.push(context, MaterialPageRoute(builder: (context) => ConstructionScreen(bien: bienObj, onSave: () => setState(() {}))));
   }
 
   @override
@@ -332,7 +280,9 @@ class _PosteListScreenState extends State<PosteListScreen> {
                     // 👇 Espace sous l'image
                     widgets.add(const SizedBox(height: 18));
                   }
+                  // ----------------------------------------------------
                   // 🔁 Tous les autres cas gérés via la map texteParSousCategorie
+                  // ----------------------------------------------------
                   else if (texteParSousCategorie.containsKey(widget.sousCategorie)) {
                     widgets.add(
                       Padding(
@@ -361,12 +311,12 @@ class _PosteListScreenState extends State<PosteListScreen> {
                     if (postesPourCeBien.isNotEmpty) {
                       final total = postesPourCeBien.fold<double>(0, (sum, p) => sum + (p.emissionCalculee ?? 0));
 
-                      // ✅ Bien existant reconstitué depuis les données disponibles
+                      // Bien existant reconstitué depuis les données disponibles
                       final bienExistant = BienImmobilier(
                         idBien: bien['ID_Bien'],
                         typeBien: bien['Type_Bien'] ?? 'Logement principal',
                         nomLogement: bien['Dénomination'] ?? '',
-                        poste: PosteBienImmobilier(), // 👈 sera enrichi dans ConstructionScreen via `loadPosteConstruction()`
+                        poste: PosteBienImmobilier(),
                       );
 
                       widgets.add(
@@ -430,7 +380,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                       // 🆕 Ajout d’une déclaration à partir de zéro
                       final bienModel = BienImmobilier(
                         idBien: bien['ID_Bien'],
-                        typeBien: bien['Type_Bien'] ?? 'Logement secondaire',
+                        typeBien: bien['Type_Bien'] ?? 'Logement principal',
                         nomLogement: bien['Dénomination'] ?? '',
                         poste: PosteBienImmobilier(),
                       );
