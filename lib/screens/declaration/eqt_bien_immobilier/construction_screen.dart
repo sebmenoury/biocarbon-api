@@ -98,12 +98,25 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
           Center(child: Text("Construction et rénovations associées au logement", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold))),
         ],
       ),
+
       children: [
         SingleChildScrollView(
           padding: const EdgeInsets.all(12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              /// DENTETE TYPE DE BIEN AVEC EMISSION ACTUALISEE
+              CustomCard(
+                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(children: [const Icon(Icons.home_work, size: 16), const SizedBox(width: 8), Text(bien.typeBien, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold))]),
+                    Text("${total.toStringAsFixed(0)} kg CO₂/an", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                  ],
+                ),
+              ),
+
               /// DESCRIPTIF DU BIEN
               CustomCard(
                 padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
@@ -205,7 +218,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                                 constraints: const BoxConstraints(),
                                 onPressed: () {
                                   setState(() {
-                                    poste.anneeConstruction = (poste.anneeConstruction - 1).clamp(0, 1000);
+                                    poste.anneeConstruction = (poste.anneeConstruction - 1).clamp(1900, DateTime.now().year);
                                     anneeController.text = poste.anneeConstruction.toStringAsFixed(0);
                                   });
                                 },
@@ -222,7 +235,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                                     final parsed = int.tryParse(val);
                                     if (parsed != null) {
                                       setState(() {
-                                        poste.anneeConstruction = parsed;
+                                        poste.anneeConstruction = parsed.clamp(1900, DateTime.now().year);
                                       });
                                     }
                                   },
@@ -235,7 +248,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                                 constraints: const BoxConstraints(),
                                 onPressed: () {
                                   setState(() {
-                                    poste.anneeConstruction = (poste.anneeConstruction + 1).clamp(0, 1000);
+                                    poste.anneeConstruction = (poste.anneeConstruction + 1).clamp(1900, DateTime.now().year);
                                     anneeController.text = poste.anneeConstruction.toStringAsFixed(0);
                                   });
                                 },
@@ -271,7 +284,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                             constraints: const BoxConstraints(),
                             onPressed: () {
                               setState(() {
-                                poste.surfaceGarage = (poste.surfaceGarage - 1).clamp(0, 1000);
+                                poste.surfaceGarage = (poste.surfaceGarage - 1).clamp(0, 500);
                                 garageController.text = poste.surfaceGarage.toStringAsFixed(0);
                               });
                             },
@@ -301,7 +314,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                             constraints: const BoxConstraints(),
                             onPressed: () {
                               setState(() {
-                                poste.surfaceGarage = (poste.surfaceGarage + 1).clamp(0, 1000);
+                                poste.surfaceGarage = (poste.surfaceGarage + 1).clamp(0, 500);
                                 garageController.text = poste.surfaceGarage.toStringAsFixed(0);
                               });
                             },
@@ -317,61 +330,68 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
               /// PISCINE
               CustomCard(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text("Surface piscine (m²)", style: TextStyle(fontSize: 11)),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 4),
-                      decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(12)),
-                      child: Row(
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.remove),
-                            iconSize: 16,
-                            padding: EdgeInsets.zero,
-                            constraints: const BoxConstraints(),
-                            onPressed: () {
-                              setState(() {
-                                poste.surfacePiscine = (poste.surfacePiscine - 1).clamp(0, 1000);
-                                piscineController.text = poste.surfacePiscine.toStringAsFixed(0);
-                              });
-                            },
-                          ),
-                          SizedBox(
-                            width: 40,
-                            child: TextFormField(
-                              controller: piscineController,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(fontSize: 12),
-                              keyboardType: TextInputType.number,
-                              decoration: const InputDecoration(isDense: true, border: InputBorder.none, contentPadding: EdgeInsets.symmetric(vertical: 6)),
-                              onChanged: (val) {
-                                final parsed = double.tryParse(val);
-                                if (parsed != null) {
+                    // Ligne surface piscine
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text("Surface piscine (m²)", style: TextStyle(fontSize: 11)),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
+                          decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(12)),
+                          child: Row(
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.remove),
+                                iconSize: 16,
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                                onPressed: () {
                                   setState(() {
-                                    poste.surfacePiscine = parsed;
+                                    poste.surfacePiscine = (poste.surfacePiscine - 1).clamp(0, 200);
+                                    piscineController.text = poste.surfacePiscine.toStringAsFixed(0);
                                   });
-                                }
-                              },
-                            ),
+                                },
+                              ),
+                              SizedBox(
+                                width: 40,
+                                child: TextFormField(
+                                  controller: piscineController,
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(fontSize: 12),
+                                  keyboardType: TextInputType.number,
+                                  decoration: const InputDecoration(isDense: true, border: InputBorder.none, contentPadding: EdgeInsets.symmetric(vertical: 6)),
+                                  onChanged: (val) {
+                                    final parsed = double.tryParse(val);
+                                    if (parsed != null) {
+                                      setState(() {
+                                        poste.surfacePiscine = parsed;
+                                      });
+                                    }
+                                  },
+                                ),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.add),
+                                iconSize: 16,
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                                onPressed: () {
+                                  setState(() {
+                                    poste.surfacePiscine = (poste.surfacePiscine + 1).clamp(0, 200);
+                                    piscineController.text = poste.surfacePiscine.toStringAsFixed(0);
+                                  });
+                                },
+                              ),
+                            ],
                           ),
-                          IconButton(
-                            icon: const Icon(Icons.add),
-                            iconSize: 16,
-                            padding: EdgeInsets.zero,
-                            constraints: const BoxConstraints(),
-                            onPressed: () {
-                              setState(() {
-                                poste.surfacePiscine = (poste.surfacePiscine + 1).clamp(0, 1000);
-                                piscineController.text = poste.surfacePiscine.toStringAsFixed(0);
-                              });
-                            },
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 12),
+                    // Ligne type de piscine (dropdown)
                     CustomDropdownCompact(
                       value: poste.typePiscine,
                       items: const ["Piscine béton", "Piscine coque"],
@@ -401,7 +421,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                             constraints: const BoxConstraints(),
                             onPressed: () {
                               setState(() {
-                                poste.surfaceAbriEtSerre = (poste.surfaceAbriEtSerre - 1).clamp(0, 1000);
+                                poste.surfaceAbriEtSerre = (poste.surfaceAbriEtSerre - 1).clamp(0, 400);
                                 abriController.text = poste.surfaceAbriEtSerre.toStringAsFixed(0);
                               });
                             },
@@ -431,7 +451,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                             constraints: const BoxConstraints(),
                             onPressed: () {
                               setState(() {
-                                poste.surfaceAbriEtSerre = (poste.surfaceAbriEtSerre + 1).clamp(0, 1000);
+                                poste.surfaceAbriEtSerre = (poste.surfaceAbriEtSerre + 1).clamp(0, 400);
                                 abriController.text = poste.surfaceAbriEtSerre.toStringAsFixed(0);
                               });
                             },
@@ -442,7 +462,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                   ],
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 24),
 
               /// BOUTON
               Row(
