@@ -26,6 +26,8 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
   String? errorMsg;
 
   late BienImmobilier bien;
+  bool bienCharge = false;
+
   PosteBienImmobilier get poste => bien.poste;
 
   late TextEditingController garageController;
@@ -37,9 +39,6 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
   late TextEditingController anneePiscineController;
   late TextEditingController anneeAbriController;
 
-  bool isEdition = false;
-  bool bienCharge = false;
-
   @override
   void initState() {
     super.initState();
@@ -49,7 +48,6 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
 
   Future<void> loadBienComplet() async {
     try {
-      // 1. Charger données de base du bien
       final biens = await ApiService.getBiens("BASILE");
       final bienData = biens.firstWhere((b) => b['ID_Bien'] == widget.idBien, orElse: () => {});
 
@@ -60,14 +58,12 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
       final nbProp = int.tryParse(bienData['Nb_Proprietaires'].toString()) ?? 1;
       final nbHabitants = double.tryParse(bienData['Nb_Habitants'].toString()) ?? 1;
 
-      // 2. Charger UC-Postes
       final postes = await ApiService.getUCPostes("BASILE", "2025");
       final postesConstruction = postes.where((p) => p['Nom_Logement'] == nomLogement && p['Sous_Categorie'] == 'Construction').toList();
 
       PosteBienImmobilier poste = PosteBienImmobilier();
 
       if (postesConstruction.isNotEmpty) {
-        isEdition = true;
         for (final p in postesConstruction) {
           final nom = p['Nom_Poste'] ?? '';
           final quantite = double.tryParse(p['Quantite'].toString()) ?? 0;
@@ -118,6 +114,10 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
       });
     } catch (e) {
       debugPrint("❌ Erreur chargement du bien complet : $e");
+      setState(() {
+        errorMsg = "Erreur lors du chargement du bien.";
+        isLoading = false;
+      });
     }
   }
 
@@ -168,22 +168,23 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final total = calculerTotalEmission(poste, facteursEmission, dureesAmortissement, nbProprietaires: bien.nbProprietaires);
-
-    if (isLoading) return const Center(child: CircularProgressIndicator());
-    if (errorMsg != null) {
-      return Scaffold(body: Center(child: Text(errorMsg!, style: const TextStyle(color: Colors.red))));
+    if (!bienCharge || isLoading) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
+
+    if (errorMsg != null) {
+      return Scaffold(body: Center(child: Text(errorMsg!, style: TextStyle(color: Colors.red))));
+    }
+    final total = calculerTotalEmission(poste, facteursEmission, dureesAmortissement, nbProprietaires: bien.nbProprietaires);
 
     return BaseScreen(
       title: Row(
         children: [
           IconButton(icon: const Icon(Icons.arrow_back), iconSize: 18, onPressed: () => Navigator.pop(context), padding: EdgeInsets.zero, constraints: const BoxConstraints()),
           const SizedBox(width: 8),
-          Center(child: Text("Construction et rénovations associées au logement", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold))),
+          const Text("Construction et rénovations associées au logement", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
         ],
       ),
-
       children: [
         SingleChildScrollView(
           padding: const EdgeInsets.all(12),
