@@ -882,7 +882,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                           }
 
                           // ABRI / SERRE
-                          if (poste.surfaceAbriEtSerre > 0 && facteursEmission.containsKey("Abri de jardin bois")) {
+                          if (poste.surfaceAbriEtSerre > 0 && facteursEmission.containsKey("Abri / serre de jardin")) {
                             await ApiService.savePoste({
                               "Code_Individu": codeIndividu,
                               "Type_Temps": typeTemps,
@@ -891,21 +891,21 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                               "Type_Poste": typePoste,
                               "Type_Categorie": typeCategorie,
                               "Sous_Categorie": sousCategorie,
-                              "Nom_Poste": "Abri de jardin bois",
+                              "Nom_Poste": "Abri / serre de jardin",
                               "Nom_Logement": bien.nomLogement,
                               "Quantite": poste.surfaceAbriEtSerre,
                               "Unite": "m²",
-                              "Facteur_Emission": facteursEmission["Abri de jardin bois"],
+                              "Facteur_Emission": facteursEmission["Abri / serre de jardin"],
                               "Emission_Calculee": calculerEmissionUnitaire(
                                 poste.surfaceAbriEtSerre,
-                                facteursEmission["Abri de jardin bois"]!,
-                                dureesAmortissement["Abri de jardin bois"],
+                                facteursEmission["Abri / serre de jardin"]!,
+                                dureesAmortissement["Abri / serre de jardin"],
                                 poste.anneeAbri,
                                 bien.nbProprietaires,
                               ),
                               "Mode_Calcul": "Amorti",
                               "Annee_Achat": poste.anneeAbri,
-                              "Duree_Amortissement": dureesAmortissement["Abri de jardin bois"],
+                              "Duree_Amortissement": dureesAmortissement["Abri / serre de jardin"],
                             });
                           }
 
