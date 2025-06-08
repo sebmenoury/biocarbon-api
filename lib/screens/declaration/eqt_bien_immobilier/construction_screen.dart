@@ -103,7 +103,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
         poste.anneeConstruction = DateTime.now().year - 10;
         poste.surfaceGarage = 0;
         poste.surfacePiscine = 0;
-        poste.typePiscine = "Piscine béton";
+        poste.typePiscine = "";
         poste.surfaceAbriEtSerre = 0;
       }
 
