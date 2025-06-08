@@ -26,16 +26,16 @@ class PosteBienImmobilier {
     this.anneeConstruction = 2025,
 
     this.garage = false,
-    this.surfaceGarage = 30,
+    this.surfaceGarage = 0,
     this.anneeGarage = 2025,
 
     this.piscine = false,
     this.typePiscine = "",
-    this.surfacePiscine = 10, // ✅ Valeur par défaut
+    this.surfacePiscine = 0, // ✅ Valeur par défaut
     this.anneePiscine = 2025,
 
     this.abriEtSerre = false,
-    this.surfaceAbriEtSerre = 10,
+    this.surfaceAbriEtSerre = 0,
     this.anneeAbri = 2025,
   });
 }

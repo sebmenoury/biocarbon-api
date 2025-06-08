@@ -54,7 +54,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
 
       if (bienData.isEmpty) throw Exception("Bien introuvable");
 
-      final nomLogement = (bienData['Nom_Logement'] ?? '').toString().trim();
+      final nomLogement = (bienData['Dénomination'] ?? '').toString().trim();
       final typeBien = bienData['Type_Bien'] ?? 'Logement principal';
       final nbProp = int.tryParse(bienData['Nb_Proprietaires'].toString()) ?? 1;
       final nbHabitants = double.tryParse(bienData['Nb_Habitants'].toString()) ?? 1;
