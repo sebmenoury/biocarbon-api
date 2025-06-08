@@ -187,6 +187,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
       return Scaffold(body: Center(child: Text(errorMsg!, style: TextStyle(color: Colors.red))));
     }
     final total = calculerTotalEmission(poste, facteursEmission, dureesAmortissement, nbProprietaires: bien.nbProprietaires);
+    final List<String> typesPiscine = ["Piscine béton", "Piscine coque"];
 
     return BaseScreen(
       title: Row(
@@ -628,10 +629,10 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                         SizedBox(
                           width: 180, // ajuste si besoin
                           child: CustomDropdownCompact(
-                            value: poste.typePiscine,
-                            items: const ["Piscine béton", "Piscine coque"],
+                            value: typesPiscine.contains(poste.typePiscine) ? poste.typePiscine : typesPiscine.first,
+                            items: typesPiscine,
                             label: "Type de piscine",
-                            onChanged: (val) => setState(() => poste.typePiscine = val ?? ''),
+                            onChanged: (val) => setState(() => poste.typePiscine = val ?? typesPiscine.first),
                           ),
                         ),
                       ],
