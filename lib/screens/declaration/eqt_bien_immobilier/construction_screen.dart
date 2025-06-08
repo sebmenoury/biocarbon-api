@@ -48,26 +48,37 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
 
   Future<void> loadBienComplet() async {
     try {
+      // 🔹 1. Chargement du bien
       final biens = await ApiService.getBiens("BASILE");
       final bienData = biens.firstWhere((b) => b['ID_Bien'] == widget.idBien, orElse: () => {});
 
       if (bienData.isEmpty) throw Exception("Bien introuvable");
 
-      final nomLogement = bienData['Nom_Logement'] ?? '';
+      final nomLogement = (bienData['Nom_Logement'] ?? '').toString().trim();
       final typeBien = bienData['Type_Bien'] ?? 'Logement principal';
       final nbProp = int.tryParse(bienData['Nb_Proprietaires'].toString()) ?? 1;
       final nbHabitants = double.tryParse(bienData['Nb_Habitants'].toString()) ?? 1;
 
+      debugPrint("✅ Bien trouvé : $nomLogement");
+
+      // 🔹 2. Chargement des postes UC-Poste
       final postes = await ApiService.getUCPostes("BASILE", "2025");
-      final postesConstruction = postes.where((p) => p['Nom_Logement'] == nomLogement && p['Sous_Categorie'] == 'Construction').toList();
+
+      debugPrint("📦 ${postes.length} postes chargés");
+
+      final postesConstruction = postes.where((p) => (p['Nom_Logement']?.toString().trim().toLowerCase() ?? '') == nomLogement.toLowerCase() && p['Sous_Categorie'] == 'Construction').toList();
 
       PosteBienImmobilier poste = PosteBienImmobilier();
 
       if (postesConstruction.isNotEmpty) {
+        debugPrint("🏗 ${postesConstruction.length} postes Construction trouvés pour $nomLogement");
+
         for (final p in postesConstruction) {
           final nom = p['Nom_Poste'] ?? '';
           final quantite = double.tryParse(p['Quantite'].toString()) ?? 0;
           final annee = int.tryParse(p['Annee_Achat'].toString()) ?? 2010;
+
+          debugPrint("➡️ Poste ${p['Nom_Poste']} : $quantite m², année $annee");
 
           if (nom.contains('Maison') || nom.contains('Appartement')) {
             poste.id = p['ID_Usage'];
@@ -89,6 +100,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
           }
         }
       } else {
+        debugPrint("⚠️ Aucun poste Construction trouvé pour ce bien. Initialisation par défaut.");
         poste.nomEquipement = "Maison Classique";
         poste.surface = 100;
         poste.anneeConstruction = DateTime.now().year - 10;
@@ -98,8 +110,10 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
         poste.surfaceAbriEtSerre = 0;
       }
 
+      // 🔹 3. Initialisation finale du bien
       bien = BienImmobilier(idBien: widget.idBien, nomLogement: nomLogement, typeBien: typeBien, nbProprietaires: nbProp, nbHabitants: nbHabitants, poste: poste);
 
+      // 🔹 4. Contrôleurs
       garageController = TextEditingController(text: poste.surfaceGarage.toStringAsFixed(0));
       surfaceController = TextEditingController(text: poste.surface.toStringAsFixed(0));
       anneeController = TextEditingController(text: poste.anneeConstruction.toString());
