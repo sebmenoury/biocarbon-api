@@ -312,12 +312,6 @@ class _PosteListScreenState extends State<PosteListScreen> {
                       final total = postesPourCeBien.fold<double>(0, (sum, p) => sum + (p.emissionCalculee ?? 0));
 
                       // Bien existant reconstitué depuis les données disponibles
-                      final bienExistant = BienImmobilier(
-                        idBien: bien['ID_Bien'],
-                        typeBien: bien['Type_Bien'] ?? 'Logement principal',
-                        nomLogement: bien['Dénomination'] ?? '',
-                        poste: PosteBienImmobilier(),
-                      );
 
                       widgets.add(
                         Column(
@@ -332,7 +326,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                               child: InkWell(
                                 onTap: () {
                                   if (widget.sousCategorie == "Construction") {
-                                    Navigator.push(context, MaterialPageRoute(builder: (_) => ConstructionScreen(bien: bienExistant, onSave: () => setState(() {}))));
+                                    Navigator.push(context, MaterialPageRoute(builder: (_) => ConstructionScreen(idBien: bien['ID_Bien'], onSave: () => setState(() {}))));
                                   } else {
                                     final entry = getEcranEtTitre(widget.typeCategorie, widget.sousCategorie);
                                     final screen = entry?.builder();
@@ -378,18 +372,12 @@ class _PosteListScreenState extends State<PosteListScreen> {
                       );
                     } else {
                       // 🆕 Ajout d’une déclaration à partir de zéro
-                      final bienModel = BienImmobilier(
-                        idBien: bien['ID_Bien'],
-                        typeBien: bien['Type_Bien'] ?? 'Logement principal',
-                        nomLogement: bien['Dénomination'] ?? '',
-                        poste: PosteBienImmobilier(),
-                      );
                       widgets.add(
                         CustomCard(
                           padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
                           child: InkWell(
                             onTap: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (_) => ConstructionScreen(bien: bienModel, onSave: () => setState(() {}))));
+                              Navigator.push(context, MaterialPageRoute(builder: (_) => ConstructionScreen(idBien: bien['ID_Bien'], onSave: () => setState(() {}))));
                             },
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -10,10 +10,10 @@ import 'emission_calculator_immobilier.dart';
 import 'const_construction.dart';
 
 class ConstructionScreen extends StatefulWidget {
-  final BienImmobilier bien;
+  final String idBien;
   final VoidCallback onSave;
 
-  const ConstructionScreen({Key? key, required this.bien, required this.onSave}) : super(key: key);
+  const ConstructionScreen({Key? key, required this.idBien, required this.onSave}) : super(key: key);
 
   @override
   State<ConstructionScreen> createState() => _ConstructionScreenState();
@@ -25,8 +25,8 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
   bool isLoading = true;
   String? errorMsg;
 
-  BienImmobilier get bien => widget.bien;
-  PosteBienImmobilier get poste => widget.bien.poste;
+  late BienImmobilier bien;
+  PosteBienImmobilier get poste => bien.poste;
 
   late TextEditingController garageController;
   late TextEditingController surfaceController;
@@ -36,106 +36,89 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
   late TextEditingController anneeGarageController;
   late TextEditingController anneePiscineController;
   late TextEditingController anneeAbriController;
-  late bool isEdition;
+
+  bool isEdition = false;
+  bool bienCharge = false;
 
   @override
   void initState() {
     super.initState();
-    isEdition = widget.bien.poste.nomEquipement.isNotEmpty;
     loadEquipementsData();
-    loadPosteConstruction(); // 👈 Ajoute ceci
-    loadBienImmobilier();
-    garageController = TextEditingController(text: poste.surfaceGarage.toStringAsFixed(0));
-    surfaceController = TextEditingController(text: poste.surface.toStringAsFixed(0));
-    anneeController = TextEditingController(text: poste.anneeConstruction.toString());
-    piscineController = TextEditingController(text: poste.surfacePiscine.toStringAsFixed(0));
-    abriController = TextEditingController(text: poste.surfaceAbriEtSerre.toStringAsFixed(0));
-    anneeGarageController = TextEditingController(text: poste.anneeGarage.toString());
-    anneePiscineController = TextEditingController(text: poste.anneePiscine.toString());
-    anneeAbriController = TextEditingController(text: poste.anneeAbri.toString());
-
-    if (!isEdition) {
-      poste.nomEquipement = "Maison Classique"; // par défaut
-      poste.surface = 100;
-      poste.anneeConstruction = DateTime.now().year - 10;
-      poste.surfaceGarage = 0;
-      poste.surfacePiscine = 0;
-      poste.typePiscine = "Piscine béton";
-      poste.surfaceAbriEtSerre = 0;
-    }
+    loadBienComplet();
   }
 
-  double calculerEmissionUnitaire(double surface, double facteur, int? duree, int annee, int nbProprietaires) {
-    final reduction = reductionParAnnee(annee);
-    return (surface * facteur * reduction) / (duree ?? 1) / nbProprietaires;
-  }
-
-  Future<void> loadBienImmobilier() async {
+  Future<void> loadBienComplet() async {
     try {
+      // 1. Charger données de base du bien
       final biens = await ApiService.getBiens("BASILE");
-      final bienData = biens.firstWhere((b) => b['Nom_Logement'] == bien.nomLogement, orElse: () => {});
+      final bienData = biens.firstWhere((b) => b['ID_Bien'] == widget.idBien, orElse: () => {});
 
-      if (bienData.isNotEmpty) {
-        setState(() {
-          bien.nbProprietaires = int.tryParse(bienData['Nb_Proprietaires'].toString()) ?? 1;
-          bien.nbHabitants = double.tryParse(bienData['Nb_Habitants'].toString()) ?? 1;
-        });
-      }
-    } catch (e) {
-      debugPrint("❌ Erreur chargement UC-Bien : $e");
-    }
-  }
+      if (bienData.isEmpty) throw Exception("Bien introuvable");
 
-  Future<void> loadPosteConstruction() async {
-    try {
-      final result = await ApiService.getUCPostes("BASILE", "2025"); // à adapter dynamiquement
-      final postesConstruction = result.where((p) => p['Nom_Logement'] == bien.nomLogement && p['Sous_Categorie'] == 'Construction').toList();
+      final nomLogement = bienData['Nom_Logement'] ?? '';
+      final typeBien = bienData['Type_Bien'] ?? 'Logement principal';
+      final nbProp = int.tryParse(bienData['Nb_Proprietaires'].toString()) ?? 1;
+      final nbHabitants = double.tryParse(bienData['Nb_Habitants'].toString()) ?? 1;
+
+      // 2. Charger UC-Postes
+      final postes = await ApiService.getUCPostes("BASILE", "2025");
+      final postesConstruction = postes.where((p) => p['Nom_Logement'] == nomLogement && p['Sous_Categorie'] == 'Construction').toList();
+
+      PosteBienImmobilier poste = PosteBienImmobilier();
 
       if (postesConstruction.isNotEmpty) {
-        setState(() {
-          for (final p in postesConstruction) {
-            final nom = p['Nom_Poste'] ?? '';
-            final nomlogement = p['Nom_Logement'] ?? '';
-            final quantite = double.tryParse(p['Quantite'].toString()) ?? 0;
-            final annee = int.tryParse(p['Annee_Achat'].toString()) ?? 2010;
+        isEdition = true;
+        for (final p in postesConstruction) {
+          final nom = p['Nom_Poste'] ?? '';
+          final quantite = double.tryParse(p['Quantite'].toString()) ?? 0;
+          final annee = int.tryParse(p['Annee_Achat'].toString()) ?? 2010;
 
-            if (nom.contains('Maison') || nom.contains('Appartement')) {
-              poste.id = p['ID_Usage']; // tu peux n'en retenir qu’un
-              poste.nomEquipement = nom;
-              poste.nomLogement = nomlogement;
-              poste.surface = quantite;
-              poste.anneeConstruction = annee;
-              poste.typeBien = p['Type_Bien'] ?? bien.typeBien;
-            } else if (nom.contains('Garage')) {
-              poste.surfaceGarage = quantite;
-              poste.anneeGarage = annee;
-            } else if (nom.contains('Abri')) {
-              poste.surfaceAbriEtSerre = quantite;
-              poste.anneeAbri = annee;
-            } else if (nom.contains('Piscine')) {
-              poste.surfacePiscine = quantite;
-              poste.typePiscine = nom;
-              poste.anneePiscine = annee;
-            }
+          if (nom.contains('Maison') || nom.contains('Appartement')) {
+            poste.id = p['ID_Usage'];
+            poste.nomEquipement = nom;
+            poste.nomLogement = nomLogement;
+            poste.surface = quantite;
+            poste.anneeConstruction = annee;
+            poste.typeBien = typeBien;
+          } else if (nom.contains('Garage')) {
+            poste.surfaceGarage = quantite;
+            poste.anneeGarage = annee;
+          } else if (nom.contains('Abri')) {
+            poste.surfaceAbriEtSerre = quantite;
+            poste.anneeAbri = annee;
+          } else if (nom.contains('Piscine')) {
+            poste.surfacePiscine = quantite;
+            poste.typePiscine = nom;
+            poste.anneePiscine = annee;
           }
-        });
+        }
+      } else {
+        poste.nomEquipement = "Maison Classique";
+        poste.surface = 100;
+        poste.anneeConstruction = DateTime.now().year - 10;
+        poste.surfaceGarage = 0;
+        poste.surfacePiscine = 0;
+        poste.typePiscine = "Piscine béton";
+        poste.surfaceAbriEtSerre = 0;
       }
-    } catch (e) {
-      debugPrint("❌ Erreur chargement UC-Poste Construction : $e");
-    }
-  }
 
-  @override
-  void dispose() {
-    garageController.dispose();
-    surfaceController.dispose();
-    anneeController.dispose();
-    piscineController.dispose();
-    abriController.dispose();
-    super.dispose();
-    anneeGarageController.dispose();
-    anneePiscineController.dispose();
-    anneeAbriController.dispose();
+      bien = BienImmobilier(idBien: widget.idBien, nomLogement: nomLogement, typeBien: typeBien, nbProprietaires: nbProp, nbHabitants: nbHabitants, poste: poste);
+
+      garageController = TextEditingController(text: poste.surfaceGarage.toStringAsFixed(0));
+      surfaceController = TextEditingController(text: poste.surface.toStringAsFixed(0));
+      anneeController = TextEditingController(text: poste.anneeConstruction.toString());
+      piscineController = TextEditingController(text: poste.surfacePiscine.toStringAsFixed(0));
+      abriController = TextEditingController(text: poste.surfaceAbriEtSerre.toStringAsFixed(0));
+      anneeGarageController = TextEditingController(text: poste.anneeGarage.toString());
+      anneePiscineController = TextEditingController(text: poste.anneePiscine.toString());
+      anneeAbriController = TextEditingController(text: poste.anneeAbri.toString());
+
+      setState(() {
+        bienCharge = true;
+      });
+    } catch (e) {
+      debugPrint("❌ Erreur chargement du bien complet : $e");
+    }
   }
 
   Future<void> loadEquipementsData() async {
@@ -163,6 +146,24 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
         isLoading = false;
       });
     }
+  }
+
+  double calculerEmissionUnitaire(double surface, double facteur, int? duree, int annee, int nbProprietaires) {
+    final reduction = reductionParAnnee(annee);
+    return (surface * facteur * reduction) / (duree ?? 1) / nbProprietaires;
+  }
+
+  @override
+  void dispose() {
+    garageController.dispose();
+    surfaceController.dispose();
+    anneeController.dispose();
+    piscineController.dispose();
+    abriController.dispose();
+    anneeGarageController.dispose();
+    anneePiscineController.dispose();
+    anneeAbriController.dispose();
+    super.dispose();
   }
 
   @override
