@@ -103,7 +103,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
         poste.anneeConstruction = DateTime.now().year - 10;
         poste.surfaceGarage = 0;
         poste.surfacePiscine = 0;
-        poste.typePiscine = "";
+        poste.typePiscine = "Piscine béton";
         poste.surfaceAbriEtSerre = 0;
       }
 
@@ -119,6 +119,19 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
       anneeGarageController = TextEditingController(text: poste.anneeGarage.toString());
       anneePiscineController = TextEditingController(text: poste.anneePiscine.toString());
       anneeAbriController = TextEditingController(text: poste.anneeAbri.toString());
+
+      // Sécurisation du type de construction
+      final typesConstruction = facteursEmission.keys.where((k) => k.contains("Maison") || k.contains("Appartement")).toList();
+
+      if (!typesConstruction.contains(poste.nomEquipement)) {
+        poste.nomEquipement = typesConstruction.contains("Maison Classique") ? "Maison Classique" : (typesConstruction.isNotEmpty ? typesConstruction.first : "");
+      }
+
+      // Sécurisation du type de piscine
+      final typesPiscine = ["Piscine béton", "Piscine coque"];
+      if (!typesPiscine.contains(poste.typePiscine)) {
+        poste.typePiscine = "Piscine béton";
+      }
 
       setState(() {
         bienCharge = true;
@@ -256,7 +269,8 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                         const Text("Surface (m²)", style: TextStyle(fontSize: 11)),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 4),
-                          decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(12)),
+                          decoration: BoxDecoration(color: (poste.surface > 0) ? Colors.white : Colors.grey.shade100, borderRadius: BorderRadius.circular(12)),
+
                           child: Row(
                             children: [
                               IconButton(
@@ -279,13 +293,12 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                                   style: const TextStyle(fontSize: 12),
                                   keyboardType: TextInputType.number,
                                   decoration: const InputDecoration(isDense: true, border: InputBorder.none, contentPadding: EdgeInsets.symmetric(vertical: 6)),
-                                  onChanged: (val) {
-                                    final parsed = double.tryParse(val);
-                                    if (parsed != null) {
-                                      setState(() {
-                                        poste.surface = parsed;
-                                      });
-                                    }
+                                  onChanged: (String? val) {
+                                    final parsed = double.tryParse(val ?? '');
+                                    setState(() {
+                                      poste.surface = parsed != null && parsed >= 0 ? parsed : 0;
+                                      surfaceController.text = poste.surface.toStringAsFixed(0);
+                                    });
                                   },
                                 ),
                               ),
@@ -315,7 +328,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                         const Text("Année de construction", style: TextStyle(fontSize: 11)),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 4),
-                          decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(12)),
+                          decoration: BoxDecoration(color: (poste.surface > 0) ? Colors.white : Colors.grey.shade100, borderRadius: BorderRadius.circular(12)),
                           child: Row(
                             children: [
                               IconButton(
@@ -338,13 +351,12 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                                   style: const TextStyle(fontSize: 12),
                                   keyboardType: TextInputType.number,
                                   decoration: const InputDecoration(isDense: true, border: InputBorder.none, contentPadding: EdgeInsets.symmetric(vertical: 6)),
-                                  onChanged: (val) {
-                                    final parsed = int.tryParse(val);
-                                    if (parsed != null) {
-                                      setState(() {
-                                        poste.anneeConstruction = parsed.clamp(1900, DateTime.now().year);
-                                      });
-                                    }
+                                  onChanged: (String? val) {
+                                    final parsed = int.tryParse(val ?? '');
+                                    setState(() {
+                                      poste.anneeConstruction = (parsed != null ? parsed : 1900).clamp(1900, DateTime.now().year);
+                                      anneeController.text = poste.anneeConstruction.toString();
+                                    });
                                   },
                                 ),
                               ),
@@ -384,7 +396,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                         const Text("Surface garage béton (m²)", style: TextStyle(fontSize: 11)),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 4),
-                          decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(12)),
+                          decoration: BoxDecoration(color: (poste.surfaceGarage > 0) ? Colors.white : Colors.grey.shade100, borderRadius: BorderRadius.circular(12)),
                           child: Row(
                             children: [
                               IconButton(
@@ -407,13 +419,12 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                                   style: const TextStyle(fontSize: 12),
                                   keyboardType: TextInputType.number,
                                   decoration: const InputDecoration(isDense: true, border: InputBorder.none, contentPadding: EdgeInsets.symmetric(vertical: 6)),
-                                  onChanged: (val) {
-                                    final parsed = double.tryParse(val);
-                                    if (parsed != null) {
-                                      setState(() {
-                                        poste.surfaceGarage = parsed;
-                                      });
-                                    }
+                                  onChanged: (String? val) {
+                                    final parsed = double.tryParse(val ?? '');
+                                    setState(() {
+                                      poste.surfaceGarage = parsed != null && parsed >= 0 ? parsed : 0;
+                                      garageController.text = poste.surfaceGarage.toStringAsFixed(0);
+                                    });
                                   },
                                 ),
                               ),
@@ -443,7 +454,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                         const Text("Année de construction", style: TextStyle(fontSize: 11)),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 4),
-                          decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(12)),
+                          decoration: BoxDecoration(color: (poste.surfaceGarage > 0) ? Colors.white : Colors.grey.shade100, borderRadius: BorderRadius.circular(12)),
                           child: Row(
                             children: [
                               IconButton(
@@ -466,13 +477,12 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                                   style: const TextStyle(fontSize: 12),
                                   keyboardType: TextInputType.number,
                                   decoration: const InputDecoration(isDense: true, border: InputBorder.none, contentPadding: EdgeInsets.symmetric(vertical: 6)),
-                                  onChanged: (val) {
-                                    final parsed = int.tryParse(val);
-                                    if (parsed != null) {
-                                      setState(() {
-                                        poste.anneeGarage = parsed.clamp(1900, DateTime.now().year);
-                                      });
-                                    }
+                                  onChanged: (String? val) {
+                                    final parsed = int.tryParse(val ?? '');
+                                    setState(() {
+                                      poste.anneeGarage = (parsed != null ? parsed : 1900).clamp(1900, DateTime.now().year);
+                                      anneeGarageController.text = poste.anneeGarage.toString();
+                                    });
                                   },
                                 ),
                               ),
@@ -512,7 +522,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                         const Text("Surface piscine (m²)", style: TextStyle(fontSize: 11)),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 4),
-                          decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(12)),
+                          decoration: BoxDecoration(color: (poste.surfacePiscine > 0) ? Colors.white : Colors.grey.shade100, borderRadius: BorderRadius.circular(12)),
                           child: Row(
                             children: [
                               IconButton(
@@ -571,7 +581,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                         const Text("Année de construction", style: TextStyle(fontSize: 11)),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 4),
-                          decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(12)),
+                          decoration: BoxDecoration(color: (poste.surfacePiscine > 0) ? Colors.white : Colors.grey.shade100, borderRadius: BorderRadius.circular(12)),
                           child: Row(
                             children: [
                               IconButton(
@@ -596,11 +606,10 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                                   decoration: const InputDecoration(isDense: true, border: InputBorder.none, contentPadding: EdgeInsets.symmetric(vertical: 6)),
                                   onChanged: (val) {
                                     final parsed = int.tryParse(val);
-                                    if (parsed != null) {
-                                      setState(() {
-                                        poste.anneePiscine = parsed.clamp(1900, DateTime.now().year);
-                                      });
-                                    }
+                                    setState(() {
+                                      poste.anneePiscine = parsed != null && parsed >= 1900 ? parsed.clamp(1900, DateTime.now().year) : 1900;
+                                      anneePiscineController.text = poste.anneePiscine.toString();
+                                    });
                                   },
                                 ),
                               ),
@@ -632,7 +641,13 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                             value: typesPiscine.contains(poste.typePiscine) ? poste.typePiscine : typesPiscine.first,
                             items: typesPiscine,
                             label: "Type de piscine",
-                            onChanged: (val) => setState(() => poste.typePiscine = val ?? typesPiscine.first),
+                            onChanged: (val) {
+                              double? parsed = val != null ? double.tryParse(val) : null;
+                              setState(() {
+                                poste.surfacePiscine = parsed != null && parsed >= 0 ? parsed : 0;
+                                piscineController.text = poste.surfacePiscine.toStringAsFixed(0);
+                              });
+                            },
                           ),
                         ),
                       ],
@@ -653,7 +668,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                         const Text("Surface abri / serre bois (m²)", style: TextStyle(fontSize: 11)),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 4),
-                          decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(12)),
+                          decoration: BoxDecoration(color: (poste.surfaceAbriEtSerre > 0) ? Colors.white : Colors.grey.shade100, borderRadius: BorderRadius.circular(12)),
                           child: Row(
                             children: [
                               IconButton(
@@ -676,13 +691,12 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                                   style: const TextStyle(fontSize: 12),
                                   keyboardType: TextInputType.number,
                                   decoration: const InputDecoration(isDense: true, border: InputBorder.none, contentPadding: EdgeInsets.symmetric(vertical: 6)),
-                                  onChanged: (val) {
-                                    final parsed = double.tryParse(val);
-                                    if (parsed != null) {
-                                      setState(() {
-                                        poste.surfaceAbriEtSerre = parsed;
-                                      });
-                                    }
+                                  onChanged: (String? val) {
+                                    final parsed = double.tryParse(val ?? '');
+                                    setState(() {
+                                      poste.surfaceAbriEtSerre = parsed != null && parsed >= 0 ? parsed : 0;
+                                      abriController.text = poste.surfaceAbriEtSerre.toStringAsFixed(0);
+                                    });
                                   },
                                 ),
                               ),
@@ -712,7 +726,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                         const Text("Année de construction", style: TextStyle(fontSize: 11)),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 4),
-                          decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(12)),
+                          decoration: BoxDecoration(color: (poste.surfaceAbriEtSerre > 0) ? Colors.white : Colors.grey.shade100, borderRadius: BorderRadius.circular(12)),
                           child: Row(
                             children: [
                               IconButton(
@@ -735,13 +749,12 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                                   style: const TextStyle(fontSize: 12),
                                   keyboardType: TextInputType.number,
                                   decoration: const InputDecoration(isDense: true, border: InputBorder.none, contentPadding: EdgeInsets.symmetric(vertical: 6)),
-                                  onChanged: (val) {
-                                    final parsed = int.tryParse(val);
-                                    if (parsed != null) {
-                                      setState(() {
-                                        poste.anneeAbri = parsed.clamp(1900, DateTime.now().year);
-                                      });
-                                    }
+                                  onChanged: (String? val) {
+                                    final parsed = int.tryParse(val ?? '');
+                                    setState(() {
+                                      poste.anneeAbri = (parsed != null ? parsed : 1900).clamp(1900, DateTime.now().year);
+                                      anneeAbriController.text = poste.anneeAbri.toString();
+                                    });
                                   },
                                 ),
                               ),
