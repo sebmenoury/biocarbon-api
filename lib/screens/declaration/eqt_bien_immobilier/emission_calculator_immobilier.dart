@@ -4,41 +4,61 @@ import '../bien_immobilier/bien_immobilier.dart';
 import 'package:flutter/foundation.dart';
 
 double calculerTotalEmission(PosteBienImmobilier poste, Map<String, double> facteursEmission, Map<String, int> dureesAmortissement, {required int nbProprietaires}) {
-  final reduction = reductionParAnnee(poste.anneeConstruction);
   double total = 0.0;
+  final anneeActuelle = DateTime.now().year;
 
   // 🔨 Maison / appartement
   if (poste.surface > 0) {
     final facteur = facteursEmission[poste.nomEquipement];
     final duree = dureesAmortissement[poste.nomEquipement];
+    final reduction = reductionParAnnee(poste.anneeConstruction);
+    final age = anneeActuelle - poste.anneeConstruction;
 
-    if (facteur == null || duree == null) {
-      debugPrint("⚠️ Logement ignoré : facteur ou durée manquante pour '${poste.nomEquipement}'");
-    } else {
+    if (facteur != null && duree != null && age < duree) {
       total += (poste.surface * facteur * reduction) / duree / nbProprietaires;
+    } else {
+      debugPrint("⏳ Logement ignoré (amorti ou info manquante) pour '${poste.nomEquipement}'");
     }
   }
 
   // 🏠 Garage
   if (poste.surfaceGarage > 0) {
-    total += (poste.surfaceGarage * (facteursEmission['Garage béton'] ?? 0) * reduction) / (dureesAmortissement['Garage béton'] ?? 1) / nbProprietaires;
+    final age = anneeActuelle - poste.anneeGarage;
+    final duree = dureesAmortissement['Garage béton'];
+    final reduction = reductionParAnnee(poste.anneeGarage);
+
+    if (duree != null && age < duree) {
+      total += (poste.surfaceGarage * (facteursEmission['Garage béton'] ?? 0) * reduction) / duree / nbProprietaires;
+    } else {
+      debugPrint("⏳ Garage ignoré (amorti ou info manquante)");
+    }
   }
 
   // 🏊‍♂️ Piscine
   if (poste.surfacePiscine > 0) {
     final facteur = facteursEmission[poste.typePiscine];
     final duree = dureesAmortissement[poste.typePiscine];
+    final reduction = reductionParAnnee(poste.anneePiscine);
+    final age = anneeActuelle - poste.anneePiscine;
 
-    if (facteur == null || duree == null) {
-      debugPrint("⚠️ Piscine ignorée : facteur ou durée manquante pour '${poste.typePiscine}'");
+    if (facteur != null && duree != null && age < duree) {
+      total += (poste.surfacePiscine * facteur * reduction) / duree / nbProprietaires;
     } else {
-      total += (poste.surfacePiscine * facteur * reductionParAnnee(poste.anneePiscine)) / duree / nbProprietaires;
+      debugPrint("⏳ Piscine ignorée (amorti ou info manquante) pour '${poste.typePiscine}'");
     }
   }
 
   // 🌿 Abri / serre
   if (poste.surfaceAbriEtSerre > 0) {
-    total += (poste.surfaceAbriEtSerre * (facteursEmission['Abri de jardin bois'] ?? 0) * reduction) / (dureesAmortissement['Abri de jardin bois'] ?? 1) / nbProprietaires;
+    final age = anneeActuelle - poste.anneeAbri;
+    final duree = dureesAmortissement['Abri de jardin bois'];
+    final reduction = reductionParAnnee(poste.anneeAbri);
+
+    if (duree != null && age < duree) {
+      total += (poste.surfaceAbriEtSerre * (facteursEmission['Abri de jardin bois'] ?? 0) * reduction) / duree / nbProprietaires;
+    } else {
+      debugPrint("⏳ Abri/serre ignoré (amorti ou info manquante)");
+    }
   }
 
   return total;

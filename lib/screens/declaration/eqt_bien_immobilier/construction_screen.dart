@@ -46,7 +46,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
     loadBienComplet();
   }
 
-  void enregistrerOuMettreAJour() async {
+  void enregistrerPostes() async {
     try {
       final maintenant = DateTime.now().toIso8601String();
       final codeIndividu = "BASILE";
@@ -63,7 +63,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
           final emission = calculerEmissionUnitaire(surface, facteursEmission[nom]!, dureesAmortissement[nom], annee, bien.nbProprietaires);
 
           postesAEnregistrer.add({
-            "ID_Usage": poste.id,
+            "ID_Usage": null,
             "Code_Individu": codeIndividu,
             "Type_Temps": typeTemps,
             "Valeur_Temps": valeurTemps,
@@ -92,6 +92,11 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
       ajouterPoste(poste.typePiscine, poste.surfacePiscine, poste.anneePiscine);
       ajouterPoste("Abri de jardin bois", poste.surfaceAbriEtSerre, poste.anneeAbri);
 
+      if (postesAEnregistrer.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("⚠️ Aucun poste à enregistrer")));
+        return;
+      }
+
       for (final p in postesAEnregistrer) {
         await ApiService.saveOrUpdatePoste(p);
       }
@@ -106,13 +111,13 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
     }
   }
 
-  void supprimerPoste() async {
+  void confirmerEtSupprimerPoste() async {
     final confirm = await showDialog<bool>(
       context: context,
       builder:
           (context) => AlertDialog(
-            title: const Text("Confirmation", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-            content: const Text("Souhaitez-vous vraiment supprimer ce poste ?", style: TextStyle(fontSize: 13)),
+            title: const Text("Confirmer la suppression"),
+            content: const Text("Souhaitez-vous vraiment supprimer ce poste ?"),
             actions: [
               TextButton(onPressed: () => Navigator.pop(context, false), child: const Text("Annuler")),
               TextButton(onPressed: () => Navigator.pop(context, true), child: const Text("Supprimer")),
@@ -187,7 +192,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
       } else {
         debugPrint("⚠️ Aucun poste Construction trouvé pour ce bien. Initialisation par défaut.");
         poste.nomEquipement = "Maison Classique";
-        poste.surface = 100;
+        poste.surface = 0;
         poste.anneeConstruction = DateTime.now().year - 10;
         poste.surfaceGarage = 0;
         poste.surfacePiscine = 0;
@@ -870,19 +875,19 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
 
               /// BOUTON
               const SizedBox(height: 24),
-              poste.nomEquipement.isNotEmpty
+              poste.id != null
                   ? Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
-                        onPressed: supprimerPoste,
+                        onPressed: confirmerEtSupprimerPoste,
                         child: const Text("Supprimer", style: TextStyle(fontSize: 12, color: Colors.red)),
                       ),
-                      ElevatedButton(onPressed: enregistrerOuMettreAJour, child: const Text("Mettre à jour", style: TextStyle(fontSize: 12))),
+                      ElevatedButton(onPressed: enregistrerPostes, child: const Text("Mettre à jour", style: TextStyle(fontSize: 12))),
                     ],
                   )
-                  : Center(child: ElevatedButton(onPressed: enregistrerOuMettreAJour, child: const Text("Enregistrer", style: TextStyle(fontSize: 12)))),
+                  : Center(child: ElevatedButton(onPressed: enregistrerPostes, child: const Text("Enregistrer", style: TextStyle(fontSize: 12)))),
             ],
           ),
         ),
