@@ -46,12 +46,12 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
     loadBienComplet();
   }
 
-  void enregistrerPostes() async {
+  void enregistrerOuMettreAJour() async {
     try {
       final maintenant = DateTime.now().toIso8601String();
       final codeIndividu = "BASILE";
       final typeTemps = "Réel";
-      final valeurTemps = "";
+      final valeurTemps = "2025";
       const typePoste = "Equipement";
       const typeCategorie = "Logement";
       const sousCategorie = "Construction";
@@ -61,7 +61,9 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
       void ajouterPoste(String nom, double surface, int annee) {
         if (surface > 0 && facteursEmission.containsKey(nom)) {
           final emission = calculerEmissionUnitaire(surface, facteursEmission[nom]!, dureesAmortissement[nom], annee, bien.nbProprietaires);
-          final idUsage = poste.id ?? "${nom.replaceAll(" ", "_")}-${DateTime.now().millisecondsSinceEpoch}";
+
+          // Génération d'une clé d'identification unique par combinaison
+          final idUsage = "${bien.idBien}_Construction_${nom}_${bien.nomLogement}".replaceAll(' ', '_');
 
           postesAEnregistrer.add({
             "ID_Usage": idUsage,
@@ -93,11 +95,6 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
       ajouterPoste(poste.typePiscine, poste.surfacePiscine, poste.anneePiscine);
       ajouterPoste("Abri de jardin bois", poste.surfaceAbriEtSerre, poste.anneeAbri);
 
-      if (postesAEnregistrer.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("⚠️ Aucun poste à enregistrer")));
-        return;
-      }
-
       for (final p in postesAEnregistrer) {
         await ApiService.saveOrUpdatePoste(p);
       }
@@ -112,7 +109,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
     }
   }
 
-  void confirmerEtSupprimerPoste() async {
+  void supprimerPoste() async {
     final confirm = await showDialog<bool>(
       context: context,
       builder:
@@ -876,19 +873,19 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
 
               /// BOUTON
               const SizedBox(height: 24),
-              poste.id != null
+              poste.nomEquipement.isNotEmpty
                   ? Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
-                        onPressed: confirmerEtSupprimerPoste,
+                        onPressed: supprimerPoste,
                         child: const Text("Supprimer", style: TextStyle(fontSize: 12, color: Colors.red)),
                       ),
-                      ElevatedButton(onPressed: enregistrerPostes, child: const Text("Mettre à jour", style: TextStyle(fontSize: 12))),
+                      ElevatedButton(onPressed: enregistrerOuMettreAJour, child: const Text("Mettre à jour", style: TextStyle(fontSize: 12))),
                     ],
                   )
-                  : Center(child: ElevatedButton(onPressed: enregistrerPostes, child: const Text("Enregistrer", style: TextStyle(fontSize: 12)))),
+                  : Center(child: ElevatedButton(onPressed: enregistrerOuMettreAJour, child: const Text("Enregistrer", style: TextStyle(fontSize: 12)))),
             ],
           ),
         ),
