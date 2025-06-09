@@ -51,7 +51,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
       final maintenant = DateTime.now().toIso8601String();
       final codeIndividu = "BASILE";
       final typeTemps = "Réel";
-      final valeurTemps = "2025";
+      final valeurTemps = "";
       const typePoste = "Equipement";
       const typeCategorie = "Logement";
       const sousCategorie = "Construction";
@@ -61,9 +61,10 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
       void ajouterPoste(String nom, double surface, int annee) {
         if (surface > 0 && facteursEmission.containsKey(nom)) {
           final emission = calculerEmissionUnitaire(surface, facteursEmission[nom]!, dureesAmortissement[nom], annee, bien.nbProprietaires);
+          final idUsage = poste.id ?? "${nom.replaceAll(" ", "_")}-${DateTime.now().millisecondsSinceEpoch}";
 
           postesAEnregistrer.add({
-            "ID_Usage": null,
+            "ID_Usage": idUsage,
             "Code_Individu": codeIndividu,
             "Type_Temps": typeTemps,
             "Valeur_Temps": valeurTemps,
