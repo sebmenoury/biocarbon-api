@@ -49,11 +49,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
         final annees = postesPourCetEquipement.map((p) => p.anneeAchat ?? DateTime.now().year).toList();
         if (annees.isEmpty) annees.add(DateTime.now().year);
 
-        final poste = PosteVehicule(
-          nomEquipement: nom,
-          anneesConstruction: annees,
-          quantite: postesPourCetEquipement.length,
-        );
+        final poste = PosteVehicule(nomEquipement: nom, anneesConstruction: annees, quantite: postesPourCetEquipement.length);
         poste.facteurEmission = facteur;
         poste.dureeAmortissement = duree;
 
@@ -69,9 +65,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
   }
 
   void recalculerTotal() {
-    totalEmission = vehiculesParCategorie.values
-        .expand((v) => v)
-        .fold(0.0, (sum, p) => sum + calculerTotalEmissionVehicule(p));
+    totalEmission = vehiculesParCategorie.values.expand((v) => v).fold(0.0, (sum, p) => sum + calculerTotalEmissionVehicule(p));
   }
 
   Future<void> saveData() async {
@@ -79,7 +73,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
       for (final poste in categorie) {
         if (poste.quantite > 0) {
           final emission = calculerTotalEmissionVehicule(poste);
-          await ApiService.savePoste({
+          await ApiService.saveOrUpdatePoste({
             "Code_Individu": "BASILE",
             "Type_Temps": "Réel",
             "Valeur_Temps": "2025",
@@ -123,11 +117,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
             width: 60,
             height: 28,
             padding: const EdgeInsets.symmetric(horizontal: 6),
-            decoration: BoxDecoration(
-              color: colorBloc,
-              borderRadius: BorderRadius.circular(8),
-              boxShadow: [BoxShadow(color: Colors.grey.shade200, blurRadius: 1, offset: const Offset(0, 1))],
-            ),
+            decoration: BoxDecoration(color: colorBloc, borderRadius: BorderRadius.circular(8), boxShadow: [BoxShadow(color: Colors.grey.shade200, blurRadius: 1, offset: const Offset(0, 1))]),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -169,11 +159,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
                   width: 90,
                   height: 28,
                   padding: const EdgeInsets.symmetric(horizontal: 6),
-                  decoration: BoxDecoration(
-                    color: colorBloc,
-                    borderRadius: BorderRadius.circular(8),
-                    boxShadow: [BoxShadow(color: Colors.grey.shade200, blurRadius: 1, offset: const Offset(0, 1))],
-                  ),
+                  decoration: BoxDecoration(color: colorBloc, borderRadius: BorderRadius.circular(8), boxShadow: [BoxShadow(color: Colors.grey.shade200, blurRadius: 1, offset: const Offset(0, 1))]),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -194,11 +180,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
                           initialValue: annee.toString(),
                           textAlign: TextAlign.center,
                           style: const TextStyle(fontSize: 12),
-                          decoration: const InputDecoration(
-                            border: InputBorder.none,
-                            isDense: true,
-                            contentPadding: EdgeInsets.symmetric(horizontal: 6),
-                          ),
+                          decoration: const InputDecoration(border: InputBorder.none, isDense: true, contentPadding: EdgeInsets.symmetric(horizontal: 6)),
                           keyboardType: TextInputType.number,
                           onChanged: (val) {
                             final an = int.tryParse(val);
@@ -236,11 +218,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
       padding: const EdgeInsets.all(12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(titre, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-          const SizedBox(height: 8),
-          ...vehicules.map(buildVehiculeLine),
-        ],
+        children: [Text(titre, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)), const SizedBox(height: 8), ...vehicules.map(buildVehiculeLine)],
       ),
     );
   }
@@ -252,13 +230,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
     return BaseScreen(
       title: Row(
         children: [
-          IconButton(
-            icon: const Icon(Icons.arrow_back),
-            iconSize: 18,
-            onPressed: () => Navigator.pop(context),
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(),
-          ),
+          IconButton(icon: const Icon(Icons.arrow_back), iconSize: 18, onPressed: () => Navigator.pop(context), padding: EdgeInsets.zero, constraints: const BoxConstraints()),
           const SizedBox(width: 8),
           const Text("Synthèse Véhicules déclarés", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
         ],
@@ -270,10 +242,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const Text("Empreinte annuelle", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-              Text(
-                "${totalEmission.toStringAsFixed(0)} kgCO₂",
-                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-              ),
+              Text("${totalEmission.toStringAsFixed(0)} kgCO₂", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
             ],
           ),
         ),

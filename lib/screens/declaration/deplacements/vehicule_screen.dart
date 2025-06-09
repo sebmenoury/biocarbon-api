@@ -68,7 +68,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
       for (final poste in categorie) {
         if (poste.quantite > 0) {
           final emission = calculerTotalEmissionVehicule(poste);
-          await ApiService.savePoste({
+          await ApiService.saveOrUpdatePoste({
             "Code_Individu": "BASILE",
             "Type_Temps": "Réel",
             "Valeur_Temps": "2025",
@@ -162,11 +162,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
                 textAlign: TextAlign.center,
                 style: const TextStyle(fontSize: 11),
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  isDense: true,
-                  contentPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 6),
-                  border: OutlineInputBorder(),
-                ),
+                decoration: const InputDecoration(isDense: true, contentPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 6), border: OutlineInputBorder()),
                 onChanged: (val) {
                   final parsed = int.tryParse(val);
                   if (parsed != null) {
@@ -189,11 +185,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
       padding: const EdgeInsets.all(12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(titre, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-          const SizedBox(height: 8),
-          ...vehicules.map((v) => buildVehiculeRow(v)).toList(),
-        ],
+        children: [Text(titre, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)), const SizedBox(height: 8), ...vehicules.map((v) => buildVehiculeRow(v)).toList()],
       ),
     );
   }
@@ -209,17 +201,12 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
           padding: const EdgeInsets.all(12),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text("Synthèse", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-              Text("${totalEmission.toStringAsFixed(0)} kgCO₂", style: const TextStyle(fontSize: 12)),
-            ],
+            children: [const Text("Synthèse", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)), Text("${totalEmission.toStringAsFixed(0)} kgCO₂", style: const TextStyle(fontSize: 12))],
           ),
         ),
         const SizedBox(height: 6),
-        if (vehiculesParCategorie['Voiture']!.isNotEmpty)
-          buildCategorieCard("Voiture", vehiculesParCategorie['Voiture']!),
-        if (vehiculesParCategorie['2-roues']!.isNotEmpty)
-          buildCategorieCard("Scoot/Moto/Vélo", vehiculesParCategorie['2-roues']!),
+        if (vehiculesParCategorie['Voiture']!.isNotEmpty) buildCategorieCard("Voiture", vehiculesParCategorie['Voiture']!),
+        if (vehiculesParCategorie['2-roues']!.isNotEmpty) buildCategorieCard("Scoot/Moto/Vélo", vehiculesParCategorie['2-roues']!),
         if (vehiculesParCategorie['Autres']!.isNotEmpty) buildCategorieCard("Autres", vehiculesParCategorie['Autres']!),
         const SizedBox(height: 12),
         Row(

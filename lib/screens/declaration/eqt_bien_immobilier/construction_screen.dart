@@ -46,6 +46,94 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
     loadBienComplet();
   }
 
+  void enregistrerOuMettreAJour() async {
+    try {
+      final maintenant = DateTime.now().toIso8601String();
+      final codeIndividu = "BASILE";
+      final typeTemps = "Réel";
+      final valeurTemps = "2025";
+      const typePoste = "Equipement";
+      const typeCategorie = "Logement";
+      const sousCategorie = "Construction";
+
+      List<Map<String, dynamic>> postesAEnregistrer = [];
+
+      void ajouterPoste(String nom, double surface, int annee) {
+        if (surface > 0 && facteursEmission.containsKey(nom)) {
+          final emission = calculerEmissionUnitaire(surface, facteursEmission[nom]!, dureesAmortissement[nom], annee, bien.nbProprietaires);
+
+          postesAEnregistrer.add({
+            "ID_Usage": poste.id,
+            "Code_Individu": codeIndividu,
+            "Type_Temps": typeTemps,
+            "Valeur_Temps": valeurTemps,
+            "Date_enregistrement": maintenant,
+            "ID_Bien": bien.idBien,
+            "Type_Bien": bien.typeBien,
+            "Type_Poste": typePoste,
+            "Type_Categorie": typeCategorie,
+            "Sous_Categorie": sousCategorie,
+            "Nom_Poste": nom,
+            "Nom_Logement": bien.nomLogement,
+            "Quantite": surface,
+            "Unite": "m²",
+            "Fréquence": "",
+            "Facteur_Emission": facteursEmission[nom],
+            "Emission_Calculee": emission,
+            "Mode_Calcul": "Amorti",
+            "Annee_Achat": annee,
+            "Duree_Amortissement": dureesAmortissement[nom],
+          });
+        }
+      }
+
+      ajouterPoste(poste.nomEquipement, poste.surface, poste.anneeConstruction);
+      ajouterPoste("Garage béton", poste.surfaceGarage, poste.anneeGarage);
+      ajouterPoste(poste.typePiscine, poste.surfacePiscine, poste.anneePiscine);
+      ajouterPoste("Abri de jardin bois", poste.surfaceAbriEtSerre, poste.anneeAbri);
+
+      for (final p in postesAEnregistrer) {
+        await ApiService.saveOrUpdatePoste(p);
+      }
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("✅ Enregistrement effectué")));
+      widget.onSave();
+      Navigator.of(context).pop();
+    } catch (e) {
+      print('❌ Erreur : \$e');
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("❌ Erreur lors de l'enregistrement")));
+    }
+  }
+
+  void supprimerPoste() async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: const Text("Confirmation", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+            content: const Text("Souhaitez-vous vraiment supprimer ce poste ?", style: TextStyle(fontSize: 13)),
+            actions: [
+              TextButton(onPressed: () => Navigator.pop(context, false), child: const Text("Annuler")),
+              TextButton(onPressed: () => Navigator.pop(context, true), child: const Text("Supprimer")),
+            ],
+          ),
+    );
+
+    if (confirm == true && poste.id != null) {
+      try {
+        await ApiService.deleteUCPoste(poste.id!);
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("✅ Poste supprimé")));
+        widget.onSave();
+        Navigator.of(context).pop();
+      } catch (e) {
+        print('❌ Erreur suppression : \$e');
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("❌ Erreur lors de la suppression du poste")));
+      }
+    }
+  }
+
   Future<void> loadBienComplet() async {
     try {
       // 🔹 1. Charger le bien par ID
@@ -788,286 +876,13 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                     children: [
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
-                        onPressed: () async {
-                          if (poste.id != null) {
-                            await ApiService.deleteUCPoste(poste.id!);
-                            if (!mounted) return;
-                            Navigator.of(context).pop(); // retour à l'écran précédent
-                          }
-                        },
+                        onPressed: supprimerPoste,
                         child: const Text("Supprimer", style: TextStyle(fontSize: 12, color: Colors.red)),
                       ),
-                      ElevatedButton(
-                        onPressed: () async {
-                          final emission = calculerTotalEmission(poste, facteursEmission, dureesAmortissement, nbProprietaires: bien.nbProprietaires);
-
-                          final maintenant = DateTime.now().toIso8601String();
-                          final codeIndividu = "BASILE";
-                          final typeTemps = "Réel";
-                          final valeurTemps = "2025";
-                          const typePoste = "Equipement";
-                          const typeCategorie = "Logement";
-                          const sousCategorie = "Construction";
-
-                          // LOGEMENT
-                          if (poste.surface > 0 && facteursEmission.containsKey(poste.nomEquipement)) {
-                            await ApiService.savePoste({
-                              "ID_Usage": poste.id,
-                              "Code_Individu": codeIndividu,
-                              "Type_Temps": typeTemps,
-                              "Valeur_Temps": valeurTemps,
-                              "Date_enregistrement": maintenant,
-                              "Type_Poste": typePoste,
-                              "Type_Categorie": typeCategorie,
-                              "Sous_Categorie": sousCategorie,
-                              "Nom_Poste": poste.nomEquipement,
-                              "Nom_Logement": bien.nomLogement,
-                              "Quantite": poste.surface,
-                              "Unite": "m²",
-                              "Facteur_Emission": facteursEmission[poste.nomEquipement],
-                              "Emission_Calculee": calculerEmissionUnitaire(
-                                poste.surface,
-                                facteursEmission[poste.nomEquipement]!,
-                                dureesAmortissement[poste.nomEquipement],
-                                poste.anneeConstruction,
-                                bien.nbProprietaires,
-                              ),
-                              "Mode_Calcul": "Amorti",
-                              "Annee_Achat": poste.anneeConstruction,
-                              "Duree_Amortissement": dureesAmortissement[poste.nomEquipement],
-                            });
-                          }
-
-                          // GARAGE
-                          if (poste.surfaceGarage > 0 && facteursEmission.containsKey("Garage béton")) {
-                            await ApiService.savePoste({
-                              "Code_Individu": codeIndividu,
-                              "Type_Temps": typeTemps,
-                              "Valeur_Temps": valeurTemps,
-                              "Date_enregistrement": maintenant,
-                              "Type_Poste": typePoste,
-                              "Type_Categorie": typeCategorie,
-                              "Sous_Categorie": sousCategorie,
-                              "Nom_Poste": "Garage béton",
-                              "Nom_Logement": bien.nomLogement,
-                              "Quantite": poste.surfaceGarage,
-                              "Unite": "m²",
-                              "Facteur_Emission": facteursEmission["Garage béton"],
-                              "Emission_Calculee": calculerEmissionUnitaire(
-                                poste.surfaceGarage,
-                                facteursEmission["Garage béton"]!,
-                                dureesAmortissement["Garage béton"],
-                                poste.anneeGarage,
-                                bien.nbProprietaires,
-                              ),
-                              "Mode_Calcul": "Amorti",
-                              "Annee_Achat": poste.anneeGarage,
-                              "Duree_Amortissement": dureesAmortissement["Garage béton"],
-                            });
-                          }
-
-                          // PISCINE
-                          if (poste.surfacePiscine > 0 && facteursEmission.containsKey(poste.typePiscine)) {
-                            await ApiService.savePoste({
-                              "Code_Individu": codeIndividu,
-                              "Type_Temps": typeTemps,
-                              "Valeur_Temps": valeurTemps,
-                              "Date_enregistrement": maintenant,
-                              "Type_Poste": typePoste,
-                              "Type_Categorie": typeCategorie,
-                              "Sous_Categorie": sousCategorie,
-                              "Nom_Poste": poste.typePiscine,
-                              "Nom_Logement": bien.nomLogement,
-                              "Quantite": poste.surfacePiscine,
-                              "Unite": "m²",
-                              "Facteur_Emission": facteursEmission[poste.typePiscine],
-                              "Emission_Calculee": calculerEmissionUnitaire(
-                                poste.surfacePiscine,
-                                facteursEmission[poste.typePiscine]!,
-                                dureesAmortissement[poste.typePiscine],
-                                poste.anneePiscine,
-                                bien.nbProprietaires,
-                              ),
-                              "Mode_Calcul": "Amorti",
-                              "Annee_Achat": poste.anneePiscine,
-                              "Duree_Amortissement": dureesAmortissement[poste.typePiscine],
-                            });
-                          }
-
-                          // ABRI / SERRE
-                          if (poste.surfaceAbriEtSerre > 0 && facteursEmission.containsKey("Abri / serre de jardin")) {
-                            await ApiService.savePoste({
-                              "Code_Individu": codeIndividu,
-                              "Type_Temps": typeTemps,
-                              "Valeur_Temps": valeurTemps,
-                              "Date_enregistrement": maintenant,
-                              "Type_Poste": typePoste,
-                              "Type_Categorie": typeCategorie,
-                              "Sous_Categorie": sousCategorie,
-                              "Nom_Poste": "Abri / serre de jardin",
-                              "Nom_Logement": bien.nomLogement,
-                              "Quantite": poste.surfaceAbriEtSerre,
-                              "Unite": "m²",
-                              "Facteur_Emission": facteursEmission["Abri / serre de jardin"],
-                              "Emission_Calculee": calculerEmissionUnitaire(
-                                poste.surfaceAbriEtSerre,
-                                facteursEmission["Abri / serre de jardin"]!,
-                                dureesAmortissement["Abri / serre de jardin"],
-                                poste.anneeAbri,
-                                bien.nbProprietaires,
-                              ),
-                              "Mode_Calcul": "Amorti",
-                              "Annee_Achat": poste.anneeAbri,
-                              "Duree_Amortissement": dureesAmortissement["Abri / serre de jardin"],
-                            });
-                          }
-
-                          if (!mounted) return;
-                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("✅ Poste mis à jour")));
-                          Navigator.pop(context);
-                        },
-                        child: const Text("Mettre à jour", style: TextStyle(fontSize: 12)),
-                      ),
+                      ElevatedButton(onPressed: enregistrerOuMettreAJour, child: const Text("Mettre à jour", style: TextStyle(fontSize: 12))),
                     ],
                   )
-                  : Center(
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        if (poste.nomEquipement.trim().isEmpty) {
-                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('⚠️ Merci de sélectionner un type de construction')));
-                          return;
-                        }
-
-                        final emission = calculerTotalEmission(poste, facteursEmission, dureesAmortissement, nbProprietaires: bien.nbProprietaires);
-
-                        final maintenant = DateTime.now().toIso8601String();
-                        final codeIndividu = "BASILE";
-                        final typeTemps = "Réel";
-                        final valeurTemps = "2025";
-                        const typePoste = "Equipement";
-                        const typeCategorie = "Logement";
-                        const sousCategorie = "Construction";
-
-                        // LOGEMENT
-                        if (poste.surface > 0 && facteursEmission.containsKey(poste.nomEquipement)) {
-                          await ApiService.savePoste({
-                            "ID_Usage": poste.id,
-                            "Code_Individu": codeIndividu,
-                            "Type_Temps": typeTemps,
-                            "Valeur_Temps": valeurTemps,
-                            "Date_enregistrement": maintenant,
-                            "Type_Poste": typePoste,
-                            "Type_Categorie": typeCategorie,
-                            "Sous_Categorie": sousCategorie,
-                            "Nom_Poste": poste.nomEquipement,
-                            "Nom_Logement": bien.nomLogement,
-                            "Quantite": poste.surface,
-                            "Unite": "m²",
-                            "Facteur_Emission": facteursEmission[poste.nomEquipement],
-                            "Emission_Calculee": calculerEmissionUnitaire(
-                              poste.surface,
-                              facteursEmission[poste.nomEquipement]!,
-                              dureesAmortissement[poste.nomEquipement],
-                              poste.anneeConstruction,
-                              bien.nbProprietaires,
-                            ),
-                            "Mode_Calcul": "Amorti",
-                            "Annee_Achat": poste.anneeConstruction,
-                            "Duree_Amortissement": dureesAmortissement[poste.nomEquipement],
-                          });
-                        }
-
-                        // GARAGE
-                        if (poste.surfaceGarage > 0 && facteursEmission.containsKey("Garage béton")) {
-                          await ApiService.savePoste({
-                            "Code_Individu": codeIndividu,
-                            "Type_Temps": typeTemps,
-                            "Valeur_Temps": valeurTemps,
-                            "Date_enregistrement": maintenant,
-                            "Type_Poste": typePoste,
-                            "Type_Categorie": typeCategorie,
-                            "Sous_Categorie": sousCategorie,
-                            "Nom_Poste": "Garage béton",
-                            "Nom_Logement": bien.nomLogement,
-                            "Quantite": poste.surfaceGarage,
-                            "Unite": "m²",
-                            "Facteur_Emission": facteursEmission["Garage béton"],
-                            "Emission_Calculee": calculerEmissionUnitaire(
-                              poste.surfaceGarage,
-                              facteursEmission["Garage béton"]!,
-                              dureesAmortissement["Garage béton"],
-                              poste.anneeGarage,
-                              bien.nbProprietaires,
-                            ),
-                            "Mode_Calcul": "Amorti",
-                            "Annee_Achat": poste.anneeGarage,
-                            "Duree_Amortissement": dureesAmortissement["Garage béton"],
-                          });
-                        }
-
-                        // PISCINE
-                        if (poste.surfacePiscine > 0 && facteursEmission.containsKey(poste.typePiscine)) {
-                          await ApiService.savePoste({
-                            "Code_Individu": codeIndividu,
-                            "Type_Temps": typeTemps,
-                            "Valeur_Temps": valeurTemps,
-                            "Date_enregistrement": maintenant,
-                            "Type_Poste": typePoste,
-                            "Type_Categorie": typeCategorie,
-                            "Sous_Categorie": sousCategorie,
-                            "Nom_Poste": poste.typePiscine,
-                            "Nom_Logement": bien.nomLogement,
-                            "Quantite": poste.surfacePiscine,
-                            "Unite": "m²",
-                            "Facteur_Emission": facteursEmission[poste.typePiscine],
-                            "Emission_Calculee": calculerEmissionUnitaire(
-                              poste.surfacePiscine,
-                              facteursEmission[poste.typePiscine]!,
-                              dureesAmortissement[poste.typePiscine],
-                              poste.anneePiscine,
-                              bien.nbProprietaires,
-                            ),
-                            "Mode_Calcul": "Amorti",
-                            "Annee_Achat": poste.anneePiscine,
-                            "Duree_Amortissement": dureesAmortissement[poste.typePiscine],
-                          });
-                        }
-
-                        // ABRI / SERRE
-                        if (poste.surfaceAbriEtSerre > 0 && facteursEmission.containsKey("Abri de jardin bois")) {
-                          await ApiService.savePoste({
-                            "Code_Individu": codeIndividu,
-                            "Type_Temps": typeTemps,
-                            "Valeur_Temps": valeurTemps,
-                            "Date_enregistrement": maintenant,
-                            "Type_Poste": typePoste,
-                            "Type_Categorie": typeCategorie,
-                            "Sous_Categorie": sousCategorie,
-                            "Nom_Poste": "Abri de jardin bois",
-                            "Nom_Logement": bien.nomLogement,
-                            "Quantite": poste.surfaceAbriEtSerre,
-                            "Unite": "m²",
-                            "Facteur_Emission": facteursEmission["Abri de jardin bois"],
-                            "Emission_Calculee": calculerEmissionUnitaire(
-                              poste.surfaceAbriEtSerre,
-                              facteursEmission["Abri de jardin bois"]!,
-                              dureesAmortissement["Abri de jardin bois"],
-                              poste.anneeAbri,
-                              bien.nbProprietaires,
-                            ),
-                            "Mode_Calcul": "Amorti",
-                            "Annee_Achat": poste.anneeAbri,
-                            "Duree_Amortissement": dureesAmortissement["Abri de jardin bois"],
-                          });
-                        }
-
-                        if (!mounted) return;
-                        widget.onSave();
-                        Navigator.of(context).pop();
-                      },
-                      child: const Text("Enregistrer", style: TextStyle(fontSize: 12)),
-                    ),
-                  ),
+                  : Center(child: ElevatedButton(onPressed: enregistrerOuMettreAJour, child: const Text("Enregistrer", style: TextStyle(fontSize: 12)))),
             ],
           ),
         ),

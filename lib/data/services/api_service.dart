@@ -138,31 +138,30 @@ class ApiService {
   // ---------------------------------------------------------------------------
   // 📦 UC - POSTES en écriture
   // ---------------------------------------------------------------------------
-
+  // 📥 Ajouter un poste
   static Future<Map<String, dynamic>> addUCPoste(Map<String, dynamic> data) async {
     final response = await http.post(Uri.parse('$baseUrl/api/uc/postes'), headers: {'Content-Type': 'application/json'}, body: jsonEncode(data));
     return _handleResponse(response);
   }
 
+  // ✏️ Mettre à jour un poste (par ID)
   static Future<Map<String, dynamic>> updateUCPoste(String id, Map<String, dynamic> data) async {
     final response = await http.patch(Uri.parse('$baseUrl/api/uc/postes/$id'), headers: {'Content-Type': 'application/json'}, body: jsonEncode(data));
     return _handleResponse(response);
   }
 
+  // ❌ Supprimer un poste
   static Future<Map<String, dynamic>> deleteUCPoste(String id) async {
     final response = await http.delete(Uri.parse('$baseUrl/api/uc/postes/$id'));
     return _handleResponse(response);
   }
 
-  static Future<void> savePoste(Map<String, dynamic> data) async {
-    final response = await http.post(
-      Uri.parse("$baseUrl/api/uc/postes"), // Appelle add_poste dans Flask
-      headers: {"Content-Type": "application/json"},
-      body: jsonEncode(data),
-    );
-
-    if (response.statusCode != 200) {
-      throw Exception("Erreur lors de l'enregistrement du poste : ${response.body}");
+  // 📦 Enregistrement intelligent (update si ID, add sinon)
+  static Future<void> saveOrUpdatePoste(Map<String, dynamic> data) async {
+    if (data['ID_Usage'] != null && data['ID_Usage'].toString().isNotEmpty) {
+      await updateUCPoste(data['ID_Usage'].toString(), data);
+    } else {
+      await addUCPoste(data);
     }
   }
 

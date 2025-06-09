@@ -22,7 +22,7 @@ class PosteBienImmobilier {
   PosteBienImmobilier({
     this.id, // 👈 ajouté
     this.nomEquipement = "",
-    this.surface = 100,
+    this.surface = 0,
     this.anneeConstruction = 2025,
 
     this.garage = false,
