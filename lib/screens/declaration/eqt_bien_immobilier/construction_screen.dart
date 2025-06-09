@@ -173,8 +173,16 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
   }
 
   double calculerEmissionUnitaire(double surface, double facteur, int? duree, int annee, int nbProprietaires) {
+    final anneeCourante = DateTime.now().year;
+    final age = anneeCourante - annee;
+    final dureeAmortie = duree ?? 1;
+
+    if (age >= dureeAmortie) {
+      return 0; // 🔴 Bien totalement amorti
+    }
+
     final reduction = reductionParAnnee(annee);
-    return (surface * facteur * reduction) / (duree ?? 1) / nbProprietaires;
+    return (surface * facteur * reduction) / dureeAmortie / nbProprietaires;
   }
 
   @override
