@@ -297,7 +297,6 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                                     final parsed = double.tryParse(val ?? '');
                                     setState(() {
                                       poste.surface = parsed != null && parsed >= 0 ? parsed : 0;
-                                      surfaceController.text = poste.surface.toStringAsFixed(0);
                                     });
                                   },
                                 ),
@@ -355,7 +354,6 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                                     final parsed = int.tryParse(val ?? '');
                                     setState(() {
                                       poste.anneeConstruction = (parsed != null ? parsed : 1900).clamp(1900, DateTime.now().year);
-                                      anneeController.text = poste.anneeConstruction.toString();
                                     });
                                   },
                                 ),
@@ -423,7 +421,6 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                                     final parsed = double.tryParse(val ?? '');
                                     setState(() {
                                       poste.surfaceGarage = parsed != null && parsed >= 0 ? parsed : 0;
-                                      garageController.text = poste.surfaceGarage.toStringAsFixed(0);
                                     });
                                   },
                                 ),
@@ -481,7 +478,6 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                                     final parsed = int.tryParse(val ?? '');
                                     setState(() {
                                       poste.anneeGarage = (parsed != null ? parsed : 1900).clamp(1900, DateTime.now().year);
-                                      anneeGarageController.text = poste.anneeGarage.toString();
                                     });
                                   },
                                 ),
@@ -608,7 +604,6 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                                     final parsed = int.tryParse(val);
                                     setState(() {
                                       poste.anneePiscine = parsed != null && parsed >= 1900 ? parsed.clamp(1900, DateTime.now().year) : 1900;
-                                      anneePiscineController.text = poste.anneePiscine.toString();
                                     });
                                   },
                                 ),
@@ -645,7 +640,6 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                               double? parsed = val != null ? double.tryParse(val) : null;
                               setState(() {
                                 poste.surfacePiscine = parsed != null && parsed >= 0 ? parsed : 0;
-                                piscineController.text = poste.surfacePiscine.toStringAsFixed(0);
                               });
                             },
                           ),
@@ -695,7 +689,6 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                                     final parsed = double.tryParse(val ?? '');
                                     setState(() {
                                       poste.surfaceAbriEtSerre = parsed != null && parsed >= 0 ? parsed : 0;
-                                      abriController.text = poste.surfaceAbriEtSerre.toStringAsFixed(0);
                                     });
                                   },
                                 ),
@@ -753,7 +746,6 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                                     final parsed = int.tryParse(val ?? '');
                                     setState(() {
                                       poste.anneeAbri = (parsed != null ? parsed : 1900).clamp(1900, DateTime.now().year);
-                                      anneeAbriController.text = poste.anneeAbri.toString();
                                     });
                                   },
                                 ),
