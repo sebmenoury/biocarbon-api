@@ -69,7 +69,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
             "Code_Individu": codeIndividu,
             "Type_Temps": typeTemps,
             "Valeur_Temps": valeurTemps,
-            "Date_enregistrement": maintenant,
+            "Date_Enregistrement": maintenant,
             "ID_Bien": bien.idBien,
             "Type_Bien": bien.typeBien,
             "Type_Poste": typePoste,
