@@ -81,7 +81,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
             "Nom_Logement": bien.nomLogement,
             "Quantite": surface,
             "Unite": "m²",
-            "Fréquence": "",
+            "Frequence": "",
             "Facteur_Emission": facteursEmission[nom],
             "Emission_Calculee": emission,
             "Mode_Calcul": "Amorti",
