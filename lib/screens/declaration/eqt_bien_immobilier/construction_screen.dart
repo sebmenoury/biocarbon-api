@@ -63,7 +63,8 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
           final emission = calculerEmissionUnitaire(surface, facteursEmission[nom]!, dureesAmortissement[nom], annee, bien.nbProprietaires);
 
           // Génération d'une clé d'identification unique par combinaison
-          final idUsage = "${bien.idBien}_Construction_${nom}_${bien.nomLogement}".replaceAll(' ', '_');
+          final idUsage = 1;
+          // "${bien.idBien}_Construction_${nom}_${bien.nomLogement}".replaceAll(' ', '_');
 
           postesAEnregistrer.add({
             "ID_Usage": idUsage,
