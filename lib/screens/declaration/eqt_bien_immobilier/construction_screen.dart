@@ -62,10 +62,9 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
         if (surface > 0 && facteursEmission.containsKey(nom)) {
           final emission = calculerEmissionUnitaire(surface, facteursEmission[nom]!, dureesAmortissement[nom], annee, bien.nbProprietaires);
 
-          // Génération d'une clé d'identification unique par combinaison
           final idUsage = "${bien.idBien}_Construction_${nom}_${bien.nomLogement}".replaceAll(' ', '_');
 
-          postesAEnregistrer.add({
+          final posteMap = {
             "ID_Usage": idUsage,
             "Code_Individu": codeIndividu,
             "Type_Temps": typeTemps,
@@ -86,7 +85,12 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
             "Mode_Calcul": "Amorti",
             "Annee_Achat": annee,
             "Duree_Amortissement": dureesAmortissement[nom],
-          });
+          };
+
+          print("📦 Poste à enregistrer : $posteMap");
+          postesAEnregistrer.add(posteMap);
+        } else {
+          print("⛔ Ignoré : surface=$surface ou facteur manquant pour '$nom'");
         }
       }
 
@@ -96,6 +100,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
       ajouterPoste("Abri de jardin bois", poste.surfaceAbriEtSerre, poste.anneeAbri);
 
       for (final p in postesAEnregistrer) {
+        print("📤 Envoi API : ${p['ID_Usage']} (${p['Nom_Poste']})");
         await ApiService.saveOrUpdatePoste(p);
       }
 
@@ -104,7 +109,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
       widget.onSave();
       Navigator.of(context).pop();
     } catch (e) {
-      print('❌ Erreur : \$e');
+      print('❌ Erreur enregistrement : $e');
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("❌ Erreur lors de l'enregistrement")));
     }
   }
