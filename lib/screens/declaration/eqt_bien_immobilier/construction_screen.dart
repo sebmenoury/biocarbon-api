@@ -100,8 +100,14 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
       ajouterPoste("Abri de jardin bois", poste.surfaceAbriEtSerre, poste.anneeAbri);
 
       for (final p in postesAEnregistrer) {
-        print("📤 Envoi API : ${p['ID_Usage']} (${p['Nom_Poste']})");
-        await ApiService.saveOrUpdatePoste(p);
+        final id = p["ID_Usage"]?.toString();
+        if (poste.id == null || poste.id!.isEmpty || id == null) {
+          print("🆕 Création du poste : $id");
+          await ApiService.addUCPoste(p);
+        } else {
+          print("🔁 Mise à jour du poste : $id");
+          await ApiService.updateUCPoste(id, p);
+        }
       }
 
       if (!mounted) return;
