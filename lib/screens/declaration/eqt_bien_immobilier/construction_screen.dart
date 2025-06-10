@@ -873,7 +873,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
 
               /// BOUTON
               const SizedBox(height: 24),
-              poste.nomEquipement.isNotEmpty
+              poste.id != null
                   ? Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
