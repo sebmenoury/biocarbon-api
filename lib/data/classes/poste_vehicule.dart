@@ -13,7 +13,18 @@ class PosteVehicule {
   // 🔽 Et optionnellement le nombre de propriétaires (si pas déjà présent) :
   final int nbProprietaires;
 
-  PosteVehicule({required this.nomEquipement, required this.anneeAchat, required this.facteurEmission, required this.dureeAmortissement, required this.nbProprietaires, this.idBien, this.typeBien});
+  int quantite; // 👈 AJOUT ICI
+
+  PosteVehicule({
+    required this.nomEquipement,
+    required this.anneeAchat,
+    required this.facteurEmission,
+    required this.dureeAmortissement,
+    required this.nbProprietaires,
+    this.idBien,
+    this.typeBien,
+    this.quantite = 1, // 👈 Valeur par défaut
+  });
 
   /// Méthode statique : retourne la sous-catégorie en fonction du nom
   static String getSousCategorieFromNom(String nom) {

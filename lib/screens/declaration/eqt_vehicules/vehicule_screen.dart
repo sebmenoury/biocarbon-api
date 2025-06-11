@@ -129,29 +129,45 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
   }
 
   Widget buildVehiculeLine(PosteVehicule poste, String categorie, int index) {
-    final colorBloc = Colors.white;
+    final isActive = poste.quantite > 0;
+    final colorBloc = isActive ? Colors.white : Colors.grey.shade100;
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         children: [
           Expanded(flex: 2, child: Text(poste.nomEquipement.replaceFirst(RegExp(r'^(Voitures|2-roues|Autres)\s*-\s*'), ''), style: const TextStyle(fontSize: 12))),
-          const SizedBox(width: 8),
-          SizedBox(
-            width: 90,
+          Container(
+            width: 60,
+            height: 28,
+            padding: const EdgeInsets.symmetric(horizontal: 6),
+            decoration: BoxDecoration(color: colorBloc, borderRadius: BorderRadius.circular(8)),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 GestureDetector(
                   onTap: () {
                     setState(() {
-                      vehiculesParCategorie[categorie]!.removeAt(index);
+                      if (poste.quantite > 1) {
+                        poste.quantite--;
+                      } else {
+                        vehiculesParCategorie[categorie]!.removeAt(index);
+                      }
                       recalculerTotal();
                     });
                   },
                   child: const Icon(Icons.remove, size: 14),
                 ),
-                const Text("1", style: TextStyle(fontSize: 12)),
-                const SizedBox(width: 14),
+                Text('${poste.quantite}', style: const TextStyle(fontSize: 12)),
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      poste.quantite++;
+                      recalculerTotal();
+                    });
+                  },
+                  child: const Icon(Icons.add, size: 14),
+                ),
               ],
             ),
           ),
@@ -160,7 +176,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
             width: 90,
             height: 28,
             padding: const EdgeInsets.symmetric(horizontal: 6),
-            decoration: BoxDecoration(color: colorBloc, borderRadius: BorderRadius.circular(8), boxShadow: [BoxShadow(color: Colors.grey.shade200, blurRadius: 1, offset: const Offset(0, 1))]),
+            decoration: BoxDecoration(color: colorBloc, borderRadius: BorderRadius.circular(8)),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -173,27 +189,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
                   },
                   child: const Icon(Icons.remove, size: 14),
                 ),
-                SizedBox(
-                  width: 40,
-                  height: 24,
-                  child: TextFormField(
-                    key: ValueKey(poste.anneeAchat),
-                    initialValue: poste.anneeAchat.toString(),
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 12),
-                    decoration: const InputDecoration(border: InputBorder.none, isDense: true, contentPadding: EdgeInsets.symmetric(horizontal: 6)),
-                    keyboardType: TextInputType.number,
-                    onChanged: (val) {
-                      final an = int.tryParse(val);
-                      if (an != null) {
-                        setState(() {
-                          poste.anneeAchat = an;
-                          recalculerTotal();
-                        });
-                      }
-                    },
-                  ),
-                ),
+                Text('${poste.anneeAchat}', style: const TextStyle(fontSize: 12)),
                 GestureDetector(
                   onTap: () {
                     setState(() {
@@ -222,30 +218,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
             children: const [Text("Voitures", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)), Text("Quantité"), Text("Année(s) d'achat")],
           ),
           const SizedBox(height: 8),
-          ...vehicules.asMap().entries.map((entry) => buildVehiculeLine(entry.value, titre, entry.key)),
-          const SizedBox(height: 8),
-          Align(
-            alignment: Alignment.centerRight,
-            child: IconButton(
-              icon: const Icon(Icons.add_circle_outline, size: 20),
-              onPressed: () {
-                setState(() {
-                  vehicules.add(
-                    PosteVehicule(
-                      nomEquipement: '${titre} - Nouvelle',
-                      anneeAchat: DateTime.now().year,
-                      facteurEmission: 0, // Valeur par défaut à remplacer si besoin
-                      dureeAmortissement: 1,
-                      nbProprietaires: nbProprietaires,
-                      idBien: idBienSelectionne,
-                      typeBien: typeBienSelectionne,
-                    ),
-                  );
-                  recalculerTotal();
-                });
-              },
-            ),
-          ),
+          ...vehicules.asMap().entries.map((entry) => buildVehiculeLine(entry.value, titre, entry.key)).toList(),
         ],
       ),
     );
