@@ -67,7 +67,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
         final emission = calculerEmissionUnitaire(surface, facteursEmission[nom]!, dureesAmortissement[nom], annee, bien.nbProprietaires);
 
         // Clé unique stable
-        final idUsage = idExistant ?? "${bien.idBien}_$sousCategorie${nom}_${bien.nomLogement}".replaceAll(' ', '_');
+        final idUsage = "${bien.idBien}_${sousCategorie}_${nom}_${bien.nomLogement}".replaceAll(' ', '_');
 
         final payload = {
           "ID_Usage": idUsage,

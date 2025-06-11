@@ -156,12 +156,34 @@ class ApiService {
     return _handleResponse(response);
   }
 
-  // 📦 Enregistrement intelligent (update si ID, add sinon)
   static Future<void> saveOrUpdatePoste(Map<String, dynamic> data) async {
-    if (data['ID_Usage'] != null && data['ID_Usage'].toString().isNotEmpty) {
-      await updateUCPoste(data['ID_Usage'].toString(), data);
-    } else {
-      await addUCPoste(data);
+    final id = data['ID_Usage'];
+    final urlGet = Uri.parse('$baseUrl/api/uc/postes/$id');
+    final urlPost = Uri.parse('$baseUrl/api/uc/postes');
+    final urlPatch = Uri.parse('$baseUrl/api/uc/postes/$id');
+
+    try {
+      // 🔍 Vérifie si le poste existe déjà
+      final getResponse = await http.get(urlGet);
+
+      if (getResponse.statusCode == 200) {
+        print("🔁 Mise à jour du poste : $id");
+        final response = await http.patch(urlPatch, headers: {'Content-Type': 'application/json'}, body: jsonEncode(data));
+
+        if (response.statusCode != 200) {
+          throw Exception("Erreur PATCH : ${response.statusCode} - ${response.body}");
+        }
+      } else {
+        print("🆕 Création du poste : $id");
+        final response = await http.post(urlPost, headers: {'Content-Type': 'application/json'}, body: jsonEncode(data));
+
+        if (response.statusCode != 200) {
+          throw Exception("Erreur POST : ${response.statusCode} - ${response.body}");
+        }
+      }
+    } catch (e) {
+      print('❌ Erreur enregistrement : $e');
+      rethrow;
     }
   }
 
