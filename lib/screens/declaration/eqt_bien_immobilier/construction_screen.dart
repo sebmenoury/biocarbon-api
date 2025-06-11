@@ -58,56 +58,51 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
 
       List<Map<String, dynamic>> postesAEnregistrer = [];
 
-      void ajouterPoste(String nom, double surface, int annee, {String? idExistant}) {
-        if (surface <= 0 || !facteursEmission.containsKey(nom)) {
-          debugPrint("⛔ Ignoré : surface=0 ou facteur manquant pour '$nom'");
-          return;
+      void ajouterPoste(String nom, double surface, int annee) {
+        if (surface > 0 && facteursEmission.containsKey(nom)) {
+          final emission = calculerEmissionUnitaire(surface, facteursEmission[nom]!, dureesAmortissement[nom], annee, bien.nbProprietaires);
+
+          // ID stable et prévisible
+          final idUsage = "${bien.idBien}_${sousCategorie}_${nom}_${bien.nomLogement}".replaceAll(' ', '_');
+
+          final poste = {
+            "ID_Usage": idUsage,
+            "Code_Individu": codeIndividu,
+            "Type_Temps": typeTemps,
+            "Valeur_Temps": valeurTemps,
+            "Date_Enregistrement": maintenant,
+            "ID_Bien": bien.idBien,
+            "Type_Bien": bien.typeBien,
+            "Type_Poste": typePoste,
+            "Type_Categorie": typeCategorie,
+            "Sous_Categorie": sousCategorie,
+            "Nom_Poste": nom,
+            "Nom_Logement": bien.nomLogement,
+            "Quantite": surface,
+            "Unite": "m²",
+            "Frequence": "",
+            "Facteur_Emission": facteursEmission[nom],
+            "Emission_Calculee": emission,
+            "Mode_Calcul": "Amorti",
+            "Annee_Achat": annee,
+            "Duree_Amortissement": dureesAmortissement[nom],
+          };
+
+          print("📦 Poste à enregistrer : $poste");
+          postesAEnregistrer.add(poste);
+        } else {
+          print("⛔ Ignoré : surface=0 ou facteur manquant pour '$nom'");
         }
-
-        final emission = calculerEmissionUnitaire(surface, facteursEmission[nom]!, dureesAmortissement[nom], annee, bien.nbProprietaires);
-
-        // Clé unique stable
-        final idUsage = "${bien.idBien}_${sousCategorie}_${nom}_${bien.nomLogement}".replaceAll(' ', '_');
-
-        final payload = {
-          "ID_Usage": idUsage,
-          "Code_Individu": codeIndividu,
-          "Type_Temps": typeTemps,
-          "Valeur_Temps": valeurTemps,
-          "Date_Enregistrement": maintenant,
-          "ID_Bien": bien.idBien,
-          "Type_Bien": bien.typeBien,
-          "Type_Poste": typePoste,
-          "Type_Categorie": typeCategorie,
-          "Sous_Categorie": sousCategorie,
-          "Nom_Poste": nom,
-          "Nom_Logement": bien.nomLogement,
-          "Quantite": surface,
-          "Unite": "m²",
-          "Frequence": "",
-          "Facteur_Emission": facteursEmission[nom],
-          "Emission_Calculee": emission,
-          "Mode_Calcul": "Amorti",
-          "Annee_Achat": annee,
-          "Duree_Amortissement": dureesAmortissement[nom],
-        };
-
-        debugPrint("📦 Poste à enregistrer : $payload");
-        postesAEnregistrer.add(payload);
       }
 
-      ajouterPoste(poste.nomEquipement, poste.surface, poste.anneeConstruction, idExistant: poste.id);
+      ajouterPoste(poste.nomEquipement, poste.surface, poste.anneeConstruction);
       ajouterPoste("Garage béton", poste.surfaceGarage, poste.anneeGarage);
       ajouterPoste(poste.typePiscine, poste.surfacePiscine, poste.anneePiscine);
       ajouterPoste("Abri de jardin bois", poste.surfaceAbriEtSerre, poste.anneeAbri);
 
       for (final p in postesAEnregistrer) {
-        if (p["ID_Usage"] != null && poste.id == p["ID_Usage"]) {
-          debugPrint("🔁 Mise à jour du poste : ${p["ID_Usage"]}");
-        } else {
-          debugPrint("🆕 Création du poste : ${p["ID_Usage"]}");
-        }
-        await ApiService.saveOrUpdatePoste(p);
+        print("📤 Envoi API : ${p["ID_Usage"]} (${p["Nom_Poste"]})");
+        await ApiService.saveOrUpdatePoste(p); // ce endpoint doit respecter l'ID_Usage fourni
       }
 
       if (!mounted) return;
@@ -115,7 +110,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
       widget.onSave();
       Navigator.of(context).pop();
     } catch (e) {
-      debugPrint('❌ Erreur enregistrement : $e');
+      print('❌ Erreur enregistrement : $e');
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("❌ Erreur lors de l'enregistrement")));
     }
   }
