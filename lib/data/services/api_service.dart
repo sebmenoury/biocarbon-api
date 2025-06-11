@@ -163,19 +163,10 @@ class ApiService {
     final urlPatch = Uri.parse('$baseUrl/api/uc/postes/$id');
 
     try {
-      print("🔍 Vérification existence du poste : $id");
-      print("➡️ URL GET : $urlGet");
-
       final getResponse = await http.get(urlGet);
-      print("📥 Réponse GET : ${getResponse.statusCode} - ${getResponse.body}");
 
       if (getResponse.statusCode == 200) {
-        print("🔁 Mise à jour du poste : $id");
-        print("📤 Données envoyées (PATCH) : ${jsonEncode(data)}");
-
         final response = await http.patch(urlPatch, headers: {'Content-Type': 'application/json'}, body: jsonEncode(data));
-
-        print("📥 Réponse PATCH : ${response.statusCode} - ${response.body}");
 
         if (response.statusCode != 200) {
           throw Exception("Erreur PATCH : ${response.statusCode} - ${response.body}");
@@ -183,12 +174,7 @@ class ApiService {
           print("✅ Poste mis à jour avec succès : $id");
         }
       } else {
-        print("🆕 Création du poste : $id");
-        print("📤 Données envoyées (POST) : ${jsonEncode(data)}");
-
         final response = await http.post(urlPost, headers: {'Content-Type': 'application/json'}, body: jsonEncode(data));
-
-        print("📥 Réponse POST : ${response.statusCode} - ${response.body}");
 
         if (response.statusCode != 200 && response.statusCode != 201) {
           throw Exception("Erreur POST : ${response.statusCode} - ${response.body}");

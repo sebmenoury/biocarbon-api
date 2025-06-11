@@ -8,6 +8,7 @@ import '../bien_immobilier/bien_immobilier.dart';
 import 'poste_bien_immobilier.dart';
 import 'emission_calculator_immobilier.dart';
 import 'const_construction.dart';
+import '../poste_list_screen.dart';
 
 class ConstructionScreen extends StatefulWidget {
   final String idBien;
@@ -111,8 +112,9 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
 
       // Rafraîchissement liste
       widget.onSave();
+      // ✅ Redirection vers la liste des postes mise à jour
       Future.delayed(const Duration(milliseconds: 300), () {
-        Navigator.pop(context);
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => PosteListScreen(typeCategorie: "Logement", sousCategorie: "Construction", codeIndividu: "BASILE", valeurTemps: "2025")));
       });
     } catch (e) {
       print('❌ Erreur enregistrement : $e');
