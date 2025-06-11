@@ -163,26 +163,30 @@ class ApiService {
     final urlPatch = Uri.parse('$baseUrl/api/uc/postes/$id');
 
     try {
-      // 🔍 Vérifie si le poste existe déjà
+      // 🔍 Vérifie si le poste existe déjà (par ID_Usage)
       final getResponse = await http.get(urlGet);
 
       if (getResponse.statusCode == 200) {
         print("🔁 Mise à jour du poste : $id");
+
+        // 🔄 Envoi d'un PATCH avec les données existantes (sans toucher à ID_Usage)
         final response = await http.patch(urlPatch, headers: {'Content-Type': 'application/json'}, body: jsonEncode(data));
 
         if (response.statusCode != 200) {
           throw Exception("Erreur PATCH : ${response.statusCode} - ${response.body}");
         } else {
-          print("✅ Mise à jour réussie : $id");
+          print("✅ Poste mis à jour avec succès : $id");
         }
       } else {
         print("🆕 Création du poste : $id");
+
+        // En POST, l’API Flask régénère un nouvel ID_Usage (attention à bien le gérer)
         final response = await http.post(urlPost, headers: {'Content-Type': 'application/json'}, body: jsonEncode(data));
 
         if (response.statusCode != 200 && response.statusCode != 201) {
           throw Exception("Erreur POST : ${response.statusCode} - ${response.body}");
         } else {
-          print("✅ Création réussie : $id");
+          print("✅ Poste créé avec succès : $id");
         }
       }
     } catch (e) {
