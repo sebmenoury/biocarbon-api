@@ -1,12 +1,19 @@
 import 'poste_postes.dart';
 
 class PosteVehicule {
-  String nomEquipement;
+  final String nomEquipement;
   int anneeAchat;
-  double facteurEmission;
-  int dureeAmortissement;
+  final double facteurEmission;
+  final int dureeAmortissement;
 
-  PosteVehicule({required this.nomEquipement, required this.anneeAchat, this.facteurEmission = 0, this.dureeAmortissement = 1});
+  // 🔽 Ajoute ces deux champs :
+  final String? idBien;
+  final String? typeBien;
+
+  // 🔽 Et optionnellement le nombre de propriétaires (si pas déjà présent) :
+  final int nbProprietaires;
+
+  PosteVehicule({required this.nomEquipement, required this.anneeAchat, required this.facteurEmission, required this.dureeAmortissement, required this.nbProprietaires, this.idBien, this.typeBien});
 
   /// Méthode statique : retourne la sous-catégorie en fonction du nom
   static String getSousCategorieFromNom(String nom) {
@@ -19,6 +26,32 @@ class PosteVehicule {
     } else {
       return "Autres";
     }
+  }
+
+  Map<String, dynamic> toMap({required String codeIndividu, required String typeTemps, required String valeurTemps}) {
+    final now = DateTime.now().toIso8601String();
+    final idUsage = "${codeIndividu}_${typeTemps}_${valeurTemps}_${nomEquipement.replaceAll(' ', '_')}_$anneeAchat";
+
+    return {
+      "ID_Usage": idUsage,
+      "Code_Individu": codeIndividu,
+      "Type_Temps": typeTemps,
+      "Valeur_Temps": valeurTemps,
+      "Date_enregistrement": now,
+      "ID_Bien": idBien,
+      "Type_Bien": typeBien,
+      "Type_Poste": "Equipement",
+      "Type_Categorie": "Déplacements",
+      "Sous_Categorie": "Véhicules",
+      "Nom_Poste": nomEquipement,
+      "Quantite": 1,
+      "Unite": "unité",
+      "Facteur_Emission": facteurEmission,
+      "Emission_Calculee": facteurEmission / dureeAmortissement,
+      "Mode_Calcul": "Amorti",
+      "Annee_Achat": anneeAchat,
+      "Duree_Amortissement": dureeAmortissement,
+    };
   }
 
   /// Regroupe une liste de postes en Map<sousCat, liste>

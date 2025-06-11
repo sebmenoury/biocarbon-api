@@ -16,6 +16,9 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
   Map<String, List<PosteVehicule>> vehiculesParCategorie = {'Voitures': [], '2-roues': [], 'Autres': []};
   bool isLoading = true;
   double totalEmission = 0;
+  String? idBienSelectionne;
+  String? typeBienSelectionne;
+  int nbProprietaires = 1;
 
   @override
   void initState() {
@@ -23,13 +26,21 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
     loadData();
   }
 
+  bool hasPostesExistants = false;
+
   Future<void> loadData() async {
-    final equipements = await ApiService.getRefEquipements();
-    final postes = await ApiService.getPostesBysousCategorie("Véhicules", "BASILE", "2025");
+    final ref = await ApiService.getRefEquipements();
+    final postesExistants = await ApiService.getPostesBysousCategorie("Véhicules", "BASILE", "2025");
+    final bien = await ApiService.getBienActif();
+    hasPostesExistants = postesExistants.isNotEmpty;
+
+    idBienSelectionne = bien['ID_Bien'];
+    typeBienSelectionne = bien['Type_Bien'];
+    nbProprietaires = bien['Nb_Proprietaires'] ?? 1;
 
     final Map<String, List<PosteVehicule>> result = {'Voitures': [], '2-roues': [], 'Autres': []};
 
-    for (final eq in equipements) {
+    for (final eq in ref) {
       if (eq['Type_Categorie'] == 'Déplacements' && eq['Sous_Categorie'] == 'Véhicules') {
         final nom = eq['Nom_Equipement'].toString();
         final facteur = double.tryParse(eq['Valeur_Emission_Grise'].toString()) ?? 0;
@@ -45,9 +56,34 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
           categorie = 'Autres';
         }
 
-        final postesPourCetEquipement = postes.where((p) => p.nomPoste == nom).toList();
-        for (final p in postesPourCetEquipement) {
-          result[categorie]!.add(PosteVehicule(nomEquipement: nom, anneeAchat: p.anneeAchat ?? DateTime.now().year, facteurEmission: facteur, dureeAmortissement: duree));
+        final existantsPourCeNom = postesExistants.where((p) => p.nomPoste == nom);
+
+        if (existantsPourCeNom.isNotEmpty) {
+          for (final poste in existantsPourCeNom) {
+            result[categorie]!.add(
+              PosteVehicule(
+                nomEquipement: nom,
+                anneeAchat: poste.anneeAchat ?? DateTime.now().year,
+                facteurEmission: facteur,
+                dureeAmortissement: duree,
+                nbProprietaires: nbProprietaires, // 👈 valeur du bien
+                idBien: poste.idBien ?? idBienSelectionne,
+                typeBien: poste.typeBien ?? typeBienSelectionne,
+              ),
+            );
+          }
+        } else {
+          result[categorie]!.add(
+            PosteVehicule(
+              nomEquipement: nom,
+              anneeAchat: DateTime.now().year,
+              facteurEmission: facteur,
+              dureeAmortissement: duree,
+              nbProprietaires: nbProprietaires,
+              idBien: idBienSelectionne,
+              typeBien: typeBienSelectionne,
+            ),
+          );
         }
       }
     }
@@ -72,6 +108,8 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
           "Type_Temps": "Réel",
           "Valeur_Temps": "2025",
           "Date_enregistrement": DateTime.now().toIso8601String(),
+          "ID_Bien": idBienSelectionne,
+          "Type_Bien": typeBienSelectionne,
           "Type_Poste": "Equipement",
           "Type_Categorie": "Déplacements",
           "Sous_Categorie": "Véhicules",
@@ -83,6 +121,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
           "Mode_Calcul": "Amorti",
           "Annee_Achat": poste.anneeAchat,
           "Duree_Amortissement": poste.dureeAmortissement,
+          "Nb_Proprietaires": poste.nbProprietaires,
         });
       }
     }
@@ -191,7 +230,17 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
               icon: const Icon(Icons.add_circle_outline, size: 20),
               onPressed: () {
                 setState(() {
-                  vehicules.add(PosteVehicule(nomEquipement: '${titre} - Nouvelle', anneeAchat: DateTime.now().year));
+                  vehicules.add(
+                    PosteVehicule(
+                      nomEquipement: '${titre} - Nouvelle',
+                      anneeAchat: DateTime.now().year,
+                      facteurEmission: 0, // Valeur par défaut à remplacer si besoin
+                      dureeAmortissement: 1,
+                      nbProprietaires: nbProprietaires,
+                      idBien: idBienSelectionne,
+                      typeBien: typeBienSelectionne,
+                    ),
+                  );
                   recalculerTotal();
                 });
               },
@@ -237,8 +286,8 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
           children: [
             ElevatedButton.icon(
               onPressed: saveData,
-              icon: const Icon(Icons.save, size: 14),
-              label: const Text("Enregistrer", style: TextStyle(fontSize: 12)),
+              icon: Icon(hasPostesExistants ? Icons.update : Icons.save, size: 14),
+              label: Text(hasPostesExistants ? "Mettre à jour" : "Enregistrer", style: const TextStyle(fontSize: 12)),
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size(120, 36),
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),

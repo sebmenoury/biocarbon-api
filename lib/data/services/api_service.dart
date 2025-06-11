@@ -85,6 +85,11 @@ class ApiService {
     }
   }
 
+  static Future<Map<String, dynamic>> getBienActif() async {
+    final tousLesBiens = await getBiens("BASILE"); // ou un autre filtre
+    return tousLesBiens.isNotEmpty ? tousLesBiens.first : {};
+  }
+
   static Future<Map<String, dynamic>> addBien({
     required String idBien, // 👈 ajouter cet argument
     required String codeIndividu,
