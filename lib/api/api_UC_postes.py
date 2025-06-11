@@ -73,6 +73,17 @@ def get_postes():
 
     return jsonify(rows)
 
+@bp_uc_postes.route("/api/uc/postes/<string:id_usage>", methods=["GET"])
+def get_poste_by_id(id_usage):
+    sheet = get_worksheet(SHEET_NAME, UC_POSTES_SHEET)
+    rows = sheet.get_all_records()
+
+    for row in rows:
+        if row["ID_Usage"] == id_usage:
+            return jsonify(row), 200
+
+    return jsonify({"error": f"Poste {id_usage} non trouvé"}), 404
+
 @bp_uc_postes.route("/api/uc/postes/<string:id_usage>", methods=["PATCH"])
 def update_poste(id_usage):
     data = request.get_json()
