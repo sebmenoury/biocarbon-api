@@ -24,45 +24,60 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
   }
 
   Future<void> loadData() async {
-    print("⏳ Chargement des données véhicules...");
-    final equipements = await ApiService.getRefEquipements();
-    final postes = await ApiService.getPostesBysousCategorie("Véhicules", "BASILE", "2025");
+    try {
+      print("⏳ Chargement des données véhicules...");
 
-    final Map<String, List<PosteVehicule>> result = {'Voitures': [], '2-roues': [], 'Autres': []};
+      final equipements = await ApiService.getRefEquipements();
+      print("📦 Équipements reçus : ${equipements.length}");
 
-    for (final eq in equipements) {
-      if (eq['Type_Categorie'] == 'Déplacements' && eq['Sous_Categorie'] == 'Véhicules') {
-        final nom = eq['Nom_Equipement'].toString();
-        final facteur = double.tryParse(eq['Valeur_Emission_Grise'].toString()) ?? 0;
-        final duree = int.tryParse(eq['Duree_Amortissement'].toString()) ?? 1;
+      final postes = await ApiService.getPostesBysousCategorie("Véhicules", "BASILE", "2025");
+      print("📄 Postes existants : ${postes.length}");
 
-        final nomLower = nom.toLowerCase();
-        String categorie;
-        if (nomLower.startsWith('voitures')) {
-          categorie = 'Voitures';
-        } else if (nomLower.startsWith('2-roues')) {
-          categorie = '2-Roues';
-        } else {
-          categorie = 'Autres';
+      final Map<String, List<PosteVehicule>> result = {'Voitures': [], '2-roues': [], 'Autres': []};
+
+      for (final eq in equipements) {
+        if (eq['Type_Categorie'] == 'Déplacements' && eq['Sous_Categorie'] == 'Véhicules') {
+          final nom = eq['Nom_Equipement']?.toString() ?? "";
+          if (nom.isEmpty) continue;
+
+          final facteur = double.tryParse(eq['Valeur_Emission_Grise']?.toString() ?? "0") ?? 0;
+          final duree = int.tryParse(eq['Duree_Amortissement']?.toString() ?? "1") ?? 1;
+
+          final nomLower = nom.toLowerCase();
+          String categorie;
+          if (nomLower.startsWith('voitures')) {
+            categorie = 'Voitures';
+          } else if (nomLower.startsWith('2-roues')) {
+            categorie = '2-roues';
+          } else {
+            categorie = 'Autres';
+          }
+
+          final postesPourCetEquipement = postes.where((p) => p.nomPoste == nom).toList();
+          final annees = postesPourCetEquipement.map((p) => p.anneeAchat ?? DateTime.now().year).toList();
+          if (annees.isEmpty) annees.add(DateTime.now().year);
+
+          final poste = PosteVehicule(nomEquipement: nom, anneesConstruction: annees, quantite: postesPourCetEquipement.length);
+
+          poste.facteurEmission = facteur;
+          poste.dureeAmortissement = duree;
+
+          result[categorie]?.add(poste);
         }
-
-        final postesPourCetEquipement = postes.where((p) => p.nomPoste == nom).toList();
-        final annees = postesPourCetEquipement.map((p) => p.anneeAchat ?? DateTime.now().year).toList();
-        if (annees.isEmpty) annees.add(DateTime.now().year);
-
-        final poste = PosteVehicule(nomEquipement: nom, anneesConstruction: annees, quantite: postesPourCetEquipement.length);
-        poste.facteurEmission = facteur;
-        poste.dureeAmortissement = duree;
-
-        result[categorie]!.add(poste);
       }
-    }
 
-    setState(() {
-      vehiculesParCategorie = result;
-      recalculerTotal();
-      isLoading = false;
-    });
+      setState(() {
+        vehiculesParCategorie = result;
+        recalculerTotal();
+        isLoading = false;
+      });
+
+      print("✅ Données véhicules chargées");
+    } catch (e, stack) {
+      print("❌ Erreur dans loadData : $e");
+      print(stack);
+      setState(() => isLoading = false);
+    }
   }
 
   void recalculerTotal() {
