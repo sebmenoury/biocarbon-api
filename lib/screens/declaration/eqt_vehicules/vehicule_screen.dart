@@ -24,6 +24,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
   }
 
   Future<void> loadData() async {
+    print("⏳ Chargement des données véhicules...");
     final equipements = await ApiService.getRefEquipements();
     final postes = await ApiService.getPostesBysousCategorie("Véhicules", "BASILE", "2025");
 
