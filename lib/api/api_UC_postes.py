@@ -11,48 +11,47 @@ def add_poste():
     data = request.get_json()
 
     required_fields = [
+        "ID_Usage",  # <<< on attend que Flutter fournisse l'ID
         "Code_Individu", "Type_Temps", "Valeur_Temps", "Date_Enregistrement",
-        "Type_Poste", "Type_Categorie", "Sous_Categorie", "ID_Bien", "Type_Bien", "Nom_Poste", "Nom_Logement", "Quantite", "Unite",
-        "Frequence", "Facteur_Emission", "Emission_Calculee", "Mode_Calcul", "Annee_Achat", "Duree_Amortissement"
+        "ID_Bien", "Type_Bien", "Type_Poste", "Type_Categorie", "Sous_Categorie",
+        "Nom_Poste", "Nom_Logement", "Quantite", "Unite", "Frequence",
+        "Facteur_Emission", "Emission_Calculee", "Mode_Calcul",
+        "Annee_Achat", "Duree_Amortissement"
     ]
 
-    if not all(field in data for field in required_fields):
-        return jsonify({"error": "Champs manquants dans la requête"}), 400
+    # Vérifie que tous les champs sont bien présents
+    if not all(field in data and data[field] != "" for field in required_fields):
+        return jsonify({"error": "Champs manquants ou vides dans la requête"}), 400
 
-    # ✅ Utilise l'ID_Usage fourni, sinon génère-le
-    if "ID_Usage" in data and data["ID_Usage"]:
-        id_usage = data["ID_Usage"]
-        print(f"✅ ID_Usage fourni par le client : {id_usage}")
-    else:
-        timestamp = datetime.datetime.now().strftime("%Y%m%dT%H%M%S")
-        id_usage = f"{data['Code_Individu']}-{data['Type_Temps']}-{data['Valeur_Temps']}-{data['Nom_Poste'].replace(' ', '_')[:20]}-{timestamp}"
-        print(f"🛠️ ID_Usage généré automatiquement : {id_usage}")
-        
-    sheet = get_worksheet(SHEET_NAME, UC_POSTES_SHEET)
-    sheet.append_row([
-        id_usage,
-        data["Code_Individu"],
-        data["Type_Temps"],
-        data["Valeur_Temps"],
-        data["Date_Enregistrement"],
-        data["ID_Bien"],
-        data["Type_Bien"],
-        data["Type_Poste"],
-        data["Type_Categorie"],
-        data["Sous_Categorie"],
-        data["Nom_Poste"],
-        data["Nom_Logement"],
-        data["Quantite"],
-        data["Unite"],
-        data["Frequence"],
-        data["Facteur_Emission"],
-        data["Emission_Calculee"],
-        data["Mode_Calcul"],
-        data["Annee_Achat"],
-        data["Duree_Amortissement"]
-    ])
+    try:
+        sheet = get_worksheet(SHEET_NAME, UC_POSTES_SHEET)
+        sheet.append_row([
+            data["ID_Usage"],
+            data["Code_Individu"],
+            data["Type_Temps"],
+            data["Valeur_Temps"],
+            data["Date_Enregistrement"],
+            data["ID_Bien"],
+            data["Type_Bien"],
+            data["Type_Poste"],
+            data["Type_Categorie"],
+            data["Sous_Categorie"],
+            data["Nom_Poste"],
+            data["Nom_Logement"],
+            data["Quantite"],
+            data["Unite"],
+            data["Frequence"],
+            data["Facteur_Emission"],
+            data["Emission_Calculee"],
+            data["Mode_Calcul"],
+            data["Annee_Achat"],
+            data["Duree_Amortissement"]
+        ])
+        return jsonify({"ID_Usage": data["ID_Usage"], "message": "Poste ajouté avec succès ✅"}), 201
 
-    return jsonify({"message": "Poste ajouté avec succès ✅", "ID_Usage": id_usage}), 201
+    except Exception as e:
+        return jsonify({"error": f"Erreur d'enregistrement : {str(e)}"}), 500
+
 
 @bp_uc_postes.route("/api/uc/postes", methods=["GET"])
 def get_postes():
