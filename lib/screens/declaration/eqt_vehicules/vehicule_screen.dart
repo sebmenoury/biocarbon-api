@@ -127,125 +127,102 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(flex: 2, child: Text(libelle, style: const TextStyle(fontSize: 12))),
-
-          // Colonne pour Quantité
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const Text("Quantité", style: TextStyle(fontSize: 10, color: Colors.grey)),
-              const SizedBox(height: 2),
-              Container(
-                width: 60,
-                height: 28,
-                padding: const EdgeInsets.symmetric(horizontal: 6),
-                decoration: BoxDecoration(color: colorBloc, borderRadius: BorderRadius.circular(8), boxShadow: [BoxShadow(color: Colors.grey.shade200, blurRadius: 1, offset: const Offset(0, 1))]),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          if (poste.quantite > 0) {
-                            poste.anneesConstruction.removeLast();
-                            poste.quantite--;
-                            recalculerTotal();
-                          }
-                        });
-                      },
-                      child: const Icon(Icons.remove, size: 14),
-                    ),
-                    Text('${poste.quantite}', style: const TextStyle(fontSize: 12)),
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          poste.anneesConstruction.add(DateTime.now().year);
-                          poste.quantite++;
-                          recalculerTotal();
-                        });
-                      },
-                      child: const Icon(Icons.add, size: 14),
-                    ),
-                  ],
+          Container(
+            width: 60,
+            height: 28,
+            padding: const EdgeInsets.symmetric(horizontal: 6),
+            decoration: BoxDecoration(color: colorBloc, borderRadius: BorderRadius.circular(8), boxShadow: [BoxShadow(color: Colors.grey.shade200, blurRadius: 1, offset: const Offset(0, 1))]),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      if (poste.quantite > 0) {
+                        poste.anneesConstruction.removeLast();
+                        poste.quantite--;
+                        recalculerTotal();
+                      }
+                    });
+                  },
+                  child: const Icon(Icons.remove, size: 14),
                 ),
-              ),
-            ],
+                Text('${poste.quantite}', style: const TextStyle(fontSize: 12)),
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      poste.anneesConstruction.add(DateTime.now().year);
+                      poste.quantite++;
+                      recalculerTotal();
+                    });
+                  },
+                  child: const Icon(Icons.add, size: 14),
+                ),
+              ],
+            ),
           ),
+          const SizedBox(width: 4),
+          Row(
+            children: List.generate(anneesAAfficher.length, (index) {
+              final annee = anneesAAfficher[index];
+              final colorBloc = poste.quantite > 0 ? Colors.white : Colors.grey.shade100;
 
-          const SizedBox(width: 8),
-
-          // Colonne pour les années
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text("Année(s) d'achat", style: TextStyle(fontSize: 10, color: Colors.grey)),
-              const SizedBox(height: 2),
-              Row(
-                children: List.generate(anneesAAfficher.length, (index) {
-                  final annee = anneesAAfficher[index];
-
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: Container(
-                      width: 90,
-                      height: 28,
-                      padding: const EdgeInsets.symmetric(horizontal: 6),
-                      decoration: BoxDecoration(
-                        color: colorBloc,
-                        borderRadius: BorderRadius.circular(8),
-                        boxShadow: [BoxShadow(color: Colors.grey.shade200, blurRadius: 1, offset: const Offset(0, 1))],
+              return Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: Container(
+                  width: 90,
+                  height: 28,
+                  padding: const EdgeInsets.symmetric(horizontal: 6),
+                  decoration: BoxDecoration(color: colorBloc, borderRadius: BorderRadius.circular(8), boxShadow: [BoxShadow(color: Colors.grey.shade200, blurRadius: 1, offset: const Offset(0, 1))]),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            poste.anneesConstruction[index] = poste.anneesConstruction[index] - 1;
+                            recalculerTotal();
+                          });
+                        },
+                        child: const Icon(Icons.remove, size: 14),
                       ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          GestureDetector(
-                            onTap: () {
+                      SizedBox(
+                        width: 40,
+                        height: 24,
+                        child: TextFormField(
+                          key: ValueKey(annee),
+                          initialValue: annee.toString(),
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(fontSize: 12),
+                          decoration: const InputDecoration(border: InputBorder.none, isDense: true, contentPadding: EdgeInsets.symmetric(horizontal: 6)),
+                          keyboardType: TextInputType.number,
+                          onChanged: (val) {
+                            final an = int.tryParse(val);
+                            if (an != null) {
                               setState(() {
-                                poste.anneesConstruction[index] = poste.anneesConstruction[index] - 1;
+                                poste.anneesConstruction[index] = an;
                                 recalculerTotal();
                               });
-                            },
-                            child: const Icon(Icons.remove, size: 14),
-                          ),
-                          SizedBox(
-                            width: 40,
-                            height: 24,
-                            child: TextFormField(
-                              key: ValueKey(annee),
-                              initialValue: annee.toString(),
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(fontSize: 12),
-                              decoration: const InputDecoration(border: InputBorder.none, isDense: true, contentPadding: EdgeInsets.symmetric(horizontal: 6)),
-                              keyboardType: TextInputType.number,
-                              onChanged: (val) {
-                                final an = int.tryParse(val);
-                                if (an != null) {
-                                  setState(() {
-                                    poste.anneesConstruction[index] = an;
-                                    recalculerTotal();
-                                  });
-                                }
-                              },
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                poste.anneesConstruction[index] = poste.anneesConstruction[index] + 1;
-                                recalculerTotal();
-                              });
-                            },
-                            child: const Icon(Icons.add, size: 14),
-                          ),
-                        ],
+                            }
+                          },
+                        ),
                       ),
-                    ),
-                  );
-                }),
-              ),
-            ],
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            poste.anneesConstruction[index] = poste.anneesConstruction[index] + 1;
+                            recalculerTotal();
+                          });
+                        },
+                        child: const Icon(Icons.add, size: 14),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }),
           ),
         ],
       ),
@@ -257,7 +234,24 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
       padding: const EdgeInsets.all(12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [Text(titre, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)), const SizedBox(height: 8), ...vehicules.map(buildVehiculeLine)],
+        children: [
+          // 🟦 Ligne d'en-tête : titre de groupe + intitulés colonnes
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(titre, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+              Row(
+                children: const [
+                  SizedBox(width: 60, child: Text("Quantité", style: TextStyle(fontSize: 10, color: Colors.grey))),
+                  SizedBox(width: 12),
+                  SizedBox(width: 100, child: Text("Année(s) d'achat", style: TextStyle(fontSize: 10, color: Colors.grey))),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          ...vehicules.map(buildVehiculeLine),
+        ],
       ),
     );
   }
