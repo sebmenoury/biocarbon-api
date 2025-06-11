@@ -1,19 +1,12 @@
 import 'poste_postes.dart';
 
 class PosteVehicule {
-  final String nomEquipement;
-  List<int> anneesConstruction;
+  String nomEquipement;
+  int anneeAchat;
   double facteurEmission;
   int dureeAmortissement;
-  int quantite;
 
-  PosteVehicule({
-    required this.nomEquipement,
-    required this.anneesConstruction,
-    this.facteurEmission = 0,
-    this.dureeAmortissement = 1,
-    this.quantite = 0, // <= AJOUT
-  });
+  PosteVehicule({required this.nomEquipement, required this.anneeAchat, this.facteurEmission = 0, this.dureeAmortissement = 1});
 
   /// Méthode statique : retourne la sous-catégorie en fonction du nom
   static String getSousCategorieFromNom(String nom) {

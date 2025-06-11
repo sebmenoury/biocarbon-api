@@ -3,7 +3,7 @@ import '../../../data/classes/poste_vehicule.dart';
 double calculerTotalEmissionVehicule(PosteVehicule poste) {
   final facteur = poste.facteurEmission;
   final duree = poste.dureeAmortissement > 0 ? poste.dureeAmortissement : 1;
-  final annees = poste.anneesConstruction;
+  final annees = poste.anneeAchat;
   final now = DateTime.now().year;
 
   double total = 0;
