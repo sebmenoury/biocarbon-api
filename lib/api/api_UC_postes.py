@@ -11,17 +11,19 @@ def add_poste():
     data = request.get_json()
 
     required_fields = [
-        "ID_Usage",  # <<< on attend que Flutter fournisse l'ID
-        "Code_Individu", "Type_Temps", "Valeur_Temps", "Date_Enregistrement",
+        "ID_Usage", "Code_Individu", "Type_Temps", "Valeur_Temps", "Date_Enregistrement",
         "ID_Bien", "Type_Bien", "Type_Poste", "Type_Categorie", "Sous_Categorie",
         "Nom_Poste", "Nom_Logement", "Quantite", "Unite", "Frequence",
-        "Facteur_Emission", "Emission_Calculee", "Mode_Calcul",
-        "Annee_Achat", "Duree_Amortissement"
+        "Facteur_Emission", "Emission_Calculee", "Mode_Calcul", "Annee_Achat", "Duree_Amortissement"
     ]
 
-    # Vérifie que tous les champs sont bien présents
-    if not all(field in data and data[field] != "" for field in required_fields):
-        return jsonify({"error": "Champs manquants ou vides dans la requête"}), 400
+    can_be_empty = ["Valeur_Temps", "ID_Bien", "Type_Bien", "Nom_Logement", "Frequence", "Unite", "Duree_Amortissement"]
+
+    for field in required_fields:
+        if field not in data:
+            return jsonify({"error": f"Champ manquant : {field}"}), 400
+        if field not in can_be_empty and str(data[field]).strip() == "":
+            return jsonify({"error": f"Champ vide non autorisé : {field}"}), 400
 
     try:
         sheet = get_worksheet(SHEET_NAME, UC_POSTES_SHEET)
