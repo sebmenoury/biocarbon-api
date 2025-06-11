@@ -19,10 +19,15 @@ def add_poste():
     if not all(field in data for field in required_fields):
         return jsonify({"error": "Champs manquants dans la requête"}), 400
 
-    # Génère un identifiant usage unique
-    timestamp = datetime.datetime.now().strftime("%Y%m%dT%H%M%S")
-    id_usage = f"{data['Code_Individu']}-{data['Type_Temps']}-{data['Valeur_Temps']}-{data['Nom_Poste'].replace(' ', '_')[:20]}-{timestamp}"
-
+    # ✅ Utilise l'ID_Usage fourni, sinon génère-le
+    if "ID_Usage" in data and data["ID_Usage"]:
+        id_usage = data["ID_Usage"]
+        print(f"✅ ID_Usage fourni par le client : {id_usage}")
+    else:
+        timestamp = datetime.datetime.now().strftime("%Y%m%dT%H%M%S")
+        id_usage = f"{data['Code_Individu']}-{data['Type_Temps']}-{data['Valeur_Temps']}-{data['Nom_Poste'].replace(' ', '_')[:20]}-{timestamp}"
+        print(f"🛠️ ID_Usage généré automatiquement : {id_usage}")
+        
     sheet = get_worksheet(SHEET_NAME, UC_POSTES_SHEET)
     sheet.append_row([
         id_usage,
