@@ -49,9 +49,9 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
   void enregistrerOuMettreAJour() async {
     try {
       final maintenant = DateTime.now().toIso8601String();
-      final codeIndividu = "BASILE";
-      final typeTemps = "Réel";
-      final valeurTemps = "2025";
+      const codeIndividu = "BASILE";
+      const typeTemps = "Réel";
+      const valeurTemps = "2025";
       const typePoste = "Equipement";
       const typeCategorie = "Logement";
       const sousCategorie = "Construction";
@@ -62,7 +62,6 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
         if (surface > 0 && facteursEmission.containsKey(nom)) {
           final emission = calculerEmissionUnitaire(surface, facteursEmission[nom]!, dureesAmortissement[nom], annee, bien.nbProprietaires);
 
-          // ID stable et prévisible
           final idUsage = "${bien.idBien}_${sousCategorie}_${nom}_${bien.nomLogement}".replaceAll(' ', '_');
 
           final poste = {
@@ -95,22 +94,29 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
         }
       }
 
+      // Ajoute les postes selon les données remplies
       ajouterPoste(poste.nomEquipement, poste.surface, poste.anneeConstruction);
       ajouterPoste("Garage béton", poste.surfaceGarage, poste.anneeGarage);
       ajouterPoste(poste.typePiscine, poste.surfacePiscine, poste.anneePiscine);
       ajouterPoste("Abri de jardin bois", poste.surfaceAbriEtSerre, poste.anneeAbri);
 
+      // Enregistrement ou mise à jour
       for (final p in postesAEnregistrer) {
         print("📤 Envoi API : ${p["ID_Usage"]} (${p["Nom_Poste"]})");
-        await ApiService.saveOrUpdatePoste(p); // ce endpoint doit respecter l'ID_Usage fourni
+        await ApiService.saveOrUpdatePoste(p);
       }
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("✅ Enregistrement effectué")));
+
+      // Rafraîchissement liste
       widget.onSave();
-      Navigator.of(context).pop();
+      Future.delayed(const Duration(milliseconds: 300), () {
+        Navigator.pop(context);
+      });
     } catch (e) {
       print('❌ Erreur enregistrement : $e');
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("❌ Erreur lors de l'enregistrement")));
     }
   }
@@ -137,7 +143,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
         widget.onSave();
         Navigator.of(context).pop();
       } catch (e) {
-        print('❌ Erreur suppression : \$e');
+        print('❌ Erreur suppression : $e');
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("❌ Erreur lors de la suppression du poste")));
       }
     }
