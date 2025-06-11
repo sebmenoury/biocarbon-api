@@ -73,20 +73,45 @@ def get_postes():
 
     return jsonify(rows)
 
-@bp_uc_postes.route("/api/uc/postes/<id_usage>", methods=["PATCH"])
-def update_postes(id_usage):
-    sheet = get_worksheet(SHEET_NAME, UC_POSTES_SHEET)
-    records = sheet.get_all_records()
+@bp_uc_postes.route("/api/uc/postes/<string:id_usage>", methods=["PATCH"])
+def update_poste(id_usage):
     data = request.get_json()
+    sheet = get_worksheet(SHEET_NAME, UC_POSTES_SHEET)
+    rows = sheet.get_all_values()
+    header = rows[0]
 
-    for idx, row in enumerate(records, start=2):
-        if row["ID_Usage"] == id_usage:
-            for key, value in data.items():
-                if key in row:
-                    sheet.update_cell(idx, list(row.keys()).index(key) + 1, value)
-            return jsonify({"message": f"Poste {id_usage} mis à jour ✅"})
+    try:
+        id_col_index = header.index("ID_Usage")
+        for idx, row in enumerate(rows[1:], start=2):  # 2 = ligne 2 (1-based)
+            if row[id_col_index] == id_usage:
+                updated_row = [  # dans le bon ordre !
+                    id_usage,
+                    data["Code_Individu"],
+                    data["Type_Temps"],
+                    data["Valeur_Temps"],
+                    data["Date_Enregistrement"],
+                    data["ID_Bien"],
+                    data["Type_Bien"],
+                    data["Type_Poste"],
+                    data["Type_Categorie"],
+                    data["Sous_Categorie"],
+                    data["Nom_Poste"],
+                    data["Nom_Logement"],
+                    data["Quantite"],
+                    data["Unite"],
+                    data["Frequence"],
+                    data["Facteur_Emission"],
+                    data["Emission_Calculee"],
+                    data["Mode_Calcul"],
+                    data["Annee_Achat"],
+                    data["Duree_Amortissement"]
+                ]
+                sheet.update(f"A{idx}:T{idx}", [updated_row])
+                return jsonify({"message": f"Poste {id_usage} mis à jour ✅"})
+        return jsonify({"error": f"Poste {id_usage} non trouvé"}), 404
 
-    return jsonify({"error": f"Poste {id_usage} non trouvé"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @bp_uc_postes.route("/api/uc/postes/<id_usage>", methods=["DELETE"])
 def delete_postes(id_usage):
