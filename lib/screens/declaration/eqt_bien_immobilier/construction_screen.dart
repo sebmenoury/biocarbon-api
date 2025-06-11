@@ -58,56 +58,56 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
 
       List<Map<String, dynamic>> postesAEnregistrer = [];
 
-      void ajouterPoste(String nom, double surface, int annee) {
-        if (surface > 0 && facteursEmission.containsKey(nom)) {
-          final emission = calculerEmissionUnitaire(surface, facteursEmission[nom]!, dureesAmortissement[nom], annee, bien.nbProprietaires);
-
-          final idUsage = "${bien.idBien}_Construction_${nom}_${bien.nomLogement}".replaceAll(' ', '_');
-
-          final posteMap = {
-            "ID_Usage": idUsage,
-            "Code_Individu": codeIndividu,
-            "Type_Temps": typeTemps,
-            "Valeur_Temps": valeurTemps,
-            "Date_Enregistrement": maintenant,
-            "ID_Bien": bien.idBien,
-            "Type_Bien": bien.typeBien,
-            "Type_Poste": typePoste,
-            "Type_Categorie": typeCategorie,
-            "Sous_Categorie": sousCategorie,
-            "Nom_Poste": nom,
-            "Nom_Logement": bien.nomLogement,
-            "Quantite": surface,
-            "Unite": "m²",
-            "Frequence": "",
-            "Facteur_Emission": facteursEmission[nom],
-            "Emission_Calculee": emission,
-            "Mode_Calcul": "Amorti",
-            "Annee_Achat": annee,
-            "Duree_Amortissement": dureesAmortissement[nom],
-          };
-
-          print("📦 Poste à enregistrer : $posteMap");
-          postesAEnregistrer.add(posteMap);
-        } else {
-          print("⛔ Ignoré : surface=$surface ou facteur manquant pour '$nom'");
+      void ajouterPoste(String nom, double surface, int annee, {String? idExistant}) {
+        if (surface <= 0 || !facteursEmission.containsKey(nom)) {
+          debugPrint("⛔ Ignoré : surface=0 ou facteur manquant pour '$nom'");
+          return;
         }
+
+        final emission = calculerEmissionUnitaire(surface, facteursEmission[nom]!, dureesAmortissement[nom], annee, bien.nbProprietaires);
+
+        // Clé unique stable
+        final idUsage = idExistant ?? "${bien.idBien}_$sousCategorie${nom}_${bien.nomLogement}".replaceAll(' ', '_');
+
+        final payload = {
+          "ID_Usage": idUsage,
+          "Code_Individu": codeIndividu,
+          "Type_Temps": typeTemps,
+          "Valeur_Temps": valeurTemps,
+          "Date_Enregistrement": maintenant,
+          "ID_Bien": bien.idBien,
+          "Type_Bien": bien.typeBien,
+          "Type_Poste": typePoste,
+          "Type_Categorie": typeCategorie,
+          "Sous_Categorie": sousCategorie,
+          "Nom_Poste": nom,
+          "Nom_Logement": bien.nomLogement,
+          "Quantite": surface,
+          "Unite": "m²",
+          "Frequence": "",
+          "Facteur_Emission": facteursEmission[nom],
+          "Emission_Calculee": emission,
+          "Mode_Calcul": "Amorti",
+          "Annee_Achat": annee,
+          "Duree_Amortissement": dureesAmortissement[nom],
+        };
+
+        debugPrint("📦 Poste à enregistrer : $payload");
+        postesAEnregistrer.add(payload);
       }
 
-      ajouterPoste(poste.nomEquipement, poste.surface, poste.anneeConstruction);
+      ajouterPoste(poste.nomEquipement, poste.surface, poste.anneeConstruction, idExistant: poste.id);
       ajouterPoste("Garage béton", poste.surfaceGarage, poste.anneeGarage);
       ajouterPoste(poste.typePiscine, poste.surfacePiscine, poste.anneePiscine);
       ajouterPoste("Abri de jardin bois", poste.surfaceAbriEtSerre, poste.anneeAbri);
 
       for (final p in postesAEnregistrer) {
-        final id = p["ID_Usage"]?.toString();
-        if (poste.id == null || poste.id!.isEmpty || id == null) {
-          print("🆕 Création du poste : $id");
-          await ApiService.addUCPoste(p);
+        if (p["ID_Usage"] != null && poste.id == p["ID_Usage"]) {
+          debugPrint("🔁 Mise à jour du poste : ${p["ID_Usage"]}");
         } else {
-          print("🔁 Mise à jour du poste : $id");
-          await ApiService.updateUCPoste(id, p);
+          debugPrint("🆕 Création du poste : ${p["ID_Usage"]}");
         }
+        await ApiService.saveOrUpdatePoste(p);
       }
 
       if (!mounted) return;
@@ -115,7 +115,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
       widget.onSave();
       Navigator.of(context).pop();
     } catch (e) {
-      print('❌ Erreur enregistrement : $e');
+      debugPrint('❌ Erreur enregistrement : $e');
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("❌ Erreur lors de l'enregistrement")));
     }
   }
@@ -202,7 +202,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
         debugPrint("⚠️ Aucun poste Construction trouvé pour ce bien. Initialisation par défaut.");
         poste.nomEquipement = "Maison Classique";
         poste.surface = 0;
-        poste.anneeConstruction = DateTime.now().year - 10;
+        poste.anneeConstruction = DateTime.now().year;
         poste.surfaceGarage = 0;
         poste.surfacePiscine = 0;
         poste.typePiscine = "Piscine béton";
