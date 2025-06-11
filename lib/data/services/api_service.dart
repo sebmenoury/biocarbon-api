@@ -172,13 +172,17 @@ class ApiService {
 
         if (response.statusCode != 200) {
           throw Exception("Erreur PATCH : ${response.statusCode} - ${response.body}");
+        } else {
+          print("✅ Mise à jour réussie : $id");
         }
       } else {
         print("🆕 Création du poste : $id");
         final response = await http.post(urlPost, headers: {'Content-Type': 'application/json'}, body: jsonEncode(data));
 
-        if (response.statusCode != 200) {
+        if (response.statusCode != 200 && response.statusCode != 201) {
           throw Exception("Erreur POST : ${response.statusCode} - ${response.body}");
+        } else {
+          print("✅ Création réussie : $id");
         }
       }
     } catch (e) {
