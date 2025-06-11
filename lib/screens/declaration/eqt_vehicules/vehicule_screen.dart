@@ -151,7 +151,12 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
                       if (poste.quantite > 1) {
                         poste.quantite--;
                       } else {
-                        vehiculesParCategorie[categorie]!.removeAt(index);
+                        final doublons = vehiculesParCategorie[categorie]!.where((p) => p.nomEquipement == poste.nomEquipement).toList();
+                        if (doublons.length > 1) {
+                          vehiculesParCategorie[categorie]!.removeAt(index);
+                        } else {
+                          poste.quantite = 0;
+                        }
                       }
                       recalculerTotal();
                     });
@@ -162,7 +167,12 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
                 GestureDetector(
                   onTap: () {
                     setState(() {
-                      poste.quantite++;
+                      final doublons = vehiculesParCategorie[categorie]!.where((p) => p.nomEquipement == poste.nomEquipement).toList();
+                      if (poste.quantite == 0) {
+                        poste.quantite = 1;
+                      } else {
+                        vehiculesParCategorie[categorie]!.insert(index + 1, PosteVehicule.clone(poste));
+                      }
                       recalculerTotal();
                     });
                   },
@@ -189,7 +199,27 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
                   },
                   child: const Icon(Icons.remove, size: 14),
                 ),
-                Text('${poste.anneeAchat}', style: const TextStyle(fontSize: 12)),
+                SizedBox(
+                  width: 40,
+                  height: 24,
+                  child: TextFormField(
+                    key: ValueKey(poste.anneeAchat),
+                    initialValue: poste.anneeAchat.toString(),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 12),
+                    decoration: const InputDecoration(border: InputBorder.none, isDense: true, contentPadding: EdgeInsets.symmetric(horizontal: 6)),
+                    keyboardType: TextInputType.number,
+                    onChanged: (val) {
+                      final an = int.tryParse(val);
+                      if (an != null) {
+                        setState(() {
+                          poste.anneeAchat = an;
+                          recalculerTotal();
+                        });
+                      }
+                    },
+                  ),
+                ),
                 GestureDetector(
                   onTap: () {
                     setState(() {
@@ -215,7 +245,11 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [Text("Voitures", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)), Text("Quantité"), Text("Année(s) d'achat")],
+            children: const [
+              Text("Voitures", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+              Padding(padding: EdgeInsets.only(right: 70), child: Text("Quantité", style: TextStyle(fontSize: 11, color: Colors.grey))),
+              Padding(padding: EdgeInsets.only(right: 10), child: Text("Année(s) d'achat", style: TextStyle(fontSize: 11, color: Colors.grey))),
+            ],
           ),
           const SizedBox(height: 8),
           ...vehicules.asMap().entries.map((entry) => buildVehiculeLine(entry.value, titre, entry.key)).toList(),
@@ -233,7 +267,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
         children: [
           IconButton(icon: const Icon(Icons.arrow_back), iconSize: 18, onPressed: () => Navigator.pop(context), padding: EdgeInsets.zero, constraints: const BoxConstraints()),
           const SizedBox(width: 8),
-          const Text("Synthèse Véhicules déclarés", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+          const Text("Déclaration des Véhicules", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
         ],
       ),
       children: [

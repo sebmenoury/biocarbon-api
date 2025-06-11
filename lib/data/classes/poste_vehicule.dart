@@ -26,6 +26,17 @@ class PosteVehicule {
     this.quantite = 1, // 👈 Valeur par défaut
   });
 
+  // 👇 Ajoute cette méthode pour permettre la duplication
+  PosteVehicule.clone(PosteVehicule original)
+    : nomEquipement = original.nomEquipement,
+      anneeAchat = original.anneeAchat,
+      facteurEmission = original.facteurEmission,
+      dureeAmortissement = original.dureeAmortissement,
+      quantite = original.quantite,
+      nbProprietaires = original.nbProprietaires,
+      idBien = original.idBien,
+      typeBien = original.typeBien;
+
   /// Méthode statique : retourne la sous-catégorie en fonction du nom
   static String getSousCategorieFromNom(String nom) {
     final nomMin = nom.toLowerCase();
