@@ -63,21 +63,26 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
     }
 
     for (final p in postesExistants) {
-      final eqMatching = ref.firstWhere((e) => e['Nom_Equipement'] == p.nomPoste, orElse: () => <String, dynamic>{});
+      final nomPoste = p.nomPoste ?? '';
+
+      final groupe =
+          nomPoste.toLowerCase().startsWith('voitures')
+              ? 'Voitures'
+              : nomPoste.toLowerCase().startsWith('2-roues')
+              ? '2-roues'
+              : 'Autres';
+
+      final eqMatching = ref.firstWhere((e) => e['Nom_Equipement'] == nomPoste, orElse: () => <String, dynamic>{});
+
+      final existeDeja = result[groupe]!.any((poste) => poste.nomEquipement == nomPoste);
+      if (existeDeja) continue;
 
       final facteur = double.tryParse(eqMatching['Valeur_Emission_Grise']?.toString() ?? '') ?? 0;
       final duree = int.tryParse(eqMatching['Duree_Amortissement']?.toString() ?? '') ?? 1;
 
-      final groupe =
-          (p.nomPoste ?? '').toLowerCase().startsWith('voitures')
-              ? 'Voitures'
-              : (p.nomPoste ?? '').toLowerCase().startsWith('2-roues')
-              ? '2-roues'
-              : 'Autres';
-
       result[groupe]!.add(
         PosteVehicule(
-          nomEquipement: p.nomPoste ?? '',
+          nomEquipement: nomPoste,
           anneeAchat: p.anneeAchat ?? DateTime.now().year,
           facteurEmission: facteur,
           dureeAmortissement: duree,
