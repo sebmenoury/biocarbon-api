@@ -139,8 +139,8 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
           Expanded(flex: 2, child: Text(poste.nomEquipement.replaceFirst(RegExp(r'^(Voitures|2-roues|Autres)\s*-\s*'), ''), style: const TextStyle(fontSize: 12))),
           Container(
             width: 60,
-            height: 28,
-            padding: const EdgeInsets.symmetric(horizontal: 6),
+            height: 24,
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
             decoration: BoxDecoration(color: colorBloc, borderRadius: BorderRadius.circular(8)),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -184,8 +184,8 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
           const SizedBox(width: 8),
           Container(
             width: 90,
-            height: 28,
-            padding: const EdgeInsets.symmetric(horizontal: 6),
+            height: 24,
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
             decoration: BoxDecoration(color: colorBloc, borderRadius: BorderRadius.circular(8)),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -239,19 +239,19 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
 
   Widget buildCategorieCard(String titre, List<PosteVehicule> vehicules) {
     return CustomCard(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
-              Text("Voitures", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-              Padding(padding: EdgeInsets.only(right: 70), child: Text("Quantité", style: TextStyle(fontSize: 11, color: Colors.grey))),
-              Padding(padding: EdgeInsets.only(right: 10), child: Text("Année(s) d'achat", style: TextStyle(fontSize: 11, color: Colors.grey))),
+            children: [
+              Text(titre, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+              const Padding(padding: EdgeInsets.only(right: 40), child: Text("Quantité", style: TextStyle(fontSize: 11, color: Colors.grey))),
+              const Padding(padding: EdgeInsets.only(right: 10), child: Text("Année(s) d'achat", style: TextStyle(fontSize: 11, color: Colors.grey))),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 6),
           ...vehicules.asMap().entries.map((entry) => buildVehiculeLine(entry.value, titre, entry.key)).toList(),
         ],
       ),
@@ -267,7 +267,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
         children: [
           IconButton(icon: const Icon(Icons.arrow_back), iconSize: 18, onPressed: () => Navigator.pop(context), padding: EdgeInsets.zero, constraints: const BoxConstraints()),
           const SizedBox(width: 8),
-          const Text("Déclaration des Véhicules", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+          const Center(child: Text("Déclaration des Véhicules", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold))),
         ],
       ),
       children: [
@@ -276,14 +276,20 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text("Empreinte annuelle", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+              const Text("Empreinte d'amortissement annuel", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
               Text("${totalEmission.toStringAsFixed(0)} kgCO₂", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
             ],
           ),
         ),
         const SizedBox(height: 6),
         ...['Voitures', '2-roues', 'Autres'].map((groupe) {
-          final items = vehiculesParCategorie[groupe]!;
+          final items = vehiculesParCategorie[groupe] ?? [];
+          print('>>> Groupe $groupe : ${items.length} éléments');
+          for (var i = 0; i < items.length; i++) {
+            final p = items[i];
+            print('  - ${p.nomEquipement} | quantité: ${p.quantite} | année: ${p.anneeAchat}');
+          }
+
           if (items.isNotEmpty) return buildCategorieCard(groupe, items);
           return const SizedBox.shrink();
         }),
