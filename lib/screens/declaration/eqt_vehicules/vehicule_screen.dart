@@ -31,61 +31,62 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
   Future<void> loadData() async {
     final ref = await ApiService.getRefEquipements();
     final postesExistants = await ApiService.getPostesBysousCategorie("Véhicules", "BASILE", "2025");
-    final bien = await ApiService.getBienActif();
-    hasPostesExistants = postesExistants.isNotEmpty;
-
-    idBienSelectionne = bien['ID_Bien'];
-    typeBienSelectionne = bien['Type_Bien'];
-    nbProprietaires = bien['Nb_Proprietaires'] ?? 1;
 
     final Map<String, List<PosteVehicule>> result = {'Voitures': [], '2-roues': [], 'Autres': []};
 
-    for (final eq in ref) {
-      if (eq['Type_Categorie'] == 'Déplacements' && eq['Sous_Categorie'] == 'Véhicules') {
-        final nom = eq['Nom_Equipement'].toString();
-        final facteur = double.tryParse(eq['Valeur_Emission_Grise'].toString()) ?? 0;
-        final duree = int.tryParse(eq['Duree_Amortissement'].toString()) ?? 1;
+    final baseEquipements = ref.where((eq) => eq['Type_Categorie'] == 'Déplacements' && eq['Sous_Categorie'] == 'Véhicules');
 
-        final nomLower = nom.toLowerCase();
-        String categorie;
-        if (nomLower.startsWith('voitures')) {
-          categorie = 'Voitures';
-        } else if (nomLower.startsWith('2-roues')) {
-          categorie = '2-roues';
-        } else {
-          categorie = 'Autres';
-        }
+    for (final eq in baseEquipements) {
+      final nom = eq['Nom_Equipement'];
+      final facteur = double.tryParse(eq['Valeur_Emission_Grise']?.toString() ?? '') ?? 0;
+      final duree = int.tryParse(eq['Duree_Amortissement']?.toString() ?? '') ?? 1;
 
-        final existantsPourCeNom = postesExistants.where((p) => p.nomPoste == nom);
+      final categorie =
+          nom.toLowerCase().startsWith('voitures')
+              ? 'Voitures'
+              : nom.toLowerCase().startsWith('2-roues')
+              ? '2-roues'
+              : 'Autres';
 
-        if (existantsPourCeNom.isNotEmpty) {
-          for (final poste in existantsPourCeNom) {
-            result[categorie]!.add(
-              PosteVehicule(
-                nomEquipement: nom,
-                anneeAchat: poste.anneeAchat ?? DateTime.now().year,
-                facteurEmission: facteur,
-                dureeAmortissement: duree,
-                nbProprietaires: nbProprietaires, // 👈 valeur du bien
-                idBien: poste.idBien ?? idBienSelectionne,
-                typeBien: poste.typeBien ?? typeBienSelectionne,
-              ),
-            );
-          }
-        } else {
-          result[categorie]!.add(
-            PosteVehicule(
-              nomEquipement: nom,
-              anneeAchat: DateTime.now().year,
-              facteurEmission: facteur,
-              dureeAmortissement: duree,
-              nbProprietaires: nbProprietaires,
-              idBien: idBienSelectionne,
-              typeBien: typeBienSelectionne,
-            ),
-          );
-        }
-      }
+      result[categorie]!.add(
+        PosteVehicule(
+          nomEquipement: nom,
+          anneeAchat: DateTime.now().year,
+          facteurEmission: facteur,
+          dureeAmortissement: duree,
+          quantite: 0,
+          idBien: idBienSelectionne,
+          typeBien: typeBienSelectionne,
+          nbProprietaires: nbProprietaires,
+        ),
+      );
+    }
+
+    for (final p in postesExistants) {
+      final eqMatching = ref.firstWhere((e) => e['Nom_Equipement'] == p.nomPoste, orElse: () => <String, dynamic>{});
+
+      final facteur = double.tryParse(eqMatching['Valeur_Emission_Grise']?.toString() ?? '') ?? 0;
+      final duree = int.tryParse(eqMatching['Duree_Amortissement']?.toString() ?? '') ?? 1;
+
+      final groupe =
+          (p.nomPoste ?? '').toLowerCase().startsWith('voitures')
+              ? 'Voitures'
+              : (p.nomPoste ?? '').toLowerCase().startsWith('2-roues')
+              ? '2-roues'
+              : 'Autres';
+
+      result[groupe]!.add(
+        PosteVehicule(
+          nomEquipement: p.nomPoste ?? '',
+          anneeAchat: p.anneeAchat ?? DateTime.now().year,
+          facteurEmission: facteur,
+          dureeAmortissement: duree,
+          quantite: 1,
+          idBien: p.idBien,
+          typeBien: p.typeBien,
+          nbProprietaires: nbProprietaires,
+        ),
+      );
     }
 
     setState(() {
