@@ -252,7 +252,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(titre, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-              const Padding(padding: EdgeInsets.only(right: 40), child: Text("Quantité", style: TextStyle(fontSize: 11, color: Colors.grey))),
+              const Padding(padding: EdgeInsets.only(right: 30), child: Text("Quantité", style: TextStyle(fontSize: 11, color: Colors.grey))),
               const Padding(padding: EdgeInsets.only(right: 10), child: Text("Année(s) d'achat", style: TextStyle(fontSize: 11, color: Colors.grey))),
             ],
           ),
@@ -289,10 +289,8 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
         const SizedBox(height: 6),
         ...['Voitures', '2-roues', 'Autres'].map((groupe) {
           final items = vehiculesParCategorie[groupe] ?? [];
-          print('>>> Groupe $groupe : ${items.length} éléments');
           for (var i = 0; i < items.length; i++) {
             final p = items[i];
-            print('  - ${p.nomEquipement} | quantité: ${p.quantite} | année: ${p.anneeAchat}');
           }
 
           if (items.isNotEmpty) return buildCategorieCard(groupe, items);
