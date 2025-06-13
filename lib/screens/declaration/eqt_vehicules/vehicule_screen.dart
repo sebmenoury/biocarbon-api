@@ -27,7 +27,6 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
   }
 
   bool hasPostesExistants = false;
-
   Future<void> loadData() async {
     final ref = await ApiService.getRefEquipements();
     final postesExistants = await ApiService.getPostesBysousCategorie("Véhicules", "BASILE", "2025");
@@ -35,9 +34,13 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
     final Map<String, List<PosteVehicule>> result = {'Voitures': [], '2-roues': [], 'Autres': []};
 
     final baseEquipements = ref.where((eq) => eq['Type_Categorie'] == 'Déplacements' && eq['Sous_Categorie'] == 'Véhicules');
+    final nomsPostesExistants = postesExistants.map((p) => p.nomPoste).toSet();
 
+    // Ajout des équipements de référence sauf ceux déjà déclarés
     for (final eq in baseEquipements) {
       final nom = eq['Nom_Equipement'];
+      if (nomsPostesExistants.contains(nom)) continue;
+
       final facteur = double.tryParse(eq['Valeur_Emission_Grise']?.toString() ?? '') ?? 0;
       final duree = int.tryParse(eq['Duree_Amortissement']?.toString() ?? '') ?? 1;
 
@@ -62,27 +65,23 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
       );
     }
 
+    // Ajout des postes existants avec données utilisateur
     for (final p in postesExistants) {
-      final nomPoste = p.nomPoste ?? '';
-
-      final groupe =
-          nomPoste.toLowerCase().startsWith('voitures')
-              ? 'Voitures'
-              : nomPoste.toLowerCase().startsWith('2-roues')
-              ? '2-roues'
-              : 'Autres';
-
-      final eqMatching = ref.firstWhere((e) => e['Nom_Equipement'] == nomPoste, orElse: () => <String, dynamic>{});
-
-      final existeDeja = result[groupe]!.any((poste) => poste.nomEquipement == nomPoste);
-      if (existeDeja) continue;
+      final eqMatching = ref.firstWhere((e) => e['Nom_Equipement'] == p.nomPoste, orElse: () => <String, dynamic>{});
 
       final facteur = double.tryParse(eqMatching['Valeur_Emission_Grise']?.toString() ?? '') ?? 0;
       final duree = int.tryParse(eqMatching['Duree_Amortissement']?.toString() ?? '') ?? 1;
 
+      final groupe =
+          (p.nomPoste ?? '').toLowerCase().startsWith('voitures')
+              ? 'Voitures'
+              : (p.nomPoste ?? '').toLowerCase().startsWith('2-roues')
+              ? '2-roues'
+              : 'Autres';
+
       result[groupe]!.add(
         PosteVehicule(
-          nomEquipement: nomPoste,
+          nomEquipement: p.nomPoste ?? '',
           anneeAchat: p.anneeAchat ?? DateTime.now().year,
           facteurEmission: facteur,
           dureeAmortissement: duree,
