@@ -94,6 +94,10 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
     }
 
     setState(() {
+      // Trie les postes par quantité décroissante dans chaque groupe
+      for (final groupe in result.keys) {
+        result[groupe]!.sort((a, b) => b.quantite.compareTo(a.quantite));
+      }
       vehiculesParCategorie = result;
       recalculerTotal();
       isLoading = false;
@@ -102,6 +106,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
 
   void recalculerTotal() {
     totalEmission = vehiculesParCategorie.values.expand((v) => v).fold(0.0, (sum, p) => sum + calculerTotalEmissionVehicule(p));
+    print('Total recalculé : $totalEmission kgCO₂');
   }
 
   Future<void> saveData() async {
@@ -244,16 +249,15 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
 
   Widget buildCategorieCard(String titre, List<PosteVehicule> vehicules) {
     return CustomCard(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(titre, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-              const Padding(padding: EdgeInsets.only(right: 30), child: Text("Quantité", style: TextStyle(fontSize: 11, color: Colors.grey))),
-              const Padding(padding: EdgeInsets.only(right: 10), child: Text("Année(s) d'achat", style: TextStyle(fontSize: 11, color: Colors.grey))),
+              const Expanded(flex: 2, child: Text("Voitures", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13))),
+              Expanded(flex: 2, child: Row(mainAxisAlignment: MainAxisAlignment.center, children: const [Text("Quantité", style: TextStyle(fontSize: 11, color: Colors.grey))])),
+              Expanded(flex: 3, child: Row(mainAxisAlignment: MainAxisAlignment.center, children: const [Text("Année(s) d'achat", style: TextStyle(fontSize: 11, color: Colors.grey))])),
             ],
           ),
           const SizedBox(height: 6),
