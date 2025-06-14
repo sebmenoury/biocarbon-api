@@ -143,7 +143,9 @@ class _PosteListScreenState extends State<PosteListScreen> {
                           print('🛞 widget.sousCategorie = "${widget.sousCategorie}"');
                           print('🚗 sousCat cliqué = "$sousCat"');
 
-                          if (sousCat.trim().toLowerCase() == "Véhicules") {
+                          if (widget.sousCategorie.trim().toLowerCase() == "véhicules") {
+                            print("✅ Navigation vers VehiculeScreen");
+
                             if (widget.codeIndividu != null && widget.denominationBien != null) {
                               Navigator.push(context, MaterialPageRoute(builder: (_) => VehiculeScreen(codeIndividu: widget.codeIndividu!, denominationBien: widget.denominationBien!)));
                             } else {
@@ -152,6 +154,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                           } else {
                             final entry = getEcranEtTitre(widget.typeCategorie, widget.sousCategorie);
                             final screen = entry?.builder();
+
                             if (screen != null) {
                               Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
                             } else {
