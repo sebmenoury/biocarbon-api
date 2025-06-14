@@ -24,15 +24,6 @@ final Map<String, Map<String, ScreenRegistryEntry>> screenRegistry = {
       titre: "Type et propriété du logement",
     ),
   },
-  "Déplacements": {
-    "Véhicules": ScreenRegistryEntry(
-      builder: () {
-        print("➡️ Navigation vers VehiculeScreen");
-        return const VehiculeScreen();
-      },
-      titre: "Déclaration des véhicules",
-    ),
-  },
 };
 
 /// Fonction utilitaire pour récupérer l'écran et le titre

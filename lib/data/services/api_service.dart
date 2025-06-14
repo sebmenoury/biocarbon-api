@@ -85,6 +85,18 @@ class ApiService {
     }
   }
 
+  static Future<Map<String, dynamic>> getBienParDenomination(String codeIndividu, String denominationBien) async {
+    final response = await http.get(Uri.parse('https://biocarbon-api.onrender.com/api/uc/biens?code_individu=$codeIndividu'));
+
+    if (response.statusCode == 200) {
+      final List biens = jsonDecode(response.body);
+      final bien = biens.firstWhere((b) => b['Dénomination'] == denominationBien, orElse: () => throw Exception('Aucun bien trouvé avec cette dénomination'));
+      return bien;
+    } else {
+      throw Exception('Erreur lors du chargement des biens');
+    }
+  }
+
   static Future<Map<String, dynamic>> getBienActif() async {
     final tousLesBiens = await getBiens("BASILE"); // ou un autre filtre
     return tousLesBiens.isNotEmpty ? tousLesBiens.first : {};

@@ -20,8 +20,9 @@ class PosteListScreen extends StatefulWidget {
   final String codeIndividu;
   final String valeurTemps;
   final VoidCallback? onAddPressed;
+  final String? denominationBien;
 
-  const PosteListScreen({super.key, required this.typeCategorie, required this.sousCategorie, required this.codeIndividu, required this.valeurTemps, this.onAddPressed});
+  const PosteListScreen({super.key, required this.typeCategorie, required this.sousCategorie, required this.codeIndividu, required this.valeurTemps, this.onAddPressed, this.denominationBien});
 
   @override
   State<PosteListScreen> createState() => _PosteListScreenState();
@@ -65,7 +66,11 @@ class _PosteListScreenState extends State<PosteListScreen> {
       postesFuture.then((postes) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (postes.isEmpty) {
-            Navigator.push(context, MaterialPageRoute(builder: (_) => const VehiculeScreen()));
+            if (widget.codeIndividu != null && widget.denominationBien != null) {
+              Navigator.push(context, MaterialPageRoute(builder: (_) => VehiculeScreen(codeIndividu: widget.codeIndividu!, denominationBien: widget.denominationBien!)));
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Impossible d'accéder à l'écran Véhicules : informations incomplètes.")));
+            }
           }
         });
       });
@@ -135,12 +140,21 @@ class _PosteListScreenState extends State<PosteListScreen> {
                         postes: postes,
                         total: total,
                         onTap: () {
-                          final entry = getEcranEtTitre(widget.typeCategorie, sousCat);
-                          final screen = entry?.builder();
-                          if (screen != null) {
-                            Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
+                          if (widget.sousCategorie == "Véhicules") {
+                            if (widget.codeIndividu != null && widget.denominationBien != null) {
+                              Navigator.push(context, MaterialPageRoute(builder: (_) => VehiculeScreen(codeIndividu: widget.codeIndividu!, denominationBien: widget.denominationBien!)));
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Code individu ou bien non défini")));
+                            }
                           } else {
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Aucun écran défini pour $sousCat")));
+                            // Appel pour les autres écrans sans bien
+                            final entry = getEcranEtTitre(widget.typeCategorie, widget.sousCategorie);
+                            final screen = entry?.builder();
+                            if (screen != null) {
+                              Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Aucun écran défini pour ${widget.sousCategorie}")));
+                            }
                           }
                         },
                       );

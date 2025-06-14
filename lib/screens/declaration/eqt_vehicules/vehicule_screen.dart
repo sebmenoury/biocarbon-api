@@ -6,7 +6,10 @@ import '../../../data/classes/poste_vehicule.dart';
 import 'emission_calculator_vehicules.dart';
 
 class VehiculeScreen extends StatefulWidget {
-  const VehiculeScreen({super.key});
+  final String codeIndividu;
+  final String denominationBien;
+
+  const VehiculeScreen({super.key, required this.codeIndividu, required this.denominationBien});
 
   @override
   State<VehiculeScreen> createState() => _VehiculeScreenState();
@@ -23,11 +26,18 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
   @override
   void initState() {
     super.initState();
-    loadData();
+    loadData(widget.codeIndividu, widget.denominationBien);
   }
 
   bool hasPostesExistants = false;
-  Future<void> loadData() async {
+  Future<void> loadData(String codeIndividu, String denominationBien) async {
+    // Chargement du bien sélectionné pour récupérer les bons paramètres
+    final bien = await ApiService.getBienParDenomination(codeIndividu, denominationBien);
+
+    final idBienSelectionne = bien['ID_Bien']?.toString() ?? '';
+    final typeBienSelectionne = bien['Type_Bien']?.toString() ?? '';
+    final nbProprietaires = int.tryParse(bien['Nb_Proprietaires']?.toString() ?? '') ?? 1;
+
     final ref = await ApiService.getRefEquipements();
     final postesExistants = await ApiService.getPostesBysousCategorie("Véhicules", "BASILE", "2025");
 
@@ -99,6 +109,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
         result[groupe]!.sort((a, b) => b.quantite.compareTo(a.quantite));
       }
       vehiculesParCategorie = result;
+
       recalculerTotal();
       isLoading = false;
     });
@@ -249,15 +260,21 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
 
   Widget buildCategorieCard(String titre, List<PosteVehicule> vehicules) {
     return CustomCard(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Expanded(flex: 2, child: Text("Voitures", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13))),
-              Expanded(flex: 2, child: Row(mainAxisAlignment: MainAxisAlignment.center, children: const [Text("Quantité", style: TextStyle(fontSize: 11, color: Colors.grey))])),
-              Expanded(flex: 3, child: Row(mainAxisAlignment: MainAxisAlignment.center, children: const [Text("Année(s) d'achat", style: TextStyle(fontSize: 11, color: Colors.grey))])),
+              Text(titre, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+              Row(
+                children: const [
+                  SizedBox(width: 70, child: Text("Quantité", style: TextStyle(fontSize: 10, color: Colors.grey))),
+                  SizedBox(width: 12),
+                  SizedBox(width: 100, child: Text("Année(s) d'achat", style: TextStyle(fontSize: 10, color: Colors.grey))),
+                ],
+              ),
             ],
           ),
           const SizedBox(height: 6),
