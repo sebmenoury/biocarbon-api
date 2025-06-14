@@ -140,20 +140,21 @@ class _PosteListScreenState extends State<PosteListScreen> {
                         postes: postes,
                         total: total,
                         onTap: () {
-                          if (widget.sousCategorie == "Véhicules") {
+                          print('🔎 sousCategorie = "${widget.sousCategorie}"');
+
+                          if (widget.sousCategorie.trim().toLowerCase() == "véhicules") {
                             if (widget.codeIndividu != null && widget.denominationBien != null) {
                               Navigator.push(context, MaterialPageRoute(builder: (_) => VehiculeScreen(codeIndividu: widget.codeIndividu!, denominationBien: widget.denominationBien!)));
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Code individu ou bien non défini")));
                             }
                           } else {
-                            // Appel pour les autres écrans sans bien
                             final entry = getEcranEtTitre(widget.typeCategorie, widget.sousCategorie);
                             final screen = entry?.builder();
                             if (screen != null) {
                               Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
                             } else {
-                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Aucun écran défini pour ${widget.sousCategorie}")));
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Aucun écran défini pour '${widget.sousCategorie}'")));
                             }
                           }
                         },
