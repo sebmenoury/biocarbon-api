@@ -143,7 +143,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                           print('🛞 widget.sousCategorie = "${widget.sousCategorie}"');
                           print('🚗 sousCat cliqué = "$sousCat"');
 
-                          if (sousCat.trim().toLowerCase() == "véhicules") {
+                          if (sousCat.trim().toLowerCase() == "Véhicules") {
                             if (widget.codeIndividu != null && widget.denominationBien != null) {
                               Navigator.push(context, MaterialPageRoute(builder: (_) => VehiculeScreen(codeIndividu: widget.codeIndividu!, denominationBien: widget.denominationBien!)));
                             } else {
