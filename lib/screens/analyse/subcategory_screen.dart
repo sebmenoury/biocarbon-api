@@ -11,12 +11,7 @@ class SubCategorieScreen extends StatefulWidget {
   final String codeIndividu;
   final String valeurTemps;
 
-  const SubCategorieScreen({
-    super.key,
-    required this.typeCategorie,
-    required this.codeIndividu,
-    required this.valeurTemps,
-  });
+  const SubCategorieScreen({super.key, required this.typeCategorie, required this.codeIndividu, required this.valeurTemps});
 
   @override
   State<SubCategorieScreen> createState() => _SubCategorieScreenState();
@@ -39,13 +34,7 @@ class _SubCategorieScreenState extends State<SubCategorieScreen> {
     return BaseScreen(
       title: Row(
         children: [
-          IconButton(
-            icon: const Icon(Icons.arrow_back),
-            iconSize: 18,
-            onPressed: () => Navigator.pop(context),
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(),
-          ),
+          IconButton(icon: const Icon(Icons.arrow_back), iconSize: 18, onPressed: () => Navigator.pop(context), padding: EdgeInsets.zero, constraints: const BoxConstraints()),
           const SizedBox(width: 8),
           Text(widget.typeCategorie, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
         ],
@@ -63,10 +52,7 @@ class _SubCategorieScreenState extends State<SubCategorieScreen> {
 
             final postes = snapshot.data!;
             if (postes.isEmpty) {
-              return const Padding(
-                padding: EdgeInsets.all(8),
-                child: Text("Aucun poste déclaré dans cette catégorie."),
-              );
+              return const Padding(padding: EdgeInsets.all(8), child: Text("Aucun poste déclaré dans cette catégorie."));
             }
 
             final totalEmission = postes.fold<double>(0, (sum, p) => sum + (p.emissionCalculee ?? 0));
@@ -91,18 +77,9 @@ class _SubCategorieScreenState extends State<SubCategorieScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   child: Row(
                     children: [
-                      Icon(
-                        categoryIcons[widget.typeCategorie] ?? Icons.label_outline,
-                        size: 16,
-                        color: categoryColors[widget.typeCategorie] ?? Colors.grey[700],
-                      ),
+                      Icon(categoryIcons[widget.typeCategorie] ?? Icons.label_outline, size: 16, color: categoryColors[widget.typeCategorie] ?? Colors.grey[700]),
                       const SizedBox(width: 12),
-                      Expanded(
-                        child: Text(
-                          widget.typeCategorie,
-                          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                        ),
-                      ),
+                      Expanded(child: Text(widget.typeCategorie, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold))),
                       Text("${(totalEmission / 1000).toStringAsFixed(2)} tCO₂", style: const TextStyle(fontSize: 11)),
                     ],
                   ),
@@ -133,10 +110,7 @@ class _SubCategorieScreenState extends State<SubCategorieScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(sousCat, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-                                  Text(
-                                    "$pourcentage% ($type)",
-                                    style: const TextStyle(fontSize: 10, color: Colors.grey),
-                                  ),
+                                  Text("$pourcentage% ($type)", style: const TextStyle(fontSize: 10, color: Colors.grey)),
                                 ],
                               ),
                             ),
@@ -145,10 +119,7 @@ class _SubCategorieScreenState extends State<SubCategorieScreen> {
                             Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Text(
-                                  "${sum.round()} kgCO",
-                                  style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
-                                ),
+                                Text("${sum.round()} kgCO", style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
                                 const SizedBox(width: 6),
                                 const Icon(Icons.chevron_right, size: 14),
                               ],
@@ -165,8 +136,16 @@ class _SubCategorieScreenState extends State<SubCategorieScreen> {
                             return PostListCard(
                               title: poste.nomPoste ?? poste.sousCategorie,
                               emission: "${poste.emissionCalculee?.round()} kgCO₂",
-                              onEdit: () {},
-                              onDelete: () {},
+                              onTap: () {
+                                print("🚗 Tap sur ${poste.nomPoste}");
+                                // Navigation ou popup à implémenter
+                              },
+                              onEdit: () {
+                                // ouvrir formulaire de modif
+                              },
+                              onDelete: () {
+                                // action suppression
+                              },
                             );
                           } else {
                             return const Divider(height: 1, thickness: 0.2, color: Colors.grey);

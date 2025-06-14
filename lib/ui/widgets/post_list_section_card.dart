@@ -31,10 +31,7 @@ class PostListSectionCard extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        Text(
-                          "${total.round()} kgCO₂",
-                          style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
-                        ),
+                        Text("${total.round()} kgCO₂", style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
                         const SizedBox(width: 4),
                         const Icon(Icons.chevron_right, size: 14),
                       ],
@@ -51,8 +48,16 @@ class PostListSectionCard extends StatelessWidget {
               return PostListCard(
                 title: poste.nomPoste ?? 'Sans nom',
                 emission: "${poste.emissionCalculee?.round() ?? 0} kgCO₂",
-                onEdit: () {}, // tu peux ajouter des paramètres si besoin
-                onDelete: () {},
+                onTap: () {
+                  print("🚗 Tap sur ${poste.nomPoste}");
+                  // Navigation ou popup à implémenter
+                },
+                onEdit: () {
+                  // ouvrir formulaire de modif
+                },
+                onDelete: () {
+                  // action suppression
+                },
               );
             } else {
               return const Divider(height: 1, thickness: 0.2, color: Colors.grey);

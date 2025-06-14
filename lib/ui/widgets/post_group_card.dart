@@ -16,18 +16,12 @@ class PostGroupCard extends StatelessWidget {
   final List<PostData> posts;
   final double totalCategorieEmission; // nécessaire pour calculer le %
 
-  const PostGroupCard({
-    super.key,
-    required this.sousCategorie,
-    required this.posts,
-    required this.totalCategorieEmission,
-  });
+  const PostGroupCard({super.key, required this.sousCategorie, required this.posts, required this.totalCategorieEmission});
 
   @override
   Widget build(BuildContext context) {
     final totalEmission = posts.fold<double>(0.0, (sum, p) => sum + p.emission);
-    final pourcentage =
-        totalCategorieEmission > 0 ? (totalEmission / totalCategorieEmission * 100).toStringAsFixed(1) : "0";
+    final pourcentage = totalCategorieEmission > 0 ? (totalEmission / totalCategorieEmission * 100).toStringAsFixed(1) : "0";
 
     return CustomCard(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -40,18 +34,20 @@ class PostGroupCard extends StatelessWidget {
             (post) => PostListCard(
               title: post.title,
               emission: "${post.emission.toStringAsFixed(0)} kg",
-              onEdit: post.onEdit,
-              onDelete: post.onDelete,
+              onTap: () {
+                print("🚗 Tap sur ${post.title}");
+                // Navigation ou popup à implémenter
+              },
+              onEdit: () {
+                // ouvrir formulaire de modif
+              },
+              onDelete: () {
+                // action suppression
+              },
             ),
           ),
           const Divider(height: 8),
-          Align(
-            alignment: Alignment.centerRight,
-            child: Text(
-              "Total : ${totalEmission.toStringAsFixed(0)} kg",
-              style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
-            ),
-          ),
+          Align(alignment: Alignment.centerRight, child: Text("Total : ${totalEmission.toStringAsFixed(0)} kg", style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold))),
         ],
       ),
     );

@@ -219,7 +219,20 @@ class _PosteListScreenState extends State<PosteListScreen> {
                           ...List.generate(postes.length * 2 - 1, (index) {
                             if (index.isEven) {
                               final poste = postes[index ~/ 2];
-                              return PostListCard(title: poste.nomPoste ?? 'Sans nom', emission: "${poste.emissionCalculee?.round() ?? 0} kgCO₂", onEdit: () {}, onDelete: () {});
+                              return PostListCard(
+                                title: poste.nomPoste ?? 'Sans nom',
+                                emission: "${poste.emissionCalculee?.round() ?? 0} kgCO₂",
+                                onTap: () {
+                                  print("🚗 Tap sur ${poste.nomPoste}");
+                                  // Navigation ou popup à implémenter
+                                },
+                                onEdit: () {
+                                  // ouvrir formulaire de modif
+                                },
+                                onDelete: () {
+                                  // action suppression
+                                },
+                              );
                             } else {
                               return const Divider(height: 1, thickness: 0.2, color: Colors.grey);
                             }
@@ -374,7 +387,20 @@ class _PosteListScreenState extends State<PosteListScreen> {
                                     ...List.generate(postesPourCeBien.length * 2 - 1, (index) {
                                       if (index.isEven) {
                                         final poste = postesPourCeBien[index ~/ 2];
-                                        return PostListCard(title: poste.nomPoste ?? 'Sans nom', emission: "${poste.emissionCalculee?.round() ?? 0} kgCO₂", onEdit: () {}, onDelete: () {});
+                                        return PostListCard(
+                                          title: poste.nomPoste ?? 'Sans nom',
+                                          emission: "${poste.emissionCalculee?.round() ?? 0} kgCO₂",
+                                          onTap: () {
+                                            print("🚗 Tap sur ${poste.nomPoste}");
+                                            // Navigation ou popup à implémenter
+                                          },
+                                          onEdit: () {
+                                            // ouvrir formulaire de modif
+                                          },
+                                          onDelete: () {
+                                            // action suppression
+                                          },
+                                        );
                                       } else {
                                         return const Divider(height: 1, thickness: 0.2, color: Colors.grey);
                                       }
