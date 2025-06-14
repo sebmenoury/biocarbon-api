@@ -140,9 +140,10 @@ class _PosteListScreenState extends State<PosteListScreen> {
                         postes: postes,
                         total: total,
                         onTap: () {
-                          print('🔎 sousCategorie = "${widget.sousCategorie}"');
+                          print('🛞 widget.sousCategorie = "${widget.sousCategorie}"');
+                          print('🚗 sousCat cliqué = "$sousCat"');
 
-                          if (widget.sousCategorie.trim().toLowerCase() == "véhicules") {
+                          if (sousCat.trim().toLowerCase() == "véhicules") {
                             if (widget.codeIndividu != null && widget.denominationBien != null) {
                               Navigator.push(context, MaterialPageRoute(builder: (_) => VehiculeScreen(codeIndividu: widget.codeIndividu!, denominationBien: widget.denominationBien!)));
                             } else {
