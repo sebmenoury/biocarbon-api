@@ -106,6 +106,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
           typeBien: p.typeBien,
           nomLogement: denominationSelectionne,
           nbProprietaires: nbProprietaires,
+          idUsageInitial: p.idUsage, // ✅ conserve la clé d’origine
         ),
       );
     }
@@ -134,7 +135,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
         if (poste.quantite > 0) {
           // ✅ on ignore les postes à 0
           final emission = calculerTotalEmissionVehicule(poste);
-          final idUsage = "${poste.idBien}_Véhicules_${poste.nomEquipement}_${poste.anneeAchat}".replaceAll(' ', '_');
+          final idUsage = poste.idUsageInitial ?? "${poste.idBien}_Véhicules_${poste.nomEquipement}_${poste.anneeAchat}".replaceAll(' ', '_');
 
           await ApiService.saveOrUpdatePoste({
             "ID_Usage": idUsage,

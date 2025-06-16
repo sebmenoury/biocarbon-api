@@ -328,6 +328,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                   for (var bien in biens) {
                     final idBien = bien['ID_Bien'];
                     final postesPourCeBien = postes.where((p) => p.idBien == idBien).toList();
+                    postesPourCeBien.sort((a, b) => (b.emissionCalculee ?? 0).compareTo(a.emissionCalculee ?? 0));
 
                     if (postesPourCeBien.isNotEmpty) {
                       final total = postesPourCeBien.fold<double>(0, (sum, p) => sum + (p.emissionCalculee ?? 0));
