@@ -132,7 +132,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
     for (final categorie in vehiculesParCategorie.values) {
       for (final poste in categorie) {
         final emission = calculerTotalEmissionVehicule(poste);
-        final idUsage = "${idBienSelectionne}_'Véhicules'_${poste.nomEquipement}_${poste.anneeAchat}".replaceAll(' ', '_');
+        final idUsage = "${poste.idBien}_'Véhicules'_${poste.nomEquipement}_${poste.anneeAchat}".replaceAll(' ', '_');
         await ApiService.saveOrUpdatePoste({
           "ID_Usage": idUsage,
           "Code_Individu": "BASILE", // à remplacer par widget.codeIndividu si besoin
