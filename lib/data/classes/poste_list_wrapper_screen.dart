@@ -6,9 +6,9 @@ import '../../screens/declaration/eqt_vehicules/vehicule_screen.dart';
 class PosteVehiculeEntryPoint extends StatefulWidget {
   final String codeIndividu;
   final String valeurTemps;
-  final String denominationBien; // ✅
+  final int idBien; // ✅ remplacé
 
-  const PosteVehiculeEntryPoint({Key? key, required this.codeIndividu, required this.valeurTemps, required this.denominationBien}) : super(key: key);
+  const PosteVehiculeEntryPoint({Key? key, required this.codeIndividu, required this.valeurTemps, required this.idBien}) : super(key: key);
 
   @override
   State<PosteVehiculeEntryPoint> createState() => _PosteVehiculeEntryPointState();
@@ -32,7 +32,7 @@ class _PosteVehiculeEntryPointState extends State<PosteVehiculeEntryPoint> {
 
         if (postes.isEmpty) {
           // 🚗 Redirige vers l’écran de déclaration directe
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => VehiculeScreen(codeIndividu: widget.codeIndividu, denominationBien: widget.denominationBien)));
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => VehiculeScreen(codeIndividu: widget.codeIndividu, idBien: widget.idBien)));
         } else {
           // 📋 Redirige vers la liste des postes existants
           Navigator.pushReplacement(
@@ -44,9 +44,9 @@ class _PosteVehiculeEntryPointState extends State<PosteVehiculeEntryPoint> {
                     sousCategorie: "Véhicules",
                     codeIndividu: widget.codeIndividu,
                     valeurTemps: widget.valeurTemps,
-                    denominationBien: widget.denominationBien,
+                    idBien: widget.idBien,
                     onAddPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (_) => VehiculeScreen(codeIndividu: widget.codeIndividu, denominationBien: widget.denominationBien)));
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => VehiculeScreen(codeIndividu: widget.codeIndividu, idBien: widget.idBien)));
                     },
                   ),
             ),

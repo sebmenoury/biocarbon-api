@@ -19,10 +19,10 @@ class PosteListScreen extends StatefulWidget {
   final String sousCategorie;
   final String codeIndividu;
   final String valeurTemps;
+  final int? idBien;
   final VoidCallback? onAddPressed;
-  final String? denominationBien;
 
-  const PosteListScreen({super.key, required this.typeCategorie, required this.sousCategorie, required this.codeIndividu, required this.valeurTemps, this.onAddPressed, this.denominationBien});
+  const PosteListScreen({super.key, required this.typeCategorie, required this.sousCategorie, required this.codeIndividu, required this.valeurTemps, this.idBien, this.onAddPressed});
 
   @override
   State<PosteListScreen> createState() => _PosteListScreenState();
@@ -66,8 +66,8 @@ class _PosteListScreenState extends State<PosteListScreen> {
       postesFuture.then((postes) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (postes.isEmpty) {
-            if (widget.codeIndividu != null && widget.denominationBien != null) {
-              Navigator.push(context, MaterialPageRoute(builder: (_) => VehiculeScreen(codeIndividu: widget.codeIndividu!, denominationBien: widget.denominationBien!)));
+            if (widget.codeIndividu != null && widget.idBien != null) {
+              Navigator.push(context, MaterialPageRoute(builder: (_) => VehiculeScreen(codeIndividu: widget.codeIndividu!, idBien: widget.idBien!)));
             } else {
               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Impossible d'accéder à l'écran Véhicules : informations incomplètes.")));
             }
@@ -112,10 +112,10 @@ class _PosteListScreenState extends State<PosteListScreen> {
             final postes = snapshot.data ?? [];
 
             // ----------------------------------------------------
-            // Cas particulier pour les véhicules et l'alimentation
+            // Cas particulier pour l'alimentation
             // ----------------------------------------------------
 
-            if (!avecBien && widget.sousCategorie == "Véhicules" || widget.typeCategorie == "Alimentation") {
+            if (widget.typeCategorie == "Alimentation") {
               final Map<String, List<Poste>> postesParSousCat = {};
               for (var poste in postes) {
                 final key = poste.sousCategorie;
@@ -125,7 +125,6 @@ class _PosteListScreenState extends State<PosteListScreen> {
                 postesParSousCat[key]!.add(poste);
               }
 
-              // Affichage par sous-catégorie
               return Column(
                 children:
                     postesParSousCat.entries.map((entry) {
@@ -140,27 +139,15 @@ class _PosteListScreenState extends State<PosteListScreen> {
                         postes: postes,
                         total: total,
                         onTap: () {
-                          print('🛞 widget.sousCategorie = "${widget.sousCategorie}"');
-                          print('🚗 sousCat cliqué = "$sousCat"');
+                          print('🍽️ Sous-catégorie alimentation cliquée : "$sousCat"');
 
-                          if (widget.sousCategorie.trim().toLowerCase() == "Véhicules") {
-                            print("✅ Navigation vers VehiculeScreen");
+                          final entry = getEcranEtTitre(widget.typeCategorie, widget.sousCategorie);
+                          final screen = entry?.builder();
 
-                            if (widget.codeIndividu != null && widget.denominationBien != null) {
-                              Navigator.push(context, MaterialPageRoute(builder: (_) => VehiculeScreen(codeIndividu: widget.codeIndividu!, denominationBien: widget.denominationBien!)));
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Code individu ou bien non défini")));
-                            }
+                          if (screen != null) {
+                            Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
                           } else {
-                            final entry = getEcranEtTitre(widget.typeCategorie, widget.sousCategorie);
-                            final screen = entry?.builder();
-
-                            if (screen != null) {
-                              Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
-                            } else {
-                              print('🚗 Là');
-                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Aucun écran défini pour '${widget.sousCategorie}'")));
-                            }
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Aucun écran défini pour '${widget.sousCategorie}'")));
                           }
                         },
                       );
@@ -359,8 +346,12 @@ class _PosteListScreenState extends State<PosteListScreen> {
                               padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
                               child: InkWell(
                                 onTap: () {
+                                  final idBien = bien['ID_Bien'];
+
                                   if (widget.sousCategorie == "Construction") {
-                                    Navigator.push(context, MaterialPageRoute(builder: (_) => ConstructionScreen(idBien: bien['ID_Bien'], onSave: () => setState(() {}))));
+                                    Navigator.push(context, MaterialPageRoute(builder: (_) => ConstructionScreen(idBien: idBien, onSave: () => setState(() {}))));
+                                  } else if (widget.sousCategorie == "Véhicules") {
+                                    Navigator.push(context, MaterialPageRoute(builder: (_) => VehiculeScreen(codeIndividu: widget.codeIndividu, idBien: idBien)));
                                   } else {
                                     final entry = getEcranEtTitre(widget.typeCategorie, widget.sousCategorie);
                                     final screen = entry?.builder();
