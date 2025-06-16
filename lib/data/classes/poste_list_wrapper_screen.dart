@@ -6,7 +6,7 @@ import '../../screens/declaration/eqt_vehicules/vehicule_screen.dart';
 class PosteVehiculeEntryPoint extends StatefulWidget {
   final String codeIndividu;
   final String valeurTemps;
-  final int idBien; // ✅ remplacé
+  final String idBien; // ✅ remplacé
 
   const PosteVehiculeEntryPoint({Key? key, required this.codeIndividu, required this.valeurTemps, required this.idBien}) : super(key: key);
 

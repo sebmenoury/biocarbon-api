@@ -19,7 +19,7 @@ class PosteListScreen extends StatefulWidget {
   final String sousCategorie;
   final String codeIndividu;
   final String valeurTemps;
-  final int? idBien;
+  final String? idBien;
   final VoidCallback? onAddPressed;
 
   const PosteListScreen({super.key, required this.typeCategorie, required this.sousCategorie, required this.codeIndividu, required this.valeurTemps, this.idBien, this.onAddPressed});

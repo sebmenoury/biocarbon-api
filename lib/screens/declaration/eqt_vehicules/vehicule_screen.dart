@@ -7,7 +7,7 @@ import 'emission_calculator_vehicules.dart';
 
 class VehiculeScreen extends StatefulWidget {
   final String codeIndividu;
-  final int idBien;
+  final String idBien;
 
   const VehiculeScreen({super.key, required this.codeIndividu, required this.idBien});
 
@@ -30,7 +30,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
   }
 
   bool hasPostesExistants = false;
-  Future<void> loadData(String codeIndividu, int idBien) async {
+  Future<void> loadData(String codeIndividu, String idBien) async {
     // Chargement du bien sélectionné pour récupérer les bons paramètres
     final bien = await ApiService.getBienParId(codeIndividu, idBien);
 

@@ -85,7 +85,7 @@ class ApiService {
     }
   }
 
-  static Future<Map<String, dynamic>> getBienParId(String codeIndividu, int idBien) async {
+  static Future<Map<String, dynamic>> getBienParId(String codeIndividu, String idBien) async {
     final response = await http.get(Uri.parse('https://biocarbon-api.onrender.com/api/uc/biens?code_individu=$codeIndividu'));
 
     if (response.statusCode == 200) {
