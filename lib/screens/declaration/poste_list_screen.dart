@@ -158,6 +158,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                             if (screen != null) {
                               Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
                             } else {
+                              print('🚗 Là');
                               ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Aucun écran défini pour '${widget.sousCategorie}'")));
                             }
                           }
@@ -197,6 +198,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                       if (screen != null) {
                         Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
                       } else {
+                        print('🚗 Ici');
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Aucun écran défini pour ${widget.sousCategorie}")));
                       }
                     },
@@ -366,6 +368,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                                     if (screen != null) {
                                       Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
                                     } else {
+                                      print('🚗 encore Là');
                                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Aucun écran défini pour ${widget.sousCategorie}")));
                                     }
                                   }
