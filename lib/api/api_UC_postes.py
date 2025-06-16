@@ -11,7 +11,7 @@ def add_poste():
     data = request.get_json()
 
     required_fields = [
-        "ID_Usage", "Code_Individu", "Type_Temps", "Valeur_Temps", "Date_Enregistrement",
+        "ID_Usage", "Code_Individu", "Type_Temps", "Valeur_Temps", "Date_enregistrement",
         "ID_Bien", "Type_Bien", "Type_Poste", "Type_Categorie", "Sous_Categorie",
         "Nom_Poste", "Nom_Logement", "Quantite", "Unite", "Frequence",
         "Facteur_Emission", "Emission_Calculee", "Mode_Calcul", "Annee_Achat", "Duree_Amortissement"
