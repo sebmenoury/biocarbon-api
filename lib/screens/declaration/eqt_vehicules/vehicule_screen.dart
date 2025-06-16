@@ -131,30 +131,34 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
   Future<void> enregistrerOuMettreAJour() async {
     for (final categorie in vehiculesParCategorie.values) {
       for (final poste in categorie) {
-        final emission = calculerTotalEmissionVehicule(poste);
-        final idUsage = "${poste.idBien}_'Véhicules'_${poste.nomEquipement}_${poste.anneeAchat}".replaceAll(' ', '_');
-        await ApiService.saveOrUpdatePoste({
-          "ID_Usage": idUsage,
-          "Code_Individu": "BASILE", // à remplacer par widget.codeIndividu si besoin
-          "Type_Temps": "Réel",
-          "Valeur_Temps": "2025", // idem ici
-          "Date_enregistrement": DateTime.now().toIso8601String(),
-          "ID_Bien": idBienSelectionne,
-          "Type_Bien": typeBienSelectionne,
-          "Type_Poste": "Equipement",
-          "Type_Categorie": "Déplacements",
-          "Sous_Categorie": "Véhicules",
-          "Nom_Poste": poste.nomEquipement,
-          "Nom_Logement": poste.nomLogement, // ou autre champ si nécessaire
-          "Quantite": 1,
-          "Unite": "unité",
-          "Frequence": "",
-          "Facteur_Emission": poste.facteurEmission,
-          "Emission_Calculee": emission,
-          "Mode_Calcul": "Amorti",
-          "Annee_Achat": poste.anneeAchat,
-          "Duree_Amortissement": poste.dureeAmortissement,
-        });
+        if (poste.quantite > 0) {
+          // ✅ on ignore les postes à 0
+          final emission = calculerTotalEmissionVehicule(poste);
+          final idUsage = "${poste.idBien}_Véhicules_${poste.nomEquipement}_${poste.anneeAchat}".replaceAll(' ', '_');
+
+          await ApiService.saveOrUpdatePoste({
+            "ID_Usage": idUsage,
+            "Code_Individu": "BASILE", // à remplacer par widget.codeIndividu si besoin
+            "Type_Temps": "Réel",
+            "Valeur_Temps": "2025", // idem ici
+            "Date_enregistrement": DateTime.now().toIso8601String(),
+            "ID_Bien": poste.idBien,
+            "Type_Bien": poste.typeBien,
+            "Type_Poste": "Equipement",
+            "Type_Categorie": "Déplacements",
+            "Sous_Categorie": "Véhicules",
+            "Nom_Poste": poste.nomEquipement,
+            "Nom_Logement": poste.nomLogement,
+            "Quantite": poste.quantite, // ✅ on respecte la valeur réelle
+            "Unite": "unité",
+            "Frequence": "",
+            "Facteur_Emission": poste.facteurEmission,
+            "Emission_Calculee": emission,
+            "Mode_Calcul": "Amorti",
+            "Annee_Achat": poste.anneeAchat,
+            "Duree_Amortissement": poste.dureeAmortissement,
+          });
+        }
       }
     }
   }
