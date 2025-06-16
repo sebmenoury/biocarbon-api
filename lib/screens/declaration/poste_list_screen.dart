@@ -143,7 +143,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                           print('🛞 widget.sousCategorie = "${widget.sousCategorie}"');
                           print('🚗 sousCat cliqué = "$sousCat"');
 
-                          if (widget.sousCategorie.trim().toLowerCase() == "véhicules") {
+                          if (widget.sousCategorie.trim().toLowerCase() == "Véhicules") {
                             print("✅ Navigation vers VehiculeScreen");
 
                             if (widget.codeIndividu != null && widget.denominationBien != null) {
