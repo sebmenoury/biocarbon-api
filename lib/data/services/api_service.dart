@@ -237,7 +237,7 @@ class ApiService {
   }
 
   static Future<List<Poste>> getPostesParIdBien(String idBien) async {
-    final response = await http.get(Uri.parse('https://biocarbon-api.onrender.com/api/uc/usages?id_bien=$idBien'));
+    final response = await http.get(Uri.parse('https://biocarbon-api.onrender.com/api/uc/postes?id_bien=$idBien'));
 
     if (response.statusCode == 200) {
       final List data = jsonDecode(response.body);
