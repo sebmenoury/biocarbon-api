@@ -236,6 +236,17 @@ class ApiService {
     }
   }
 
+  static Future<List<Poste>> getPostesParIdBien(String idBien) async {
+    final response = await http.get(Uri.parse('https://biocarbon-api.onrender.com/api/uc/usages?id_bien=$idBien'));
+
+    if (response.statusCode == 200) {
+      final List data = jsonDecode(response.body);
+      return data.map((json) => Poste.fromJson(json)).toList();
+    } else {
+      throw Exception('Erreur lors de la récupération des postes pour le bien $idBien');
+    }
+  }
+
   // récupère les données par Type de poste
   // ---------------------------------------------------------------------------
 
