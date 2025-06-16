@@ -63,6 +63,7 @@ def get_postes():
     code = request.args.get("code_individu")
     annee = request.args.get("valeur_temps")
     type_temps = request.args.get("type_temps")
+    id_bien = request.args.get("id_bien")  # 🔥 ajout du paramètre
 
     if code:
         rows = [r for r in rows if r["Code_Individu"] == code]
@@ -70,8 +71,11 @@ def get_postes():
         rows = [r for r in rows if str(r["Valeur_Temps"]) == str(annee)]
     if type_temps:
         rows = [r for r in rows if r["Type_Temps"] == type_temps]
+    if id_bien:
+        rows = [r for r in rows if str(r["ID_Bien"]) == str(id_bien)]  # 🔥 filtre par bien
 
     return jsonify(rows)
+
 
 @bp_uc_postes.route("/api/uc/postes/<string:id_usage>", methods=["GET"])
 def get_poste_by_id(id_usage):
