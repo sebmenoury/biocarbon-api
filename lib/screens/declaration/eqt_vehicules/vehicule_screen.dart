@@ -120,14 +120,14 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
     print('Total recalculé : $totalEmission kgCO₂');
   }
 
-  Future<void> saveData() async {
+  Future<void> enregistrerOuMettreAJour() async {
     for (final categorie in vehiculesParCategorie.values) {
       for (final poste in categorie) {
         final emission = calculerTotalEmissionVehicule(poste);
         await ApiService.saveOrUpdatePoste({
-          "Code_Individu": "BASILE",
+          "Code_Individu": "BASILE", // à remplacer par widget.codeIndividu si besoin
           "Type_Temps": "Réel",
-          "Valeur_Temps": "2025",
+          "Valeur_Temps": "2025", // idem ici
           "Date_enregistrement": DateTime.now().toIso8601String(),
           "ID_Bien": idBienSelectionne,
           "Type_Bien": typeBienSelectionne,
@@ -146,7 +146,27 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
         });
       }
     }
-    Navigator.pop(context);
+  }
+
+  Future<void> supprimerPoste() async {
+    final postes = await ApiService.getPostesBysousCategorie(
+      "Véhicules",
+      widget.codeIndividu,
+      "2025", // ou widget.valeurTemps si dispo
+    );
+
+    final postesPourCeBien = postes.where((p) => p.idBien == widget.idBien).toList();
+
+    for (final poste in postesPourCeBien) {
+      await ApiService.deleteUCPoste(poste.idUsage);
+    }
+
+    setState(() {
+      hasPostesExistants = false;
+      vehiculesParCategorie.clear();
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Déclaration supprimée")));
   }
 
   Widget buildVehiculeLine(PosteVehicule poste, String categorie, int index) {
@@ -318,23 +338,48 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
           return const SizedBox.shrink();
         }),
         const SizedBox(height: 12),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            ElevatedButton.icon(
-              onPressed: saveData,
-              icon: Icon(hasPostesExistants ? Icons.update : Icons.save, size: 14),
-              label: Text(hasPostesExistants ? "Mettre à jour" : "Enregistrer", style: const TextStyle(fontSize: 12)),
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size(120, 36),
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                backgroundColor: Colors.green[100],
-                foregroundColor: Colors.green[900],
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        (hasPostesExistants)
+            ? Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  onPressed: supprimerPoste,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: Colors.red,
+                    minimumSize: const Size(120, 36),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                  ),
+                  child: const Text("Supprimer", style: TextStyle(fontSize: 12)),
+                ),
+                ElevatedButton.icon(
+                  onPressed: enregistrerOuMettreAJour,
+                  icon: const Icon(Icons.update, size: 14),
+                  label: const Text("Mettre à jour", style: TextStyle(fontSize: 12)),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green[100],
+                    foregroundColor: Colors.green[900],
+                    minimumSize: const Size(120, 36),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                  ),
+                ),
+              ],
+            )
+            : Center(
+              child: ElevatedButton.icon(
+                onPressed: enregistrerOuMettreAJour,
+                icon: const Icon(Icons.save, size: 14),
+                label: const Text("Enregistrer", style: TextStyle(fontSize: 12)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green[100],
+                  foregroundColor: Colors.green[900],
+                  minimumSize: const Size(120, 36),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                ),
               ),
             ),
-          ],
-        ),
       ],
     );
   }

@@ -416,7 +416,23 @@ class _PosteListScreenState extends State<PosteListScreen> {
                           padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
                           child: InkWell(
                             onTap: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (_) => ConstructionScreen(idBien: bien['ID_Bien'], onSave: () => setState(() {}))));
+                              final idBien = bien['ID_Bien'];
+
+                              if (widget.sousCategorie == "Construction") {
+                                Navigator.push(context, MaterialPageRoute(builder: (_) => ConstructionScreen(idBien: idBien, onSave: () => setState(() {}))));
+                              } else if (widget.sousCategorie == "Véhicules") {
+                                Navigator.push(context, MaterialPageRoute(builder: (_) => VehiculeScreen(codeIndividu: widget.codeIndividu, idBien: idBien)));
+                              } else {
+                                final entry = getEcranEtTitre(widget.typeCategorie, widget.sousCategorie);
+                                final screen = entry?.builder();
+
+                                if (screen != null) {
+                                  Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
+                                } else {
+                                  print('🚗 encore Là');
+                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Aucun écran défini pour ${widget.sousCategorie}")));
+                                }
+                              }
                             },
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
