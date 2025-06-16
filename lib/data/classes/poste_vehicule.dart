@@ -5,12 +5,9 @@ class PosteVehicule {
   int anneeAchat;
   final double facteurEmission;
   final int dureeAmortissement;
-
-  // 🔽 Ajoute ces deux champs :
   final String? idBien;
   final String? typeBien;
-
-  // 🔽 Et optionnellement le nombre de propriétaires (si pas déjà présent) :
+  final String? nomLogement;
   final int nbProprietaires;
 
   int quantite; // 👈 AJOUT ICI
@@ -21,6 +18,7 @@ class PosteVehicule {
     required this.facteurEmission,
     required this.dureeAmortissement,
     required this.nbProprietaires,
+    this.nomLogement,
     this.idBien,
     this.typeBien,
     this.quantite = 1, // 👈 Valeur par défaut
@@ -33,6 +31,7 @@ class PosteVehicule {
       facteurEmission = original.facteurEmission,
       dureeAmortissement = original.dureeAmortissement,
       quantite = original.quantite,
+      nomLogement = original.nomLogement,
       nbProprietaires = original.nbProprietaires,
       idBien = original.idBien,
       typeBien = original.typeBien;
@@ -66,8 +65,10 @@ class PosteVehicule {
       "Type_Categorie": "Déplacements",
       "Sous_Categorie": "Véhicules",
       "Nom_Poste": nomEquipement,
+      "Nom_Logement": nomLogement,
       "Quantite": 1,
       "Unite": "unité",
+      "Frequence": null, // Pas de fréquence pour les véhicules
       "Facteur_Emission": facteurEmission,
       "Emission_Calculee": facteurEmission / dureeAmortissement,
       "Mode_Calcul": "Amorti",

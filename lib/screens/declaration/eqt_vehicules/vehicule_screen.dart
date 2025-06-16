@@ -36,6 +36,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
 
     final idBienSelectionne = bien['ID_Bien']?.toString() ?? '';
     final typeBienSelectionne = bien['Type_Bien']?.toString() ?? '';
+    final denominationSelectionne = bien['Dénomination']?.toString() ?? '';
     final nbProprietaires = int.tryParse(bien['Nb_Proprietaires']?.toString() ?? '') ?? 1;
 
     final ref = await ApiService.getRefEquipements();
@@ -70,6 +71,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
           quantite: 0,
           idBien: idBienSelectionne,
           typeBien: typeBienSelectionne,
+          nomLogement: denominationSelectionne,
           nbProprietaires: nbProprietaires,
         ),
       );
@@ -98,6 +100,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
           quantite: 1,
           idBien: p.idBien,
           typeBien: p.typeBien,
+          nomLogement: denominationSelectionne,
           nbProprietaires: nbProprietaires,
         ),
       );
@@ -124,7 +127,9 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
     for (final categorie in vehiculesParCategorie.values) {
       for (final poste in categorie) {
         final emission = calculerTotalEmissionVehicule(poste);
+        final idUsage = "${idBienSelectionne}_'Véhicules'_${poste.nomEquipement}_${poste.anneeAchat}".replaceAll(' ', '_');
         await ApiService.saveOrUpdatePoste({
+          "ID_Usage": idUsage,
           "Code_Individu": "BASILE", // à remplacer par widget.codeIndividu si besoin
           "Type_Temps": "Réel",
           "Valeur_Temps": "2025", // idem ici
@@ -135,14 +140,15 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
           "Type_Categorie": "Déplacements",
           "Sous_Categorie": "Véhicules",
           "Nom_Poste": poste.nomEquipement,
+          "Nom_Logement": poste.nomLogement, // ou autre champ si nécessaire
           "Quantite": 1,
           "Unite": "unité",
+          "Frequence": "",
           "Facteur_Emission": poste.facteurEmission,
           "Emission_Calculee": emission,
           "Mode_Calcul": "Amorti",
           "Annee_Achat": poste.anneeAchat,
           "Duree_Amortissement": poste.dureeAmortissement,
-          "Nb_Proprietaires": poste.nbProprietaires,
         });
       }
     }
