@@ -70,7 +70,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
             "Code_Individu": codeIndividu,
             "Type_Temps": typeTemps,
             "Valeur_Temps": valeurTemps,
-            "Date_Enregistrement": maintenant,
+            "Date_enregistrement": maintenant,
             "ID_Bien": bien.idBien,
             "Type_Bien": bien.typeBien,
             "Type_Poste": typePoste,
@@ -103,7 +103,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
 
       // Enregistrement ou mise à jour
       for (final p in postesAEnregistrer) {
-        print("📤 Envoi API : ${p["ID_Usage"]} (${p["Nom_Poste"]})");
+        // print("📤 Envoi API : ${p["ID_Usage"]} (${p["Nom_Poste"]})");
         await ApiService.saveOrUpdatePoste(p);
       }
 

@@ -116,6 +116,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
         result[groupe]!.sort((a, b) => b.quantite.compareTo(a.quantite));
       }
       vehiculesParCategorie = result;
+      hasPostesExistants = postesExistants.isNotEmpty; // ✅ ligne clé
 
       recalculerTotal();
       isLoading = false;
