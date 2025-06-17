@@ -95,6 +95,8 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
               ? '2-roues'
               : 'Autres';
 
+      print('Poste: ${p.nomPoste} | idusageinitial = ${p.idUsage} | q=${p.quantite} | ');
+
       result[groupe]!.add(
         PosteVehicule(
           nomEquipement: p.nomPoste ?? '',
