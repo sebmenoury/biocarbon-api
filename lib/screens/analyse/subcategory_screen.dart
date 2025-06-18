@@ -23,7 +23,7 @@ class _SubCategorieScreenState extends State<SubCategorieScreen> {
   @override
   void initState() {
     super.initState();
-    postesFuture = ApiService.getPostesByCategorie(widget.typeCategorie, widget.codeIndividu, widget.valeurTemps);
+    postesFuture = ApiService.getUCPostesFiltres(codeIndividu: widget.codeIndividu, annee: widget.valeurTemps, typeCategorie: widget.typeCategorie);
   }
 
   void handleGroupEdit(String typePoste, String sousCategorie) {}

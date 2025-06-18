@@ -34,13 +34,10 @@ class _AnalyseScreenState extends State<AnalyseScreen> {
 
   Future<Map<String, Map<String, double>>> fetchData() {
     if (filtre == "Tous") {
-      return ApiService.getEmissionsByTypeAndYearAndUser(filtre, codeIndividu, valeurTemps);
+      return ApiService.getEmissionsAggregated(codeIndividu: codeIndividu, valeurTemps: valeurTemps, groupByFields: ['Type_Categorie']);
     } else {
-      return ApiService.getEmissionsFilteredByTypePosteGroupedByCategorie(
-        filtre.substring(0, filtre.length - 1), // "Usages" → "Usage"
-        codeIndividu,
-        valeurTemps,
-      );
+      final typePoste = filtre.substring(0, filtre.length - 1); // "Usages" → "Usage"
+      return ApiService.getEmissionsAggregated(codeIndividu: codeIndividu, valeurTemps: valeurTemps, typePoste: typePoste, groupByFields: ['Type_Categorie']);
     }
   }
 
@@ -69,14 +66,7 @@ class _AnalyseScreenState extends State<AnalyseScreen> {
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(color: isSelected ? Colors.indigo : Colors.white),
                       ),
-                      child: Text(
-                        option,
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                          color: isSelected ? Colors.white : Colors.black87,
-                        ),
-                      ),
+                      child: Text(option, style: TextStyle(fontSize: 12, fontWeight: isSelected ? FontWeight.bold : FontWeight.normal, color: isSelected ? Colors.white : Colors.black87)),
                     ),
                   );
                 }).toList(),
@@ -108,25 +98,16 @@ class _AnalyseScreenState extends State<AnalyseScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          'Simulation carbone – Année 2024',
-                          style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
-                        ),
+                        const Text('Simulation carbone – Année 2024', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
                         const SizedBox(height: 30),
                         DashboardGauge(valeur: total * 1000),
                         Center(
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Text(
-                                "Niveau d'émission carbone",
-                                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.black87),
-                              ),
+                              const Text("Niveau d'émission carbone", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.black87)),
                               const SizedBox(height: 1),
-                              const Text(
-                                "Données annuelles en kg CO₂e / personne",
-                                style: TextStyle(fontSize: 8, color: Colors.black54),
-                              ),
+                              const Text("Données annuelles en kg CO₂e / personne", style: TextStyle(fontSize: 8, color: Colors.black54)),
                             ],
                           ),
                         ),
@@ -134,15 +115,7 @@ class _AnalyseScreenState extends State<AnalyseScreen> {
                     ),
                   ),
                 ),
-                CustomCard(
-                  child: CategoryListCard(
-                    data: data,
-                    typeCategories: typeCategories,
-                    total: total,
-                    codeIndividu: codeIndividu,
-                    valeurTemps: valeurTemps,
-                  ),
-                ),
+                CustomCard(child: CategoryListCard(data: data, typeCategories: typeCategories, total: total, codeIndividu: codeIndividu, valeurTemps: valeurTemps)),
               ],
             );
           },

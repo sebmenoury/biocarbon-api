@@ -209,132 +209,81 @@ class ApiService {
   // 📦 UC - POSTES en lecture
   // ---------------------------------------------------------------------------
 
-  // récupère l'ensemble des données d'un individu pour un bilan (année ou simulation)
+  // requête générique avec filtres pour récupérer les postes
   // ---------------------------------------------------------------------------
 
-  static Future<List<Map<String, dynamic>>> getUCPostes(String codeIndividu, String valeurTemps) async {
-    final response = await http.get(Uri.parse("$baseUrl/api/uc/postes?code_individu=$codeIndividu&valeur_temps=$valeurTemps"));
-    if (response.statusCode == 200) {
-      final List<dynamic> data = jsonDecode(response.body);
-      return data.cast<Map<String, dynamic>>();
-    } else {
-      throw Exception("Erreur lors du chargement des postes");
-    }
-  }
+  static Future<List<Poste>> getUCPostesFiltres({
+    String? codeIndividu,
+    String? annee,
+    String? typePoste,
+    String? typeTemps,
+    String? idBien,
+    String? sousCategorie,
+    String? typeCategorie,
+    String? idUsage,
+  }) async {
+    final queryParameters = {
+      if (codeIndividu != null) 'Code_Individu': codeIndividu,
+      if (annee != null) 'Valeur_Temps': annee,
+      if (typeTemps != null) 'Type_Temps': typeTemps,
+      if (idBien != null) 'ID_Bien': idBien,
+      if (sousCategorie != null) 'Sous_Categorie': sousCategorie,
+      if (typeCategorie != null) 'Type_Categorie': typeCategorie,
+      if (idUsage != null) 'ID_Usage': idUsage,
+      if (typePoste != null) 'Type_Poste': typePoste,
+    };
 
-  // récupère les données par Type Catégories
-  // ---------------------------------------------------------------------------
-
-  static Future<List<Poste>> getPostesByCategorie(String typeCategorie, String codeIndividu, String valeurTemps) async {
-    final response = await http.get(Uri.parse('$baseUrl/api/uc/postes?code_individu=$codeIndividu&valeur_temps=$valeurTemps'));
+    final uri = Uri.http(baseUrl, '/api/uc/postes', queryParameters);
+    final response = await http.get(uri);
 
     if (response.statusCode == 200) {
       final List<dynamic> jsonList = jsonDecode(response.body);
-      return jsonList.map((json) => Poste.fromJson(json)).where((poste) => poste.typeCategorie == typeCategorie).toList();
+      return jsonList.map((json) => Poste.fromJson(json)).toList();
     } else {
-      throw Exception("Erreur lors de la récupération des postes");
+      throw Exception('Erreur lors du chargement des postes filtrés');
     }
   }
-
-  static Future<List<Poste>> getPostesParIdBien(String idBien) async {
-    final response = await http.get(Uri.parse('https://biocarbon-api.onrender.com/api/uc/postes?id_bien=$idBien'));
-
-    if (response.statusCode == 200) {
-      final List data = jsonDecode(response.body);
-      return data.map((json) => Poste.fromJson(json)).toList();
-    } else {
-      throw Exception('Erreur lors de la récupération des postes pour le bien $idBien');
-    }
-  }
-
-  // récupère les données par Type de poste
+  // requête générique avec filtres pour récupérer les émissions
   // ---------------------------------------------------------------------------
 
-  static Future<Map<String, Map<String, double>>> getEmissionsByTypeAndYearAndUser(
-    String filtre, // 'Tous', 'Usages', 'Equipements'
-    String codeIndividu,
-    String valeurTemps,
-  ) async {
-    List<Map<String, dynamic>> allData = await getUCPostes(codeIndividu, valeurTemps);
+  static Future<Map<String, Map<String, double>>> getEmissionsAggregated({
+    required String codeIndividu,
+    required String valeurTemps,
+    String? typePoste,
+    String? typeCategorie,
+    String? sousCategorie,
+    String? idBien,
+    required List<String> groupByFields,
+  }) async {
+    // 1. Appel API avec tous les filtres nécessaires (filtrage côté API)
+    final postes = await getUCPostesFiltres(codeIndividu: codeIndividu, annee: valeurTemps, typeCategorie: typeCategorie, sousCategorie: sousCategorie, typePoste: typePoste, idBien: idBien);
 
-    if (filtre != 'Tous') {
-      allData = allData.where((item) => item['Type_Poste'] == filtre).toList();
-    }
-
+    // 2. Préparer une map avec regroupement dynamique
     final Map<String, Map<String, double>> result = {};
 
-    for (final item in allData) {
-      final String typeCategorie = item['Type_Categorie'] ?? 'Inconnu';
-      final emission = (item['Emission_Calculee'] ?? 0).toDouble();
+    for (final poste in postes) {
+      // Construire les clés de regroupement dynamiquement
+      final keys =
+          groupByFields.map((field) {
+            switch (field) {
+              case 'Type_Categorie':
+                return poste.typeCategorie ?? 'Inconnu';
+              case 'Sous_Categorie':
+                return poste.sousCategorie ?? 'Autre';
+              case 'Type_Poste':
+                return poste.typePoste ?? 'Autre';
+              default:
+                return 'Autre';
+            }
+          }).toList();
 
-      if (!result.containsKey(typeCategorie)) {
-        result[typeCategorie] = {"total": 0};
-      }
-      result[typeCategorie]!["total"] = result[typeCategorie]!["total"]! + emission / 1000;
-    }
+      final primaryKey = keys.first;
+      final secondaryKey = keys.length > 1 ? keys[1] : 'total';
 
-    return result;
-  }
+      final emission = (poste.emissionCalculee ?? 0) / 1000;
 
-  // récupère les données par sous Catégorie
-  // ---------------------------------------------------------------------------
-
-  static Future<List<Poste>> getPostesBysousCategorie(String sousCategorie, String codeIndividu, String valeurTemps) async {
-    // Fonction de normalisation (accents, majuscules)
-    String normalize(String s) => s.toLowerCase().replaceAll('é', 'e').replaceAll('è', 'e').trim();
-
-    final allData = await getUCPostes(codeIndividu, valeurTemps);
-
-    final filtered = allData.where((item) {
-      final itemCat = normalize(item['Sous_Categorie'] ?? '');
-      final targetCat = normalize(sousCategorie);
-      return itemCat == targetCat;
-    });
-
-    return filtered.map((item) => Poste.fromJson(item)).toList();
-  }
-
-  // récupère les données par Type Catégorie et sous Catégorie
-  // ---------------------------------------------------------------------------
-
-  static Future<Map<String, Map<String, double>>> getEmissionsByCategoryAndSousCategorie(String codeIndividu, String valeurTemps) async {
-    final List<Map<String, dynamic>> allData = await getUCPostes(codeIndividu, valeurTemps);
-
-    final Map<String, Map<String, double>> result = {};
-
-    for (final item in allData) {
-      final String typeCategorie = item['Type_Categorie'] ?? 'Inconnu';
-      final String sousCategorie = item['Sous_Categorie'] ?? 'Autre';
-      final emission = (item['Emission_Calculee'] ?? 0).toDouble();
-
-      result.putIfAbsent(typeCategorie, () => {});
-      result[typeCategorie]![sousCategorie] = (result[typeCategorie]![sousCategorie] ?? 0) + emission / 1000;
-    }
-
-    return result;
-  }
-
-  // récupère les données par Type poste et Type Catégorie
-  // ---------------------------------------------------------------------------
-
-  static Future<Map<String, Map<String, double>>> getEmissionsFilteredByTypePosteGroupedByCategorie(
-    String typePoste, // "Usage", "Equipement"
-    String codeIndividu,
-    String valeurTemps,
-  ) async {
-    final allData = await getUCPostes(codeIndividu, valeurTemps);
-
-    // Filtrer par Type_Poste
-    final filtered = allData.where((item) => item['Type_Poste'] == typePoste).toList();
-
-    final Map<String, Map<String, double>> result = {};
-
-    for (final item in filtered) {
-      final categorie = item['Type_Categorie'] ?? 'Inconnu';
-      final emission = (item['Emission_Calculee'] ?? 0).toDouble();
-
-      result.putIfAbsent(categorie, () => {});
-      result[categorie]!['total'] = (result[categorie]!['total'] ?? 0) + emission / 1000;
+      result.putIfAbsent(primaryKey, () => {});
+      result[primaryKey]![secondaryKey] = (result[primaryKey]![secondaryKey] ?? 0) + emission;
     }
 
     return result;

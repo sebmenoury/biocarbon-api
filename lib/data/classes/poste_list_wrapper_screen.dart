@@ -24,7 +24,7 @@ class _PosteVehiculeEntryPointState extends State<PosteVehiculeEntryPoint> {
   }
 
   Future<void> fetchAndRedirect() async {
-    final postes = await ApiService.getPostesBysousCategorie("Véhicules", widget.codeIndividu, widget.valeurTemps);
+    final postes = await ApiService.getUCPostesFiltres(sousCategorie: "Véhicules", codeIndividu: widget.codeIndividu, annee: widget.valeurTemps);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!_navigated) {

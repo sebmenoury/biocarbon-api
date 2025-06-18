@@ -21,7 +21,7 @@ class _ProjectionScreenState extends State<ProjectionScreen> {
   @override
   void initState() {
     super.initState();
-    dataFuture = ApiService.getEmissionsByCategoryAndSousCategorie(codeIndividu, valeurTemps);
+    dataFuture = ApiService.getEmissionsAggregated(codeIndividu: codeIndividu, valeurTemps: valeurTemps, groupByFields: ['Type_Categorie']);
   }
 
   double calculateTotal(Map<String, Map<String, double>> data) {
@@ -33,10 +33,7 @@ class _ProjectionScreenState extends State<ProjectionScreen> {
     return BaseScreen(
       title: const Text("Projection", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
       children: [
-        const CustomCard(
-          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-          child: Text('Trajectoire carbone projetée...', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-        ),
+        const CustomCard(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3), child: Text('Trajectoire carbone projetée...', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold))),
         FutureBuilder<Map<String, Map<String, double>>>(
           future: dataFuture,
           builder: (context, snapshot) {
@@ -62,11 +59,7 @@ class _ProjectionScreenState extends State<ProjectionScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Text(
-                          "Niveau Emission : ${total.toStringAsFixed(2)} tCO₂e/an",
-                          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
-                          textAlign: TextAlign.center,
-                        ),
+                        Text("Niveau Emission : ${total.toStringAsFixed(2)} tCO₂e/an", style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
                         const SizedBox(height: 8),
                         GraphCard(data: data, compactLeftLegend: true),
                       ],

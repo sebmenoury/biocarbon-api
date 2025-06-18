@@ -45,9 +45,9 @@ class _PosteListScreenState extends State<PosteListScreen> {
     avecBien = sousCategoriesAvecBien.contains(widget.sousCategorie);
 
     if (sousCategorieRedirigeeParType.containsKey(widget.sousCategorie)) {
-      postesFuture = ApiService.getPostesByCategorie(sousCategorieRedirigeeParType[widget.sousCategorie]!, widget.codeIndividu, widget.valeurTemps);
+      postesFuture = ApiService.getUCPostesFiltres(sousCategorie: sousCategorieRedirigeeParType[widget.sousCategorie]!, codeIndividu: widget.codeIndividu, annee: widget.valeurTemps);
     } else {
-      postesFuture = ApiService.getPostesBysousCategorie(widget.sousCategorie, widget.codeIndividu, widget.valeurTemps);
+      postesFuture = ApiService.getUCPostesFiltres(sousCategorie: widget.sousCategorie, codeIndividu: widget.codeIndividu, annee: widget.valeurTemps);
     }
 
     if (avecBien) {

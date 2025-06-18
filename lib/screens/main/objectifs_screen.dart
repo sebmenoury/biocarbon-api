@@ -22,7 +22,7 @@ class _ObjectifsScreenState extends State<ObjectifsScreen> {
   @override
   void initState() {
     super.initState();
-    dataFuture = ApiService.getEmissionsByCategoryAndSousCategorie(codeIndividu, valeurTemps);
+    dataFuture = ApiService.getEmissionsAggregated(codeIndividu: codeIndividu, valeurTemps: valeurTemps, groupByFields: ['Type_Categorie']);
   }
 
   double totalEmissions(Map<String, Map<String, double>> data) {
@@ -56,10 +56,7 @@ class _ObjectifsScreenState extends State<ObjectifsScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        "Projection de vos émissions annuelles",
-                        style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                      ),
+                      const Text("Projection de vos émissions annuelles", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
                       const SizedBox(height: 12),
                       SizedBox(
                         height: 320,
@@ -72,12 +69,7 @@ class _ObjectifsScreenState extends State<ObjectifsScreen> {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      Center(
-                        child: Text(
-                          "Total : ${total.toStringAsFixed(2)} tCO₂e/an",
-                          style: const TextStyle(fontSize: 10),
-                        ),
-                      ),
+                      Center(child: Text("Total : ${total.toStringAsFixed(2)} tCO₂e/an", style: const TextStyle(fontSize: 10))),
                     ],
                   ),
                 ),

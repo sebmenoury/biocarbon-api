@@ -42,7 +42,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
     final ref = await ApiService.getRefEquipements();
 
     // 🔁 Appel par ID_Bien + filtre sur la sous-catégorie
-    final tousLesPostes = await ApiService.getPostesParIdBien(idBienSelectionne);
+    final tousLesPostes = await ApiService.getUCPostesFiltres(idBien: idBienSelectionne);
     final postesExistants = tousLesPostes.where((p) => p.sousCategorie == "Véhicules").toList();
 
     final Map<String, List<PosteVehicule>> result = {'Voitures': [], '2-roues': [], 'Autres': []};
@@ -167,10 +167,10 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
   }
 
   Future<void> supprimerPoste() async {
-    final postes = await ApiService.getPostesBysousCategorie(
-      "Véhicules",
-      widget.codeIndividu,
-      "2025", // ou widget.valeurTemps si dispo
+    final postes = await ApiService.getUCPostesFiltres(
+      sousCategorie: "Véhicules",
+      codeIndividu: widget.codeIndividu,
+      annee: "2025", // ou widget.valeurTemps si dispo
     );
 
     final postesPourCeBien = postes.where((p) => p.idBien == widget.idBien).toList();

@@ -60,19 +60,28 @@ def get_postes():
     sheet = get_worksheet(SHEET_NAME, UC_POSTES_SHEET)
     rows = sheet.get_all_records()
 
-    code = request.args.get("code_individu")
-    annee = request.args.get("valeur_temps")
-    type_temps = request.args.get("type_temps")
-    id_bien = request.args.get("id_bien")  # 🔥 ajout du paramètre
+    idUsage = request.args.get("ID_Usage")  
+    individu = request.args.get("Code_Individu")
+    annee = request.args.get("Valeur_Temps")
+    type_temps = request.args.get("Type_temps")
+    id_bien = request.args.get("ID_Bien")  
+    sous_categorie = request.args.get('Sous_Categorie')
+    type_categorie = request.args.get('Type_Categorie')
 
-    if code:
-        rows = [r for r in rows if r["Code_Individu"] == code]
+    if idUsage:
+        rows = [r for r in rows if str(r["ID_Usage"]) == str(idUsage)]
+    if individu:
+        rows = [r for r in rows if r["Code_Individu"] == individu]
     if annee:
         rows = [r for r in rows if str(r["Valeur_Temps"]) == str(annee)]
     if type_temps:
         rows = [r for r in rows if r["Type_Temps"] == type_temps]
     if id_bien:
-        rows = [r for r in rows if str(r["ID_Bien"]) == str(id_bien)]  # 🔥 filtre par bien
+        rows = [r for r in rows if str(r["ID_Bien"]) == str(id_bien)]  
+    if sous_categorie:
+        rows = [d for d in rows if d['Sous_Categorie'] == sous_categorie]
+    if type_categorie:
+        rows = [d for d in rows if d['Type_Categorie'] == type_categorie]
 
     return jsonify(rows)
 

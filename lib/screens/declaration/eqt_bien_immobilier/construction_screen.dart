@@ -160,17 +160,16 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
       if (bienData.isEmpty) throw Exception("Bien introuvable");
 
       final nomLogement = (bienData['Dénomination'] ?? '').toString().trim();
+      final idBien = (bienData['ID_Bien'] ?? '').toString().trim();
       final typeBien = bienData['Type_Bien'] ?? 'Logement principal';
       final nbProp = int.tryParse(bienData['Nb_Proprietaires'].toString()) ?? 1;
       final nbHabitants = double.tryParse(bienData['Nb_Habitants'].toString()) ?? 1;
 
-      debugPrint("✅ Bien trouvé : $nomLogement ($widget.idBien)");
+      debugPrint("✅ Bien trouvé : $nomLogement ($idBien)");
 
-      // 🔹 2. Récupérer tous les postes de l'utilisateur pour l'année
-      final postes = await ApiService.getUCPostes("BASILE", "2025");
-
-      // 🔹 3. Filtrer les postes liés à ce bien
-      final postesConstruction = postes.where((p) => (p['ID_Bien']?.toString() ?? '') == widget.idBien && p['Sous_Categorie'] == 'Construction').toList();
+      // 🔹 2. Récupérer tous les postes de l'utilisateur pour l'année et filtrer les postes liés à ce bien
+      final postes = await ApiService.getUCPostesFiltres(codeIndividu: "BASILE", annee: "2025");
+      final postesConstruction = postes.where((p) => (p.idBien?.toString() ?? '') == widget.idBien && p.sousCategorie == 'Construction').toList();
 
       PosteBienImmobilier poste = PosteBienImmobilier();
 
@@ -178,12 +177,12 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
         debugPrint("🏗 ${postesConstruction.length} postes Construction trouvés pour ce bien");
 
         for (final p in postesConstruction) {
-          final nom = p['Nom_Poste'] ?? '';
-          final quantite = double.tryParse(p['Quantite'].toString()) ?? 0;
-          final annee = int.tryParse(p['Annee_Achat'].toString()) ?? 2010;
+          final nom = p.nomPoste ?? '';
+          final quantite = double.tryParse(p.quantite.toString()) ?? 0;
+          final annee = int.tryParse(p.anneeAchat.toString()) ?? 2010;
 
           if (nom.contains('Maison') || nom.contains('Appartement')) {
-            poste.id = p['ID_Usage'];
+            poste.id = p.idUsage;
             poste.nomEquipement = nom;
             poste.nomLogement = nomLogement;
             poste.surface = quantite;
