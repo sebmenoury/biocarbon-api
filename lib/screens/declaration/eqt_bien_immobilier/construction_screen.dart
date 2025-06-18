@@ -30,6 +30,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
   bool bienCharge = false;
 
   PosteBienImmobilier get poste => bien.poste;
+  bool posteDejaDeclare = false;
 
   late TextEditingController garageController;
   late TextEditingController surfaceController;
@@ -172,6 +173,9 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
       final postesConstruction = postes.where((p) => (p.idBien?.toString() ?? '') == widget.idBien && p.sousCategorie == 'Construction').toList();
 
       PosteBienImmobilier poste = PosteBienImmobilier();
+      setState(() {
+        posteDejaDeclare = postesConstruction.isNotEmpty;
+      });
 
       if (postesConstruction.isNotEmpty) {
         debugPrint("🏗 ${postesConstruction.length} postes Construction trouvés pour ce bien");
@@ -886,7 +890,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
 
               /// BOUTON
               const SizedBox(height: 24),
-              poste.id != null
+              posteDejaDeclare
                   ? Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
