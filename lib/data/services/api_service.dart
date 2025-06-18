@@ -233,7 +233,7 @@ class ApiService {
       if (typePoste != null) 'Type_Poste': typePoste,
     };
 
-    final uri = Uri.http(baseUrl, '/api/uc/postes', queryParameters);
+    final uri = Uri.parse('$baseUrl/api/uc/postes').replace(queryParameters: queryParameters);
     final response = await http.get(uri);
 
     if (response.statusCode == 200) {
