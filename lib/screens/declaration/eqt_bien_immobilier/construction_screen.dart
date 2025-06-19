@@ -349,6 +349,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                           width: 180,
                           child: DropdownButtonFormField<String>(
                             value: facteursEmission.keys.contains(poste.nomEquipement) ? poste.nomEquipement : null,
+                            hint: const Text("Type de construction", style: TextStyle(fontSize: 11)), // ✅ cohérence
                             decoration: const InputDecoration(
                               labelText: "Type de construction",
                               labelStyle: TextStyle(fontSize: 10),
