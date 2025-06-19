@@ -347,27 +347,37 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                       children: [
                         SizedBox(
                           width: 180,
-                          child: DropdownButtonFormField<String>(
-                            value: facteursEmission.keys.contains(poste.nomEquipement) ? poste.nomEquipement : null,
-
-                            decoration: const InputDecoration(
-                              labelText: "Type de construction",
-                              labelStyle: TextStyle(fontSize: 10),
-                              isDense: true,
-                              contentPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 12),
+                          child: DropdownButtonHideUnderline(
+                            child: ButtonTheme(
+                              alignedDropdown: true,
+                              child: DropdownButtonFormField<String>(
+                                value: facteursEmission.keys.contains(poste.nomEquipement) ? poste.nomEquipement : null,
+                                isExpanded: true,
+                                hint: const Text("Type de construction", style: TextStyle(fontSize: 11)),
+                                decoration: const InputDecoration(
+                                  labelText: "Type de construction",
+                                  labelStyle: TextStyle(fontSize: 10),
+                                  isDense: true,
+                                  contentPadding: EdgeInsets.symmetric(vertical: 6, horizontal: 8),
+                                ),
+                                style: const TextStyle(fontSize: 11),
+                                items: [
+                                  const DropdownMenuItem(value: '', child: Text('', style: TextStyle(fontSize: 11))),
+                                  ...facteursEmission.keys
+                                      .where((k) => k.contains("Maison") || k.contains("Appartement"))
+                                      .map(
+                                        (t) => DropdownMenuItem(
+                                          value: t,
+                                          child: SizedBox(height: 20, child: Align(alignment: Alignment.centerLeft, child: Text(t, style: const TextStyle(fontSize: 11)))),
+                                        ),
+                                      )
+                                      .toList(),
+                                ],
+                                onChanged: (val) {
+                                  setState(() => poste.nomEquipement = val ?? '');
+                                },
+                              ),
                             ),
-                            isExpanded: true,
-                            style: const TextStyle(fontSize: 11),
-                            items: [
-                              const DropdownMenuItem(value: '', child: Text('', style: TextStyle(fontSize: 11))),
-                              ...facteursEmission.keys
-                                  .where((k) => k.contains("Maison") || k.contains("Appartement"))
-                                  .map((t) => DropdownMenuItem(value: t, child: Text(t, style: const TextStyle(fontSize: 11))))
-                                  .toList(),
-                            ],
-                            onChanged: (val) {
-                              setState(() => poste.nomEquipement = val ?? '');
-                            },
                           ),
                         ),
                       ],
