@@ -354,12 +354,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                                 value: facteursEmission.keys.contains(poste.nomEquipement) ? poste.nomEquipement : null,
                                 isExpanded: true,
                                 hint: const Text("Type de construction", style: TextStyle(fontSize: 11)),
-                                decoration: const InputDecoration(
-                                  labelText: "Type de construction",
-                                  labelStyle: TextStyle(fontSize: 10),
-                                  isDense: true,
-                                  contentPadding: EdgeInsets.symmetric(vertical: 6, horizontal: 8),
-                                ),
+                                decoration: const InputDecoration(labelStyle: TextStyle(fontSize: 10), isDense: true, contentPadding: EdgeInsets.symmetric(vertical: 6, horizontal: 8)),
                                 style: const TextStyle(fontSize: 11),
                                 items: [
                                   const DropdownMenuItem(value: '', child: Text('', style: TextStyle(fontSize: 11))),
