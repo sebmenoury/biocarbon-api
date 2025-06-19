@@ -349,7 +349,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                           width: 180,
                           child: DropdownButtonFormField<String>(
                             value: facteursEmission.keys.contains(poste.nomEquipement) ? poste.nomEquipement : null,
-                            hint: const Text("Type de construction", style: TextStyle(fontSize: 11)), // ✅ cohérence
+
                             decoration: const InputDecoration(
                               labelText: "Type de construction",
                               labelStyle: TextStyle(fontSize: 10),
@@ -359,7 +359,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                             isExpanded: true,
                             style: const TextStyle(fontSize: 11),
                             items: [
-                              const DropdownMenuItem(value: '', child: Text('')), // ligne vide
+                              const DropdownMenuItem(value: '', child: Text('', style: TextStyle(fontSize: 11))),
                               ...facteursEmission.keys
                                   .where((k) => k.contains("Maison") || k.contains("Appartement"))
                                   .map((t) => DropdownMenuItem(value: t, child: Text(t, style: const TextStyle(fontSize: 11))))
