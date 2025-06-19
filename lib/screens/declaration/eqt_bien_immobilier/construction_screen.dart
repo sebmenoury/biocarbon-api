@@ -233,19 +233,6 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
       anneePiscineController = TextEditingController(text: poste.anneePiscine.toString());
       anneeAbriController = TextEditingController(text: poste.anneeAbri.toString());
 
-      // Sécurisation du type de construction
-      final typesConstruction = facteursEmission.keys.where((k) => k.contains("Maison") || k.contains("Appartement")).toList();
-
-      if (!typesConstruction.contains(poste.nomEquipement)) {
-        poste.nomEquipement = typesConstruction.contains("Maison Classique") ? "Maison Classique" : (typesConstruction.isNotEmpty ? typesConstruction.first : "");
-      }
-
-      // Sécurisation du type de piscine
-      final typesPiscine = ["Piscine béton", "Piscine coque"];
-      if (!typesPiscine.contains(poste.typePiscine)) {
-        poste.typePiscine = "Piscine béton";
-      }
-
       setState(() {
         bienCharge = true;
       });
