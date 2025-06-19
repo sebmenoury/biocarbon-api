@@ -10,6 +10,8 @@ import 'emission_calculator_immobilier.dart';
 import 'const_construction.dart';
 import '../poste_list_screen.dart';
 
+const List<String> typesPiscine = ['Piscine béton', 'Piscine coque', 'Piscine bois'];
+
 class ConstructionScreen extends StatefulWidget {
   final String idBien;
   final VoidCallback onSave;
@@ -32,6 +34,8 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
   PosteBienImmobilier get poste => bien.poste;
   bool posteDejaDeclare = false;
 
+  late List<String> typesPiscineAvecVide;
+
   late TextEditingController garageController;
   late TextEditingController surfaceController;
   late TextEditingController anneeController;
@@ -44,6 +48,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
   @override
   void initState() {
     super.initState();
+    typesPiscineAvecVide = [''] + typesPiscine;
     loadEquipementsData();
     loadBienComplet();
   }
@@ -206,12 +211,12 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
         }
       } else {
         debugPrint("⚠️ Aucun poste Construction trouvé pour ce bien. Initialisation par défaut.");
-        poste.nomEquipement = "Maison Classique";
+        poste.nomEquipement = '';
         poste.surface = 0;
         poste.anneeConstruction = DateTime.now().year;
         poste.surfaceGarage = 0;
         poste.surfacePiscine = 0;
-        poste.typePiscine = "Piscine béton";
+        poste.typePiscine = '';
         poste.surfaceAbriEtSerre = 0;
       }
 
@@ -365,12 +370,16 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                             ),
                             isExpanded: true,
                             style: const TextStyle(fontSize: 11),
-                            items:
-                                facteursEmission.keys
-                                    .where((k) => k.contains("Maison") || k.contains("Appartement"))
-                                    .map((t) => DropdownMenuItem(value: t, child: Text(t, style: const TextStyle(fontSize: 11))))
-                                    .toList(),
-                            onChanged: (val) => setState(() => poste.nomEquipement = val!),
+                            items: [
+                              const DropdownMenuItem(value: '', child: Text('')), // ligne vide
+                              ...facteursEmission.keys
+                                  .where((k) => k.contains("Maison") || k.contains("Appartement"))
+                                  .map((t) => DropdownMenuItem(value: t, child: Text(t, style: const TextStyle(fontSize: 11))))
+                                  .toList(),
+                            ],
+                            onChanged: (val) {
+                              setState(() => poste.nomEquipement = val ?? '');
+                            },
                           ),
                         ),
                       ],
@@ -749,13 +758,12 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                         SizedBox(
                           width: 180, // ajuste si besoin
                           child: CustomDropdownCompact(
-                            value: typesPiscine.contains(poste.typePiscine) ? poste.typePiscine : typesPiscine.first,
-                            items: typesPiscine,
+                            value: typesPiscine.contains(poste.typePiscine) ? poste.typePiscine : '',
+                            items: typesPiscineAvecVide,
                             label: "Type de piscine",
                             onChanged: (val) {
-                              double? parsed = val != null ? double.tryParse(val) : null;
                               setState(() {
-                                poste.surfacePiscine = parsed != null && parsed >= 0 ? parsed : 0;
+                                poste.typePiscine = val ?? '';
                               });
                             },
                           ),
