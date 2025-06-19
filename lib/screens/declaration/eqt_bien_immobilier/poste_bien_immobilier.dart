@@ -1,6 +1,6 @@
 class PosteBienImmobilier {
   String? id; // <-- contient l’ID_Usage s’il existe déjà
-  String nomEquipement; // "Maison Classique", "Appartement BBC", etc.
+  String typeConstruction; // "Maison Classique", "Appartement BBC", etc.
   String? nomLogement; // Nom du logement, par exemple "Mon appartement"
   String? typeBien; // "Logement principal", "Logement secondaire", etc.
   double surface;
@@ -21,7 +21,7 @@ class PosteBienImmobilier {
 
   PosteBienImmobilier({
     this.id, // 👈 ajouté
-    this.nomEquipement = "",
+    this.typeConstruction = "",
     this.surface = 0,
     this.anneeConstruction = 2025,
 

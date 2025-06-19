@@ -9,15 +9,15 @@ double calculerTotalEmission(PosteBienImmobilier poste, Map<String, double> fact
 
   // 🔨 Maison / appartement
   if (poste.surface > 0) {
-    final facteur = facteursEmission[poste.nomEquipement];
-    final duree = dureesAmortissement[poste.nomEquipement];
+    final facteur = facteursEmission[poste.typeConstruction];
+    final duree = dureesAmortissement[poste.typeConstruction];
     final reduction = reductionParAnnee(poste.anneeConstruction);
     final age = anneeActuelle - poste.anneeConstruction;
 
     if (facteur != null && duree != null && age < duree) {
       total += (poste.surface * facteur * reduction) / duree / nbProprietaires;
     } else {
-      debugPrint("⏳ Logement ignoré (amorti ou info manquante) pour '${poste.nomEquipement}'");
+      debugPrint("⏳ Logement ignoré (amorti ou info manquante) pour '${poste.typeConstruction}'");
     }
   }
 

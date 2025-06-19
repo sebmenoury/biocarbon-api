@@ -11,6 +11,7 @@ import 'const_construction.dart';
 import '../poste_list_screen.dart';
 
 const List<String> typesPiscine = ['Piscine béton', 'Piscine coque', 'Piscine bois'];
+const List<String> typesConstruction = ['Maison Classique', 'Appartement', 'Appartement BBC', 'Maison Bois', 'Maison Passive'];
 
 class ConstructionScreen extends StatefulWidget {
   final String idBien;
@@ -35,6 +36,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
   bool posteDejaDeclare = false;
 
   late List<String> typesPiscineAvecVide;
+  late List<String> typesConstructionAvecVide;
 
   late TextEditingController garageController;
   late TextEditingController surfaceController;
@@ -49,6 +51,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
   void initState() {
     super.initState();
     typesPiscineAvecVide = [''] + typesPiscine;
+    typesConstructionAvecVide = [''] + typesConstruction;
     loadEquipementsData();
     loadBienComplet();
   }
@@ -102,7 +105,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
       }
 
       // Ajoute les postes selon les données remplies
-      ajouterPoste(poste.nomEquipement, poste.surface, poste.anneeConstruction);
+      ajouterPoste(poste.typeConstruction, poste.surface, poste.anneeConstruction);
       ajouterPoste("Garage béton", poste.surfaceGarage, poste.anneeGarage);
       ajouterPoste(poste.typePiscine, poste.surfacePiscine, poste.anneePiscine);
       ajouterPoste("Abri de jardin bois", poste.surfaceAbriEtSerre, poste.anneeAbri);
@@ -192,7 +195,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
 
           if (nom.contains('Maison') || nom.contains('Appartement')) {
             poste.id = p.idUsage;
-            poste.nomEquipement = nom;
+            poste.typeConstruction = nom;
             poste.nomLogement = nomLogement;
             poste.surface = quantite;
             poste.anneeConstruction = annee;
@@ -211,7 +214,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
         }
       } else {
         debugPrint("⚠️ Aucun poste Construction trouvé pour ce bien. Initialisation par défaut.");
-        poste.nomEquipement = '';
+        poste.typeConstruction = '';
         poste.surface = 0;
         poste.anneeConstruction = DateTime.now().year;
         poste.surfaceGarage = 0;
@@ -346,43 +349,20 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         SizedBox(
-                          width: 180,
-                          child: DropdownButtonHideUnderline(
-                            child: ButtonTheme(
-                              alignedDropdown: true,
-                              child: DropdownButtonFormField<String>(
-                                value: facteursEmission.keys.contains(poste.nomEquipement) ? poste.nomEquipement : null,
-                                isExpanded: true,
-                                // ✅ Supprimé : plus de `hint` ici
-                                decoration: const InputDecoration(
-                                  labelText: "Type de construction",
-                                  labelStyle: TextStyle(fontSize: 10),
-                                  isDense: true,
-                                  contentPadding: EdgeInsets.symmetric(vertical: 6, horizontal: 8),
-                                ),
-                                style: const TextStyle(fontSize: 11),
-                                items: [
-                                  const DropdownMenuItem(value: '', child: Text('', style: TextStyle(fontSize: 11))),
-                                  ...facteursEmission.keys
-                                      .where((k) => k.contains("Maison") || k.contains("Appartement"))
-                                      .map(
-                                        (t) => DropdownMenuItem(
-                                          value: t,
-                                          child: SizedBox(height: 20, child: Align(alignment: Alignment.centerLeft, child: Text(t, style: const TextStyle(fontSize: 11)))),
-                                        ),
-                                      )
-                                      .toList(),
-                                ],
-                                onChanged: (val) {
-                                  setState(() => poste.nomEquipement = val ?? '');
-                                },
-                              ),
-                            ),
+                          width: 180, // ajuste si besoin
+                          child: CustomDropdownCompact(
+                            value: typesConstruction.contains(poste.typeConstruction) ? poste.typeConstruction : '',
+                            items: typesConstructionAvecVide,
+                            label: "Type de construction",
+                            onChanged: (val) {
+                              setState(() {
+                                poste.typeConstruction = val ?? '';
+                              });
+                            },
                           ),
                         ),
                       ],
                     ),
-
                     const SizedBox(height: 12),
 
                     /// SURFACE
