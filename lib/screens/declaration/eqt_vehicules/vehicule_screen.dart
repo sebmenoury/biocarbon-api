@@ -134,7 +134,8 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
   Future<void> enregistrerOuMettreAJour() async {
     for (final categorie in vehiculesParCategorie.values) {
       for (final poste in categorie) {
-        final newIdUsage = "${poste.idBien}_Véhicules_${poste.nomEquipement}_${poste.anneeAchat}".replaceAll(' ', '_');
+        final uniqueSuffix = DateTime.now().millisecondsSinceEpoch;
+        final newIdUsage = "${poste.idBien}_Véhicules_${poste.nomEquipement}_${poste.anneeAchat}_$uniqueSuffix".replaceAll(' ', '_');
 
         // ⚠️ Cas 1 : si quantité = 0 → suppression du poste existant (si idUsageInitial non nul)
         if (poste.quantite <= 0) {
