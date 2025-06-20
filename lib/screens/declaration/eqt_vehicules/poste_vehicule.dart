@@ -9,7 +9,7 @@ class PosteVehicule {
   final String? typeBien;
   final String? nomLogement;
   final int nbProprietaires;
-  final String? idUsageInitial; // nullable
+  String? idUsageInitial;
 
   int quantite; // 👈 AJOUT ICI
 
@@ -50,6 +50,11 @@ class PosteVehicule {
     } else {
       return "Autres";
     }
+  }
+
+  String generateNewIdUsage() {
+    final suffix = DateTime.now().millisecondsSinceEpoch; // sert uniquement à la création
+    return "${idBien}_Véhicules_${nomEquipement}_${anneeAchat}_$suffix".replaceAll(' ', '_');
   }
 
   Map<String, dynamic> toMap({required String codeIndividu, required String typeTemps, required String valeurTemps}) {

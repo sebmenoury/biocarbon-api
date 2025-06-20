@@ -134,31 +134,28 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
   Future<void> enregistrerOuMettreAJour() async {
     for (final categorie in vehiculesParCategorie.values) {
       for (final poste in categorie) {
-        final uniqueSuffix = DateTime.now().millisecondsSinceEpoch;
-        final newIdUsage = "${poste.idBien}_Véhicules_${poste.nomEquipement}_${poste.anneeAchat}_$uniqueSuffix".replaceAll(' ', '_');
+        final currentTime = DateTime.now().toIso8601String();
 
-        // ⚠️ Cas 1 : si quantité = 0 → suppression du poste existant (si idUsageInitial non nul)
+        // ⚠️ Cas 1 : Suppression si quantité à 0
         if (poste.quantite <= 0) {
           if (poste.idUsageInitial != null) {
             await ApiService.deleteUCPoste(poste.idUsageInitial!);
-            debugPrint("🗑 Poste supprimé : ${poste.idUsageInitial!}");
+            debugPrint("🗑 Supprimé : ${poste.idUsageInitial!}");
           }
-          continue; // skip cette itération
+          continue;
         }
 
+        // ⚠️ Cas 2 : Création si nouveau poste sans id
+        if (poste.idUsageInitial == null) {
+          final newId = poste.generateNewIdUsage();
+          poste.idUsageInitial = newId; // On le fixe une fois pour toutes
+        }
+
+        // ✅ Cas 3 : Mise à jour ou création
         final emission = calculerTotalEmissionVehicule(poste);
-        final currentTime = DateTime.now().toIso8601String();
-
-        // ⚠️ Cas 2 : si id initial différent du nouvel ID → suppression de l’ancien
-        if (poste.idUsageInitial != null && poste.idUsageInitial != newIdUsage) {
-          await ApiService.deleteUCPoste(poste.idUsageInitial!);
-          debugPrint("♻️ Ancien poste supprimé : ${poste.idUsageInitial!}");
-        }
-
-        // ✅ Cas 3 : création / mise à jour du poste
         await ApiService.saveOrUpdatePoste({
-          "ID_Usage": newIdUsage,
-          "Code_Individu": "BASILE", // ou widget.codeIndividu
+          "ID_Usage": poste.idUsageInitial,
+          "Code_Individu": "BASILE",
           "Type_Temps": "Réel",
           "Valeur_Temps": "2025",
           "Date_enregistrement": currentTime,
@@ -179,7 +176,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
           "Duree_Amortissement": poste.dureeAmortissement,
         });
 
-        debugPrint("✅ Poste sauvegardé : $newIdUsage");
+        debugPrint("✅ Poste traité : ${poste.idUsageInitial}");
       }
     }
   }
