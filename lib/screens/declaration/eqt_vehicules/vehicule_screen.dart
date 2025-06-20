@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../ui/layout/base_screen.dart';
 import '../../../ui/layout/custom_card.dart';
 import '../../../data/services/api_service.dart';
-import '../../../data/classes/poste_vehicule.dart';
+import 'poste_vehicule.dart';
 import 'emission_calculator_vehicules.dart';
 
 class VehiculeScreen extends StatefulWidget {
@@ -135,16 +135,22 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
     for (final categorie in vehiculesParCategorie.values) {
       for (final poste in categorie) {
         if (poste.quantite > 0) {
-          // ✅ on ignore les postes à 0
           final emission = calculerTotalEmissionVehicule(poste);
-          final idUsage = poste.idUsageInitial ?? "${poste.idBien}_Véhicules_${poste.nomEquipement}_${poste.anneeAchat}".replaceAll(' ', '_');
+          final newIdUsage = "${poste.idBien}_Véhicules_${poste.nomEquipement}_${poste.anneeAchat}".replaceAll(' ', '_');
+          final currentTime = DateTime.now().toIso8601String();
 
+          // 👇 Suppression de l'ancien poste si l'ID initial est différent
+          if (poste.idUsageInitial != null && poste.idUsageInitial != newIdUsage) {
+            await ApiService.deleteUCPoste(poste.idUsageInitial!);
+          }
+
+          // 👇 Création ou mise à jour du nouveau poste
           await ApiService.saveOrUpdatePoste({
-            "ID_Usage": idUsage,
-            "Code_Individu": "BASILE", // à remplacer par widget.codeIndividu si besoin
+            "ID_Usage": newIdUsage,
+            "Code_Individu": "BASILE", // à adapter
             "Type_Temps": "Réel",
-            "Valeur_Temps": "2025", // idem ici
-            "Date_enregistrement": DateTime.now().toIso8601String(),
+            "Valeur_Temps": "2025",
+            "Date_enregistrement": currentTime,
             "ID_Bien": poste.idBien,
             "Type_Bien": poste.typeBien,
             "Type_Poste": "Equipement",
@@ -152,7 +158,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
             "Sous_Categorie": "Véhicules",
             "Nom_Poste": poste.nomEquipement,
             "Nom_Logement": poste.nomLogement,
-            "Quantite": poste.quantite, // ✅ on respecte la valeur réelle
+            "Quantite": poste.quantite,
             "Unite": "unité",
             "Frequence": "",
             "Facteur_Emission": poste.facteurEmission,

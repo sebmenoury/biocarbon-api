@@ -1,4 +1,4 @@
-import 'poste_postes.dart';
+import '../../../data/classes/poste_postes.dart';
 
 class PosteVehicule {
   final String nomEquipement;
