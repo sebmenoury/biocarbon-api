@@ -134,40 +134,51 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
   Future<void> enregistrerOuMettreAJour() async {
     for (final categorie in vehiculesParCategorie.values) {
       for (final poste in categorie) {
-        if (poste.quantite > 0) {
-          final emission = calculerTotalEmissionVehicule(poste);
-          final newIdUsage = "${poste.idBien}_Véhicules_${poste.nomEquipement}_${poste.anneeAchat}".replaceAll(' ', '_');
-          final currentTime = DateTime.now().toIso8601String();
+        final newIdUsage = "${poste.idBien}_Véhicules_${poste.nomEquipement}_${poste.anneeAchat}".replaceAll(' ', '_');
 
-          // 👇 Suppression de l'ancien poste si l'ID initial est différent
-          if (poste.idUsageInitial != null && poste.idUsageInitial != newIdUsage) {
+        // ⚠️ Cas 1 : si quantité = 0 → suppression du poste existant (si idUsageInitial non nul)
+        if (poste.quantite <= 0) {
+          if (poste.idUsageInitial != null) {
             await ApiService.deleteUCPoste(poste.idUsageInitial!);
+            debugPrint("🗑 Poste supprimé : ${poste.idUsageInitial!}");
           }
-
-          // 👇 Création ou mise à jour du nouveau poste
-          await ApiService.saveOrUpdatePoste({
-            "ID_Usage": newIdUsage,
-            "Code_Individu": "BASILE", // à adapter
-            "Type_Temps": "Réel",
-            "Valeur_Temps": "2025",
-            "Date_enregistrement": currentTime,
-            "ID_Bien": poste.idBien,
-            "Type_Bien": poste.typeBien,
-            "Type_Poste": "Equipement",
-            "Type_Categorie": "Déplacements",
-            "Sous_Categorie": "Véhicules",
-            "Nom_Poste": poste.nomEquipement,
-            "Nom_Logement": poste.nomLogement,
-            "Quantite": poste.quantite,
-            "Unite": "unité",
-            "Frequence": "",
-            "Facteur_Emission": poste.facteurEmission,
-            "Emission_Calculee": emission,
-            "Mode_Calcul": "Amorti",
-            "Annee_Achat": poste.anneeAchat,
-            "Duree_Amortissement": poste.dureeAmortissement,
-          });
+          continue; // skip cette itération
         }
+
+        final emission = calculerTotalEmissionVehicule(poste);
+        final currentTime = DateTime.now().toIso8601String();
+
+        // ⚠️ Cas 2 : si id initial différent du nouvel ID → suppression de l’ancien
+        if (poste.idUsageInitial != null && poste.idUsageInitial != newIdUsage) {
+          await ApiService.deleteUCPoste(poste.idUsageInitial!);
+          debugPrint("♻️ Ancien poste supprimé : ${poste.idUsageInitial!}");
+        }
+
+        // ✅ Cas 3 : création / mise à jour du poste
+        await ApiService.saveOrUpdatePoste({
+          "ID_Usage": newIdUsage,
+          "Code_Individu": "BASILE", // ou widget.codeIndividu
+          "Type_Temps": "Réel",
+          "Valeur_Temps": "2025",
+          "Date_enregistrement": currentTime,
+          "ID_Bien": poste.idBien,
+          "Type_Bien": poste.typeBien,
+          "Type_Poste": "Equipement",
+          "Type_Categorie": "Déplacements",
+          "Sous_Categorie": "Véhicules",
+          "Nom_Poste": poste.nomEquipement,
+          "Nom_Logement": poste.nomLogement,
+          "Quantite": poste.quantite,
+          "Unite": "unité",
+          "Frequence": "",
+          "Facteur_Emission": poste.facteurEmission,
+          "Emission_Calculee": emission,
+          "Mode_Calcul": "Amorti",
+          "Annee_Achat": poste.anneeAchat,
+          "Duree_Amortissement": poste.dureeAmortissement,
+        });
+
+        debugPrint("✅ Poste sauvegardé : $newIdUsage");
       }
     }
   }
