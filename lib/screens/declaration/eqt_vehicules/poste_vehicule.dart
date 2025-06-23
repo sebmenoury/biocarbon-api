@@ -12,6 +12,7 @@ class PosteVehicule {
   String? idUsageInitial;
 
   int quantite; // 👈 AJOUT ICI
+  final int? anneeAchatInitiale;
 
   PosteVehicule({
     required this.nomEquipement,
@@ -24,6 +25,7 @@ class PosteVehicule {
     this.typeBien,
     this.quantite = 1, // 👈 Valeur par défaut
     this.idUsageInitial,
+    this.anneeAchatInitiale, // ⚠️ ajouter ici
   });
 
   // 👇 Ajoute cette méthode pour permettre la duplication
@@ -37,7 +39,8 @@ class PosteVehicule {
       nbProprietaires = original.nbProprietaires,
       idBien = original.idBien,
       typeBien = original.typeBien,
-      idUsageInitial = null; // 👈 explicite;
+      idUsageInitial = null, // 👈 explicite
+      anneeAchatInitiale = original.anneeAchatInitiale; // ⚠️ copier ici aussi
 
   /// Méthode statique : retourne la sous-catégorie en fonction du nom
   static String getSousCategorieFromNom(String nom) {

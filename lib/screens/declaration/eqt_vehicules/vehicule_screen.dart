@@ -4,6 +4,7 @@ import '../../../ui/layout/custom_card.dart';
 import '../../../data/services/api_service.dart';
 import 'poste_vehicule.dart';
 import 'emission_calculator_vehicules.dart';
+import '../../../data/classes/post_helper.dart'; // adapte le chemin
 
 class VehiculeScreen extends StatefulWidget {
   final String codeIndividu;
@@ -108,7 +109,9 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
           typeBien: p.typeBien,
           nomLogement: denominationSelectionne,
           nbProprietaires: nbProprietaires,
-          idUsageInitial: p.idUsage, // ✅ conserve la clé d’origine
+          idUsageInitial: p.idUsage,
+          anneeAchatInitiale: p.anneeAchat, // ✅ Ici aussi
+          // ✅ conserve la clé d’origine
         ),
       );
     }
@@ -134,31 +137,15 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
   Future<void> enregistrerOuMettreAJour() async {
     for (final categorie in vehiculesParCategorie.values) {
       for (final poste in categorie) {
-        final currentTime = DateTime.now().toIso8601String();
-
-        // ⚠️ Cas 1 : Suppression si quantité à 0
-        if (poste.quantite <= 0) {
-          if (poste.idUsageInitial != null) {
-            await ApiService.deleteUCPoste(poste.idUsageInitial!);
-            debugPrint("🗑 Supprimé : ${poste.idUsageInitial!}");
-          }
-          continue;
-        }
-
-        // ⚠️ Cas 2 : Création si nouveau poste sans id
-        if (poste.idUsageInitial == null) {
-          final newId = poste.generateNewIdUsage();
-          poste.idUsageInitial = newId; // On le fixe une fois pour toutes
-        }
-
-        // ✅ Cas 3 : Mise à jour ou création
+        final uniqueSuffix = DateTime.now().millisecondsSinceEpoch;
+        final newIdUsage = "${poste.idBien}_Véhicules_${poste.nomEquipement}_${poste.anneeAchat}_$uniqueSuffix".replaceAll(' ', '_');
         final emission = calculerTotalEmissionVehicule(poste);
-        await ApiService.saveOrUpdatePoste({
-          "ID_Usage": poste.idUsageInitial,
+
+        final posteMap = {
           "Code_Individu": "BASILE",
           "Type_Temps": "Réel",
           "Valeur_Temps": "2025",
-          "Date_enregistrement": currentTime,
+          "Date_enregistrement": DateTime.now().toIso8601String(),
           "ID_Bien": poste.idBien,
           "Type_Bien": poste.typeBien,
           "Type_Poste": "Equipement",
@@ -174,9 +161,15 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
           "Mode_Calcul": "Amorti",
           "Annee_Achat": poste.anneeAchat,
           "Duree_Amortissement": poste.dureeAmortissement,
-        });
+        };
 
-        debugPrint("✅ Poste traité : ${poste.idUsageInitial}");
+        await PosteHelper.traiterPoste(
+          posteData: posteMap,
+          idUsageInitial: poste.idUsageInitial,
+          anneeAchatInitiale: poste.anneeAchatInitiale ?? poste.anneeAchat, // garde une trace dans ton modèle
+          nouvelleAnneeAchat: poste.anneeAchat,
+          newIdUsage: newIdUsage,
+        );
       }
     }
   }

@@ -69,7 +69,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
             if (widget.codeIndividu != null && widget.idBien != null) {
               Navigator.push(context, MaterialPageRoute(builder: (_) => VehiculeScreen(codeIndividu: widget.codeIndividu!, idBien: widget.idBien!)));
             } else {
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Impossible d'accéder à l'écran Véhicules : informations incomplètes.")));
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Veuillez sélectionner un des logements pour y attribuer vos véhicules.")));
             }
           }
         });
