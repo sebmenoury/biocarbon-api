@@ -135,41 +135,43 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
   }
 
   Future<void> enregistrerOuMettreAJour() async {
+    // 1. Supprimer tous les enregistrements actuels pour ce Bien, ce temps et cette sous-catégorie
+    final idBien = vehiculesParCategorie.values.first.first.idBien;
+    final codeIndividu = "BASILE";
+    final valeurTemps = "2025";
+    final sousCategorie = "Véhicules";
+
+    // 1️⃣ Suppression de tous les postes existants pour ce bien et cette sous-catégorie
+    await ApiService.deleteAllPostes(codeIndividu: codeIndividu, idBien: idBien, valeurTemps: valeurTemps, sousCategorie: sousCategorie);
+
     for (final categorie in vehiculesParCategorie.values) {
       for (final poste in categorie) {
-        final uniqueSuffix = DateTime.now().millisecondsSinceEpoch;
-        final newIdUsage = "${poste.idBien}_Véhicules_${poste.nomEquipement}_${poste.anneeAchat}_$uniqueSuffix".replaceAll(' ', '_');
-        final emission = calculerTotalEmissionVehicule(poste);
+        if (poste.quantite > 0) {
+          final idUsage = "${poste.idBien}_Véhicules_${poste.nomEquipement}_${poste.anneeAchat}_${DateTime.now().millisecondsSinceEpoch}".replaceAll(' ', '_');
+          final emission = calculerTotalEmissionVehicule(poste);
 
-        final posteMap = {
-          "Code_Individu": "BASILE",
-          "Type_Temps": "Réel",
-          "Valeur_Temps": "2025",
-          "Date_enregistrement": DateTime.now().toIso8601String(),
-          "ID_Bien": poste.idBien,
-          "Type_Bien": poste.typeBien,
-          "Type_Poste": "Equipement",
-          "Type_Categorie": "Déplacements",
-          "Sous_Categorie": "Véhicules",
-          "Nom_Poste": poste.nomEquipement,
-          "Nom_Logement": poste.nomLogement,
-          "Quantite": poste.quantite,
-          "Unite": "unité",
-          "Frequence": "",
-          "Facteur_Emission": poste.facteurEmission,
-          "Emission_Calculee": emission,
-          "Mode_Calcul": "Amorti",
-          "Annee_Achat": poste.anneeAchat,
-          "Duree_Amortissement": poste.dureeAmortissement,
-        };
-
-        await PosteHelper.traiterPoste(
-          posteData: posteMap,
-          idUsageInitial: poste.idUsageInitial,
-          anneeAchatInitiale: poste.anneeAchatInitiale ?? poste.anneeAchat, // garde une trace dans ton modèle
-          nouvelleAnneeAchat: poste.anneeAchat,
-          newIdUsage: newIdUsage,
-        );
+          await ApiService.addUCPoste({
+            "ID_Usage": idUsage,
+            "Code_Individu": "BASILE",
+            "Type_Temps": "Réel",
+            "Valeur_Temps": "2025",
+            "ID_Bien": poste.idBien,
+            "Type_Bien": poste.typeBien,
+            "Type_Poste": "Equipement",
+            "Type_Categorie": "Déplacements",
+            "Sous_Categorie": "Véhicules",
+            "Nom_Poste": poste.nomEquipement,
+            "Nom_Logement": poste.nomLogement,
+            "Quantite": poste.quantite,
+            "Unite": "unité",
+            "Frequence": "",
+            "Facteur_Emission": poste.facteurEmission,
+            "Emission_Calculee": emission,
+            "Mode_Calcul": "Amorti",
+            "Annee_Achat": poste.anneeAchat,
+            "Duree_Amortissement": poste.dureeAmortissement,
+          });
+        }
       }
     }
   }

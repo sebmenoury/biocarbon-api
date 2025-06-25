@@ -152,3 +152,37 @@ def delete_postes(id_usage):
 
     except Exception as e:
         return jsonify({"error": f"Erreur serveur : {str(e)}"}), 500
+    
+@bp_uc_postes.route('/delete_all', methods=['DELETE'])
+def delete_all_postes():
+    code_individu = request.args.get('Code_Individu')
+    id_bien = request.args.get('ID_Bien')
+    valeur_temps = request.args.get('Valeur_Temps')
+    sous_categorie = request.args.get('Sous_Categorie')
+
+    if not all([code_individu, id_bien, valeur_temps, sous_categorie]):
+        return jsonify({"error": "Paramètres manquants"}), 400
+
+    try:
+        sheet = get_worksheet(SHEET_NAME, UC_POSTES_SHEET)
+        records = sheet.get_all_records()
+
+        # 📍 On identifie les indices à supprimer en partant de la fin
+        rows_to_delete = []
+        for idx, row in enumerate(records, start=2):  # Ligne 2 = première data row
+            if (
+                str(row.get('Code_Individu')) == str(code_individu) and
+                str(row.get('ID_Bien')) == str(id_bien) and
+                str(row.get('Valeur_Temps')) == str(valeur_temps) and
+                str(row.get('Sous_Categorie')) == str(sous_categorie)
+            ):
+                rows_to_delete.append(idx)
+
+        # 📍 On supprime les lignes en commençant par la fin
+        for row_num in reversed(rows_to_delete):
+            sheet.delete_rows(row_num)
+
+        return jsonify({"message": f"{len(rows_to_delete)} postes supprimés ✅"}), 200
+
+    except Exception as e:
+        return jsonify({"error": f"Erreur serveur : {str(e)}"}), 500

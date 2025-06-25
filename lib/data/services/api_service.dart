@@ -173,6 +173,26 @@ class ApiService {
     return _handleResponse(response);
   }
 
+  static Future<void> deleteAllPostes({required String codeIndividu, required String? idBien, required String valeurTemps, required String sousCategorie}) async {
+    if (idBien == null || idBien.isEmpty) {
+      throw Exception('ID_Bien manquant');
+    }
+    final uri = Uri.parse(
+      '$baseUrl/delete_all?Code_Individu=$codeIndividu'
+      '&ID_Bien=$idBien'
+      '&Valeur_Temps=$valeurTemps'
+      '&Sous_Categorie=$sousCategorie',
+    );
+
+    final response = await http.delete(uri);
+
+    if (response.statusCode != 200) {
+      throw Exception("Erreur suppression des postes: ${response.statusCode} - ${response.body}");
+    } else {
+      print('✅ Tous les postes $sousCategorie du bien $idBien supprimés.');
+    }
+  }
+
   static Future<void> saveOrUpdatePoste(Map<String, dynamic> data) async {
     final id = data['ID_Usage'];
     final urlGet = Uri.parse('$baseUrl/api/uc/postes/$id');
