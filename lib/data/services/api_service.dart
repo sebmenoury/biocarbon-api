@@ -225,6 +225,22 @@ class ApiService {
     }
   }
 
+  static Future<void> savePoste(Map<String, dynamic> data) async {
+    final urlPost = Uri.parse('$baseUrl/api/uc/postes');
+
+    try {
+      final response = await http.post(urlPost, headers: {'Content-Type': 'application/json'}, body: jsonEncode(data));
+
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        throw Exception('Erreur POST : ${response.statusCode} - ${response.body}');
+      }
+      print('✅ Poste créé avec succès : ${data['ID_Usage']}');
+    } catch (e) {
+      print('❌ Erreur enregistrement : $e');
+      rethrow;
+    }
+  }
+
   // ---------------------------------------------------------------------------
   // 📦 UC - POSTES en lecture
   // ---------------------------------------------------------------------------
