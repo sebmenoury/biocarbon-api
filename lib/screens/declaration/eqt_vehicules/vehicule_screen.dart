@@ -150,11 +150,12 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
           final idUsage = "${poste.idBien}_Véhicules_${poste.nomEquipement}_${poste.anneeAchat}_${DateTime.now().millisecondsSinceEpoch}".replaceAll(' ', '_');
           final emission = calculerTotalEmissionVehicule(poste);
 
-          await ApiService.addUCPoste({
+          await ApiService.saveOrUpdatePoste({
             "ID_Usage": idUsage,
-            "Code_Individu": "BASILE",
+            "Code_Individu": codeIndividu,
             "Type_Temps": "Réel",
-            "Valeur_Temps": "2025",
+            "Valeur_Temps": valeurTemps,
+            "Date_enregistrement": DateTime.now().toIso8601String(),
             "ID_Bien": poste.idBien,
             "Type_Bien": poste.typeBien,
             "Type_Poste": "Equipement",
