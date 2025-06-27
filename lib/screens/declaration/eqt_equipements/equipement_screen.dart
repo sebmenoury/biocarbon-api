@@ -198,7 +198,12 @@ class _EquipementScreenState extends State<EquipementScreen> {
                       if (poste.quantite > 1) {
                         poste.quantite--;
                       } else {
-                        poste.quantite = 0;
+                        final doublons = equipements.where((p) => p.nomEquipement == poste.nomEquipement).toList();
+                        if (doublons.length > 1) {
+                          equipements.removeAt(index);
+                        } else {
+                          poste.quantite = 0;
+                        }
                       }
                       recalculerTotal();
                     });
