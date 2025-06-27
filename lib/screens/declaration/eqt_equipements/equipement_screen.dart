@@ -209,7 +209,11 @@ class _EquipementScreenState extends State<EquipementScreen> {
                 GestureDetector(
                   onTap: () {
                     setState(() {
-                      poste.quantite++;
+                      if (poste.quantite == 0) {
+                        poste.quantite = 1;
+                      } else {
+                        equipements.insert(index + 1, PosteEquipement.clone(poste));
+                      }
                       recalculerTotal();
                     });
                   },
