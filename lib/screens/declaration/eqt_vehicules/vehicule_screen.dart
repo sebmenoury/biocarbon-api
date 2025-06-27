@@ -143,19 +143,18 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
     final sousCategorie = "Véhicules";
 
     try {
-      // 1️⃣ Suppression de tous les postes existants
+      // 1️⃣ Suppression de tous les postes existants pour ce bien et cette sous-catégorie
       await ApiService.deleteAllPostes(codeIndividu: codeIndividu, idBien: idBien, valeurTemps: valeurTemps, sousCategorie: sousCategorie);
 
-      // 2️⃣ Création des nouveaux postes (parallélisée pour rapidité)
-      final futures = <Future>[];
-
+      // 2️⃣ Création des nouveaux postes un par un
+      int index = 0;
       for (final categorie in vehiculesParCategorie.values) {
         for (final poste in categorie) {
           if (poste.quantite > 0) {
-            final idUsage = "${poste.idBien}_Véhicules_${poste.nomEquipement}_${poste.anneeAchat}_${DateTime.now().millisecondsSinceEpoch}".replaceAll(' ', '_');
+            final idUsage = "TEMP-${DateTime.now().millisecondsSinceEpoch}_${index}_${poste.nomEquipement}_${poste.anneeAchat}".replaceAll(' ', '_');
             final emission = calculerTotalEmissionVehicule(poste);
 
-            final data = {
+            await ApiService.savePoste({
               "ID_Usage": idUsage,
               "Code_Individu": codeIndividu,
               "Type_Temps": "Réel",
@@ -176,21 +175,28 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
               "Mode_Calcul": "Amorti",
               "Annee_Achat": poste.anneeAchat,
               "Duree_Amortissement": poste.dureeAmortissement,
-            };
+            });
 
-            futures.add(ApiService.savePoste(data));
+            index++;
           }
         }
       }
 
-      // 3️⃣ Attente de tous les enregistrements
-      await Future.wait(futures);
-
       if (!mounted) return;
+
+      // ✅ Message global une fois tous les enregistrements terminés
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("✅ Véhicules enregistrés avec succès")));
 
-      widget.onSave(); // mise à jour de la liste
-      Navigator.of(context).pop(); // retour arrière
+      // ✅ Rafraîchissement de la liste
+      widget.onSave();
+
+      // ✅ Redirection vers PosteListScreen
+      Future.delayed(const Duration(milliseconds: 300), () {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => PosteListScreen(typeCategorie: "Déplacements", sousCategorie: "Véhicules", codeIndividu: widget.codeIndividu, valeurTemps: valeurTemps)),
+        );
+      });
     } catch (e) {
       print('❌ Erreur enregistrement véhicules : $e');
       if (!mounted) return;
