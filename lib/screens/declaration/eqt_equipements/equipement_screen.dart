@@ -277,7 +277,16 @@ class _EquipementScreenState extends State<EquipementScreen> {
     if (isLoading) return const Center(child: CircularProgressIndicator());
 
     return BaseScreen(
-      title: Text("Déclarer mes  ${widget.sousCategorie?.toLowerCase() ?? ''}", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+      title: Stack(
+        alignment: Alignment.center,
+        children: [
+          Text("Déclarer mes  ${widget.sousCategorie?.toLowerCase() ?? ''}", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: IconButton(icon: const Icon(Icons.arrow_back), iconSize: 18, padding: EdgeInsets.zero, constraints: const BoxConstraints(), onPressed: () => Navigator.pop(context)),
+          ),
+        ],
+      ),
       children: [
         CustomCard(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -296,7 +305,16 @@ class _EquipementScreenState extends State<EquipementScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              ElevatedButton(onPressed: supprimer, child: const Text("Supprimer", style: TextStyle(fontSize: 12))),
+              ElevatedButton(
+                onPressed: supprimer,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: Colors.red,
+                  minimumSize: const Size(120, 36),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                ),
+                child: const Text("Supprimer", style: TextStyle(fontSize: 12)),
+              ),
               ElevatedButton(onPressed: enregistrer, child: const Text("Mettre à jour", style: TextStyle(fontSize: 12))),
             ],
           )

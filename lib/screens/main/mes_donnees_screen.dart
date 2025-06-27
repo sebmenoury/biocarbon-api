@@ -16,7 +16,7 @@ class MesDonneesScreen extends StatefulWidget {
 class _MesDonneesScreenState extends State<MesDonneesScreen> {
   int selectedIndex = 0; // 0 = Equipements, 1 = Usages
 
-  final List<String> equipementLabels = ['Biens Immobiliers', 'Construction', 'Equipements Confort', 'Equipements Ménager', 'Equipements Bricolage', 'Equipements Multi-média', 'Véhicules'];
+  final List<String> equipementLabels = ['Biens Immobiliers', 'Construction', 'Equipements Confort', 'Equipements Ménager', 'Equipements Bricolage', 'Equipements Multi-media', 'Véhicules'];
 
   final List<String> usageLabels = [
     'Electricité',

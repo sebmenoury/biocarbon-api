@@ -12,7 +12,7 @@ const Map<String, String> titreParSousCategorie = {
   'Equipements Confort': 'Mes équipements de confort par logement',
   'Equipements Ménager': 'Mes équipements ménagers par logement',
   'Equipements Bricolage': 'Mes équipements de bricolage par logement',
-  'Equipements Multi-média': 'Mes équipements multi-média par logement',
+  'Equipements Multi-media': 'Mes équipements multi-média par logement',
   'Habillement': 'Mes vêtements et accessoires',
   'Loisirs': 'Mes loisirs',
   'Banque et assurances': 'Mes banques et assurances',

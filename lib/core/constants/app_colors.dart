@@ -15,7 +15,7 @@ class AppColors {
     "Equipements Bricolage": Color.fromARGB(255, 24, 168, 41),
     "Equipements Ménager": Color.fromARGB(255, 56, 179, 77),
     "Habillement": Color.fromARGB(255, 82, 194, 96),
-    "Equipements Multi-média": Color.fromARGB(255, 121, 204, 132),
+    "Equipements Multi-media": Color.fromARGB(255, 121, 204, 132),
     "Loisirs": Color.fromARGB(255, 156, 217, 164),
     "Banques et assurances": Color.fromARGB(255, 189, 229, 193),
 
