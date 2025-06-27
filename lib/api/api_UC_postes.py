@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from google_client import get_worksheet
+from sheets_service import sheet_uc_postes
 from lib.core.constants.const_api import SHEET_NAME, UC_POSTES_SHEET
 import datetime
 import uuid
@@ -96,6 +97,38 @@ def get_poste_by_id(id_usage):
             return jsonify(row), 200
 
     return jsonify({"error": f"Poste {id_usage} non trouvé"}), 404
+
+@bp_uc_postes.route('/postes/bulk', methods=['POST'])
+def save_postes_bulk():
+    try:
+        data = request.get_json()
+        for poste in data:
+            # ➕ Logique de validation si besoin
+            sheet_uc_postes.append_row([
+                poste["ID_Usage"],
+                poste["Code_Individu"],
+                poste["Type_Temps"],
+                poste["Valeur_Temps"],
+                poste["Date_enregistrement"],
+                poste.get("ID_Bien", ""),
+                poste.get("Type_Bien", ""),
+                poste["Type_Poste"],
+                poste["Type_Categorie"],
+                poste["Sous_Categorie"],
+                poste["Nom_Poste"],
+                poste.get("Nom_Logement", ""),
+                poste["Quantite"],
+                poste.get("Unite", "unité"),
+                poste.get("Frequence", ""),
+                poste["Facteur_Emission"],
+                poste["Emission_Calculee"],
+                poste["Mode_Calcul"],
+                poste["Annee_Achat"],
+                poste["Duree_Amortissement"],
+            ])
+        return jsonify({"message": "Postes enregistrés"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @bp_uc_postes.route("/api/uc/postes/<string:id_usage>", methods=["PATCH"])
 def update_poste(id_usage):

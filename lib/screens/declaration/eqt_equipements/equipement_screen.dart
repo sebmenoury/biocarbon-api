@@ -112,17 +112,21 @@ class _EquipementScreenState extends State<EquipementScreen> {
 
     await ApiService.deleteAllPostes(codeIndividu: codeIndividu, idBien: widget.idBien, valeurTemps: valeurTemps, sousCategorie: sousCategorie);
 
+    final nowIso = DateTime.now().toIso8601String();
+    final List<Map<String, dynamic>> payloads = [];
+
     for (int i = 0; i < equipements.length; i++) {
       final e = equipements[i];
       if (e.quantite > 0) {
-        final idUsage = "TEMP-${DateTime.now().millisecondsSinceEpoch}__${sousCategorie}_${e.nomEquipement}_${e.anneeAchat}".replaceAll(' ', '_');
+        final timestamp = DateTime.now().millisecondsSinceEpoch;
+        final idUsage = "TEMP-${timestamp}_${codeIndividu}_${sousCategorie}_${e.nomEquipement}_${e.anneeAchat}".replaceAll(' ', '_');
 
-        await ApiService.savePoste({
+        payloads.add({
           "ID_Usage": idUsage,
           "Code_Individu": codeIndividu,
           "Type_Temps": "Réel",
           "Valeur_Temps": valeurTemps,
-          "Date_enregistrement": DateTime.now().toIso8601String(),
+          "Date_enregistrement": nowIso,
           "ID_Bien": e.idBien,
           "Type_Bien": e.typeBien,
           "Type_Poste": "Equipement",
@@ -142,8 +146,14 @@ class _EquipementScreenState extends State<EquipementScreen> {
       }
     }
 
+    if (payloads.isNotEmpty) {
+      await ApiService.savePostesBulk(payloads); // ⬅️ à implémenter si pas encore fait
+    }
+
     widget.onSave();
+
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("✅ Équipements enregistrés")));
+
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (_) => PosteListScreen(typeCategorie: "Biens et services", sousCategorie: sousCategorie, codeIndividu: codeIndividu, valeurTemps: valeurTemps)),

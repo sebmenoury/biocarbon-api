@@ -167,6 +167,14 @@ class ApiService {
     return _handleResponse(response);
   }
 
+  static Future<void> savePostesBulk(List<Map<String, dynamic>> postes) async {
+    final response = await http.post(Uri.parse("$baseUrl/api/uc/postes/bulk"), headers: {"Content-Type": "application/json"}, body: jsonEncode(postes));
+
+    if (response.statusCode != 200) {
+      throw Exception("Erreur lors de l'enregistrement en masse des postes");
+    }
+  }
+
   // ❌ Supprimer un poste
   static Future<Map<String, dynamic>> deleteUCPoste(String id) async {
     final response = await http.delete(Uri.parse('$baseUrl/api/uc/postes/$id'));
