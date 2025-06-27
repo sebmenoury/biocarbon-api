@@ -12,6 +12,7 @@ import 'eqt_bien_immobilier/poste_bien_immobilier.dart';
 import 'eqt_bien_immobilier/construction_screen.dart';
 import 'eqt_vehicules/vehicule_screen.dart';
 import '../../core/constants/app_titre_categorie.dart';
+import '../main/mes_donnees_screen.dart';
 import 'navigation_registry.dart';
 
 class PosteListScreen extends StatefulWidget {
@@ -106,7 +107,21 @@ class _PosteListScreenState extends State<PosteListScreen> {
           Center(child: Text(titreParSousCategorie[widget.sousCategorie] ?? widget.sousCategorie, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold), textAlign: TextAlign.center)),
           Align(
             alignment: Alignment.centerLeft,
-            child: IconButton(icon: const Icon(Icons.arrow_back), iconSize: 18, onPressed: () => Navigator.pop(context), padding: EdgeInsets.zero, constraints: const BoxConstraints()),
+            child: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              iconSize: 18,
+              onPressed: () {
+                // Navigation personnalisée selon le contexte
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const MesDonneesScreen(), // ou MesUsagesScreen si besoin
+                  ),
+                );
+              },
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(),
+            ),
           ),
         ],
       ),

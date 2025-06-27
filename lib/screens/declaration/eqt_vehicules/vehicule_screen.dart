@@ -151,7 +151,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
       for (final categorie in vehiculesParCategorie.values) {
         for (final poste in categorie) {
           if (poste.quantite > 0) {
-            final idUsage = "TEMP-${DateTime.now().millisecondsSinceEpoch}_${index}_${poste.nomEquipement}_${poste.anneeAchat}".replaceAll(' ', '_');
+            final idUsage = "TEMP-${DateTime.now().millisecondsSinceEpoch}_${index}_'Véhicules'_${poste.nomEquipement}_${poste.anneeAchat}".replaceAll(' ', '_');
             final emission = calculerTotalEmissionVehicule(poste);
 
             await ApiService.savePoste({
