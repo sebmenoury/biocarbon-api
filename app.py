@@ -34,8 +34,8 @@ app.register_blueprint(bp_ref_aeroports)
 app.register_blueprint(bp_ref_equipements)
 app.register_blueprint(bp_ref_type_categories)
 
-app.register_blueprint(bp_uc_postes, url_prefix='/api/uc/postes')
-app.register_blueprint(bp_uc_biens, url_prefix='/api/uc/biens')
+app.register_blueprint(bp_uc_postes)
+app.register_blueprint(bp_uc_biens)
 app.register_blueprint(bp_uc_individu)
 app.register_blueprint(bp_uc_synthese)
 
