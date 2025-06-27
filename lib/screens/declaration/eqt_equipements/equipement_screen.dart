@@ -37,7 +37,8 @@ class _EquipementScreenState extends State<EquipementScreen> {
     final nbProprietaires = int.tryParse(bien['Nb_Proprietaires']?.toString() ?? '1') ?? 1;
 
     final ref = await ApiService.getRefEquipements();
-    final refFiltree = ref.where((e) => e['Type_Categorie'] == 'Biens et services' && ['Equipemets Ménager', 'Equipemets Bricolage', 'Equipemets Multi-media'].contains(e['Sous_Categorie'])).toList();
+    final refFiltree =
+        ref.where((e) => e['Type_Categorie'] == 'Biens et services' && ['Equipements Ménager', 'Equipements Bricolage', 'Equipements Multi-media'].contains(e['Sous_Categorie'])).toList();
 
     final postes = await ApiService.getUCPostesFiltres(idBien: widget.idBien);
     final existants = postes.where((p) => p.sousCategorie == widget.sousCategorie).toList();
@@ -315,11 +316,35 @@ class _EquipementScreenState extends State<EquipementScreen> {
                 ),
                 child: const Text("Supprimer", style: TextStyle(fontSize: 12)),
               ),
-              ElevatedButton(onPressed: enregistrer, child: const Text("Mettre à jour", style: TextStyle(fontSize: 12))),
+              ElevatedButton.icon(
+                onPressed: enregistrer,
+                icon: const Icon(Icons.update, size: 14),
+                label: const Text("Mettre à jour", style: TextStyle(fontSize: 12)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green[100],
+                  foregroundColor: Colors.green[900],
+                  minimumSize: const Size(120, 36),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                ),
+              ),
             ],
           )
         else
-          Center(child: ElevatedButton(onPressed: enregistrer, child: const Text("Enregistrer", style: TextStyle(fontSize: 12)))),
+          Center(
+            child: ElevatedButton.icon(
+              onPressed: enregistrer,
+              icon: const Icon(Icons.save, size: 14),
+              label: const Text("Enregistrer", style: TextStyle(fontSize: 12)),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green[100],
+                foregroundColor: Colors.green[900],
+                minimumSize: const Size(120, 36),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              ),
+            ),
+          ),
       ],
     );
   }
