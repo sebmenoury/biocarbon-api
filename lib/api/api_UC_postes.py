@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from google_client import get_worksheet
 from sheets_service import sheet_uc_postes
+from flask import Blueprint, request, jsonify
 from lib.core.constants.const_api import SHEET_NAME, UC_POSTES_SHEET
 import datetime
 import uuid
@@ -98,7 +99,7 @@ def get_poste_by_id(id_usage):
 
     return jsonify({"error": f"Poste {id_usage} non trouvé"}), 404
 
-@bp_uc_postes.route('/postes/bulk', methods=['POST'])
+@bp_uc_postes.route("/api/uc/postes/bulk", methods=["POST"])
 def save_postes_bulk():
     try:
         data = request.get_json()
@@ -186,7 +187,7 @@ def delete_postes(id_usage):
     except Exception as e:
         return jsonify({"error": f"Erreur serveur : {str(e)}"}), 500
     
-@bp_uc_postes.route('/delete_all', methods=['DELETE'])
+@bp_uc_postes.route('/api/uc/postes/delete_all', methods=['DELETE'])
 def delete_all_postes():
     code_individu = request.args.get('Code_Individu')
     id_bien = request.args.get('ID_Bien')
