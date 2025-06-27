@@ -5,12 +5,14 @@ import '../../../data/services/api_service.dart';
 import 'poste_vehicule.dart';
 import 'emission_calculator_vehicules.dart';
 import '../../../data/classes/post_helper.dart'; // adapte le chemin
+import '../poste_list_screen.dart';
 
 class VehiculeScreen extends StatefulWidget {
   final String codeIndividu;
   final String idBien;
+  final VoidCallback onSave; // 👈 Ajoute cette ligne
 
-  const VehiculeScreen({super.key, required this.codeIndividu, required this.idBien});
+  const VehiculeScreen({super.key, required this.codeIndividu, required this.idBien, required this.onSave});
 
   @override
   State<VehiculeScreen> createState() => _VehiculeScreenState();
@@ -172,30 +174,84 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
             "Annee_Achat": poste.anneeAchat,
             "Duree_Amortissement": poste.dureeAmortissement,
           });
+
+          try {
+            if (!mounted) return;
+
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("✅ Véhicules enregistrés avec succès")));
+
+            // Rafraîchissement de la liste si besoin
+            widget.onSave();
+
+            // Redirection vers l'écran de liste des véhicules
+            Future.delayed(const Duration(milliseconds: 300), () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder:
+                      (_) => PosteListScreen(
+                        typeCategorie: "Déplacements",
+                        sousCategorie: "Véhicules",
+                        codeIndividu: widget.codeIndividu,
+                        valeurTemps: "2025", // ou widget.valeurTemps si dispo
+                      ),
+                ),
+              );
+            });
+          } catch (e) {
+            print('❌ Erreur enregistrement véhicules : $e');
+            if (!mounted) return;
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("❌ Erreur lors de l'enregistrement des véhicules")));
+          }
         }
       }
     }
   }
 
   Future<void> supprimerPoste() async {
-    final postes = await ApiService.getUCPostesFiltres(
-      sousCategorie: "Véhicules",
-      codeIndividu: widget.codeIndividu,
-      annee: "2025", // ou widget.valeurTemps si dispo
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: const Text("Confirmer la suppression"),
+            content: const Text("Souhaitez-vous vraiment supprimer cette déclaration de véhicules ?"),
+            actions: [
+              TextButton(onPressed: () => Navigator.pop(context, false), child: const Text("Annuler")),
+              TextButton(onPressed: () => Navigator.pop(context, true), child: const Text("Supprimer")),
+            ],
+          ),
     );
 
-    final postesPourCeBien = postes.where((p) => p.idBien == widget.idBien).toList();
+    if (confirm != true) return;
 
-    for (final poste in postesPourCeBien) {
-      await ApiService.deleteUCPoste(poste.idUsage);
+    try {
+      final postes = await ApiService.getUCPostesFiltres(
+        sousCategorie: "Véhicules",
+        codeIndividu: widget.codeIndividu,
+        annee: "2025", // ou widget.valeurTemps
+      );
+
+      final postesPourCeBien = postes.where((p) => p.idBien == widget.idBien).toList();
+
+      for (final poste in postesPourCeBien) {
+        await ApiService.deleteUCPoste(poste.idUsage);
+      }
+
+      if (!mounted) return;
+
+      setState(() {
+        hasPostesExistants = false;
+        vehiculesParCategorie.clear();
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("✅ Déclaration supprimée avec succès")));
+      widget.onSave;
+      Navigator.of(context).pop();
+    } catch (e) {
+      print('❌ Erreur suppression : $e');
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("❌ Erreur lors de la suppression de la déclaration")));
     }
-
-    setState(() {
-      hasPostesExistants = false;
-      vehiculesParCategorie.clear();
-    });
-
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Déclaration supprimée")));
   }
 
   Widget buildVehiculeLine(PosteVehicule poste, String categorie, int index) {
@@ -338,11 +394,14 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
     if (isLoading) return const Center(child: CircularProgressIndicator());
 
     return BaseScreen(
-      title: Row(
+      title: Stack(
+        alignment: Alignment.center,
         children: [
-          IconButton(icon: const Icon(Icons.arrow_back), iconSize: 18, onPressed: () => Navigator.pop(context), padding: EdgeInsets.zero, constraints: const BoxConstraints()),
-          const SizedBox(width: 8),
-          const Center(child: Text("Déclaration des Véhicules", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold))),
+          const Text("Déclaration des Véhicules", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: IconButton(icon: const Icon(Icons.arrow_back), iconSize: 18, padding: EdgeInsets.zero, constraints: const BoxConstraints(), onPressed: () => Navigator.pop(context)),
+          ),
         ],
       ),
       children: [

@@ -32,7 +32,20 @@ class _PosteVehiculeEntryPointState extends State<PosteVehiculeEntryPoint> {
 
         if (postes.isEmpty) {
           // 🚗 Redirige vers l’écran de déclaration directe
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => VehiculeScreen(codeIndividu: widget.codeIndividu, idBien: widget.idBien)));
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder:
+                  (_) => VehiculeScreen(
+                    codeIndividu: widget.codeIndividu,
+                    idBien: widget.idBien,
+                    onSave: () {
+                      // Rafraîchissement de la liste si besoin
+                      setState(() {});
+                    },
+                  ),
+            ),
+          );
         } else {
           // 📋 Redirige vers la liste des postes existants
           Navigator.pushReplacement(
@@ -46,7 +59,19 @@ class _PosteVehiculeEntryPointState extends State<PosteVehiculeEntryPoint> {
                     valeurTemps: widget.valeurTemps,
                     idBien: widget.idBien,
                     onAddPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (_) => VehiculeScreen(codeIndividu: widget.codeIndividu, idBien: widget.idBien)));
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (_) => VehiculeScreen(
+                                codeIndividu: widget.codeIndividu,
+                                idBien: widget.idBien,
+                                onSave: () {
+                                  setState(() {});
+                                },
+                              ),
+                        ),
+                      );
                     },
                   ),
             ),

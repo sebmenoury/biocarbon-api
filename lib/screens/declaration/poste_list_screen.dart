@@ -422,7 +422,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                               if (widget.sousCategorie == "Construction") {
                                 Navigator.push(context, MaterialPageRoute(builder: (_) => ConstructionScreen(idBien: idBien, onSave: () => setState(() {}))));
                               } else if (widget.sousCategorie == "Véhicules") {
-                                Navigator.push(context, MaterialPageRoute(builder: (_) => VehiculeScreen(codeIndividu: widget.codeIndividu, idBien: idBien)));
+                                Navigator.push(context, MaterialPageRoute(builder: (_) => VehiculeScreen(codeIndividu: widget.codeIndividu, idBien: idBien, onSave: () => setState(() {}))));
                               } else {
                                 final entry = getEcranEtTitre(widget.typeCategorie, widget.sousCategorie);
                                 final screen = entry?.builder();
