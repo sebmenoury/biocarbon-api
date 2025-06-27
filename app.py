@@ -21,7 +21,10 @@ from lib.api.api_UC_synthese import bp_uc_synthese
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}})  # ou restreint si besoin
+CORS(app,
+     resources={r"/*": {"origins": "*"}},
+     allow_headers="*",
+     supports_credentials=False)  # ← évite les conflits
 
 @app.route("/")
 def home():

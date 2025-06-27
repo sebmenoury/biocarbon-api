@@ -98,13 +98,16 @@ def get_poste_by_id(id_usage):
             return jsonify(row), 200
 
     return jsonify({"error": f"Poste {id_usage} non trouvé"}), 404
-
-@bp_uc_postes.route("/api/uc/postes/bulk", methods=["POST"])
+@bp_uc_postes.route("/api/uc/postes/bulk", methods=["POST", "OPTIONS"])
 def save_postes_bulk():
+    # ✅ Gérer la requête préflight CORS
+    if request.method == 'OPTIONS':
+        return '', 200
+
     try:
         data = request.get_json()
         for poste in data:
-            # ➕ Logique de validation si besoin
+            # Valider les champs ici si tu veux
             sheet_uc_postes.append_row([
                 poste["ID_Usage"],
                 poste["Code_Individu"],
@@ -130,6 +133,7 @@ def save_postes_bulk():
         return jsonify({"message": "Postes enregistrés"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 @bp_uc_postes.route("/api/uc/postes/<string:id_usage>", methods=["PATCH"])
 def update_poste(id_usage):
