@@ -67,7 +67,21 @@ class _PosteListScreenState extends State<PosteListScreen> {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (postes.isEmpty) {
             if (widget.codeIndividu != null && widget.idBien != null) {
-              Navigator.push(context, MaterialPageRoute(builder: (_) => VehiculeScreen(codeIndividu: widget.codeIndividu!, idBien: widget.idBien!)));
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder:
+                      (_) => VehiculeScreen(
+                        codeIndividu: widget.codeIndividu!,
+                        idBien: widget.idBien!,
+                        onSave: () {
+                          setState(() {
+                            postesFuture = ApiService.getUCPostesFiltres(sousCategorie: widget.sousCategorie, codeIndividu: widget.codeIndividu, annee: widget.valeurTemps);
+                          });
+                        },
+                      ),
+                ),
+              );
             } else {
               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Veuillez sélectionner un des logements pour y attribuer vos véhicules.")));
             }
@@ -352,7 +366,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                                   if (widget.sousCategorie == "Construction") {
                                     Navigator.push(context, MaterialPageRoute(builder: (_) => ConstructionScreen(idBien: idBien, onSave: () => setState(() {}))));
                                   } else if (widget.sousCategorie == "Véhicules") {
-                                    Navigator.push(context, MaterialPageRoute(builder: (_) => VehiculeScreen(codeIndividu: widget.codeIndividu, idBien: idBien)));
+                                    Navigator.push(context, MaterialPageRoute(builder: (_) => VehiculeScreen(codeIndividu: widget.codeIndividu, idBien: idBien, onSave: () => setState(() {}))));
                                   } else {
                                     final entry = getEcranEtTitre(widget.typeCategorie, widget.sousCategorie);
                                     final screen = entry?.builder();
