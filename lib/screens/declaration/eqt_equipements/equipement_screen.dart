@@ -132,6 +132,7 @@ class _EquipementScreenState extends State<EquipementScreen> {
           "Nom_Logement": e.nomLogement,
           "Quantite": e.quantite,
           "Unite": "unité",
+          "Frequence": "",
           "Facteur_Emission": e.facteurEmission,
           "Emission_Calculee": calculerEmission(e),
           "Mode_Calcul": "Amorti",
