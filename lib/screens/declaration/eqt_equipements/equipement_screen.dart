@@ -37,10 +37,10 @@ class _EquipementScreenState extends State<EquipementScreen> {
     final nbProprietaires = int.tryParse(bien['Nb_Proprietaires']?.toString() ?? '1') ?? 1;
 
     final ref = await ApiService.getRefEquipements();
-    final refFiltree = ref.where((e) => e['Type_Categorie'] == 'Biens' && ['Maison Ménager', 'Maison Bricolage', 'Electronique, telecoms'].contains(e['Sous_Categorie'])).toList();
+    final refFiltree = ref.where((e) => e['Type_Categorie'] == 'Biens et services' && ['Equipemets Ménager', 'Equipemets Bricolage', 'Equipemets Multi-media'].contains(e['Sous_Categorie'])).toList();
 
     final postes = await ApiService.getUCPostesFiltres(idBien: widget.idBien);
-    final existants = postes.where((p) => p.typeCategorie == "Biens").toList();
+    final existants = postes.where((p) => p.sousCategorie == widget.sousCategorie).toList();
     hasPostesExistants = existants.isNotEmpty;
 
     final nomsExistants = existants.map((e) => e.nomPoste).toSet();
@@ -92,7 +92,7 @@ class _EquipementScreenState extends State<EquipementScreen> {
   }
 
   double calculerEmission(PosteEquipement p) {
-    final e = (p.quantite * p.facteurEmission) / p.dureeAmortissement;
+    final e = (p.quantite * p.facteurEmission) / p.dureeAmortissement / p.nbProprietaires;
     return e.isNaN ? 0 : e;
   }
 
@@ -103,15 +103,17 @@ class _EquipementScreenState extends State<EquipementScreen> {
   Future<void> enregistrer() async {
     final codeIndividu = widget.codeIndividu;
     final valeurTemps = "2025";
-    const sousCategorie = "Maison Ménager";
+    final sousCategorie = widget.sousCategorie;
 
     await ApiService.deleteAllPostes(codeIndividu: codeIndividu, idBien: widget.idBien, valeurTemps: valeurTemps, sousCategorie: sousCategorie);
 
     for (int i = 0; i < equipements.length; i++) {
       final e = equipements[i];
       if (e.quantite > 0) {
+        final idUsage = "TEMP-${DateTime.now().millisecondsSinceEpoch}__${sousCategorie}_${e.nomEquipement}_${e.anneeAchat}".replaceAll(' ', '_');
+
         await ApiService.savePoste({
-          "ID_Usage": "EQ-${DateTime.now().millisecondsSinceEpoch}_$i",
+          "ID_Usage": idUsage,
           "Code_Individu": codeIndividu,
           "Type_Temps": "Réel",
           "Valeur_Temps": valeurTemps,
@@ -119,7 +121,7 @@ class _EquipementScreenState extends State<EquipementScreen> {
           "ID_Bien": e.idBien,
           "Type_Bien": e.typeBien,
           "Type_Poste": "Equipement",
-          "Type_Categorie": "Biens",
+          "Type_Categorie": "Biens et services",
           "Sous_Categorie": sousCategorie,
           "Nom_Poste": e.nomEquipement,
           "Nom_Logement": e.nomLogement,
@@ -136,7 +138,10 @@ class _EquipementScreenState extends State<EquipementScreen> {
 
     widget.onSave();
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("✅ Équipements enregistrés")));
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => PosteListScreen(typeCategorie: "Biens", sousCategorie: sousCategorie, codeIndividu: codeIndividu, valeurTemps: valeurTemps)));
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => PosteListScreen(typeCategorie: "Biens et services", sousCategorie: sousCategorie, codeIndividu: codeIndividu, valeurTemps: valeurTemps)),
+    );
   }
 
   Future<void> supprimer() async {
@@ -151,7 +156,7 @@ class _EquipementScreenState extends State<EquipementScreen> {
     );
 
     if (confirm == true) {
-      final postes = await ApiService.getUCPostesFiltres(sousCategorie: "Maison Ménager", codeIndividu: widget.codeIndividu, annee: "2025");
+      final postes = await ApiService.getUCPostesFiltres(sousCategorie: widget.sousCategorie, codeIndividu: widget.codeIndividu, annee: "2025");
       for (final p in postes.where((p) => p.idBien == widget.idBien)) {
         await ApiService.deleteUCPoste(p.idUsage);
       }
@@ -210,13 +215,14 @@ class _EquipementScreenState extends State<EquipementScreen> {
     if (isLoading) return const Center(child: CircularProgressIndicator());
 
     return BaseScreen(
-      title: const Text("Équipements ménagers", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+      title: Text("Déclarer mes  ${widget.sousCategorie?.toLowerCase() ?? ''}", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
       children: [
         CustomCard(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text("Empreinte annuelle estimée", style: TextStyle(fontSize: 12)),
+              const Text("Empreinte d'amortissement annuel", style: TextStyle(fontSize: 12)),
               Text("${totalEmission.toStringAsFixed(0)} kgCO₂", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
             ],
           ),
