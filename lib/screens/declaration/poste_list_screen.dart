@@ -458,6 +458,13 @@ class _PosteListScreenState extends State<PosteListScreen> {
                                 Navigator.push(context, MaterialPageRoute(builder: (_) => ConstructionScreen(idBien: idBien, onSave: () => setState(() {}))));
                               } else if (widget.sousCategorie == "Véhicules") {
                                 Navigator.push(context, MaterialPageRoute(builder: (_) => VehiculeScreen(codeIndividu: widget.codeIndividu, idBien: idBien, onSave: () => setState(() {}))));
+                              } else if (["Equipements Bricolage", "Equipements Ménager", "Equipements Multi-media"].contains(widget.sousCategorie)) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => EquipementScreen(codeIndividu: widget.codeIndividu, idBien: idBien, sousCategorie: widget.sousCategorie, onSave: () => setState(() {})),
+                                  ),
+                                );
                               } else {
                                 final entry = getEcranEtTitre(widget.typeCategorie, widget.sousCategorie);
                                 final screen = entry?.builder();
