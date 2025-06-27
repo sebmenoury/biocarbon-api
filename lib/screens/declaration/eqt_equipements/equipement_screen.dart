@@ -10,8 +10,9 @@ class EquipementScreen extends StatefulWidget {
   final String codeIndividu;
   final String idBien;
   final VoidCallback onSave;
+  final String sousCategorie;
 
-  const EquipementScreen({super.key, required this.codeIndividu, required this.idBien, required this.onSave});
+  const EquipementScreen({super.key, required this.codeIndividu, required this.idBien, required this.sousCategorie, required this.onSave});
 
   @override
   State<EquipementScreen> createState() => _EquipementScreenState();

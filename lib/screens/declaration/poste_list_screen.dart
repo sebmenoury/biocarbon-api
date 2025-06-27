@@ -14,6 +14,7 @@ import 'eqt_vehicules/vehicule_screen.dart';
 import '../../core/constants/app_titre_categorie.dart';
 import '../main/mes_donnees_screen.dart';
 import 'navigation_registry.dart';
+import 'eqt_equipements/equipement_screen.dart';
 
 class PosteListScreen extends StatefulWidget {
   final String typeCategorie;
@@ -382,18 +383,23 @@ class _PosteListScreenState extends State<PosteListScreen> {
                                     Navigator.push(context, MaterialPageRoute(builder: (_) => ConstructionScreen(idBien: idBien, onSave: () => setState(() {}))));
                                   } else if (widget.sousCategorie == "Véhicules") {
                                     Navigator.push(context, MaterialPageRoute(builder: (_) => VehiculeScreen(codeIndividu: widget.codeIndividu, idBien: idBien, onSave: () => setState(() {}))));
+                                  } else if (["Equipements Bricolage", "Equipements Ménager", "Equipements Multi-media"].contains(widget.sousCategorie)) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => EquipementScreen(codeIndividu: widget.codeIndividu, idBien: idBien, sousCategorie: widget.sousCategorie, onSave: () => setState(() {})),
+                                      ),
+                                    );
                                   } else {
                                     final entry = getEcranEtTitre(widget.typeCategorie, widget.sousCategorie);
-                                    final screen = entry?.builder();
-
-                                    if (screen != null) {
-                                      Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
+                                    if (entry != null && entry.builder != null) {
+                                      Navigator.push(context, MaterialPageRoute(builder: (_) => entry.builder!()));
                                     } else {
-                                      print('🚗 encore Là');
-                                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Aucun écran défini pour ${widget.sousCategorie}")));
+                                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Écran non disponible pour cette sous-catégorie.")));
                                     }
                                   }
-                                },
+                                }, // 👈 FERMETURE ici du onTap
+
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
