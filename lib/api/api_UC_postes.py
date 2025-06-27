@@ -191,17 +191,12 @@ def delete_postes(id_usage):
     except Exception as e:
         return jsonify({"error": f"Erreur serveur : {str(e)}"}), 500
     
-@bp_uc_postes.route('/api/uc/postes/delete_all', methods=['DELETE', 'OPTIONS'])
+@bp_uc_postes.route('/delete_all', methods=['DELETE', 'OPTIONS'])
 def delete_all_postes():
-    # 👉 Réponse au préflight CORS
+    # ✅ On gère la pré-requête OPTIONS
     if request.method == 'OPTIONS':
-        response = jsonify({'message': 'Preflight OK'})
-        response.headers.add("Access-Control-Allow-Origin", "*")
-        response.headers.add("Access-Control-Allow-Headers", "Content-Type")
-        response.headers.add("Access-Control-Allow-Methods", "DELETE, OPTIONS")
-        return response, 200
+        return '', 200
 
-    # 👇 Traitement de la requête DELETE
     code_individu = request.args.get('Code_Individu')
     id_bien = request.args.get('ID_Bien')
     valeur_temps = request.args.get('Valeur_Temps')
@@ -227,11 +222,7 @@ def delete_all_postes():
         for row_num in reversed(rows_to_delete):
             sheet.delete_rows(row_num)
 
-        response = jsonify({"message": f"{len(rows_to_delete)} postes supprimés ✅"})
-        response.headers.add("Access-Control-Allow-Origin", "*")
-        return response, 200
+        return jsonify({"message": f"{len(rows_to_delete)} postes supprimés ✅"}), 200
 
     except Exception as e:
-        response = jsonify({"error": f"Erreur serveur : {str(e)}"})
-        response.headers.add("Access-Control-Allow-Origin", "*")
-        return response, 500
+        return jsonify({"error": f"Erreur serveur : {str(e)}"}), 500

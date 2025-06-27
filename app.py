@@ -24,7 +24,7 @@ app = Flask(__name__)
 CORS(app,
      resources={r"/*": {"origins": "*"}},
      allow_headers="*",
-     supports_credentials=False)  # ← évite les conflits
+     supports_credentials=False)
 
 @app.route("/")
 def home():
