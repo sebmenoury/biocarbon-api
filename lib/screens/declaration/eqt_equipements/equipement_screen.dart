@@ -37,9 +37,7 @@ class _EquipementScreenState extends State<EquipementScreen> {
     final nbProprietaires = int.tryParse(bien['Nb_Proprietaires']?.toString() ?? '1') ?? 1;
 
     final ref = await ApiService.getRefEquipements();
-    final refFiltree =
-        ref.where((e) => e['Type_Categorie'] == 'Biens et services' && ['Equipements Ménager', 'Equipements Bricolage', 'Equipements Multi-media'].contains(e['Sous_Categorie'])).toList();
-
+    final refFiltree = ref.where((e) => e['Type_Categorie'] == 'Biens et services' && e['Sous_Categorie'] == widget.sousCategorie).toList();
     final postes = await ApiService.getUCPostesFiltres(idBien: widget.idBien);
     final existants = postes.where((p) => p.sousCategorie == widget.sousCategorie).toList();
     hasPostesExistants = existants.isNotEmpty;
@@ -84,6 +82,12 @@ class _EquipementScreenState extends State<EquipementScreen> {
         ),
       );
     }
+    // Trie : équipements déclarés (quantité > 0) en haut
+    resultat.sort((a, b) {
+      if (a.quantite > 0 && b.quantite == 0) return -1;
+      if (a.quantite == 0 && b.quantite > 0) return 1;
+      return 0;
+    });
 
     setState(() {
       equipements = resultat;
