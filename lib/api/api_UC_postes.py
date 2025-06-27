@@ -187,8 +187,17 @@ def delete_postes(id_usage):
     except Exception as e:
         return jsonify({"error": f"Erreur serveur : {str(e)}"}), 500
     
-@bp_uc_postes.route('/api/uc/postes/delete_all', methods=['DELETE'])
+@bp_uc_postes.route('/api/uc/postes/delete_all', methods=['DELETE', 'OPTIONS'])
 def delete_all_postes():
+    # 👉 Réponse au préflight CORS
+    if request.method == 'OPTIONS':
+        response = jsonify({'message': 'Preflight OK'})
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+        response.headers.add("Access-Control-Allow-Methods", "DELETE, OPTIONS")
+        return response, 200
+
+    # 👇 Traitement de la requête DELETE
     code_individu = request.args.get('Code_Individu')
     id_bien = request.args.get('ID_Bien')
     valeur_temps = request.args.get('Valeur_Temps')
@@ -201,9 +210,8 @@ def delete_all_postes():
         sheet = get_worksheet(SHEET_NAME, UC_POSTES_SHEET)
         records = sheet.get_all_records()
 
-        # 📍 On identifie les indices à supprimer en partant de la fin
         rows_to_delete = []
-        for idx, row in enumerate(records, start=2):  # Ligne 2 = première data row
+        for idx, row in enumerate(records, start=2):
             if (
                 str(row.get('Code_Individu')) == str(code_individu) and
                 str(row.get('ID_Bien')) == str(id_bien) and
@@ -212,11 +220,14 @@ def delete_all_postes():
             ):
                 rows_to_delete.append(idx)
 
-        # 📍 On supprime les lignes en commençant par la fin
         for row_num in reversed(rows_to_delete):
             sheet.delete_rows(row_num)
 
-        return jsonify({"message": f"{len(rows_to_delete)} postes supprimés ✅"}), 200
+        response = jsonify({"message": f"{len(rows_to_delete)} postes supprimés ✅"})
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        return response, 200
 
     except Exception as e:
-        return jsonify({"error": f"Erreur serveur : {str(e)}"}), 500
+        response = jsonify({"error": f"Erreur serveur : {str(e)}"})
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        return response, 500

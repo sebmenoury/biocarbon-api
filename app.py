@@ -21,7 +21,7 @@ from lib.api.api_UC_synthese import bp_uc_synthese
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)  # <-- ajoute cette ligne avant l’enregistrement des blueprints
+CORS(app, resources={r"/*": {"origins": "*"}})  # ou restreint si besoin
 
 @app.route("/")
 def home():
