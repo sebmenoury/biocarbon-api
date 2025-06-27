@@ -167,42 +167,104 @@ class _EquipementScreenState extends State<EquipementScreen> {
     }
   }
 
-  Widget buildLine(PosteEquipement p, int index) {
+  Widget buildEquipementLine(PosteEquipement poste, int index) {
+    final isActive = poste.quantite > 0;
+    final colorBloc = isActive ? Colors.white : Colors.grey.shade100;
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         children: [
-          Expanded(child: Text(p.nomEquipement, style: const TextStyle(fontSize: 12))),
-          IconButton(
-            icon: const Icon(Icons.remove, size: 14),
-            onPressed:
-                () => setState(() {
-                  if (p.quantite > 0) p.quantite--;
-                  recalculerTotal();
-                }),
-          ),
-          Text('${p.quantite}', style: const TextStyle(fontSize: 12)),
-          IconButton(
-            icon: const Icon(Icons.add, size: 14),
-            onPressed:
-                () => setState(() {
-                  p.quantite++;
-                  recalculerTotal();
-                }),
-          ),
-          const SizedBox(width: 8),
-          SizedBox(
+          // Nom de l'équipement
+          Expanded(flex: 2, child: Text(poste.nomEquipement, style: const TextStyle(fontSize: 12))),
+
+          // Bloc quantité avec + / -
+          Container(
             width: 60,
-            child: TextFormField(
-              initialValue: p.anneeAchat.toString(),
-              textAlign: TextAlign.center,
-              onChanged:
-                  (v) => setState(() {
-                    final a = int.tryParse(v);
-                    if (a != null) p.anneeAchat = a;
-                    recalculerTotal();
-                  }),
-              style: const TextStyle(fontSize: 12),
+            height: 24,
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+            decoration: BoxDecoration(color: colorBloc, borderRadius: BorderRadius.circular(8)),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      if (poste.quantite > 1) {
+                        poste.quantite--;
+                      } else {
+                        poste.quantite = 0;
+                      }
+                      recalculerTotal();
+                    });
+                  },
+                  child: const Icon(Icons.remove, size: 14),
+                ),
+                Text('${poste.quantite}', style: const TextStyle(fontSize: 12)),
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      poste.quantite++;
+                      recalculerTotal();
+                    });
+                  },
+                  child: const Icon(Icons.add, size: 14),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(width: 8),
+
+          // Bloc année d'achat avec + / -
+          Container(
+            width: 90,
+            height: 24,
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+            decoration: BoxDecoration(color: colorBloc, borderRadius: BorderRadius.circular(8)),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      poste.anneeAchat--;
+                      recalculerTotal();
+                    });
+                  },
+                  child: const Icon(Icons.remove, size: 14),
+                ),
+                SizedBox(
+                  width: 40,
+                  height: 24,
+                  child: TextFormField(
+                    key: ValueKey(poste.anneeAchat),
+                    initialValue: poste.anneeAchat.toString(),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 12),
+                    decoration: const InputDecoration(border: InputBorder.none, isDense: true, contentPadding: EdgeInsets.symmetric(horizontal: 6)),
+                    keyboardType: TextInputType.number,
+                    onChanged: (val) {
+                      final an = int.tryParse(val);
+                      if (an != null) {
+                        setState(() {
+                          poste.anneeAchat = an;
+                          recalculerTotal();
+                        });
+                      }
+                    },
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      poste.anneeAchat++;
+                      recalculerTotal();
+                    });
+                  },
+                  child: const Icon(Icons.add, size: 14),
+                ),
+              ],
             ),
           ),
         ],
@@ -228,7 +290,7 @@ class _EquipementScreenState extends State<EquipementScreen> {
           ),
         ),
         const SizedBox(height: 8),
-        CustomCard(child: Column(children: equipements.asMap().entries.map((e) => buildLine(e.value, e.key)).toList())),
+        CustomCard(child: Column(children: equipements.asMap().entries.map((e) => buildEquipementLine(e.value, e.key)).toList())),
         const SizedBox(height: 12),
         if (hasPostesExistants)
           Row(
