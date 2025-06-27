@@ -1,5 +1,6 @@
 print("✅ DÉMARRAGE APP.PY")
 
+
 import sys, os
 sys.path.append(os.path.abspath("lib"))
 
@@ -17,8 +18,10 @@ from lib.api.api_UC_individu import bp_uc_individu
 from lib.api.api_UC_synthese import bp_uc_synthese
 
 
+from flask_cors import CORS
+
 app = Flask(__name__)
-CORS(app)  # ✅ active les CORS sur toutes les routes
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 @app.route("/")
 def home():
