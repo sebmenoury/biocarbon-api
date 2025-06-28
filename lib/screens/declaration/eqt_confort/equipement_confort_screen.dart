@@ -212,8 +212,117 @@ class _EquipementConfortScreenState extends State<EquipementConfortScreen> {
   }
 
   Widget buildEquipementLine(PosteEquipement poste, int index) {
-    // ↪️ Identique à ton code d'origine (je peux le dupliquer aussi si besoin)
-    return Container(); // à remplacer par ta version existante si elle est déjà factorisée
+    final isActive = poste.quantite > 0;
+    final colorBloc = isActive ? Colors.white : Colors.grey.shade100;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: [
+          // Nom de l'équipement
+          Expanded(flex: 2, child: Text(poste.nomEquipement, style: const TextStyle(fontSize: 12))),
+
+          // Bloc quantité avec + / -
+          Container(
+            width: 60,
+            height: 24,
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+            decoration: BoxDecoration(color: colorBloc, borderRadius: BorderRadius.circular(8)),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      if (poste.quantite > 1) {
+                        poste.quantite--;
+                      } else {
+                        final doublons = equipements.where((p) => p.nomEquipement == poste.nomEquipement).toList();
+                        if (doublons.length > 1) {
+                          equipements.removeAt(index);
+                        } else {
+                          poste.quantite = 0;
+                        }
+                      }
+                      recalculerTotal();
+                    });
+                  },
+                  child: const Icon(Icons.remove, size: 14),
+                ),
+                Text('${poste.quantite}', style: const TextStyle(fontSize: 12)),
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      if (poste.quantite == 0) {
+                        poste.quantite = 1;
+                      } else {
+                        equipements.insert(index + 1, PosteEquipement.clone(poste));
+                      }
+                      recalculerTotal();
+                    });
+                  },
+                  child: const Icon(Icons.add, size: 14),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(width: 8),
+
+          // Bloc année d'achat avec + / -
+          Container(
+            width: 90,
+            height: 24,
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+            decoration: BoxDecoration(color: colorBloc, borderRadius: BorderRadius.circular(8)),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      poste.anneeAchat--;
+                      recalculerTotal();
+                    });
+                  },
+                  child: const Icon(Icons.remove, size: 14),
+                ),
+                SizedBox(
+                  width: 40,
+                  height: 24,
+                  child: TextFormField(
+                    key: ValueKey(poste.anneeAchat),
+                    initialValue: poste.anneeAchat.toString(),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 12),
+                    decoration: const InputDecoration(border: InputBorder.none, isDense: true, contentPadding: EdgeInsets.symmetric(horizontal: 6)),
+                    keyboardType: TextInputType.number,
+                    onChanged: (val) {
+                      final an = int.tryParse(val);
+                      if (an != null) {
+                        setState(() {
+                          poste.anneeAchat = an;
+                          recalculerTotal();
+                        });
+                      }
+                    },
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      poste.anneeAchat++;
+                      recalculerTotal();
+                    });
+                  },
+                  child: const Icon(Icons.add, size: 14),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
