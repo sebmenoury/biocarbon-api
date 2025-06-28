@@ -146,7 +146,8 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
       // 1️⃣ Suppression de tous les postes existants pour ce bien et cette sous-catégorie
       await ApiService.deleteAllPostes(codeIndividu: codeIndividu, idBien: idBien, valeurTemps: valeurTemps, sousCategorie: sousCategorie);
 
-      // 2️⃣ Création des nouveaux postes un par un
+      // 2️⃣ Construction de la liste des nouveaux postes à enregistrer
+      final List<Map<String, dynamic>> payloads = [];
       int index = 0;
       for (final categorie in vehiculesParCategorie.values) {
         for (final poste in categorie) {
@@ -154,7 +155,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
             final idUsage = "TEMP-${DateTime.now().millisecondsSinceEpoch}_${index}_${sousCategorie}_${poste.nomEquipement}_${poste.anneeAchat}".replaceAll(' ', '_');
             final emission = calculerTotalEmissionVehicule(poste);
 
-            await ApiService.savePoste({
+            payloads.add({
               "ID_Usage": idUsage,
               "Code_Individu": codeIndividu,
               "Type_Temps": "Réel",
@@ -164,7 +165,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
               "Type_Bien": poste.typeBien,
               "Type_Poste": "Equipement",
               "Type_Categorie": "Déplacements",
-              "Sous_Categorie": "Véhicules",
+              "Sous_Categorie": sousCategorie,
               "Nom_Poste": poste.nomEquipement,
               "Nom_Logement": poste.nomLogement,
               "Quantite": poste.quantite,
@@ -182,19 +183,24 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
         }
       }
 
+      // 3️⃣ Enregistrement en une seule requête si des données sont présentes
+      if (payloads.isNotEmpty) {
+        await ApiService.savePostesBulk(payloads);
+      }
+
       if (!mounted) return;
 
-      // ✅ Message global une fois tous les enregistrements terminés
+      // ✅ Message de succès
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("✅ Véhicules enregistrés avec succès")));
 
       // ✅ Rafraîchissement de la liste
       widget.onSave();
 
-      // ✅ Redirection vers PosteListScreen
+      // ✅ Retour vers la liste
       Future.delayed(const Duration(milliseconds: 300), () {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => PosteListScreen(typeCategorie: "Déplacements", sousCategorie: "Véhicules", codeIndividu: widget.codeIndividu, valeurTemps: valeurTemps)),
+          MaterialPageRoute(builder: (_) => PosteListScreen(typeCategorie: "Déplacements", sousCategorie: sousCategorie, codeIndividu: widget.codeIndividu, valeurTemps: valeurTemps)),
         );
       });
     } catch (e) {
@@ -221,17 +227,12 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
     if (confirm != true) return;
 
     try {
-      final postes = await ApiService.getUCPostesFiltres(
-        sousCategorie: "Véhicules",
+      await ApiService.deleteAllPostes(
         codeIndividu: widget.codeIndividu,
-        annee: "2025", // ou widget.valeurTemps
+        idBien: widget.idBien,
+        valeurTemps: "2025", // ou widget.valeurTemps si paramétrable
+        sousCategorie: "Véhicules",
       );
-
-      final postesPourCeBien = postes.where((p) => p.idBien == widget.idBien).toList();
-
-      for (final poste in postesPourCeBien) {
-        await ApiService.deleteUCPoste(poste.idUsage);
-      }
 
       if (!mounted) return;
 
@@ -241,8 +242,9 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
       });
 
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("✅ Déclaration supprimée avec succès")));
-      widget.onSave;
-      Navigator.of(context).pop();
+
+      widget.onSave(); // Ajout de l'appel à la fonction de rappel
+      Navigator.of(context).pop(); // Retour à l'écran précédent
     } catch (e) {
       print('❌ Erreur suppression : $e');
       if (!mounted) return;
