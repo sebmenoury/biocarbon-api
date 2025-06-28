@@ -119,7 +119,7 @@ class _EquipementScreenState extends State<EquipementScreen> {
       final e = equipements[i];
       if (e.quantite > 0) {
         final timestamp = DateTime.now().millisecondsSinceEpoch;
-        final idUsage = "TEMP-${timestamp}_${codeIndividu}_${sousCategorie}_${e.nomEquipement}_${e.anneeAchat}".replaceAll(' ', '_');
+        final idUsage = "TEMP-${timestamp}_${sousCategorie}_${e.nomEquipement}_${e.anneeAchat}".replaceAll(' ', '_');
 
         payloads.add({
           "ID_Usage": idUsage,
@@ -172,10 +172,8 @@ class _EquipementScreenState extends State<EquipementScreen> {
     );
 
     if (confirm == true) {
-      final postes = await ApiService.getUCPostesFiltres(sousCategorie: widget.sousCategorie, codeIndividu: widget.codeIndividu, annee: "2025");
-      for (final p in postes.where((p) => p.idBien == widget.idBien)) {
-        await ApiService.deleteUCPoste(p.idUsage);
-      }
+      await ApiService.deleteAllPostes(codeIndividu: widget.codeIndividu, idBien: widget.idBien, valeurTemps: "2025", sousCategorie: widget.sousCategorie);
+
       setState(() {
         equipements.clear();
         hasPostesExistants = false;
