@@ -31,24 +31,40 @@ class _EquipementConfortScreenState extends State<EquipementConfortScreen> {
   }
 
   Future<void> loadData() async {
+    print("🔍 Chargement des données pour: ${widget.sousCategorie}");
+
     final bien = await ApiService.getBienParId(widget.codeIndividu, widget.idBien);
+    print("🏡 Bien récupéré: $bien");
+
     final denomination = bien['Dénomination'] ?? '';
     final typeBien = bien['Type_Bien'] ?? '';
     final nbProprietaires = int.tryParse(bien['Nb_Proprietaires']?.toString() ?? '1') ?? 1;
 
     final ref = await ApiService.getRefEquipements();
+    print("📚 Ref totale: ${ref.length}");
+
     final refFiltree = ref.where((e) => e['Type_Categorie'] == 'Logement' && e['Sous_Categorie'] == widget.sousCategorie).toList();
 
+    print("🧮 Références filtrées pour ${widget.sousCategorie} : ${refFiltree.length}");
+    for (var e in refFiltree) {
+      print("📌 Ref incluse: ${e['Nom_Equipement']}");
+    }
+
     final postes = await ApiService.getUCPostesFiltres(idBien: widget.idBien);
+    print("📦 Postes existants pour bien ${widget.idBien}: ${postes.length}");
+
     final existants = postes.where((p) => p.sousCategorie == widget.sousCategorie).toList();
+    print("🧩 Postes dans la sous-catégorie ${widget.sousCategorie} : ${existants.length}");
+
     hasPostesExistants = existants.isNotEmpty;
 
     final nomsExistants = existants.map((e) => e.nomPoste).toSet();
-
     List<PosteEquipement> resultat = [];
 
     for (final e in refFiltree) {
       if (nomsExistants.contains(e['Nom_Equipement'])) continue;
+
+      print("➕ Ajout neuf: ${e['Nom_Equipement']}");
       resultat.add(
         PosteEquipement(
           nomEquipement: e['Nom_Equipement'],
@@ -65,10 +81,19 @@ class _EquipementConfortScreenState extends State<EquipementConfortScreen> {
     }
 
     for (final p in existants) {
-      final refMatch = ref.firstWhere((e) => e['Nom_Equipement'] == p.nomPoste, orElse: () => {});
+      final refMatch = ref.firstWhere(
+        (e) => e['Nom_Equipement'] == p.nomPoste,
+        orElse: () {
+          print("⚠️ Aucune correspondance ref pour ${p.nomPoste}");
+          return {};
+        },
+      );
+
+      print("♻️ Restauration poste existant: ${p.nomPoste}");
+
       resultat.add(
         PosteEquipement(
-          nomEquipement: p.nomPoste!,
+          nomEquipement: p.nomPoste ?? "Inconnu",
           quantite: p.quantite != null ? p.quantite!.round() : 1,
           anneeAchat: p.anneeAchat ?? DateTime.now().year,
           facteurEmission: double.tryParse(refMatch['Valeur_Emission_Grise'].toString()) ?? 0,
@@ -87,6 +112,8 @@ class _EquipementConfortScreenState extends State<EquipementConfortScreen> {
       if (a.quantite == 0 && b.quantite > 0) return 1;
       return 0;
     });
+
+    print("✅ Total éléments à afficher: ${resultat.length}");
 
     setState(() {
       equipements = resultat;
