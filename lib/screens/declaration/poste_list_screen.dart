@@ -345,7 +345,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                     widgets.add(
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 60), // 👈 padding réduit
-                        child: Image.asset(imageParSousCategorie[widget.sousCategorie]!, fit: BoxFit.contain),
+                        child: imageParSousCategorie.containsKey(widget.sousCategorie) ? Image.asset(imageParSousCategorie[widget.sousCategorie]!, fit: BoxFit.contain) : const SizedBox.shrink(),
                       ),
                     );
 
