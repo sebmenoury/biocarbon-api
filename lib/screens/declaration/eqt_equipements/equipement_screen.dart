@@ -174,10 +174,14 @@ class _EquipementScreenState extends State<EquipementScreen> {
     if (confirm == true) {
       await ApiService.deleteAllPostes(codeIndividu: widget.codeIndividu, idBien: widget.idBien, valeurTemps: "2025", sousCategorie: widget.sousCategorie);
 
-      setState(() {
-        equipements.clear();
-        hasPostesExistants = false;
-      });
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("✅ Tous les équipements ont été supprimés")));
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => PosteListScreen(typeCategorie: "Biens et services", sousCategorie: widget.sousCategorie, codeIndividu: widget.codeIndividu, valeurTemps: "2025")),
+      );
     }
   }
 

@@ -15,6 +15,7 @@ import '../../core/constants/app_titre_categorie.dart';
 import '../main/mes_donnees_screen.dart';
 import 'navigation_registry.dart';
 import 'eqt_equipements/equipement_screen.dart';
+import 'eqt_confort/equipement_confort_screen.dart';
 
 class PosteListScreen extends StatefulWidget {
   final String typeCategorie;
@@ -390,6 +391,13 @@ class _PosteListScreenState extends State<PosteListScreen> {
                                         builder: (_) => EquipementScreen(codeIndividu: widget.codeIndividu, idBien: idBien, sousCategorie: widget.sousCategorie, onSave: () => setState(() {})),
                                       ),
                                     );
+                                  } else if (widget.sousCategorie == "Equipements Confort") {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => EquipementConfortScreen(codeIndividu: widget.codeIndividu, idBien: idBien, sousCategorie: widget.sousCategorie, onSave: () => setState(() {})),
+                                      ),
+                                    );
                                   } else {
                                     final entry = getEcranEtTitre(widget.typeCategorie, widget.sousCategorie);
                                     if (entry != null && entry.builder != null) {
@@ -463,6 +471,13 @@ class _PosteListScreenState extends State<PosteListScreen> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (_) => EquipementScreen(codeIndividu: widget.codeIndividu, idBien: idBien, sousCategorie: widget.sousCategorie, onSave: () => setState(() {})),
+                                  ),
+                                );
+                              } else if (widget.sousCategorie == "Equipements Confort") {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => EquipementConfortScreen(codeIndividu: widget.codeIndividu, idBien: idBien, sousCategorie: widget.sousCategorie, onSave: () => setState(() {})),
                                   ),
                                 );
                               } else {
