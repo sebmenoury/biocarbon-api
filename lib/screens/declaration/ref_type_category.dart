@@ -2,6 +2,7 @@ final Map<String, String> refTypeCategorie = {
   // Équipements
   "Biens Immobiliers": "Logement",
   "Construction": "Logement",
+  "Rénovation": "Logement",
   "Equipements Confort": "Logement",
   "Equipements Ménager": "Biens et services",
   "Equipements Bricolage": "Biens et services",
