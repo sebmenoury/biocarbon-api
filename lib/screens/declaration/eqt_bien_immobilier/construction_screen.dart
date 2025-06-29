@@ -318,7 +318,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
         children: [
           IconButton(icon: const Icon(Icons.arrow_back), iconSize: 18, onPressed: () => Navigator.pop(context), padding: EdgeInsets.zero, constraints: const BoxConstraints()),
           const SizedBox(width: 8),
-          const Text("Construction et rénovations associées au logement", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+          const Text("Construction associée au logement", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
         ],
       ),
       children: [
@@ -493,7 +493,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text("Surface garage béton (m²)", style: TextStyle(fontSize: 11)),
+                        const Text("Surface cave / garage béton (m²)", style: TextStyle(fontSize: 11)),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 4),
                           decoration: BoxDecoration(color: (poste.surfaceGarage > 0) ? Colors.white : Colors.grey.shade100, borderRadius: BorderRadius.circular(12)),

@@ -19,6 +19,7 @@ final Map<String, Color> categoryColors = {
 final Map<String, IconData> sousCategorieIcons = {
   'Biens Immobiliers': Icons.home,
   'Construction': Icons.home,
+  'Rénovation': Icons.home_repair_service,
   'Véhicules': Icons.directions_car,
   'Equipements Multi-media': Icons.devices,
   'Equipements Bricolage': Icons.handyman,
@@ -41,6 +42,7 @@ final Map<String, IconData> sousCategorieIcons = {
 final Map<String, Color> souscategoryColors = {
   "Biens Immobiliers": Colors.teal,
   'Construction': Colors.teal,
+  'Rénovation': Colors.teal,
   'Véhicules': Colors.indigo,
   'Equipements Multi-media': Colors.orange,
   'Equipements Bricolage': Colors.orange,

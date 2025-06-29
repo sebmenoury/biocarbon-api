@@ -28,6 +28,7 @@ class AppColors {
 
     // Logement (violets/roses)
     "Construction": Color.fromARGB(255, 81, 2, 73),
+    "Rénovation": Color.fromARGB(255, 113, 10, 103),
     "Equipements Confort": Color.fromARGB(255, 134, 10, 129),
     "Gaz et Fioul": Color.fromARGB(255, 152, 43, 147),
     "Électricité": Color.fromARGB(255, 184, 114, 184),
