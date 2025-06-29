@@ -339,17 +339,30 @@ class _PosteListScreenState extends State<PosteListScreen> {
                     widgets.add(
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                        child: Text(texteParSousCategorie[widget.sousCategorie]!, style: const TextStyle(fontSize: 11, height: 1.4), textAlign: TextAlign.justify),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(child: Text(texteParSousCategorie[widget.sousCategorie]!, style: const TextStyle(fontSize: 11, height: 1.4), textAlign: TextAlign.justify)),
+                            if (infoBulleParSousCategorie.containsKey(widget.sousCategorie))
+                              Tooltip(
+                                message: infoBulleParSousCategorie[widget.sousCategorie]!,
+                                padding: const EdgeInsets.all(12),
+                                textStyle: const TextStyle(fontSize: 12, color: Colors.white),
+                                decoration: BoxDecoration(color: Colors.black87, borderRadius: BorderRadius.circular(8)),
+                                child: const Padding(padding: EdgeInsets.only(left: 8), child: Icon(Icons.info_outline, size: 16, color: Colors.grey)),
+                              ),
+                          ],
+                        ),
                       ),
                     );
+
                     widgets.add(
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 60), // 👈 padding réduit
+                        padding: const EdgeInsets.symmetric(horizontal: 60),
                         child: imageParSousCategorie.containsKey(widget.sousCategorie) ? Image.asset(imageParSousCategorie[widget.sousCategorie]!, fit: BoxFit.contain) : const SizedBox.shrink(),
                       ),
                     );
 
-                    // 👇 Espace sous l'image
                     widgets.add(const SizedBox(height: 12));
                   }
 

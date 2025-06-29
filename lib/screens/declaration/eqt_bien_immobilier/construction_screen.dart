@@ -323,13 +323,13 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
       ),
       children: [
         SingleChildScrollView(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               /// DENTETE TYPE DE BIEN AVEC EMISSION ACTUALISEE
               CustomCard(
-                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -341,7 +341,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
 
               /// DESCRIPTIF DU BIEN
               CustomCard(
-                padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
+                padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -363,7 +363,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 6),
 
                     /// SURFACE
                     Row(
@@ -421,7 +421,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 6),
 
                     /// ANNÉE DE CONSTRUCTION
                     Row(
@@ -545,7 +545,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 6),
 
                     /// ANNÉE DE CONSTRUCTION
                     Row(
@@ -616,6 +616,25 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                   children: [
                     // Ligne surface piscine
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        SizedBox(
+                          width: 180, // ajuste si besoin
+                          child: CustomDropdownCompact(
+                            value: typesPiscine.contains(poste.typePiscine) ? poste.typePiscine : '',
+                            items: typesPiscineAvecVide,
+                            label: "Type de piscine",
+                            onChanged: (val) {
+                              setState(() {
+                                poste.typePiscine = val ?? '';
+                              });
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                    Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Text("Surface piscine (m²)", style: TextStyle(fontSize: 11)),
@@ -671,7 +690,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 6),
 
                     /// ANNÉE DE CONSTRUCTION
                     Row(
@@ -728,26 +747,8 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 12),
+
                     // Ligne type de piscine (dropdown)
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        SizedBox(
-                          width: 180, // ajuste si besoin
-                          child: CustomDropdownCompact(
-                            value: typesPiscine.contains(poste.typePiscine) ? poste.typePiscine : '',
-                            items: typesPiscineAvecVide,
-                            label: "Type de piscine",
-                            onChanged: (val) {
-                              setState(() {
-                                poste.typePiscine = val ?? '';
-                              });
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
                   ],
                 ),
               ),
@@ -812,7 +813,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 6),
 
                     /// ANNÉE DE CONSTRUCTION
                     Row(
@@ -875,7 +876,6 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
               const SizedBox(height: 24),
 
               /// BOUTON
-              const SizedBox(height: 24),
               posteDejaDeclare
                   ? Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
