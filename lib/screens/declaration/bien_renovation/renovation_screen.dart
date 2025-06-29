@@ -5,8 +5,7 @@ import '../../../ui/widgets/custom_number_input.dart';
 import '../../../ui/layout/base_screen.dart';
 import '../../../data/classes/poste_postes.dart';
 import '../../../data/classes/post_helper.dart';
-import '../bien_immobilier/bien_list_screen.dart';
-import '..//poste_list_screen.dart';
+import '../poste_list_screen.dart';
 
 class CustomNumberInput extends StatelessWidget {
   final int value;

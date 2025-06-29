@@ -4,7 +4,7 @@ import '../../../ui/layout/custom_card.dart';
 import '../../../data/services/api_service.dart';
 import 'poste_vehicule.dart';
 import 'emission_calculator_vehicules.dart';
-import '../../../data/classes/post_helper.dart'; // adapte le chemin
+
 import '../poste_list_screen.dart';
 
 class VehiculeScreen extends StatefulWidget {

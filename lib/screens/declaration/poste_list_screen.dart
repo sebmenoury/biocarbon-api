@@ -7,8 +7,7 @@ import '../../ui/widgets/post_list_section_card.dart';
 import '../../data/services/api_service.dart';
 import '../../data/classes/poste_postes.dart';
 import 'sous_categorie_avec_bien.dart';
-import 'bien_immobilier/bien_immobilier.dart';
-import 'eqt_bien_immobilier/poste_bien_immobilier.dart';
+
 import 'eqt_bien_immobilier/construction_screen.dart';
 import 'eqt_vehicules/vehicule_screen.dart';
 import '../../core/constants/app_titre_categorie.dart';

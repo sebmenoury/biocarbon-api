@@ -1,5 +1,3 @@
-import '../../../data/classes/poste_postes.dart';
-
 class PosteEquipement {
   final String nomEquipement;
   int anneeAchat;

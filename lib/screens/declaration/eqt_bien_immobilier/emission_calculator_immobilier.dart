@@ -1,6 +1,5 @@
 import 'poste_bien_immobilier.dart';
 import 'const_construction.dart';
-import '../bien_immobilier/bien_immobilier.dart';
 import 'package:flutter/foundation.dart';
 
 double calculerTotalEmission(PosteBienImmobilier poste, Map<String, double> facteursEmission, Map<String, int> dureesAmortissement, {required int nbProprietaires}) {

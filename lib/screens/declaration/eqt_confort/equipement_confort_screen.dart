@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../../ui/layout/base_screen.dart';
 import '../../../ui/layout/custom_card.dart';
 import '../../../data/services/api_service.dart';
-import '../../../data/classes/post_helper.dart';
 import '../poste_list_screen.dart';
 import '../eqt_equipements/poste_equipement.dart';
 
