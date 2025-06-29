@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../core/constants/app_icons.dart';
 import '../../../ui/layout/base_screen.dart';
 import '../../../ui/layout/custom_card.dart';
 import '../../../ui/widgets/custom_dropdown_compact.dart';
@@ -97,11 +96,8 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
             "Duree_Amortissement": dureesAmortissement[nom],
           };
 
-          print("📦 Poste à enregistrer : $poste");
           postesAEnregistrer.add(poste);
-        } else {
-          print("⛔ Ignoré : surface=0 ou facteur manquant pour '$nom'");
-        }
+        } else {}
       }
 
       // Ajoute les postes selon les données remplies
@@ -126,7 +122,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => PosteListScreen(typeCategorie: "Logement", sousCategorie: "Construction", codeIndividu: "BASILE", valeurTemps: "2025")));
       });
     } catch (e) {
-      print('❌ Erreur enregistrement : $e');
+      // print('❌ Erreur enregistrement : $e');
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("❌ Erreur lors de l'enregistrement")));
     }
@@ -163,6 +159,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
   Future<void> loadBienComplet() async {
     try {
       // 🔹 1. Charger le bien par ID
+
       final biens = await ApiService.getBiens("BASILE");
       final bienData = biens.firstWhere((b) => b['ID_Bien'] == widget.idBien, orElse: () => {});
 
