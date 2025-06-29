@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import '../../../data/services/api_service.dart';
 import '../../../ui/layout/custom_card.dart';
-import '../../../ui/widgets/custom_number_input.dart';
 import '../../../ui/layout/base_screen.dart';
 import '../../../data/classes/poste_postes.dart';
 import '../../../data/classes/post_helper.dart';
 import '../poste_list_screen.dart';
+import '../eqt_equipements/poste_equipement.dart';
 
 class CustomNumberInput extends StatelessWidget {
   final int value;
@@ -45,14 +45,8 @@ class RenovationScreen extends StatefulWidget {
 
 class _RenovationScreenState extends State<RenovationScreen> {
   Map<String, dynamic> bien = {};
-  List<Map<String, dynamic>> refEquipements = [];
-  List<Map<String, dynamic>> postesExistants = [];
-
-  final Map<String, TextEditingController> surfaceControllers = {};
-  final Map<String, TextEditingController> anneeControllers = {};
-  final Map<String, String?> idUsageExistants = {};
-  final Map<String, int> anneeInitiale = {};
-
+  List<PosteEquipement> equipements = [];
+  double totalEmission = 0.0;
   bool isLoading = true;
 
   @override
@@ -64,95 +58,144 @@ class _RenovationScreenState extends State<RenovationScreen> {
   Future<void> loadData() async {
     setState(() => isLoading = true);
 
-    // 🔹 1. Chargement des données de référence et du bien
-    final bienData = await ApiService.getBienParId(widget.idBien, widget.codeIndividu);
+    // 🔹 Chargement du bien
+    bien = await ApiService.getBienParId(widget.codeIndividu, widget.idBien);
+    final denomination = bien['Dénomination'] ?? '';
+    final typeBien = bien['Type_Bien'] ?? '';
+    final nbProprietaires = int.tryParse(bien['Nb_Proprietaires']?.toString() ?? '1') ?? 1;
+
+    // 🔹 Données de référence
     final ref = await ApiService.getRefEquipements();
     final refFiltree = ref.where((e) => e['Type_Categorie'] == 'Logement' && e['Sous_Categorie'] == 'Rénovation').toList();
 
-    refEquipements = refFiltree;
-    bien = bienData;
+    // 🔹 Postes existants
+    final postes = await ApiService.getUCPostesFiltres(idBien: widget.idBien);
+    final existants = postes.where((p) => p.sousCategorie == 'Rénovation').toList();
+    final nomsExistants = existants.map((e) => e.nomPoste).toSet();
 
-    // 🔹 2. Chargement des postes existants liés à ce bien pour l’année et la sous-catégorie Rénovation
-    final List<Poste> tousPostes = await ApiService.getUCPostesFiltres(codeIndividu: widget.codeIndividu, idBien: widget.idBien, sousCategorie: 'Rénovation', annee: widget.valeurTemps);
+    List<PosteEquipement> resultat = [];
 
-    final List<Poste> postesRenovation = tousPostes.where((p) => p.idBien?.toString() == widget.idBien).toList();
-
-    postesExistants = postesRenovation.map((p) => {'ID_Usage': p.idUsage, 'Nom_Poste': p.nomPoste, 'Quantite': p.quantite, 'Annee_Achat': p.anneeAchat}).toList();
-
-    debugPrint("🔧 ${postesRenovation.length} postes Rénovation trouvés");
-
-    // 🔹 3. Initialisation des contrôleurs
-    for (final refEq in refEquipements) {
-      final usage = refEq['Nom_Equipement'];
-
-      final match = postesRenovation.firstWhere(
-        (p) => p.nomPoste == usage,
-        orElse:
-            () => Poste(
-              idUsage: '', // temporaire, car pas encore connu
-              typeCategorie: 'Logement',
-              sousCategorie: 'Rénovation',
-              typePoste: 'Poste',
-              nomPoste: usage,
-              idBien: widget.idBien,
-              typeBien: bien['Type_Bien'] ?? '',
-              quantite: 0,
-              unite: 'm2',
-              emissionCalculee: 0,
-              frequence: '',
-              anneeAchat: DateTime.now().year,
-              dureeAmortissement: 0,
-            ),
+    // 🔹 Nouveaux équipements (pas encore déclarés)
+    for (final e in refFiltree) {
+      if (nomsExistants.contains(e['Nom_Equipement'])) continue;
+      resultat.add(
+        PosteEquipement(
+          nomEquipement: e['Nom_Equipement'],
+          anneeAchat: DateTime.now().year,
+          quantite: 0,
+          facteurEmission: double.tryParse(e['Valeur_Emission_Grise'].toString()) ?? 0,
+          dureeAmortissement: int.tryParse(e['Duree_Amortissement'].toString()) ?? 1,
+          idBien: widget.idBien,
+          typeBien: typeBien,
+          nomLogement: denomination,
+          nbProprietaires: nbProprietaires,
+        ),
       );
-
-      surfaceControllers[usage] = TextEditingController(text: match.quantite.toString());
-      anneeControllers[usage] = TextEditingController(text: match.anneeAchat.toString());
-
-      idUsageExistants[usage] = match.idUsage;
-      anneeInitiale[usage] = match.anneeAchat ?? DateTime.now().year;
     }
 
-    setState(() => isLoading = false);
+    // 🔹 Équipements existants
+    for (final p in existants) {
+      final refMatch = ref.firstWhere((e) => e['Nom_Equipement'] == p.nomPoste, orElse: () => {});
+      resultat.add(
+        PosteEquipement(
+          nomEquipement: p.nomPoste!,
+          quantite: p.quantite != null ? p.quantite!.round() : 0,
+          anneeAchat: p.anneeAchat ?? DateTime.now().year,
+          facteurEmission: double.tryParse(refMatch['Valeur_Emission_Grise'].toString()) ?? 0,
+          dureeAmortissement: int.tryParse(refMatch['Duree_Amortissement'].toString()) ?? 1,
+          idBien: widget.idBien,
+          typeBien: typeBien,
+          nomLogement: denomination,
+          nbProprietaires: nbProprietaires,
+          idUsageInitial: p.idUsage,
+        ),
+      );
+    }
+
+    resultat.sort((a, b) {
+      if (a.quantite > 0 && b.quantite == 0) return -1;
+      if (a.quantite == 0 && b.quantite > 0) return 1;
+      return 0;
+    });
+
+    setState(() {
+      equipements = resultat;
+      isLoading = false;
+    });
+
+    recalculeTotal();
+  }
+
+  void recalculeTotal() {
+    double total = 0.0;
+
+    for (final e in equipements) {
+      if (e.quantite > 0 && e.facteurEmission > 0 && e.dureeAmortissement > 0) {
+        final emission = e.quantite * e.facteurEmission / e.dureeAmortissement;
+        total += emission / (e.nbProprietaires > 0 ? e.nbProprietaires : 1);
+      }
+    }
+
+    setState(() {
+      totalEmission = total;
+    });
   }
 
   Future<void> enregistrer() async {
-    for (final refEq in refEquipements) {
-      final usage = refEq['Nom_Usage'];
-      final quantite = int.tryParse(surfaceControllers[usage]?.text ?? '') ?? 0;
-      final annee = int.tryParse(anneeControllers[usage]?.text ?? '') ?? DateTime.now().year;
-      final newIdUsage = "${widget.idBien}_${usage}_$annee".replaceAll(' ', '_');
+    final codeIndividu = widget.codeIndividu;
+    final valeurTemps = widget.valeurTemps;
+    final sousCategorie = "Rénovation";
 
-      final emission = (refEq['Facteur_Emission'] ?? 0.0) * quantite / (refEq['Duree'] ?? 30);
+    // 🔁 Supprimer les anciens postes liés à ce bien et cette sous-catégorie
+    await ApiService.deleteAllPostes(codeIndividu: codeIndividu, idBien: widget.idBien, valeurTemps: valeurTemps, sousCategorie: sousCategorie);
 
-      final data = {
-        "Code_Individu": widget.codeIndividu,
-        "Type_Temps": "Réel",
-        "Valeur_Temps": widget.valeurTemps,
-        "ID_Bien": widget.idBien,
-        "Nom_Logement": bien['Dénomination'] ?? '',
-        "Type_Bien": bien['Type_Bien'] ?? '',
-        "Type_Poste": "Equipement",
-        "Type_Categorie": "Logement",
-        "Sous_Categorie": "Rénovation",
-        "Nom_Poste": usage,
-        "Quantite": quantite,
-        "Unite": "m2",
-        "Facteur_Emission": refEq['Facteur_Emission'],
-        "Emission_Calculee": emission,
-        "Mode_Calcul": "Amorti",
-        "Duree_Amortissement": refEq['Duree'],
-        "Annee_Achat": annee,
-      };
+    final nowIso = DateTime.now().toIso8601String();
+    final List<Map<String, dynamic>> payloads = [];
 
-      await PosteHelper.traiterPoste(posteData: data, idUsageInitial: idUsageExistants[usage], anneeAchatInitiale: anneeInitiale[usage] ?? annee, nouvelleAnneeAchat: annee, newIdUsage: newIdUsage);
+    for (int i = 0; i < equipements.length; i++) {
+      final e = equipements[i];
+
+      if (e.quantite > 0) {
+        final idUsage = "${widget.idBien}_${e.nomEquipement}_${e.anneeAchat}".replaceAll(' ', '_');
+
+        payloads.add({
+          "ID_Usage": idUsage,
+          "Code_Individu": codeIndividu,
+          "Type_Temps": "Réel",
+          "Valeur_Temps": valeurTemps,
+          "Date_enregistrement": nowIso,
+          "ID_Bien": e.idBien,
+          "Type_Bien": e.typeBien,
+          "Type_Poste": "Equipement",
+          "Type_Categorie": "Logement",
+          "Sous_Categorie": sousCategorie,
+          "Nom_Poste": e.nomEquipement,
+          "Nom_Logement": e.nomLogement,
+          "Quantite": e.quantite,
+          "Unite": "m2",
+          "Frequence": "",
+          "Facteur_Emission": e.facteurEmission,
+          "Emission_Calculee": (e.facteurEmission * e.quantite / e.dureeAmortissement),
+          "Mode_Calcul": "Amorti",
+          "Annee_Achat": e.anneeAchat,
+          "Duree_Amortissement": e.dureeAmortissement,
+        });
+      }
+    }
+
+    // ✅ Envoi groupé
+    if (payloads.isNotEmpty) {
+      await ApiService.savePostesBulk(payloads);
     }
 
     widget.onSave();
+
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("✅ Rénovations enregistrées")));
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("✅ Travaux de rénovation enregistrés")));
+
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (_) => PosteListScreen(typeCategorie: "Logement", sousCategorie: "Rénovation", codeIndividu: widget.codeIndividu, valeurTemps: widget.valeurTemps)),
+      MaterialPageRoute(builder: (_) => PosteListScreen(typeCategorie: "Logement", sousCategorie: sousCategorie, codeIndividu: codeIndividu, valeurTemps: valeurTemps)),
     );
   }
 
@@ -198,21 +241,22 @@ class _RenovationScreenState extends State<RenovationScreen> {
               ),
             ),
             const SizedBox(height: 12),
-            for (final ref in refEquipements)
+            for (final ref in equipements)
               CustomCard(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(ref['Nom_Usage'], style: const TextStyle(fontWeight: FontWeight.bold)),
+                    Text(ref.nomEquipement, style: const TextStyle(fontWeight: FontWeight.bold)),
                     const SizedBox(height: 6),
                     Row(
                       children: [
                         Expanded(
                           child: CustomNumberInput(
                             label: "Surface (m²)",
-                            value: int.tryParse(surfaceControllers[ref['Nom_Usage']]?.text ?? '') ?? 0,
+                            value: ref.quantite,
                             onChanged: (val) {
-                              surfaceControllers[ref['Nom_Usage']]?.text = val.toString();
+                              setState(() => ref.quantite = val);
+                              recalculeTotal();
                             },
                           ),
                         ),
@@ -220,9 +264,9 @@ class _RenovationScreenState extends State<RenovationScreen> {
                         Expanded(
                           child: CustomNumberInput(
                             label: "Année",
-                            value: int.tryParse(anneeControllers[ref['Nom_Usage']]?.text ?? '') ?? DateTime.now().year,
+                            value: ref.anneeAchat,
                             onChanged: (val) {
-                              anneeControllers[ref['Nom_Usage']]?.text = val.toString();
+                              setState(() => ref.anneeAchat = val);
                             },
                           ),
                         ),
@@ -244,13 +288,19 @@ class _RenovationScreenState extends State<RenovationScreen> {
 
   double calculTotal() {
     double total = 0.0;
-    for (final ref in refEquipements) {
-      final usage = ref['Nom_Usage'];
-      final quantite = int.tryParse(surfaceControllers[usage]?.text ?? '') ?? 0;
-      final duree = ref['Duree'] ?? 30;
-      final facteur = ref['Facteur_Emission'] ?? 0.0;
-      total += (quantite * facteur / duree);
+
+    for (final e in equipements) {
+      final quantite = e.quantite;
+      final facteur = e.facteurEmission;
+      final duree = e.dureeAmortissement > 0 ? e.dureeAmortissement : 30;
+      final nbProps = e.nbProprietaires > 0 ? e.nbProprietaires : 1;
+
+      if (quantite > 0 && facteur > 0) {
+        final emission = (quantite * facteur) / duree;
+        total += emission / nbProps;
+      }
     }
+
     return total;
   }
 }
