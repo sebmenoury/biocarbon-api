@@ -189,9 +189,9 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12),
           child: Text(
-            "🧮 Le nombre de propriétaires correspond au nombre de financeurs du bien ou de la location, "
+            "👥 Le nombre de propriétaires correspond au nombre de financeurs du bien ou de la location, "
             "et est utilisé pour répartir par individu propriétaire l'énergie grise des équipements associés à ces biens.\n\n"
-            "👨‍👩‍👧‍👦 Le nombre d'habitants correspond au nombre de personnes qui y vivent, et est utilisé pour répartir l'énergie d'usage des équipements associés à ces biens.",
+            "🧑‍🤝‍🧑 Le nombre d'habitants correspond au nombre de personnes qui y vivent, et est utilisé pour répartir l'énergie d'usage des équipements associés à ces biens.",
             style: const TextStyle(fontSize: 11, height: 1.4),
             textAlign: TextAlign.justify,
           ),

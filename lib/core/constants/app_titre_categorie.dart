@@ -25,7 +25,7 @@ const Map<String, String> titreParSousCategorie = {
 const Map<String, String> texteParSousCategorie = {
   'Equipements Confort':
       "❄️ Ces équipements sont amortis annuellement en fonction de leur durée de vie. "
-      "La date d'achat (considérée comme la date de construction) est importante pour la projection de l'amortissement dans le temps. "
+      "La date d'achat est importante pour la projection de l'amortissement dans le temps. "
       "Le calcul tient compte de leur énergie grise de fabrication et du nombre de propriétaires du logement associé.",
 
   'Equipements Ménager':
@@ -48,6 +48,49 @@ const Map<String, String> texteParSousCategorie = {
       "Dans cette section, tu peux déclarer les voitures, deux-roues motorisés, vélos et autres moyens de transport personnels.",
 
   'Electricité': "🔌 Vous déclarez ici la consommation annuelle d’électricité par logement, qui est répartie entre le nombre d'habitants.",
+};
+
+const Map<String, String> infoBulleParSousCategorie = {
+  'Equipements Confort':
+      "🔧 Le calcul inclut :\n\n"
+      "• l’énergie grise liée à leur fabrication,\n"
+      "• leur durée de vie estimée,\n"
+      "• le nombre de propriétaires associés au bien,\n"
+      "• et l’année d’achat, pour prendre en compte l’amortissement annuel.\n\n"
+      "💡 Important : seuls les équipements que tu possèdes doivent être déclarés ici.",
+
+  'Equipements Ménager':
+      "🔧 Le calcul inclut :\n\n"
+      "• l’énergie grise liée à leur fabrication,\n"
+      "• leur durée de vie estimée,\n"
+      "• le nombre de propriétaires associés au bien,\n"
+      "• et l’année d’achat, pour prendre en compte l’amortissement annuel.\n\n"
+      "💡 Important : seuls les équipements que tu possèdes doivent être déclarés ici.",
+
+  'Equipements Bricolage':
+      "🔧 Le calcul inclut :\n\n"
+      "• l’énergie grise liée à leur fabrication,\n"
+      "• leur durée de vie estimée,\n"
+      "• le nombre de propriétaires associés au bien,\n"
+      "• et l’année d’achat, pour prendre en compte l’amortissement annuel.\n\n"
+      "💡 Important : seuls les équipements que tu possèdes doivent être déclarés ici.",
+
+  'Equipements Multi-media':
+      "🔧 Le calcul inclut :\n\n"
+      "• l’énergie grise liée à leur fabrication,\n"
+      "• leur durée de vie estimée,\n"
+      "• le nombre de propriétaires associés au bien,\n"
+      "• et l’année d’achat, pour prendre en compte l’amortissement annuel.\n\n"
+      "💡 Important : seuls les équipements que tu possèdes doivent être déclarés ici.",
+
+  'Véhicules':
+      "🔧 Le calcul inclut :\n\n"
+      "• l’énergie grise liée à leur fabrication,\n"
+      "• leur durée de vie estimée,\n"
+      "• le nombre de propriétaires associés au bien,\n"
+      "• et l’année d’achat, pour prendre en compte l’amortissement annuel.\n\n"
+      "💡 Important : seuls les véhicules que tu possèdes doivent être déclarés ici. "
+      "L’usage (carburant, distance parcourue…) est à renseigner séparément dans la section transports.",
 };
 
 /// Référentiel des images explicatives par sous-catégorie

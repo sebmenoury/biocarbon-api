@@ -323,7 +323,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
       ),
       children: [
         SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 2),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -478,7 +478,6 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 12),
                   ],
                 ),
               ),
