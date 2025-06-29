@@ -3,6 +3,7 @@ const List<String> sousCategoriesAvecBien = [
   "Gaz et Fioul",
   "Déchets et Eau",
   "Construction",
+  "Rénovation",
   "Equipements Confort",
   "Equipements Ménager",
   "Equipements Bricolage",
