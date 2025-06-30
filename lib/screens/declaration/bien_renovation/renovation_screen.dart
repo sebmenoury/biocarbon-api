@@ -269,79 +269,137 @@ class _RenovationScreenState extends State<RenovationScreen> {
                       const SizedBox(height: 6),
 
                       /// Surface (m²)
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 4),
-                        decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(12)),
-                        child: Row(
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.remove),
-                              iconSize: 16,
-                              padding: EdgeInsets.zero,
-                              constraints: const BoxConstraints(),
-                              onPressed: () {
-                                setState(() {
-                                  ref.quantite = (ref.quantite - 1).clamp(0, 999);
-                                  surfaceControllers[ref.nomEquipement]?.text = ref.quantite.toString();
-                                  recalculeTotal();
-                                });
-                              },
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text("Surface (m²)", style: TextStyle(fontSize: 11)),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 4),
+                            decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(12)),
+                            child: Row(
+                              children: [
+                                IconButton(
+                                  icon: const Icon(Icons.remove),
+                                  iconSize: 16,
+                                  padding: EdgeInsets.zero,
+                                  constraints: const BoxConstraints(),
+                                  onPressed: () {
+                                    setState(() {
+                                      ref.quantite = (ref.quantite - 1).clamp(0, 999);
+                                      surfaceControllers[ref.nomEquipement]?.text = ref.quantite.toString();
+                                      recalculeTotal();
+                                    });
+                                  },
+                                ),
+                                SizedBox(
+                                  width: 40,
+                                  child: TextFormField(
+                                    controller: surfaceControllers[ref.nomEquipement] ??= TextEditingController(text: ref.quantite.toString()),
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(fontSize: 12),
+                                    keyboardType: TextInputType.number,
+                                    decoration: const InputDecoration(isDense: true, border: InputBorder.none, contentPadding: EdgeInsets.symmetric(vertical: 6)),
+                                    onChanged: (val) {
+                                      final parsed = int.tryParse(val);
+                                      setState(() {
+                                        ref.quantite = (parsed != null && parsed >= 0) ? parsed : 0;
+                                        recalculeTotal();
+                                      });
+                                    },
+                                  ),
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.add),
+                                  iconSize: 16,
+                                  padding: EdgeInsets.zero,
+                                  constraints: const BoxConstraints(),
+                                  onPressed: () {
+                                    setState(() {
+                                      ref.quantite = (ref.quantite + 1).clamp(0, 999);
+                                      surfaceControllers[ref.nomEquipement]?.text = ref.quantite.toString();
+                                      recalculeTotal();
+                                    });
+                                  },
+                                ),
+                              ],
                             ),
-                            SizedBox(
-                              width: 40,
-                              child: TextFormField(
-                                controller: surfaceControllers[ref.nomEquipement] ??= TextEditingController(text: ref.quantite.toString()),
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(fontSize: 12),
-                                keyboardType: TextInputType.number,
-                                decoration: const InputDecoration(isDense: true, border: InputBorder.none, contentPadding: EdgeInsets.symmetric(vertical: 6)),
-                                onChanged: (val) {
-                                  final parsed = int.tryParse(val);
-                                  setState(() {
-                                    ref.quantite = (parsed != null && parsed >= 0) ? parsed : 0;
-                                    recalculeTotal();
-                                  });
-                                },
-                              ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 6),
+
+                      /// Année de construction
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text("Année de construction", style: TextStyle(fontSize: 11)),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 4),
+                            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
+                            child: Row(
+                              children: [
+                                IconButton(
+                                  icon: const Icon(Icons.remove),
+                                  iconSize: 16,
+                                  padding: EdgeInsets.zero,
+                                  constraints: const BoxConstraints(),
+                                  onPressed: () {
+                                    setState(() {
+                                      ref.anneeAchat = (ref.anneeAchat - 1).clamp(1900, DateTime.now().year);
+                                      anneeControllers[ref.nomEquipement]?.text = ref.anneeAchat.toString();
+                                    });
+                                  },
+                                ),
+                                SizedBox(
+                                  width: 40,
+                                  child: TextFormField(
+                                    controller: anneeControllers[ref.nomEquipement] ??= TextEditingController(text: ref.anneeAchat.toString()),
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(fontSize: 12),
+                                    keyboardType: TextInputType.number,
+                                    decoration: const InputDecoration(isDense: true, border: InputBorder.none, contentPadding: EdgeInsets.symmetric(vertical: 6)),
+                                    onChanged: (String? val) {
+                                      final parsed = int.tryParse(val ?? '');
+                                      setState(() {
+                                        ref.anneeAchat = (parsed != null ? parsed : 1900).clamp(1900, DateTime.now().year);
+                                      });
+                                    },
+                                  ),
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.add),
+                                  iconSize: 16,
+                                  padding: EdgeInsets.zero,
+                                  constraints: const BoxConstraints(),
+                                  onPressed: () {
+                                    setState(() {
+                                      ref.anneeAchat = (ref.anneeAchat + 1).clamp(1900, DateTime.now().year);
+                                      anneeControllers[ref.nomEquipement]?.text = ref.anneeAchat.toString();
+                                    });
+                                  },
+                                ),
+                              ],
                             ),
-                            IconButton(
-                              icon: const Icon(Icons.add),
-                              iconSize: 16,
-                              padding: EdgeInsets.zero,
-                              constraints: const BoxConstraints(),
-                              onPressed: () {
-                                setState(() {
-                                  ref.quantite = (ref.quantite + 1).clamp(0, 999);
-                                  surfaceControllers[ref.nomEquipement]?.text = ref.quantite.toString();
-                                  recalculeTotal();
-                                });
-                              },
-                            ),
-                            const SizedBox(width: 12),
-                            const Text("Année", style: TextStyle(fontSize: 12)),
-                            const SizedBox(width: 4),
-                            SizedBox(
-                              width: 60,
-                              child: TextFormField(
-                                controller: anneeControllers[ref.nomEquipement] ??= TextEditingController(text: ref.anneeAchat.toString()),
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(fontSize: 12),
-                                keyboardType: TextInputType.number,
-                                decoration: const InputDecoration(isDense: true, border: InputBorder.none, contentPadding: EdgeInsets.symmetric(vertical: 6)),
-                                onChanged: (val) {
-                                  final parsed = int.tryParse(val);
-                                  setState(() {
-                                    ref.anneeAchat = (parsed != null) ? parsed.clamp(1900, DateTime.now().year) : DateTime.now().year;
-                                  });
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
                 ),
+              const SizedBox(height: 12),
+
+              /// BOUTONS ENREGISTRER / SUPPRIMER
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                    onPressed: enregistrer,
+                    style: ElevatedButton.styleFrom(backgroundColor: Colors.green.shade100),
+                    child: const Text("Enregistrer", style: TextStyle(color: Colors.black)),
+                  ),
+                  OutlinedButton(onPressed: supprimer, style: OutlinedButton.styleFrom(side: BorderSide(color: Colors.teal.shade200)), child: const Text("Supprimer la déclaration")),
+                ],
+              ),
             ],
           ),
         ),
