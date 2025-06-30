@@ -315,7 +315,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
         children: [
           IconButton(icon: const Icon(Icons.arrow_back), iconSize: 18, onPressed: () => Navigator.pop(context), padding: EdgeInsets.zero, constraints: const BoxConstraints()),
           const SizedBox(width: 8),
-          const Text("Construction associée au logement", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+          const Text("Constructions associées au logement", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
         ],
       ),
       children: [

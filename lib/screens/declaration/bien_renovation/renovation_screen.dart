@@ -45,6 +45,8 @@ class RenovationScreen extends StatefulWidget {
 
 class _RenovationScreenState extends State<RenovationScreen> {
   Map<String, dynamic> bien = {};
+  Map<String, TextEditingController> surfaceControllers = {};
+  Map<String, TextEditingController> anneeControllers = {};
   List<PosteEquipement> equipements = [];
   double totalEmission = 0.0;
   bool isLoading = true;
@@ -228,79 +230,122 @@ class _RenovationScreenState extends State<RenovationScreen> {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
-    return Scaffold(
-      appBar: AppBar(title: const Text("Rénovation")),
-      body: Padding(
-        padding: const EdgeInsets.all(8),
-        child: ListView(
-          children: [
-            CustomCard(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [const Text("Total kg CO₂/an", style: TextStyle(fontSize: 12)), Text(calculTotal().toStringAsFixed(0), style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold))],
-              ),
-            ),
-            const SizedBox(height: 12),
-            for (final ref in equipements)
+    return BaseScreen(
+      title: Row(
+        children: [
+          IconButton(icon: const Icon(Icons.arrow_back), iconSize: 18, onPressed: () => Navigator.pop(context), padding: EdgeInsets.zero, constraints: const BoxConstraints()),
+          const SizedBox(width: 8),
+          const Text("Rénovations associées au logement", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+        ],
+      ),
+      children: [
+        SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 2),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              /// DENTETE TYPE DE BIEN AVEC EMISSION ACTUALISEE
               CustomCard(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(ref.nomEquipement, style: const TextStyle(fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 6),
                     Row(
-                      children: [
-                        Expanded(
-                          child: CustomNumberInput(
-                            label: "Surface (m²)",
-                            value: ref.quantite,
-                            onChanged: (val) {
-                              setState(() => ref.quantite = val);
-                              recalculeTotal();
-                            },
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: CustomNumberInput(
-                            label: "Année",
-                            value: ref.anneeAchat,
-                            onChanged: (val) {
-                              setState(() => ref.anneeAchat = val);
-                            },
-                          ),
-                        ),
-                      ],
+                      children: [const Icon(Icons.home_work, size: 16), const SizedBox(width: 8), Text(bien['Dénomination'] ?? '', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold))],
                     ),
+                    Text("${totalEmission.toStringAsFixed(0)} kg CO₂/an", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
                   ],
                 ),
               ),
-            const SizedBox(height: 12),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [ElevatedButton(onPressed: enregistrer, child: const Text("Enregistrer")), OutlinedButton(onPressed: supprimer, child: const Text("Supprimer la déclaration"))],
-            ),
-          ],
+              const SizedBox(height: 12),
+
+              for (final ref in equipements)
+                CustomCard(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(ref.nomEquipement, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 6),
+
+                      /// Surface (m²)
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                        decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(12)),
+                        child: Row(
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.remove),
+                              iconSize: 16,
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(),
+                              onPressed: () {
+                                setState(() {
+                                  ref.quantite = (ref.quantite - 1).clamp(0, 999);
+                                  surfaceControllers[ref.nomEquipement]?.text = ref.quantite.toString();
+                                  recalculeTotal();
+                                });
+                              },
+                            ),
+                            SizedBox(
+                              width: 40,
+                              child: TextFormField(
+                                controller: surfaceControllers[ref.nomEquipement] ??= TextEditingController(text: ref.quantite.toString()),
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(fontSize: 12),
+                                keyboardType: TextInputType.number,
+                                decoration: const InputDecoration(isDense: true, border: InputBorder.none, contentPadding: EdgeInsets.symmetric(vertical: 6)),
+                                onChanged: (val) {
+                                  final parsed = int.tryParse(val);
+                                  setState(() {
+                                    ref.quantite = (parsed != null && parsed >= 0) ? parsed : 0;
+                                    recalculeTotal();
+                                  });
+                                },
+                              ),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.add),
+                              iconSize: 16,
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(),
+                              onPressed: () {
+                                setState(() {
+                                  ref.quantite = (ref.quantite + 1).clamp(0, 999);
+                                  surfaceControllers[ref.nomEquipement]?.text = ref.quantite.toString();
+                                  recalculeTotal();
+                                });
+                              },
+                            ),
+                            const SizedBox(width: 12),
+                            const Text("Année", style: TextStyle(fontSize: 12)),
+                            const SizedBox(width: 4),
+                            SizedBox(
+                              width: 60,
+                              child: TextFormField(
+                                controller: anneeControllers[ref.nomEquipement] ??= TextEditingController(text: ref.anneeAchat.toString()),
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(fontSize: 12),
+                                keyboardType: TextInputType.number,
+                                decoration: const InputDecoration(isDense: true, border: InputBorder.none, contentPadding: EdgeInsets.symmetric(vertical: 6)),
+                                onChanged: (val) {
+                                  final parsed = int.tryParse(val);
+                                  setState(() {
+                                    ref.anneeAchat = (parsed != null) ? parsed.clamp(1900, DateTime.now().year) : DateTime.now().year;
+                                  });
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+            ],
+          ),
         ),
-      ),
+      ],
     );
-  }
-
-  double calculTotal() {
-    double total = 0.0;
-
-    for (final e in equipements) {
-      final quantite = e.quantite;
-      final facteur = e.facteurEmission;
-      final duree = e.dureeAmortissement > 0 ? e.dureeAmortissement : 30;
-      final nbProps = e.nbProprietaires > 0 ? e.nbProprietaires : 1;
-
-      if (quantite > 0 && facteur > 0) {
-        final emission = (quantite * facteur) / duree;
-        total += emission / nbProps;
-      }
-    }
-
-    return total;
   }
 }
