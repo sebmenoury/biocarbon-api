@@ -299,14 +299,11 @@ class ApiService {
     String? idBien,
     required List<String> groupByFields,
   }) async {
-    // 1. Appel API avec tous les filtres nécessaires (filtrage côté API)
     final postes = await getUCPostesFiltres(codeIndividu: codeIndividu, annee: valeurTemps, typeCategorie: typeCategorie, sousCategorie: sousCategorie, typePoste: typePoste, idBien: idBien);
 
-    // 2. Préparer une map avec regroupement dynamique
     final Map<String, Map<String, double>> result = {};
 
     for (final poste in postes) {
-      // Construire les clés de regroupement dynamiquement
       final keys =
           groupByFields.map((field) {
             switch (field) {
@@ -322,11 +319,12 @@ class ApiService {
           }).toList();
 
       final primaryKey = keys.first;
-      final secondaryKey = keys.length > 1 ? keys[1] : poste.nomPoste ?? 'total';
+      final secondaryKey = keys.length > 1 ? keys[1] : (poste.nomPoste ?? 'total');
 
       final emission = (poste.emissionCalculee ?? 0) / 1000;
 
       result.putIfAbsent(primaryKey, () => {});
+      result[primaryKey]![secondaryKey] = (result[primaryKey]![secondaryKey] ?? 0) + emission;
     }
 
     return result;
