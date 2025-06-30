@@ -58,7 +58,8 @@ class _ObjectifsScreenState extends State<ObjectifsScreen> {
                     children: [
                       const Text("Projection de vos émissions annuelles", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
                       const SizedBox(height: 12),
-                      Expanded(
+                      SizedBox(
+                        height: 320,
                         child: WaterfallChart(
                           data: data.map((cat, sousCatMap) {
                             final short = AppText.shortLabel(cat);
