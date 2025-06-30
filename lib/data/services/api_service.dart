@@ -322,12 +322,11 @@ class ApiService {
           }).toList();
 
       final primaryKey = keys.first;
-      final secondaryKey = keys.length > 1 ? keys[1] : 'total';
+      final secondaryKey = keys.length > 1 ? keys[1] : poste.nomPoste ?? 'total';
 
       final emission = (poste.emissionCalculee ?? 0) / 1000;
 
       result.putIfAbsent(primaryKey, () => {});
-      result[primaryKey]![secondaryKey] = (result[primaryKey]![secondaryKey] ?? 0) + emission;
     }
 
     return result;
