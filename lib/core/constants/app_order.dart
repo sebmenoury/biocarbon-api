@@ -4,7 +4,7 @@ class AppOrder {
 
   // Ordre des sous-catégories par type (du plus foncé au plus clair)
   static const Map<String, List<String>> sousCategorieOrder = {
-    'Logement': ["Construction", "Rénovation", "Equipements Confort", "Gaz et Fioul", "Électricité", "Déchets et Eau"], // <--- la virgule ici est valide
+    'Logement': ["Construction", "Rénovation", "Equipements Confort", "Gaz et Fioul", "Electricité", "Déchets et Eau"], // <--- la virgule ici est valide
     'Déplacements': ["Véhicules", "Déplacements Voiture", "Déplacements Train/Métro/Bus", "Déplacements Avion", "Déplacements Autres"],
     'Alimentation': [
       "Fruits et légumes",

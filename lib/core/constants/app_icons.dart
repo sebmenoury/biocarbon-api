@@ -9,11 +9,11 @@ final Map<String, IconData> categoryIcons = {
 };
 
 final Map<String, Color> categoryColors = {
-  "Logement": Colors.teal,
+  "Logement": const Color.fromARGB(255, 137, 12, 160),
   "Déplacements": Colors.indigo,
   "Alimentation": Colors.redAccent,
-  "Biens et services": Colors.orange,
-  "Services publics": Colors.purple,
+  "Biens et services": Colors.teal,
+  "Services publics": Colors.blueGrey,
 };
 
 final Map<String, IconData> sousCategorieIcons = {
