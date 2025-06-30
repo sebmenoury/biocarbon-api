@@ -319,7 +319,7 @@ class ApiService {
           }).toList();
 
       final primaryKey = keys.first;
-      final secondaryKey = keys.length > 1 ? keys[1] : (poste.nomPoste ?? 'total');
+      final secondaryKey = keys.length > 1 ? keys[1] : (poste.sousCategorie ?? 'total');
 
       final emission = (poste.emissionCalculee ?? 0) / 1000;
 
