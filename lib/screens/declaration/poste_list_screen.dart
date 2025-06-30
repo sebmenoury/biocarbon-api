@@ -47,9 +47,12 @@ class _PosteListScreenState extends State<PosteListScreen> {
     super.initState();
     avecBien = sousCategoriesAvecBien.contains(widget.sousCategorie);
 
-    if (sousCategorieRedirigeeParType.containsKey(widget.sousCategorie)) {
-      postesFuture = ApiService.getUCPostesFiltres(sousCategorie: sousCategorieRedirigeeParType[widget.sousCategorie]!, codeIndividu: widget.codeIndividu, annee: widget.valeurTemps);
+    // 🔁 Gestion cas particuliers
+    if (widget.typeCategorie == "Alimentation" || widget.typeCategorie == "Services publics") {
+      // ✅ On filtre par typeCategorie
+      postesFuture = ApiService.getUCPostesFiltres(typeCategorie: widget.typeCategorie, codeIndividu: widget.codeIndividu, annee: widget.valeurTemps);
     } else {
+      // 🧩 Cas normal : filtrage par sous-catégorie
       postesFuture = ApiService.getUCPostesFiltres(sousCategorie: widget.sousCategorie, codeIndividu: widget.codeIndividu, annee: widget.valeurTemps);
     }
 

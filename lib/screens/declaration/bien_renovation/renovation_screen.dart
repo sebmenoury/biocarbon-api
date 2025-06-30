@@ -134,7 +134,8 @@ class _RenovationScreenState extends State<RenovationScreen> {
     for (final e in equipements) {
       if (e.quantite > 0 && e.facteurEmission > 0 && e.dureeAmortissement > 0) {
         final emission = e.quantite * e.facteurEmission / e.dureeAmortissement;
-        total += emission / (e.nbProprietaires > 0 ? e.nbProprietaires : 1);
+        final nbProps = (e.nbProprietaires > 0) ? e.nbProprietaires : (int.tryParse(bien['Nb_Proprietaires']?.toString() ?? '1') ?? 1);
+        total += emission / nbProps;
       }
     }
 
