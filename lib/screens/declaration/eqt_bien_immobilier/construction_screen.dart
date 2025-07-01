@@ -343,7 +343,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12),
           child: Text(
-            "🏠 Déclarez ici les dates des travaux significatifs de gros oeuvre. Elles peuvent correspondre soit à la date de construction initiale, soit à une date de rénovation majeure intégrant du gros oeuvre.",
+            "🏠 Déclarez ici les caractéristiques de surface et dates des travaux significatifs de construction. Elles peuvent correspondre soit à la date de construction initiale, soit à une date de rénovation majeure intégrant une grosse revisite du gros oeuvre.",
             style: const TextStyle(fontSize: 11, height: 1.4),
             textAlign: TextAlign.justify,
           ),
@@ -364,7 +364,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                   children: [
                     Row(
                       children: [
-                        const Icon(Icons.home_work, size: 16),
+                        const Icon(Icons.home_work, size: 16, color: Color.fromARGB(255, 137, 12, 160)),
                         const SizedBox(width: 8),
                         Text("Construction ${bien.nomLogement}", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
                       ],
@@ -376,7 +376,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
 
               /// DESCRIPTIF DU BIEN
               CustomCard(
-                padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -406,7 +406,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text("Surface (m²)", style: TextStyle(fontSize: 11)),
+                        const Padding(padding: EdgeInsets.only(left: 6), child: Text("Surface (m²)", style: TextStyle(fontSize: 11))),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 4),
                           decoration: BoxDecoration(color: (poste.surface > 0) ? Colors.white : Colors.grey.shade100, borderRadius: BorderRadius.circular(12)),
@@ -464,7 +464,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text("Année de construction", style: TextStyle(fontSize: 11)),
+                        const Padding(padding: EdgeInsets.only(left: 6), child: Text("Année de construction", style: TextStyle(fontSize: 11))),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 4),
                           decoration: BoxDecoration(color: (poste.surface > 0) ? Colors.white : Colors.grey.shade100, borderRadius: BorderRadius.circular(12)),
@@ -523,16 +523,16 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
 
               /// GARAGE
               CustomCard(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("Cave ou Garage ou autre (Béton)", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                    Text("Cave, ou Garage, ou autre (en Béton)", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 6),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text("Surface (m²)", style: TextStyle(fontSize: 11)),
+                        const Padding(padding: EdgeInsets.only(left: 6), child: Text("Surface (m²)", style: TextStyle(fontSize: 11))),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 4),
                           decoration: BoxDecoration(color: (poste.surfaceGarage > 0) ? Colors.white : Colors.grey.shade100, borderRadius: BorderRadius.circular(12)),
@@ -589,7 +589,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text("Année de construction", style: TextStyle(fontSize: 11)),
+                        const Padding(padding: EdgeInsets.only(left: 6), child: Text("Année de construction", style: TextStyle(fontSize: 11))),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 4),
                           decoration: BoxDecoration(color: (poste.surfaceGarage > 0) ? Colors.white : Colors.grey.shade100, borderRadius: BorderRadius.circular(12)),
@@ -648,7 +648,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
 
               /// PISCINE
               CustomCard(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -677,7 +677,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text("Surface (m²)", style: TextStyle(fontSize: 11)),
+                        const Padding(padding: EdgeInsets.only(left: 6), child: Text("Surface (m²)", style: TextStyle(fontSize: 11))),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 4),
                           decoration: BoxDecoration(color: (poste.surfacePiscine > 0) ? Colors.white : Colors.grey.shade100, borderRadius: BorderRadius.circular(12)),
@@ -736,7 +736,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text("Année de construction", style: TextStyle(fontSize: 11)),
+                        const Padding(padding: EdgeInsets.only(left: 6), child: Text("Année de construction", style: TextStyle(fontSize: 11))),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 4),
                           decoration: BoxDecoration(color: (poste.surfacePiscine > 0) ? Colors.white : Colors.grey.shade100, borderRadius: BorderRadius.circular(12)),
@@ -795,16 +795,16 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
 
               /// ABRI / SERRE
               CustomCard(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("Abri ou Serre ou autre (Bois)", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                    Text("Abri, ou Serre, ou autre (en Bois)", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 6),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text("Surface (m²)", style: TextStyle(fontSize: 11)),
+                        const Padding(padding: EdgeInsets.only(left: 6), child: Text("Surface (m²)", style: TextStyle(fontSize: 11))),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 4),
                           decoration: BoxDecoration(color: (poste.surfaceAbriEtSerre > 0) ? Colors.white : Colors.grey.shade100, borderRadius: BorderRadius.circular(12)),
@@ -861,7 +861,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text("Année de construction", style: TextStyle(fontSize: 11)),
+                        const Padding(padding: EdgeInsets.only(left: 6), child: Text("Année de construction", style: TextStyle(fontSize: 11))),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 4),
                           decoration: BoxDecoration(color: (poste.surfaceAbriEtSerre > 0) ? Colors.white : Colors.grey.shade100, borderRadius: BorderRadius.circular(12)),

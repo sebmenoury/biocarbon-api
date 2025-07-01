@@ -24,28 +24,29 @@ const Map<String, String> titreParSousCategorie = {
 
 /// Référentiel des textes explicatifs par sous-catégorie
 const Map<String, String> texteParSousCategorie = {
+  'Rénovation': "⚙️ On retrouve ici l'amortissement de l'énergie grise associée à des éléments de rénovation significatifs du logement.",
   'Equipements Confort':
-      "❄️ Ces équipements sont amortis annuellement en fonction de leur durée de vie. "
+      "⚙️ Ces équipements sont amortis annuellement en fonction de leur durée de vie. "
       "La date d'achat est importante pour la projection de l'amortissement dans le temps. "
       "Le calcul tient compte de leur énergie grise de fabrication et du nombre de propriétaires du logement associé.",
 
   'Equipements Ménager':
-      "🍽️ Ces équipements sont amortis annuellement en fonction de leur durée de vie. "
+      "⚙️ Ces équipements sont amortis annuellement en fonction de leur durée de vie. "
       "La date d'achat est importante pour la projection de l'amortissement dans le temps. "
       "Le calcul tient compte de leur énergie grise de fabrication et du nombre de propriétaires du logement associé.",
 
   'Equipements Bricolage':
-      "🛠️ Ces équipements sont amortis annuellement en fonction de leur durée de vie. "
+      "⚙️ Ces équipements sont amortis annuellement en fonction de leur durée de vie. "
       "La date d'achat est importante pour la projection de l'amortissement dans le temps. "
       "Le calcul tient compte de leur énergie grise de fabrication et du nombre de propriétaires du logement associé.",
 
   'Equipements Multi-media':
-      "📺 Ces équipements sont amortis annuellement en fonction de leur durée de vie. "
+      "⚙️ Ces équipements sont amortis annuellement en fonction de leur durée de vie. "
       "La date d'achat est importante pour la projection de l'amortissement dans le temps. "
       "Le calcul tient compte de leur énergie grise de fabrication et du nombre de propriétaires du logement associé.",
 
   'Véhicules':
-      "🚗 Les véhicules personnels représentent un poste d’émission majeur, lié à leur fabrication (énergie grise) et à leur usage quotidien.\n\n"
+      "⚙️ Les véhicules personnels représentent un poste d’émission majeur, lié à leur fabrication (énergie grise) et à leur usage quotidien.\n\n"
       "Dans cette section, tu peux déclarer les voitures, deux-roues motorisés, vélos et autres moyens de transport personnels.",
 
   'Electricité': "🔌 Vous déclarez ici la consommation annuelle d’électricité par logement, qui est répartie entre le nombre d'habitants.",

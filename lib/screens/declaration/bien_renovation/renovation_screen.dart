@@ -243,7 +243,7 @@ class _RenovationScreenState extends State<RenovationScreen> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12),
           child: Text(
-            "🏠On retrouve ici l'amortissement de l'énergie grise associée à des éléments de rénovation significatifs du logement.",
+            "🏠 Déclarez les rénovations significatives associées au logement. A ne pas déclarer si la date de construction a concerné une date de rénovation majeure intégrant le gros oeuvre.",
             style: const TextStyle(fontSize: 11, height: 1.4),
             textAlign: TextAlign.justify,
           ),

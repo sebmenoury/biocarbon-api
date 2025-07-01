@@ -427,29 +427,15 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            ElevatedButton.icon(
+            ElevatedButton(
               onPressed: enregistrerOuMettreAJour,
-              icon: const Icon(Icons.save, size: 14),
-              label: const Text("Enregistrer", style: TextStyle(fontSize: 12)),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green[100],
-                foregroundColor: Colors.green[900],
-                minimumSize: const Size(120, 36),
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-              ),
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.green.shade100),
+              child: const Text("Enregistrer", style: TextStyle(color: Colors.black)),
             ),
-            OutlinedButton.icon(
+            OutlinedButton(
               onPressed: hasPostesExistants ? supprimerPoste : null,
-              icon: const Icon(Icons.delete_outline, size: 14),
-              label: const Text("Supprimer la déclaration", style: TextStyle(fontSize: 12)),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: Colors.red,
-                side: BorderSide(color: hasPostesExistants ? Colors.teal.shade200 : Colors.grey.shade300),
-                minimumSize: const Size(120, 36),
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-              ),
+              style: OutlinedButton.styleFrom(side: BorderSide(color: Colors.teal.shade200)),
+              child: const Text("Supprimer la déclaration", style: TextStyle(fontSize: 12)),
             ),
           ],
         ),

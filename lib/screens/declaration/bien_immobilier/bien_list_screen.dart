@@ -74,7 +74,7 @@ class _BienListScreenState extends State<BienListScreen> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 child: Text(
-                  "🏠 Ici, vous déclarez les biens immobiliers que vous possédez ou que vous louez. \n",
+                  "⚙️ Ici, vous déclarez les biens immobiliers que vous possédez ou que vous louez. \n",
                   style: const TextStyle(fontSize: 11, fontStyle: FontStyle.italic),
                   textAlign: TextAlign.justify,
                 ),

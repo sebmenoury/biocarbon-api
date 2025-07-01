@@ -300,7 +300,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const Text(
-                              "On retrouve ici l'amortissement de l'énergie grise associée à la construction des éléments structurels du logement.",
+                              "⚙️ On retrouve ici l'amortissement de l'énergie grise associée à la construction des éléments structurels du logement.",
                               style: TextStyle(fontSize: 11),
                               textAlign: TextAlign.justify,
                             ),

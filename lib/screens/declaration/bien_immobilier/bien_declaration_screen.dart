@@ -188,9 +188,9 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12),
           child: Text(
-            "👥 Le nombre de propriétaires correspond au nombre de financeurs du bien ou de la location, "
+            "⚙️ Le nombre de propriétaires correspond au nombre de financeurs du bien ou de la location, "
             "et est utilisé pour répartir par individu propriétaire l'énergie grise des équipements associés à ces biens.\n\n"
-            "🧑‍🤝‍🧑 Le nombre d'habitants correspond au nombre de personnes qui y vivent, et est utilisé pour répartir l'énergie d'usage des équipements associés à ces biens.",
+            "⚙️ Le nombre d'habitants correspond au nombre de personnes qui y vivent, et est utilisé pour répartir l'énergie d'usage des équipements associés à ces biens.",
             style: const TextStyle(fontSize: 11, height: 1.4),
             textAlign: TextAlign.justify,
           ),
@@ -205,18 +205,21 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
             children: [
               const Text('Choix du type de logement', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
               const SizedBox(height: 6),
-              Padding(
-                padding: const EdgeInsets.all(12),
-                child: CustomDropdownCompact(
-                  value: typeBien,
-                  items: const ['Logement principal', 'Logement secondaire'],
-                  label: "Type de logement",
-                  onChanged: (val) {
-                    setState(() {
-                      typeBien = val ?? 'Logement principal';
-                      bien.typeBien = typeBien;
-                    });
-                  },
+              Align(
+                alignment: Alignment.centerRight,
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: CustomDropdownCompact(
+                    value: typeBien,
+                    items: const ['Logement principal', 'Logement secondaire'],
+                    label: "Type de logement",
+                    onChanged: (val) {
+                      setState(() {
+                        typeBien = val ?? 'Logement principal';
+                        bien.typeBien = typeBien;
+                      });
+                    },
+                  ),
                 ),
               ),
             ],
@@ -233,7 +236,13 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
               const SizedBox(height: 6),
               Row(
                 children: [
-                  const Expanded(flex: 2, child: Text("Dénomination", style: TextStyle(fontSize: 11))),
+                  const Expanded(
+                    flex: 2,
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 6), // ← décalage ici
+                      child: Text("Dénomination", style: TextStyle(fontSize: 11)),
+                    ),
+                  ),
                   Expanded(
                     flex: 3,
                     child: TextFormField(
@@ -248,7 +257,13 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
               const SizedBox(height: 12),
               Row(
                 children: [
-                  const Expanded(flex: 2, child: Text("Adresse", style: TextStyle(fontSize: 11))),
+                  const Expanded(
+                    flex: 2,
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 6), // ← décalage ici
+                      child: Text("Adresse", style: TextStyle(fontSize: 11)),
+                    ),
+                  ),
                   Expanded(
                     flex: 3,
                     child: TextFormField(
@@ -266,7 +281,7 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
         ),
 
         CustomCard(
-          padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -275,7 +290,7 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text("Nombre de propriétaires", style: TextStyle(fontSize: 11)),
+                  const Padding(padding: EdgeInsets.only(left: 6), child: Text("Nombre de propriétaires", style: TextStyle(fontSize: 11))),
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -286,11 +301,10 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 6),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text("Nombre d'habitants", style: TextStyle(fontSize: 11)),
+                  const Padding(padding: EdgeInsets.only(left: 6), child: Text("Nombre d'habitants", style: TextStyle(fontSize: 11))),
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
