@@ -324,7 +324,7 @@ class _EquipementConfortScreenState extends State<EquipementConfortScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text("Empreinte d'amortissement annuel", style: TextStyle(fontSize: 12)),
+              const Text("Empreinte d'amortissement annuel", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
               Text("${totalEmission.toStringAsFixed(0)} kgCO₂", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
             ],
           ),

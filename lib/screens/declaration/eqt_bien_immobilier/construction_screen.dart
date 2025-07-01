@@ -343,7 +343,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12),
           child: Text(
-            "🏠 Déclarez ici les caractéristiques de surface et dates des travaux significatifs de construction. Elles peuvent correspondre soit à la date de construction initiale, soit à une date de rénovation majeure intégrant une grosse revisite du gros oeuvre.",
+            "⚙️ Déclarez ici les caractéristiques de surface et dates des travaux significatifs de construction. Elles peuvent correspondre soit à la date de construction initiale, soit à une date de rénovation majeure intégrant une grosse revisite du gros oeuvre.",
             style: const TextStyle(fontSize: 11, height: 1.4),
             textAlign: TextAlign.justify,
           ),

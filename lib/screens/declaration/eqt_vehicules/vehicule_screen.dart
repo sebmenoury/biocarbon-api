@@ -260,7 +260,10 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         children: [
-          Expanded(flex: 2, child: Text(poste.nomEquipement.replaceFirst(RegExp(r'^(Voitures|2-roues|Autres)\s*-\s*'), ''), style: const TextStyle(fontSize: 12))),
+          Expanded(
+            flex: 2,
+            child: Padding(padding: EdgeInsets.only(left: 6), child: Text(poste.nomEquipement.replaceFirst(RegExp(r'^(Voitures|2-roues|Autres)\s*-\s*'), ''), style: const TextStyle(fontSize: 12))),
+          ),
           Container(
             width: 60,
             height: 24,
@@ -373,9 +376,9 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
               Text(titre, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
               Row(
                 children: const [
-                  SizedBox(width: 70, child: Text("Quantité", style: TextStyle(fontSize: 10, color: Colors.grey))),
+                  SizedBox(width: 85, child: Text("Quantité", style: TextStyle(fontSize: 10, color: Colors.grey))),
                   SizedBox(width: 12),
-                  SizedBox(width: 100, child: Text("Année(s) d'achat", style: TextStyle(fontSize: 10, color: Colors.grey))),
+                  SizedBox(width: 110, child: Text("Année(s) d'achat", style: TextStyle(fontSize: 10, color: Colors.grey))),
                 ],
               ),
             ],

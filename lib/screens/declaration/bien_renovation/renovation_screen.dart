@@ -243,7 +243,7 @@ class _RenovationScreenState extends State<RenovationScreen> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12),
           child: Text(
-            "🏠 Déclarez les rénovations significatives associées au logement. A ne pas déclarer si la date de construction a concerné une date de rénovation majeure intégrant le gros oeuvre.",
+            "⚙️ Déclarez les rénovations significatives associées au logement. A ne pas déclarer si la date de construction a concerné une date de rénovation majeure intégrant le gros oeuvre.",
             style: const TextStyle(fontSize: 11, height: 1.4),
             textAlign: TextAlign.justify,
           ),
@@ -261,7 +261,7 @@ class _RenovationScreenState extends State<RenovationScreen> {
                   children: [
                     Row(
                       children: [
-                        const Icon(Icons.home_work, size: 16),
+                        const Icon(Icons.home_work, size: 16, color: Color.fromARGB(255, 137, 12, 160)),
                         const SizedBox(width: 8),
                         Text("Rénovation ${bien['Dénomination'] ?? ''}", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
                       ],
