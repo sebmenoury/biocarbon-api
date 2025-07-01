@@ -330,7 +330,11 @@ class _EquipementScreenState extends State<EquipementScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            ElevatedButton(onPressed: enregistrer, style: ElevatedButton.styleFrom(backgroundColor: Colors.green.shade100), child: const Text("Enregistrer", style: TextStyle(color: Colors.black))),
+            ElevatedButton(
+              onPressed: enregistrer,
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.green.shade100),
+              child: const Text("Enregistrer", style: TextStyle(fontSize: 12, color: Colors.black)),
+            ),
             OutlinedButton(
               onPressed: hasPostesExistants ? supprimer : null,
               style: OutlinedButton.styleFrom(side: BorderSide(color: Colors.teal.shade200)),

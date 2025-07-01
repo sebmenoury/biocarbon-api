@@ -308,7 +308,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
               ],
             ),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: 6),
           Container(
             width: 90,
             height: 24,
@@ -376,9 +376,9 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
               Text(titre, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
               Row(
                 children: const [
-                  SizedBox(width: 85, child: Text("Quantité", style: TextStyle(fontSize: 10, color: Colors.grey))),
+                  SizedBox(width: 50, child: Text("Quantité", style: TextStyle(fontSize: 10, color: Colors.grey))),
                   SizedBox(width: 12),
-                  SizedBox(width: 110, child: Text("Année(s) d'achat", style: TextStyle(fontSize: 10, color: Colors.grey))),
+                  SizedBox(width: 90, child: Text("Année(s) d'achat", style: TextStyle(fontSize: 10, color: Colors.grey))),
                 ],
               ),
             ],
@@ -433,7 +433,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
             ElevatedButton(
               onPressed: enregistrerOuMettreAJour,
               style: ElevatedButton.styleFrom(backgroundColor: Colors.green.shade100),
-              child: const Text("Enregistrer", style: TextStyle(color: Colors.black)),
+              child: const Text("Enregistrer", style: TextStyle(fontSize: 12, color: Colors.black)),
             ),
             OutlinedButton(
               onPressed: hasPostesExistants ? supprimerPoste : null,

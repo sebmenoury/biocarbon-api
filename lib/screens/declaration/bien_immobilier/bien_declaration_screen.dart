@@ -355,12 +355,12 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
                 }
               },
               style: ElevatedButton.styleFrom(backgroundColor: Colors.green.shade100),
-              child: const Text("Enregistrer", style: TextStyle(color: Colors.black)),
+              child: const Text("Enregistrer", style: TextStyle(fontSize: 12, color: Colors.black)),
             ),
             OutlinedButton(
               onPressed: widget.bienExistant != null ? supprimerBien : null,
               style: OutlinedButton.styleFrom(side: BorderSide(color: Colors.teal.shade200)),
-              child: const Text("Supprimer la déclaration"),
+              child: const Text("Supprimer la déclaration", style: TextStyle(fontSize: 12)),
             ),
           ],
         ),
