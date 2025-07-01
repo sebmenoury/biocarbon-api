@@ -240,6 +240,14 @@ class _RenovationScreenState extends State<RenovationScreen> {
         ],
       ),
       children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: Text(
+            "🏠On retrouve ici l'amortissement de l'énergie grise associée à des éléments de rénovation significatifs du logement.",
+            style: const TextStyle(fontSize: 11, height: 1.4),
+            textAlign: TextAlign.justify,
+          ),
+        ),
         SingleChildScrollView(
           padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 2),
           child: Column(
@@ -252,7 +260,11 @@ class _RenovationScreenState extends State<RenovationScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Row(
-                      children: [const Icon(Icons.home_work, size: 16), const SizedBox(width: 8), Text(bien['Dénomination'] ?? '', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold))],
+                      children: [
+                        const Icon(Icons.home_work, size: 16),
+                        const SizedBox(width: 8),
+                        Text("Rénovation ${bien['Dénomination'] ?? ''}", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                      ],
                     ),
                     Text("${totalEmission.toStringAsFixed(0)} kg CO₂/an", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
                   ],

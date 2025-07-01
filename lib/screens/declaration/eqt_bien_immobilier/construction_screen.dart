@@ -14,9 +14,12 @@ const List<String> typesConstruction = ['Maison Classique', 'Appartement', 'Appa
 
 class ConstructionScreen extends StatefulWidget {
   final String idBien;
+  final String codeIndividu;
+  final String valeurTemps;
+  final String sousCategorie;
   final VoidCallback onSave;
 
-  const ConstructionScreen({Key? key, required this.idBien, required this.onSave}) : super(key: key);
+  const ConstructionScreen({Key? key, required this.idBien, required this.codeIndividu, required this.valeurTemps, required this.sousCategorie, required this.onSave}) : super(key: key);
 
   @override
   State<ConstructionScreen> createState() => _ConstructionScreenState();
@@ -58,12 +61,12 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
   void enregistrerOuMettreAJour() async {
     try {
       final maintenant = DateTime.now().toIso8601String();
-      const codeIndividu = "BASILE";
-      const typeTemps = "Réel";
-      const valeurTemps = "2025";
+      final codeIndividu = widget.codeIndividu;
+      const typeTemps = "Réel"; // ça peut rester constant si jamais
+      final valeurTemps = widget.valeurTemps;
+      final sousCategorie = widget.sousCategorie;
       const typePoste = "Equipement";
       const typeCategorie = "Logement";
-      const sousCategorie = "Construction";
 
       List<Map<String, dynamic>> postesAEnregistrer = [];
 
@@ -311,14 +314,43 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
     final List<String> typesPiscine = ["Piscine béton", "Piscine coque"];
 
     return BaseScreen(
-      title: Row(
+      title: Stack(
+        alignment: Alignment.center,
         children: [
-          IconButton(icon: const Icon(Icons.arrow_back), iconSize: 18, onPressed: () => Navigator.pop(context), padding: EdgeInsets.zero, constraints: const BoxConstraints()),
-          const SizedBox(width: 8),
-          const Text("Constructions associées au logement", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+          const Center(child: Text("Constructions associées au logement", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold))),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              iconSize: 18,
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => PosteListScreen(typeCategorie: "Logement", sousCategorie: widget.sousCategorie, codeIndividu: widget.codeIndividu, valeurTemps: widget.valeurTemps),
+                  ),
+                );
+              },
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(),
+            ),
+          ),
         ],
       ),
       children: [
+        const SizedBox(height: 8),
+
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: Text(
+            "🏠 Déclarez ici les dates des travaux significatifs de gros oeuvre. Elles peuvent correspondre soit à la date de construction initiale, soit à une date de rénovation majeure intégrant du gros oeuvre.",
+            style: const TextStyle(fontSize: 11, height: 1.4),
+            textAlign: TextAlign.justify,
+          ),
+        ),
+
+        const SizedBox(height: 12),
+
         SingleChildScrollView(
           padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 2),
           child: Column(
@@ -330,7 +362,13 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Row(children: [const Icon(Icons.home_work, size: 16), const SizedBox(width: 8), Text(bien.nomLogement, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold))]),
+                    Row(
+                      children: [
+                        const Icon(Icons.home_work, size: 16),
+                        const SizedBox(width: 8),
+                        Text("Construction ${bien.nomLogement}", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                      ],
+                    ),
                     Text("${total.toStringAsFixed(0)} kg CO₂/an", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
                   ],
                 ),
@@ -342,6 +380,8 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Text("Caractéristiques du bien", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 6),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
@@ -487,10 +527,12 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Text("Cave ou Garage ou autre (Béton)", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 6),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text("Surface cave / garage béton (m²)", style: TextStyle(fontSize: 11)),
+                        const Text("Surface (m²)", style: TextStyle(fontSize: 11)),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 4),
                           decoration: BoxDecoration(color: (poste.surfaceGarage > 0) ? Colors.white : Colors.grey.shade100, borderRadius: BorderRadius.circular(12)),
@@ -610,6 +652,8 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Text("Caractéristiques Piscine", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 6),
                     // Ligne surface piscine
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
@@ -633,7 +677,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text("Surface piscine (m²)", style: TextStyle(fontSize: 11)),
+                        const Text("Surface (m²)", style: TextStyle(fontSize: 11)),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 4),
                           decoration: BoxDecoration(color: (poste.surfacePiscine > 0) ? Colors.white : Colors.grey.shade100, borderRadius: BorderRadius.circular(12)),
@@ -755,10 +799,12 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Text("Abri ou Serre ou autre (Bois)", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 6),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text("Surface abri / serre bois (m²)", style: TextStyle(fontSize: 11)),
+                        const Text("Surface (m²)", style: TextStyle(fontSize: 11)),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 4),
                           decoration: BoxDecoration(color: (poste.surfaceAbriEtSerre > 0) ? Colors.white : Colors.grey.shade100, borderRadius: BorderRadius.circular(12)),
@@ -872,19 +918,21 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
               const SizedBox(height: 24),
 
               /// BOUTON
-              posteDejaDeclare
-                  ? Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
-                        onPressed: supprimerPoste,
-                        child: const Text("Supprimer", style: TextStyle(fontSize: 12, color: Colors.red)),
-                      ),
-                      ElevatedButton(onPressed: enregistrerOuMettreAJour, child: const Text("Mettre à jour", style: TextStyle(fontSize: 12))),
-                    ],
-                  )
-                  : Center(child: ElevatedButton(onPressed: enregistrerOuMettreAJour, child: const Text("Enregistrer", style: TextStyle(fontSize: 12)))),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                    onPressed: enregistrerOuMettreAJour,
+                    style: ElevatedButton.styleFrom(backgroundColor: Colors.green.shade100),
+                    child: const Text("Enregistrer", style: TextStyle(color: Colors.black)),
+                  ),
+                  OutlinedButton(
+                    onPressed: posteDejaDeclare ? supprimerPoste : null,
+                    style: OutlinedButton.styleFrom(side: BorderSide(color: Colors.teal.shade200)),
+                    child: const Text("Supprimer la déclaration"),
+                  ),
+                ],
+              ),
             ],
           ),
         ),

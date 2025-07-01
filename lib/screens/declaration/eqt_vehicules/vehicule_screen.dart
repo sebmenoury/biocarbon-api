@@ -424,48 +424,35 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
           return const SizedBox.shrink();
         }),
         const SizedBox(height: 12),
-        (hasPostesExistants)
-            ? Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton(
-                  onPressed: supprimerPoste,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: Colors.red,
-                    minimumSize: const Size(120, 36),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                  ),
-                  child: const Text("Supprimer", style: TextStyle(fontSize: 12)),
-                ),
-                ElevatedButton.icon(
-                  onPressed: enregistrerOuMettreAJour,
-                  icon: const Icon(Icons.update, size: 14),
-                  label: const Text("Mettre à jour", style: TextStyle(fontSize: 12)),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green[100],
-                    foregroundColor: Colors.green[900],
-                    minimumSize: const Size(120, 36),
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                  ),
-                ),
-              ],
-            )
-            : Center(
-              child: ElevatedButton.icon(
-                onPressed: enregistrerOuMettreAJour,
-                icon: const Icon(Icons.save, size: 14),
-                label: const Text("Enregistrer", style: TextStyle(fontSize: 12)),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green[100],
-                  foregroundColor: Colors.green[900],
-                  minimumSize: const Size(120, 36),
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            ElevatedButton.icon(
+              onPressed: enregistrerOuMettreAJour,
+              icon: const Icon(Icons.save, size: 14),
+              label: const Text("Enregistrer", style: TextStyle(fontSize: 12)),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green[100],
+                foregroundColor: Colors.green[900],
+                minimumSize: const Size(120, 36),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
               ),
             ),
+            OutlinedButton.icon(
+              onPressed: hasPostesExistants ? supprimerPoste : null,
+              icon: const Icon(Icons.delete_outline, size: 14),
+              label: const Text("Supprimer la déclaration", style: TextStyle(fontSize: 12)),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: Colors.red,
+                side: BorderSide(color: hasPostesExistants ? Colors.teal.shade200 : Colors.grey.shade300),
+                minimumSize: const Size(120, 36),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              ),
+            ),
+          ],
+        ),
       ],
     );
   }

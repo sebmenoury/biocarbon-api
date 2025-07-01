@@ -99,7 +99,7 @@ class _BienListScreenState extends State<BienListScreen> {
                       children: [
                         Row(
                           children: [
-                            const Icon(Icons.home, size: 16, color: Colors.teal),
+                            const Icon(Icons.home, size: 16, color: Color.fromARGB(255, 137, 12, 160)),
                             const SizedBox(width: 6),
                             Text(type, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                             const Spacer(),

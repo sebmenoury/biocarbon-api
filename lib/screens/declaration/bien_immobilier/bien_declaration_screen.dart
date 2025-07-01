@@ -229,7 +229,8 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 4),
+              Text('Identitié du logement', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 6),
               Row(
                 children: [
                   const Expanded(flex: 2, child: Text("Dénomination", style: TextStyle(fontSize: 11))),
@@ -269,6 +270,8 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Text('Nombre de personnes associées au logement', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 6),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -283,15 +286,7 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
                   ),
                 ],
               ),
-            ],
-          ),
-        ),
-
-        CustomCard(
-          padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+              const SizedBox(height: 6),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -309,13 +304,14 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
             ],
           ),
         ),
+
         // Carte 3 : Inclure dans le bilan
         CustomCard(
           padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text("Inclure dans le bilan", style: TextStyle(fontSize: 11)),
+              const Text("Inclure ce logement dans le bilan", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
               Transform.scale(
                 scale: 0.85,
                 child: Checkbox(value: bien.inclureDansBilan == true, visualDensity: VisualDensity.compact, onChanged: (v) => setState(() => bien.inclureDansBilan = v ?? true)),
@@ -325,41 +321,35 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
         ),
 
         const SizedBox(height: 24),
-        widget.bienExistant != null
-            ? Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: Colors.white), onPressed: supprimerBien, child: const Text("Supprimer", style: TextStyle(fontSize: 12))),
-                ElevatedButton(
-                  onPressed: () {
-                    if (bien.nomLogement.trim().isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('⚠️ Merci de saisir une dénomination')));
-                      return;
-                    }
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                if (bien.nomLogement.trim().isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('⚠️ Merci de saisir une dénomination')));
+                  return;
+                }
 
-                    bien.nbProprietaires = nbProprietaires;
-                    bien.nbHabitants = nbHabitants; // 👈 ajoute ceci
-                    updateBien();
-                  },
-                  child: const Text("Mettre à jour", style: TextStyle(fontSize: 12)),
-                ),
-              ],
-            )
-            : Center(
-              child: ElevatedButton(
-                onPressed: () {
-                  if (bien.nomLogement.trim().isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('⚠️ Merci de saisir une dénomination')));
-                    return;
-                  }
+                bien.nbProprietaires = nbProprietaires;
+                bien.nbHabitants = nbHabitants;
 
-                  bien.nbProprietaires = nbProprietaires;
-                  bien.nbHabitants = nbHabitants; // 👈 ajoute ceci
+                if (widget.bienExistant != null) {
+                  updateBien();
+                } else {
                   enregistrerBien();
-                },
-                child: const Text("Enregistrer", style: TextStyle(fontSize: 12)),
-              ),
+                }
+              },
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.green.shade100),
+              child: const Text("Enregistrer", style: TextStyle(color: Colors.black)),
             ),
+            OutlinedButton(
+              onPressed: widget.bienExistant != null ? supprimerBien : null,
+              style: OutlinedButton.styleFrom(side: BorderSide(color: Colors.teal.shade200)),
+              child: const Text("Supprimer la déclaration"),
+            ),
+          ],
+        ),
       ],
     );
   }

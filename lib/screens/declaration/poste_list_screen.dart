@@ -397,7 +397,19 @@ class _PosteListScreenState extends State<PosteListScreen> {
                                   final idBien = bien['ID_Bien'];
 
                                   if (widget.sousCategorie == "Construction") {
-                                    Navigator.push(context, MaterialPageRoute(builder: (_) => ConstructionScreen(idBien: idBien, onSave: () => setState(() {}))));
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder:
+                                            (_) => ConstructionScreen(
+                                              codeIndividu: widget.codeIndividu,
+                                              valeurTemps: widget.valeurTemps,
+                                              sousCategorie: widget.sousCategorie,
+                                              idBien: idBien,
+                                              onSave: () => setState(() {}),
+                                            ),
+                                      ),
+                                    );
                                   } else if (widget.sousCategorie == "Véhicules") {
                                     Navigator.push(context, MaterialPageRoute(builder: (_) => VehiculeScreen(codeIndividu: widget.codeIndividu, idBien: idBien, onSave: () => setState(() {}))));
                                   } else if (["Equipements Bricolage", "Equipements Ménager", "Equipements Multi-media"].contains(widget.sousCategorie)) {
@@ -486,7 +498,19 @@ class _PosteListScreenState extends State<PosteListScreen> {
                               final idBien = bien['ID_Bien'];
 
                               if (widget.sousCategorie == "Construction") {
-                                Navigator.push(context, MaterialPageRoute(builder: (_) => ConstructionScreen(idBien: idBien, onSave: () => setState(() {}))));
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder:
+                                        (_) => ConstructionScreen(
+                                          codeIndividu: widget.codeIndividu,
+                                          valeurTemps: widget.valeurTemps,
+                                          sousCategorie: widget.sousCategorie,
+                                          idBien: idBien,
+                                          onSave: () => setState(() {}),
+                                        ),
+                                  ),
+                                );
                               } else if (widget.sousCategorie == "Véhicules") {
                                 Navigator.push(context, MaterialPageRoute(builder: (_) => VehiculeScreen(codeIndividu: widget.codeIndividu, idBien: idBien, onSave: () => setState(() {}))));
                               } else if (["Equipements Bricolage", "Equipements Ménager", "Equipements Multi-media"].contains(widget.sousCategorie)) {
