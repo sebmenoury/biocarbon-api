@@ -94,8 +94,7 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
         inclureDansBilan: bien.inclureDansBilan ? 'TRUE' : 'FALSE',
       );
 
-      print('✅ Bien enregistré : $result');
-
+      // print('✅ Bien enregistré : $result');
       // Affiche le message
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('✅ Enregistrement effectué')));
 
@@ -104,7 +103,7 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const BienListScreen()));
       });
     } catch (e) {
-      print('❌ Erreur enregistrement : $e');
+      // print('❌ Erreur enregistrement : $e');
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Erreur lors de l\'enregistrement du bien')));
     }
   }
@@ -121,7 +120,7 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const BienListScreen()));
       });
     } catch (e) {
-      print('❌ Erreur mise à jour : $e');
+      // print('❌ Erreur mise à jour : $e');
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Erreur lors de la mise à jour du bien')));
     }
   }
@@ -139,7 +138,7 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             title: const Text("Confirmer la suppression", style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
-            content: const Text("Souhaitez-vous vraiment supprimer ce bien ?", style: TextStyle(fontSize: 11)),
+            content: const Text("Souhaitez-vous vraiment supprimer ce bien (toutes les données associées seront supprimées) ?", style: TextStyle(fontSize: 11)),
             actionsPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             actions: [
               TextButton(onPressed: () => Navigator.pop(context, false), child: const Text("Annuler", style: TextStyle(fontSize: 11))),
@@ -156,7 +155,7 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
           Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const BienListScreen()));
         });
       } catch (e) {
-        print('❌ Erreur suppression : $e');
+        // print('❌ Erreur suppression : $e');
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Erreur lors de la suppression")));
       }
     }
@@ -200,17 +199,27 @@ class _BienDeclarationScreenState extends State<BienDeclarationScreen> {
         const SizedBox(height: 12),
 
         CustomCard(
-          padding: const EdgeInsets.all(12),
-          child: CustomDropdownCompact(
-            value: typeBien,
-            items: const ['Logement principal', 'Logement secondaire'],
-            label: "Type de logement",
-            onChanged: (val) {
-              setState(() {
-                typeBien = val ?? 'Logement principal';
-                bien.typeBien = typeBien;
-              });
-            },
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('Choix du type de logement', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 6),
+              Padding(
+                padding: const EdgeInsets.all(12),
+                child: CustomDropdownCompact(
+                  value: typeBien,
+                  items: const ['Logement principal', 'Logement secondaire'],
+                  label: "Type de logement",
+                  onChanged: (val) {
+                    setState(() {
+                      typeBien = val ?? 'Logement principal';
+                      bien.typeBien = typeBien;
+                    });
+                  },
+                ),
+              ),
+            ],
           ),
         ),
 

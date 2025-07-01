@@ -22,10 +22,6 @@ class BienImmobilier {
     PosteBienImmobilier? poste,
   }) : poste = poste ?? PosteBienImmobilier();
 
-  String formatDoubleToDotString(double value) {
-    return value.toString().replaceAll(',', '.');
-  }
-
   factory BienImmobilier.fromMap(Map<String, dynamic> map) {
     return BienImmobilier(
       idBien: map['ID_Bien'],
