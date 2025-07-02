@@ -16,7 +16,7 @@ import 'navigation_registry.dart';
 import 'eqt_equipements/equipement_screen.dart';
 import 'eqt_confort/equipement_confort_screen.dart';
 import 'bien_renovation/renovation_screen.dart';
-import 'usage_logement/usages_electricite.dart';
+import 'usage_logement/usages_electricite_screen.dart';
 
 const List<String> usageLabels = [
   'Electricité',

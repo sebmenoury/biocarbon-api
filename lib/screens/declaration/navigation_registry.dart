@@ -18,7 +18,6 @@ class ScreenRegistryEntry {
 final Map<String, Map<String, ScreenRegistryEntry>> screenRegistry = {
   "Alimentation": {"Général": ScreenRegistryEntry(builder: () => const AlimentationScreen(), titre: "Déclaration de l'alimentation")},
   "Logement": {
-    "Gaz et Fioul": ScreenRegistryEntry(builder: () => const UsagesGazFioulScreen(), titre: "Déclaration Gaz et Fioul"),
     "Biens Immobiliers": ScreenRegistryEntry(
       builder: () => const BienDeclarationScreen(), // à adapter si besoin
       titre: "Type et propriété du logement",

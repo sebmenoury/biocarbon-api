@@ -5,20 +5,20 @@ import '../../../data/services/api_service.dart';
 import '../poste_list_screen.dart';
 import 'poste_usage.dart';
 
-class UsagesElectriciteScreen extends StatefulWidget {
+class UsagesDechetsEauScreen extends StatefulWidget {
   final String codeIndividu;
   final String idBien;
   final VoidCallback onSave;
   final String sousCategorie;
   final String valeurTemps;
 
-  const UsagesElectriciteScreen({super.key, required this.codeIndividu, required this.idBien, required this.sousCategorie, required this.valeurTemps, required this.onSave});
+  const UsagesDechetsEauScreen({super.key, required this.codeIndividu, required this.idBien, required this.sousCategorie, required this.valeurTemps, required this.onSave});
 
   @override
-  State<UsagesElectriciteScreen> createState() => _UsagesElectriciteScreenState();
+  State<UsagesDechetsEauScreen> createState() => _UsagesDechetsEauScreenState();
 }
 
-class _UsagesElectriciteScreenState extends State<UsagesElectriciteScreen> {
+class _UsagesDechetsEauScreenState extends State<UsagesDechetsEauScreen> {
   List<PosteUsage> usages = [];
   bool isLoading = true;
   double totalEmission = 0;
@@ -40,7 +40,7 @@ class _UsagesElectriciteScreenState extends State<UsagesElectriciteScreen> {
     final ref = await ApiService.getRefUsages();
     final postes = await ApiService.getUCPostesFiltres(idBien: widget.idBien);
 
-    final existants = postes.where((p) => p.sousCategorie == 'Electricité').toList();
+    final existants = postes.where((p) => p.sousCategorie == 'Déchets et Eau').toList();
 
     hasPostesExistants = existants.isNotEmpty;
 
@@ -48,7 +48,7 @@ class _UsagesElectriciteScreenState extends State<UsagesElectriciteScreen> {
 
     List<PosteUsage> resultat = [];
 
-    final refFiltree = ref.where((e) => e['Sous_Categorie'] == 'Electricité').toList();
+    final refFiltree = ref.where((e) => e['Sous_Categorie'] == 'Déchets et Eau').toList();
 
     // Boucle sur les postes référentiels qui ne sont pas encore déclarés
     for (final r in refFiltree) {
@@ -59,9 +59,9 @@ class _UsagesElectriciteScreenState extends State<UsagesElectriciteScreen> {
       resultat.add(
         PosteUsage(
           nomUsage: nom,
-          valeur: 0,
+          valeur: double.tryParse(r['Valeur_Emission_Unitaire'].toString()) ?? 0,
           unite: r['Unite'] ?? 'kWh',
-          facteurEmission: double.tryParse(r['Valeur_Emission_Unitaire'].toString()) ?? 0,
+          facteurEmission: 1.0, // Valeur par défaut, peut être ajustée
           idBien: widget.idBien,
           typeBien: typeBien,
           nomLogement: denomination,
@@ -79,7 +79,7 @@ class _UsagesElectriciteScreenState extends State<UsagesElectriciteScreen> {
           nomUsage: p.nomPoste ?? 'Inconnu',
           valeur: (p.quantite ?? 0).toDouble(),
           unite: refMatch['Unite'] ?? 'kWh',
-          facteurEmission: double.tryParse(refMatch['Valeur_Emission_Unitaire'].toString()) ?? 0,
+          facteurEmission: 1.0, // Valeur par défaut, peut être ajustée
           idBien: widget.idBien,
           typeBien: typeBien,
           nomLogement: denomination,
@@ -180,7 +180,7 @@ class _UsagesElectriciteScreenState extends State<UsagesElectriciteScreen> {
       title: Stack(
         alignment: Alignment.center,
         children: [
-          const Text("Déclaration de votre consommation d’électricité", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+          const Text("Estimation automatique de votre consommation eau et déchets", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
           Align(
             alignment: Alignment.centerLeft,
             child: IconButton(icon: const Icon(Icons.arrow_back), iconSize: 18, padding: EdgeInsets.zero, constraints: const BoxConstraints(), onPressed: () => Navigator.pop(context)),
@@ -194,9 +194,16 @@ class _UsagesElectriciteScreenState extends State<UsagesElectriciteScreen> {
         else ...[
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 12.0),
-            child: Text(
-              "⚙️ Indiquez votre consommation annuelle en kWh, en séparant l’électricité réseau classique et l’électricité verte si vous êtes abonné à une offre dédiée ou produisez en local.",
+            child: const Text(
+              "⚙️ Ces estimations sont basées sur des ordres de grandeur moyens constatés en France, par habitant :\n\n"
+              "• Déchets : chaque personne génère en moyenne 590 kg de déchets ménagers par an.\n"
+              "• Eau : la consommation domestique annuelle moyenne est d’environ 53 m³ par habitant.\n\n"
+              "Ces consommations sont ensuite converties en émissions de gaz à effet de serre grâce à des facteurs d’émission moyens fournis par l’ADEME. "
+              "Les résultats affichés correspondent donc à l’empreinte carbone annuelle estimée pour une personne, en kg de CO₂ équivalent.\n\n"
+              "• Déchets ménagers : 250.00 kg CO₂/an\n"
+              "• Eau domestique : 14.00 kg CO₂/an",
               style: TextStyle(fontSize: 11),
+              textAlign: TextAlign.justify,
             ),
           ),
           const SizedBox(height: 12),
@@ -223,7 +230,7 @@ class _UsagesElectriciteScreenState extends State<UsagesElectriciteScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("Relevé de consommation", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                Text("Indication de consommation par défaut", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 6),
 
                 Column(
@@ -253,13 +260,8 @@ class _UsagesElectriciteScreenState extends State<UsagesElectriciteScreen> {
                                     ),
                                   ),
                                   const SizedBox(width: 4),
-                                  Text("kWh/an", style: const TextStyle(fontSize: 10, color: Colors.grey)),
+                                  Text("kg CO₂/an", style: const TextStyle(fontSize: 10, color: Colors.grey)),
                                 ],
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                "val=${u.valeur}, facteur=${u.facteurEmission}, hab=${u.nbHabitants}, emission=${u.calculerEmission(nbHabitants).toStringAsFixed(1)}",
-                                style: const TextStyle(fontSize: 10, color: Colors.grey),
                               ),
                             ],
                           ),

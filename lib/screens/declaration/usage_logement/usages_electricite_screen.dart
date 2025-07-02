@@ -5,20 +5,20 @@ import '../../../data/services/api_service.dart';
 import '../poste_list_screen.dart';
 import 'poste_usage.dart';
 
-class UsagesGazFioulScreen extends StatefulWidget {
+class UsagesElectriciteScreen extends StatefulWidget {
   final String codeIndividu;
   final String idBien;
   final VoidCallback onSave;
   final String sousCategorie;
   final String valeurTemps;
 
-  const UsagesGazFioulScreen({super.key, required this.codeIndividu, required this.idBien, required this.sousCategorie, required this.valeurTemps, required this.onSave});
+  const UsagesElectriciteScreen({super.key, required this.codeIndividu, required this.idBien, required this.sousCategorie, required this.valeurTemps, required this.onSave});
 
   @override
-  State<UsagesGazFioulScreen> createState() => _UsagesGazFioulScreenState();
+  State<UsagesElectriciteScreen> createState() => _UsagesElectriciteScreenState();
 }
 
-class _UsagesGazFioulScreenState extends State<UsagesGazFioulScreen> {
+class _UsagesElectriciteScreenState extends State<UsagesElectriciteScreen> {
   List<PosteUsage> usages = [];
   bool isLoading = true;
   double totalEmission = 0;
@@ -40,7 +40,7 @@ class _UsagesGazFioulScreenState extends State<UsagesGazFioulScreen> {
     final ref = await ApiService.getRefUsages();
     final postes = await ApiService.getUCPostesFiltres(idBien: widget.idBien);
 
-    final existants = postes.where((p) => p.sousCategorie == 'Gaz et Fioul').toList();
+    final existants = postes.where((p) => p.sousCategorie == 'Electricité').toList();
 
     hasPostesExistants = existants.isNotEmpty;
 
@@ -48,7 +48,7 @@ class _UsagesGazFioulScreenState extends State<UsagesGazFioulScreen> {
 
     List<PosteUsage> resultat = [];
 
-    final refFiltree = ref.where((e) => e['Sous_Categorie'] == 'Gaz et Fioul').toList();
+    final refFiltree = ref.where((e) => e['Sous_Categorie'] == 'Electricité').toList();
 
     // Boucle sur les postes référentiels qui ne sont pas encore déclarés
     for (final r in refFiltree) {
@@ -180,7 +180,7 @@ class _UsagesGazFioulScreenState extends State<UsagesGazFioulScreen> {
       title: Stack(
         alignment: Alignment.center,
         children: [
-          const Text("Déclaration de votre consommation de gaz et Fioul", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+          const Text("Déclaration de votre consommation d’électricité", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
           Align(
             alignment: Alignment.centerLeft,
             child: IconButton(icon: const Icon(Icons.arrow_back), iconSize: 18, padding: EdgeInsets.zero, constraints: const BoxConstraints(), onPressed: () => Navigator.pop(context)),
@@ -195,7 +195,7 @@ class _UsagesGazFioulScreenState extends State<UsagesGazFioulScreen> {
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 12.0),
             child: Text(
-              "⚙️ Indiquez vos consommations annuelles de Gaz et Fioul pour le chauffage, la cuisson, ou le chauffe-eau. Les émissions sont calculées en fonction du nombre d'habitants.",
+              "⚙️ Indiquez votre consommation annuelle en kWh, en séparant l’électricité réseau classique et l’électricité verte si vous êtes abonné à une offre dédiée ou produisez en local.",
               style: TextStyle(fontSize: 11),
             ),
           ),
@@ -229,12 +229,6 @@ class _UsagesGazFioulScreenState extends State<UsagesGazFioulScreen> {
                 Column(
                   children:
                       usages.map((u) {
-                        // Choix de l’unité selon le nom de l’usage
-                        String uniteAffichee = "kWh/an";
-                        if (u.nomUsage.toLowerCase().contains("fioul")) {
-                          uniteAffichee = "litres/an";
-                        }
-
                         return Padding(
                           padding: const EdgeInsets.symmetric(vertical: 6),
                           child: Column(
@@ -259,7 +253,7 @@ class _UsagesGazFioulScreenState extends State<UsagesGazFioulScreen> {
                                     ),
                                   ),
                                   const SizedBox(width: 4),
-                                  Text(uniteAffichee, style: const TextStyle(fontSize: 10, color: Colors.grey)),
+                                  Text("kWh/an", style: const TextStyle(fontSize: 10, color: Colors.grey)),
                                 ],
                               ),
                             ],
