@@ -320,9 +320,13 @@ class _EquipementScreenState extends State<EquipementScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Icon(sousCategorieIcons[widget.sousCategorie] ?? Icons.device_unknown, size: 16, color: souscategoryColors[widget.sousCategorie] ?? Colors.grey),
-              const SizedBox(width: 8),
-              const Text("Empreinte d'amortissement annuel", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+              Row(
+                children: [
+                  Icon(sousCategorieIcons[widget.sousCategorie] ?? Icons.device_unknown, size: 16, color: souscategoryColors[widget.sousCategorie] ?? Colors.grey),
+                  const SizedBox(width: 8),
+                  const Text("Empreinte d'amortissement annuel", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                ],
+              ),
               Text("${totalEmission.toStringAsFixed(0)} kgCO₂", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
             ],
           ),

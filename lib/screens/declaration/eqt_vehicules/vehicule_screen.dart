@@ -411,9 +411,13 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Icon(Icons.directions_car, size: 16, color: Colors.indigo),
-              const SizedBox(width: 8),
-              const Text("Empreinte d'amortissement annuel", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+              Row(
+                children: [
+                  const Icon(Icons.directions_car, size: 16, color: Colors.indigo),
+                  const SizedBox(width: 8),
+                  const Text("Empreinte d'amortissement annuel", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                ],
+              ),
               Text("${totalEmission.toStringAsFixed(0)} kgCO₂", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
             ],
           ),

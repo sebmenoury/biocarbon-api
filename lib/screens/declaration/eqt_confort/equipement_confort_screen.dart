@@ -324,9 +324,13 @@ class _EquipementConfortScreenState extends State<EquipementConfortScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Icon(Icons.thermostat, size: 16, color: Color.fromARGB(255, 137, 12, 160)),
-              const SizedBox(width: 8),
-              const Text("Empreinte d'amortissement annuel", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+              Row(
+                children: [
+                  const Icon(Icons.thermostat, size: 16, color: Color.fromARGB(255, 137, 12, 160)),
+                  const SizedBox(width: 8),
+                  const Text("Empreinte d'amortissement annuel", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                ],
+              ),
               Text("${totalEmission.toStringAsFixed(0)} kgCO₂", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
             ],
           ),
