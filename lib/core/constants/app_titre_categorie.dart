@@ -49,7 +49,19 @@ const Map<String, String> texteParSousCategorie = {
       "⚙️ Les véhicules personnels représentent un poste d’émission majeur, lié à leur fabrication (énergie grise) et à leur usage quotidien.\n\n"
       "Dans cette section, tu peux déclarer les voitures, deux-roues motorisés, vélos et autres moyens de transport personnels.",
 
-  'Electricité': "🔌 Vous déclarez ici la consommation annuelle d’électricité par logement, qui est répartie entre le nombre d'habitants.",
+  'Electricité': "⚙️ Vous déclarez ici la consommation annuelle d’électricité par logement. Elle est répartie entre le nombre d'habitants.",
+  'Gaz et Fioul': "⚙️ Vous déclarez ici la consommation annuelle de gaz ou fioul par logement. Elle  est répartie entre le nombre d'habitants.",
+  'Déchets et Eau': "⚙️ Vous déclarez ici votre comportement en gestion des déchets, et si vous la connaissez votre consommation d'eau. Elle  est répartie entre le nombre d'habitants.",
+  'Alimentation':
+      "⚙️ Vous déclarez ici votre régime alimentaire. Vous avez le choix entre un régime général qui déclinera une répartition d'aliments, ou une déclaration plus détaillée par nature d'aliments.",
+  'Loisirs': "⚙️ Vous déclarez ici les éléments significatifs de consommation pendant les phases de loisirs.",
+  'Habillement': "⚙️ Vous déclarez ici les dépenses en habillement, qui sont retranscrits en empreinte carbone.",
+  'Banque et Assurances': "⚙️ Vous déclarez ici les montants principaux présents sur comptes bancaires.",
+  'Déplacements Avion': "⚙️ Vous déclarez ici les différents déplacements que vous avez effectués en avion sur la période sélectionnée.",
+  'Déplacements Voiture': "⚙️ Vous déclarez ici les kilométrages réalisés avec vos différents moyens de transport.",
+  'Déplacements Train/Métro/Bus': "⚙️ Vous déclarez ici les kilométrages réalisés en moyen de transport public.",
+  'Déplacements Autres': "⚙️ Vous déclarez ici les kilométrages réalisés en moyen de transport spécifique.",
+  'Services publics': "⚙️ Des valeurs par défaut vous sont atribuées. Elles correspondent à une répartition nationale par habitant des différents services publics.",
 };
 
 const Map<String, String> infoBulleParSousCategorie = {
