@@ -50,43 +50,44 @@ class _UsagesDechetsEauScreenState extends State<UsagesDechetsEauScreen> {
 
     final refFiltree = ref.where((e) => e['Sous_Categorie'] == 'Déchets et Eau').toList();
 
-    // Boucle sur les postes référentiels qui ne sont pas encore déclarés
-    for (final r in refFiltree) {
-      final nom = r['Nom_Usage'];
-
-      if (nomsExistants.contains(nom)) continue;
-
-      resultat.add(
-        PosteUsage(
-          nomUsage: nom,
-          valeur: double.tryParse(r['Valeur_Emission_Unitaire'].toString()) ?? 0,
-          unite: r['Unite'] ?? 'kWh',
-          facteurEmission: 1.0, // Valeur par défaut, peut être ajustée
-          idBien: widget.idBien,
-          typeBien: typeBien,
-          nomLogement: denomination,
-          nbHabitants: nbHabitants,
-        ),
-      );
-    }
-
-    // Boucle sur les postes UC déjà enregistrés
-    for (final p in existants) {
-      final refMatch = refFiltree.firstWhere((e) => e['Nom_Usage'] == p.nomPoste, orElse: () => {});
-
-      resultat.add(
-        PosteUsage(
+    // Création d'un dictionnaire des postes existants
+    final Map<String, PosteUsage> mapExistants = {
+      for (final p in existants)
+        p.nomPoste ?? '': PosteUsage(
           nomUsage: p.nomPoste ?? 'Inconnu',
           valeur: (p.quantite ?? 0).toDouble(),
-          unite: refMatch['Unite'] ?? 'kWh',
-          facteurEmission: 1.0, // Valeur par défaut, peut être ajustée
+          unite: refFiltree.firstWhere((e) => e['Nom_Usage'] == p.nomPoste, orElse: () => {})['Unite'] ?? 'kg CO₂/an',
+          facteurEmission: 1.0,
           idBien: widget.idBien,
           typeBien: typeBien,
           nomLogement: denomination,
           nbHabitants: nbHabitants,
           idUsageInitial: p.idUsage,
         ),
-      );
+    };
+
+    // Construction de la liste finale à afficher
+    for (final r in refFiltree) {
+      final nom = r['Nom_Usage'];
+
+      if (mapExistants.containsKey(nom)) {
+        // Si usage déjà déclaré → on l'utilise
+        resultat.add(mapExistants[nom]!);
+      } else {
+        // Sinon → initialisation par défaut depuis la référence
+        resultat.add(
+          PosteUsage(
+            nomUsage: nom,
+            valeur: double.tryParse(r['Valeur_Emission_Unitaire'].toString()) ?? 0,
+            unite: r['Unite'] ?? 'kg CO₂/an',
+            facteurEmission: 1.0,
+            idBien: widget.idBien,
+            typeBien: typeBien,
+            nomLogement: denomination,
+            nbHabitants: nbHabitants,
+          ),
+        );
+      }
     }
 
     setState(() {
