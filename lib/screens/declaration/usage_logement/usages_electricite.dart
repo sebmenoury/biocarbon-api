@@ -179,7 +179,17 @@ class _UsagesElectriciteScreenState extends State<UsagesElectriciteScreen> {
     if (isLoading) return const Center(child: CircularProgressIndicator());
 
     return BaseScreen(
-      title: const Text("Déclaration de votre consommation d’électricité", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+      title: Stack(
+        alignment: Alignment.center,
+        children: [
+          const Text("Déclaration de votre consommation d’électricité", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: IconButton(icon: const Icon(Icons.arrow_back), iconSize: 18, padding: EdgeInsets.zero, constraints: const BoxConstraints(), onPressed: () => Navigator.pop(context)),
+          ),
+        ],
+      ),
+
       children: [
         const Padding(
           padding: EdgeInsets.symmetric(horizontal: 12.0),
@@ -190,7 +200,7 @@ class _UsagesElectriciteScreenState extends State<UsagesElectriciteScreen> {
         ),
         const SizedBox(height: 12),
         CustomCard(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -208,38 +218,48 @@ class _UsagesElectriciteScreenState extends State<UsagesElectriciteScreen> {
         const SizedBox(height: 8),
         CustomCard(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+
           child: Column(
-            children:
-                usages.map((u) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 6),
-                    child: Row(
-                      children: [
-                        Expanded(child: Text(u.nomUsage, style: const TextStyle(fontSize: 12))),
-                        const SizedBox(width: 12),
-                        SizedBox(
-                          width: 80,
-                          child: TextFormField(
-                            initialValue: u.valeur.toString(),
-                            decoration: const InputDecoration(isDense: true, border: OutlineInputBorder()),
-                            keyboardType: TextInputType.number,
-                            onChanged: (val) {
-                              final v = double.tryParse(val) ?? 0;
-                              setState(() {
-                                u.valeur = v;
-                                recalculerTotal();
-                              });
-                            },
-                          ),
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("Relevé de consommation", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 6),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children:
+                    usages.map((u) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 6),
+                        child: Row(
+                          children: [
+                            Expanded(child: Text(u.nomUsage, style: const TextStyle(fontSize: 12))),
+                            const SizedBox(width: 12),
+                            SizedBox(
+                              width: 80,
+                              child: TextFormField(
+                                initialValue: u.valeur.toString(),
+                                keyboardType: TextInputType.number,
+                                onChanged: (val) {
+                                  final v = double.tryParse(val) ?? 0;
+                                  setState(() {
+                                    u.valeur = v;
+                                    recalculerTotal();
+                                  });
+                                },
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            Text("Kwh/an", style: const TextStyle(fontSize: 10, color: Colors.grey)),
+                          ],
                         ),
-                        const SizedBox(width: 4),
-                        Text(u.unite ?? '', style: const TextStyle(fontSize: 10, color: Colors.grey)),
-                      ],
-                    ),
-                  );
-                }).toList(),
+                      );
+                    }).toList(),
+              ),
+            ],
           ),
         ),
+
         const SizedBox(height: 24),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
