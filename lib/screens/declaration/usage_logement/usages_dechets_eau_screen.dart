@@ -60,9 +60,9 @@ class _UsagesDechetsEauScreenState extends State<UsagesDechetsEauScreen> {
       // Valeurs par défaut spécifiques
       double valeurInitiale = 0;
       if (nom == 'Déchets ménagers') {
-        valeurInitiale = 590;
+        valeurInitiale = 590 * nbHabitants;
       } else if (nom == 'Eau domestique') {
-        valeurInitiale = 53;
+        valeurInitiale = 53 * nbHabitants;
       }
 
       resultat.add(
@@ -204,7 +204,7 @@ class _UsagesDechetsEauScreenState extends State<UsagesDechetsEauScreen> {
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 12.0),
             child: const Text(
-              "⚙️ Les valeurs proposéess sont basées sur des ordres de grandeur moyens constatés en France, par habitant :\n\n"
+              "⚙️ Les valeurs proposéess sont basées sur des ordres de grandeur moyens constatés en France, appliquées au nombre d'habitants du logement, sachant que :\n\n"
               "• Déchets : chaque personne génère en moyenne 590 kg de déchets ménagers par an.\n"
               "• Eau : la consommation domestique annuelle moyenne est d’environ 53 m³ par habitant.\n\n",
               style: TextStyle(fontSize: 11),
