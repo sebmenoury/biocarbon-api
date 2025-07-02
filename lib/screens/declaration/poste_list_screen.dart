@@ -17,6 +17,8 @@ import 'eqt_equipements/equipement_screen.dart';
 import 'eqt_confort/equipement_confort_screen.dart';
 import 'bien_renovation/renovation_screen.dart';
 import 'usage_logement/usages_electricite_screen.dart';
+import 'usage_logement/usages_gaz_fioul_screen.dart';
+import 'usage_logement/usages_dechets_eau_screen.dart';
 
 const List<String> usageLabels = [
   'Electricité',
@@ -458,6 +460,34 @@ class _PosteListScreenState extends State<PosteListScreen> {
                                             ),
                                       ),
                                     );
+                                  } else if (widget.sousCategorie == "Gaz et Fioul") {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder:
+                                            (_) => UsagesGazFioulScreen(
+                                              codeIndividu: widget.codeIndividu,
+                                              idBien: idBien,
+                                              sousCategorie: widget.sousCategorie,
+                                              valeurTemps: widget.valeurTemps,
+                                              onSave: () => setState(() {}),
+                                            ),
+                                      ),
+                                    );
+                                  } else if (widget.sousCategorie == "Déchets et Eau") {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder:
+                                            (_) => UsagesDechetsEauScreen(
+                                              codeIndividu: widget.codeIndividu,
+                                              idBien: idBien,
+                                              sousCategorie: widget.sousCategorie,
+                                              valeurTemps: widget.valeurTemps,
+                                              onSave: () => setState(() {}),
+                                            ),
+                                      ),
+                                    );
                                   } else {
                                     final entry = getEcranEtTitre(widget.typeCategorie, widget.sousCategorie);
                                     if (entry != null && entry.builder != null) {
@@ -565,6 +595,34 @@ class _PosteListScreenState extends State<PosteListScreen> {
                                   MaterialPageRoute(
                                     builder:
                                         (_) => UsagesElectriciteScreen(
+                                          codeIndividu: widget.codeIndividu,
+                                          idBien: idBien,
+                                          sousCategorie: widget.sousCategorie,
+                                          valeurTemps: widget.valeurTemps,
+                                          onSave: () => setState(() {}),
+                                        ),
+                                  ),
+                                );
+                              } else if (widget.sousCategorie == "Gaz et Fioul") {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder:
+                                        (_) => UsagesGazFioulScreen(
+                                          codeIndividu: widget.codeIndividu,
+                                          idBien: idBien,
+                                          sousCategorie: widget.sousCategorie,
+                                          valeurTemps: widget.valeurTemps,
+                                          onSave: () => setState(() {}),
+                                        ),
+                                  ),
+                                );
+                              } else if (widget.sousCategorie == "Déchets et Eau") {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder:
+                                        (_) => UsagesDechetsEauScreen(
                                           codeIndividu: widget.codeIndividu,
                                           idBien: idBien,
                                           sousCategorie: widget.sousCategorie,
