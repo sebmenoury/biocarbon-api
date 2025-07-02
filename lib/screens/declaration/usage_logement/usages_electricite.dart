@@ -176,8 +176,6 @@ class _UsagesElectriciteScreenState extends State<UsagesElectriciteScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (isLoading) return const Center(child: CircularProgressIndicator());
-
     return BaseScreen(
       title: Stack(
         alignment: Alignment.center,
@@ -191,87 +189,91 @@ class _UsagesElectriciteScreenState extends State<UsagesElectriciteScreen> {
       ),
 
       children: [
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 12.0),
-          child: Text(
-            "⚙️ Indiquez votre consommation annuelle en kWh, en séparant l’électricité réseau classique et l’électricité verte si vous êtes abonné à une offre dédiée ou produisez en local.",
-            style: TextStyle(fontSize: 11),
-          ),
-        ),
-        const SizedBox(height: 12),
-        CustomCard(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  const Icon(Icons.electrical_services, size: 16, color: Colors.teal),
-                  const SizedBox(width: 8),
-                  const Text("Empreinte totale", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-                ],
-              ),
-              Text("${totalEmission.toStringAsFixed(0)} kgCO₂", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-            ],
-          ),
-        ),
-        const SizedBox(height: 8),
-        CustomCard(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text("Relevé de consommation", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 6),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children:
-                    usages.map((u) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 6),
-                        child: Row(
-                          children: [
-                            Expanded(child: Text(u.nomUsage, style: const TextStyle(fontSize: 12))),
-                            const SizedBox(width: 12),
-                            SizedBox(
-                              width: 80,
-                              child: TextFormField(
-                                initialValue: u.valeur.toString(),
-                                keyboardType: TextInputType.number,
-                                onChanged: (val) {
-                                  final v = double.tryParse(val) ?? 0;
-                                  setState(() {
-                                    u.valeur = v;
-                                    recalculerTotal();
-                                  });
-                                },
-                              ),
-                            ),
-                            const SizedBox(width: 4),
-                            Text("Kwh/an", style: const TextStyle(fontSize: 10, color: Colors.grey)),
-                          ],
-                        ),
-                      );
-                    }).toList(),
-              ),
-            ],
-          ),
-        ),
-
-        const SizedBox(height: 24),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            ElevatedButton(onPressed: enregistrer, style: ElevatedButton.styleFrom(backgroundColor: Colors.green.shade100), child: const Text("Enregistrer", style: TextStyle(color: Colors.black))),
-            OutlinedButton(
-              onPressed: hasPostesExistants ? supprimer : null,
-              style: OutlinedButton.styleFrom(side: BorderSide(color: Colors.teal.shade200)),
-              child: const Text("Supprimer la déclaration", style: TextStyle(fontSize: 12)),
+        if (isLoading)
+          const Center(child: CircularProgressIndicator())
+        else ...[
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 12.0),
+            child: Text(
+              "⚙️ Indiquez votre consommation annuelle en kWh, en séparant l’électricité réseau classique et l’électricité verte si vous êtes abonné à une offre dédiée ou produisez en local.",
+              style: TextStyle(fontSize: 11),
             ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 12),
+          CustomCard(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    const Icon(Icons.electrical_services, size: 16, color: Colors.teal),
+                    const SizedBox(width: 8),
+                    const Text("Empreinte totale", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                  ],
+                ),
+                Text("${totalEmission.toStringAsFixed(0)} kgCO₂", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+              ],
+            ),
+          ),
+          const SizedBox(height: 8),
+          CustomCard(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("Relevé de consommation", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 6),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children:
+                      usages.map((u) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 6),
+                          child: Row(
+                            children: [
+                              Expanded(child: Text(u.nomUsage, style: const TextStyle(fontSize: 12))),
+                              const SizedBox(width: 12),
+                              SizedBox(
+                                width: 80,
+                                child: TextFormField(
+                                  initialValue: u.valeur.toString(),
+                                  keyboardType: TextInputType.number,
+                                  onChanged: (val) {
+                                    final v = double.tryParse(val) ?? 0;
+                                    setState(() {
+                                      u.valeur = v;
+                                      recalculerTotal();
+                                    });
+                                  },
+                                ),
+                              ),
+                              const SizedBox(width: 4),
+                              Text("Kwh/an", style: const TextStyle(fontSize: 10, color: Colors.grey)),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 24),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              ElevatedButton(onPressed: enregistrer, style: ElevatedButton.styleFrom(backgroundColor: Colors.green.shade100), child: const Text("Enregistrer", style: TextStyle(color: Colors.black))),
+              OutlinedButton(
+                onPressed: hasPostesExistants ? supprimer : null,
+                style: OutlinedButton.styleFrom(side: BorderSide(color: Colors.teal.shade200)),
+                child: const Text("Supprimer la déclaration", style: TextStyle(fontSize: 12)),
+              ),
+            ],
+          ),
+        ],
       ],
     );
   }
