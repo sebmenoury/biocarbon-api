@@ -50,44 +50,52 @@ class _UsagesDechetsEauScreenState extends State<UsagesDechetsEauScreen> {
 
     final refFiltree = ref.where((e) => e['Sous_Categorie'] == 'Déchets et Eau').toList();
 
-    // Création d'un dictionnaire des postes existants
-    final Map<String, PosteUsage> mapExistants = {
-      for (final p in existants)
-        p.nomPoste ?? '': PosteUsage(
+    // Boucle sur les postes référentiels qui ne sont pas encore déclarés
+    // Boucle sur les postes référentiels qui ne sont pas encore déclarés
+    for (final r in refFiltree) {
+      final nom = r['Nom_Usage'];
+
+      if (nomsExistants.contains(nom)) continue;
+
+      // Valeurs par défaut spécifiques
+      double valeurInitiale = 0;
+      if (nom == 'Déchets ménagers') {
+        valeurInitiale = 590;
+      } else if (nom == 'Eau domestique') {
+        valeurInitiale = 53;
+      }
+
+      resultat.add(
+        PosteUsage(
+          nomUsage: nom,
+          valeur: valeurInitiale,
+          unite: r['Unite'] ?? 'kWh',
+          facteurEmission: double.tryParse(r['Valeur_Emission_Unitaire'].toString()) ?? 0,
+          idBien: widget.idBien,
+          typeBien: typeBien,
+          nomLogement: denomination,
+          nbHabitants: nbHabitants,
+        ),
+      );
+    }
+
+    // Boucle sur les postes UC déjà enregistrés
+    for (final p in existants) {
+      final refMatch = refFiltree.firstWhere((e) => e['Nom_Usage'] == p.nomPoste, orElse: () => {});
+
+      resultat.add(
+        PosteUsage(
           nomUsage: p.nomPoste ?? 'Inconnu',
           valeur: (p.quantite ?? 0).toDouble(),
-          unite: refFiltree.firstWhere((e) => e['Nom_Usage'] == p.nomPoste, orElse: () => {})['Unite'] ?? 'kg CO₂/an',
-          facteurEmission: 1.0,
+          unite: refMatch['Unite'] ?? 'kWh',
+          facteurEmission: double.tryParse(refMatch['Valeur_Emission_Unitaire'].toString()) ?? 0,
           idBien: widget.idBien,
           typeBien: typeBien,
           nomLogement: denomination,
           nbHabitants: nbHabitants,
           idUsageInitial: p.idUsage,
         ),
-    };
-
-    // Construction de la liste finale à afficher
-    for (final r in refFiltree) {
-      final nom = r['Nom_Usage'];
-
-      if (mapExistants.containsKey(nom)) {
-        // Si usage déjà déclaré → on l'utilise
-        resultat.add(mapExistants[nom]!);
-      } else {
-        // Sinon → initialisation par défaut depuis la référence
-        resultat.add(
-          PosteUsage(
-            nomUsage: nom,
-            valeur: double.tryParse(r['Valeur_Emission_Unitaire'].toString()) ?? 0,
-            unite: r['Unite'] ?? 'kg CO₂/an',
-            facteurEmission: 1.0,
-            idBien: widget.idBien,
-            typeBien: typeBien,
-            nomLogement: denomination,
-            nbHabitants: nbHabitants,
-          ),
-        );
-      }
+      );
     }
 
     setState(() {
@@ -181,7 +189,7 @@ class _UsagesDechetsEauScreenState extends State<UsagesDechetsEauScreen> {
       title: Stack(
         alignment: Alignment.center,
         children: [
-          const Text("Estimation automatique de votre consommation eau et déchets", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+          const Text("Déclaration de votre consommation eau et déchets", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
           Align(
             alignment: Alignment.centerLeft,
             child: IconButton(icon: const Icon(Icons.arrow_back), iconSize: 18, padding: EdgeInsets.zero, constraints: const BoxConstraints(), onPressed: () => Navigator.pop(context)),
@@ -196,13 +204,9 @@ class _UsagesDechetsEauScreenState extends State<UsagesDechetsEauScreen> {
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 12.0),
             child: const Text(
-              "⚙️ Ces estimations sont basées sur des ordres de grandeur moyens constatés en France, par habitant :\n\n"
+              "⚙️ Les valeurs proposéess sont basées sur des ordres de grandeur moyens constatés en France, par habitant :\n\n"
               "• Déchets : chaque personne génère en moyenne 590 kg de déchets ménagers par an.\n"
-              "• Eau : la consommation domestique annuelle moyenne est d’environ 53 m³ par habitant.\n\n"
-              "Ces consommations sont ensuite converties en émissions de gaz à effet de serre grâce à des facteurs d’émission moyens fournis par l’ADEME. "
-              "Les résultats affichés correspondent donc à l’empreinte carbone annuelle estimée pour une personne, en kg de CO₂ équivalent.\n\n"
-              "• Déchets ménagers : 250.00 kg CO₂/an\n"
-              "• Eau domestique : 14.00 kg CO₂/an",
+              "• Eau : la consommation domestique annuelle moyenne est d’environ 53 m³ par habitant.\n\n",
               style: TextStyle(fontSize: 11),
               textAlign: TextAlign.justify,
             ),
@@ -237,6 +241,12 @@ class _UsagesDechetsEauScreenState extends State<UsagesDechetsEauScreen> {
                 Column(
                   children:
                       usages.map((u) {
+                        // Choix de l’unité selon le nom de l’usage
+                        String uniteAffichee = "kg déchets/an";
+                        if (u.nomUsage.toLowerCase().contains("eau")) {
+                          uniteAffichee = "m³/an";
+                        }
+
                         return Padding(
                           padding: const EdgeInsets.symmetric(vertical: 6),
                           child: Column(
@@ -261,7 +271,7 @@ class _UsagesDechetsEauScreenState extends State<UsagesDechetsEauScreen> {
                                     ),
                                   ),
                                   const SizedBox(width: 4),
-                                  Text("kg CO₂/an", style: const TextStyle(fontSize: 10, color: Colors.grey)),
+                                  Text(uniteAffichee, style: const TextStyle(fontSize: 10, color: Colors.grey)),
                                 ],
                               ),
                             ],
