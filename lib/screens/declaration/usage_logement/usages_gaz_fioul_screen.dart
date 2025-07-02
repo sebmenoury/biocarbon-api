@@ -242,7 +242,7 @@ class _UsagesGazFioulScreenState extends State<UsagesGazFioulScreen> {
                             children: [
                               Row(
                                 children: [
-                                  Expanded(child: Text(u.nomUsage, style: const TextStyle(fontSize: 12))),
+                                  Expanded(flex: 2, child: Text(u.nomUsage, style: const TextStyle(fontSize: 12))),
                                   const SizedBox(width: 12),
                                   SizedBox(
                                     width: 80,
