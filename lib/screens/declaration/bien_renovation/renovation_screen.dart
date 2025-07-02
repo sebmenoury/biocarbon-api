@@ -399,7 +399,7 @@ class _RenovationScreenState extends State<RenovationScreen> {
                     ],
                   ),
                 ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 24),
 
               /// BOUTONS ENREGISTRER / SUPPRIMER
               Row(

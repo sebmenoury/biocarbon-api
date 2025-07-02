@@ -336,8 +336,31 @@ class _EquipementConfortScreenState extends State<EquipementConfortScreen> {
           ),
         ),
         const SizedBox(height: 8),
-        CustomCard(child: Column(children: equipements.asMap().entries.map((e) => buildEquipementLine(e.value, e.key)).toList())),
-        const SizedBox(height: 12),
+
+        CustomCard(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: const [
+                      SizedBox(width: 50, child: Text("Quantité", style: TextStyle(fontSize: 10, color: Colors.grey))),
+                      SizedBox(width: 12),
+                      SizedBox(width: 90, child: Text("Année(s) d'achat", style: TextStyle(fontSize: 10, color: Colors.grey))),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 6),
+
+              ...equipements.asMap().entries.map((e) => buildEquipementLine(e.value, e.key)).toList(),
+            ],
+          ),
+        ),
+        const SizedBox(height: 24),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [

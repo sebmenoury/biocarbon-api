@@ -432,7 +432,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
           if (items.isNotEmpty) return buildCategorieCard(groupe, items);
           return const SizedBox.shrink();
         }),
-        const SizedBox(height: 12),
+        const SizedBox(height: 24),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
