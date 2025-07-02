@@ -7,14 +7,15 @@ import '../declaration/ref_type_category.dart';
 import '../declaration/bien_immobilier/bien_list_screen.dart';
 
 class MesDonneesScreen extends StatefulWidget {
-  const MesDonneesScreen({super.key});
+  final int initialTabIndex;
+  const MesDonneesScreen({super.key, this.initialTabIndex = 0});
 
   @override
   State<MesDonneesScreen> createState() => _MesDonneesScreenState();
 }
 
 class _MesDonneesScreenState extends State<MesDonneesScreen> {
-  int selectedIndex = 0; // 0 = Equipements, 1 = Usages
+  late int selectedIndex;
 
   final List<String> equipementLabels = [
     'Biens Immobiliers',
@@ -41,6 +42,12 @@ class _MesDonneesScreenState extends State<MesDonneesScreen> {
     'Déplacements Autres',
     'Services publics',
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    selectedIndex = widget.initialTabIndex;
+  }
 
   @override
   Widget build(BuildContext context) {

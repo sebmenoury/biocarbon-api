@@ -18,6 +18,21 @@ import 'eqt_confort/equipement_confort_screen.dart';
 import 'bien_renovation/renovation_screen.dart';
 import 'usage_logement/usages_electricite.dart';
 
+const List<String> usageLabels = [
+  'Electricité',
+  'Gaz et Fioul',
+  'Déchets et Eau',
+  'Alimentation',
+  'Loisirs',
+  'Habillement',
+  'Banque et Assurances',
+  'Déplacements Avion',
+  'Déplacements Voiture',
+  'Déplacements Train/Métro/Bus',
+  'Déplacements Autres',
+  'Services publics',
+];
+
 class PosteListScreen extends StatefulWidget {
   final String typeCategorie;
   final String sousCategorie;
@@ -117,13 +132,8 @@ class _PosteListScreenState extends State<PosteListScreen> {
               icon: const Icon(Icons.arrow_back),
               iconSize: 18,
               onPressed: () {
-                // Navigation personnalisée selon le contexte
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const MesDonneesScreen(), // ou MesUsagesScreen si besoin
-                  ),
-                );
+                final isUsage = usageLabels.contains(widget.sousCategorie);
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => MesDonneesScreen(initialTabIndex: isUsage ? 1 : 0)));
               },
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(),
