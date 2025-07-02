@@ -133,7 +133,7 @@ class _UsagesElectriciteScreenState extends State<UsagesElectriciteScreen> {
           "Frequence": "",
           "Facteur_Emission": u.facteurEmission,
           "Emission_Calculee": u.valeur * u.facteurEmission / u.nbHabitants,
-          "Mode_Calcul": "Par habitant",
+          "Mode_Calcul": "Direct",
           "Annee_Achat": "", // optionnel si non concerné
           "Duree_Amortissement": "", // optionnel si non concerné
         });
@@ -231,26 +231,36 @@ class _UsagesElectriciteScreenState extends State<UsagesElectriciteScreen> {
                       usages.map((u) {
                         return Padding(
                           padding: const EdgeInsets.symmetric(vertical: 6),
-                          child: Row(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Expanded(child: Text(u.nomUsage, style: const TextStyle(fontSize: 12))),
-                              const SizedBox(width: 12),
-                              SizedBox(
-                                width: 80,
-                                child: TextFormField(
-                                  initialValue: u.valeur.toString(),
-                                  keyboardType: TextInputType.number,
-                                  onChanged: (val) {
-                                    final v = double.tryParse(val) ?? 0;
-                                    setState(() {
-                                      u.valeur = v;
-                                      recalculerTotal();
-                                    });
-                                  },
-                                ),
+                              Row(
+                                children: [
+                                  Expanded(child: Text(u.nomUsage, style: const TextStyle(fontSize: 12))),
+                                  const SizedBox(width: 12),
+                                  SizedBox(
+                                    width: 80,
+                                    child: TextFormField(
+                                      initialValue: u.valeur.toString(),
+                                      keyboardType: TextInputType.number,
+                                      onChanged: (val) {
+                                        final v = double.tryParse(val) ?? 0;
+                                        setState(() {
+                                          u.valeur = v;
+                                          recalculerTotal();
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text("kWh/an", style: const TextStyle(fontSize: 10, color: Colors.grey)),
+                                ],
                               ),
-                              const SizedBox(width: 4),
-                              const Text("kWh/an", style: TextStyle(fontSize: 10, color: Colors.grey)),
+                              const SizedBox(height: 2),
+                              Text(
+                                "val=${u.valeur}, facteur=${u.facteurEmission}, hab=${u.nbHabitants}, emission=${u.calculerEmission(nbHabitants).toStringAsFixed(1)}",
+                                style: const TextStyle(fontSize: 10, color: Colors.grey),
+                              ),
                             ],
                           ),
                         );
