@@ -343,7 +343,7 @@ class _EquipementConfortScreenState extends State<EquipementConfortScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Row(
                     children: const [
