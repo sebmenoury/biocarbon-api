@@ -324,6 +324,8 @@ class _EquipementConfortScreenState extends State<EquipementConfortScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              const Icon(Icons.thermostat, size: 16, color: Color.fromARGB(255, 137, 12, 160)),
+              const SizedBox(width: 8),
               const Text("Empreinte d'amortissement annuel", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
               Text("${totalEmission.toStringAsFixed(0)} kgCO₂", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
             ],
@@ -335,11 +337,7 @@ class _EquipementConfortScreenState extends State<EquipementConfortScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            ElevatedButton(
-              onPressed: enregistrer,
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.green.shade100),
-              child: const Text("Enregistrer", style: TextStyle(fontSize: 12, color: Colors.black)),
-            ),
+            ElevatedButton(onPressed: enregistrer, style: ElevatedButton.styleFrom(backgroundColor: Colors.green.shade100), child: const Text("Enregistrer", style: TextStyle(color: Colors.black))),
             OutlinedButton(
               onPressed: hasPostesExistants ? supprimer : null,
               style: OutlinedButton.styleFrom(side: BorderSide(color: Colors.teal.shade200)),

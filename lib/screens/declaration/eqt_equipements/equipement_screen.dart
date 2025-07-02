@@ -4,6 +4,7 @@ import '../../../ui/layout/custom_card.dart';
 import '../../../data/services/api_service.dart';
 import '../poste_list_screen.dart';
 import 'poste_equipement.dart';
+import '../../../core/constants/app_icons.dart';
 
 class EquipementScreen extends StatefulWidget {
   final String codeIndividu;
@@ -319,6 +320,8 @@ class _EquipementScreenState extends State<EquipementScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              Icon(sousCategorieIcons[widget.sousCategorie] ?? Icons.device_unknown, size: 16, color: souscategoryColors[widget.sousCategorie] ?? Colors.grey),
+              const SizedBox(width: 8),
               const Text("Empreinte d'amortissement annuel", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
               Text("${totalEmission.toStringAsFixed(0)} kgCO₂", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
             ],
@@ -330,11 +333,7 @@ class _EquipementScreenState extends State<EquipementScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            ElevatedButton(
-              onPressed: enregistrer,
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.green.shade100),
-              child: const Text("Enregistrer", style: TextStyle(fontSize: 12, color: Colors.black)),
-            ),
+            ElevatedButton(onPressed: enregistrer, style: ElevatedButton.styleFrom(backgroundColor: Colors.green.shade100), child: const Text("Enregistrer", style: TextStyle(color: Colors.black))),
             OutlinedButton(
               onPressed: hasPostesExistants ? supprimer : null,
               style: OutlinedButton.styleFrom(side: BorderSide(color: Colors.teal.shade200)),

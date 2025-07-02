@@ -411,6 +411,8 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              const Icon(Icons.directions_car, size: 16, color: Colors.indigo),
+              const SizedBox(width: 8),
               const Text("Empreinte d'amortissement annuel", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
               Text("${totalEmission.toStringAsFixed(0)} kgCO₂", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
             ],
@@ -433,7 +435,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
             ElevatedButton(
               onPressed: enregistrerOuMettreAJour,
               style: ElevatedButton.styleFrom(backgroundColor: Colors.green.shade100),
-              child: const Text("Enregistrer", style: TextStyle(fontSize: 12, color: Colors.black)),
+              child: const Text("Enregistrer", style: TextStyle(color: Colors.black)),
             ),
             OutlinedButton(
               onPressed: hasPostesExistants ? supprimerPoste : null,

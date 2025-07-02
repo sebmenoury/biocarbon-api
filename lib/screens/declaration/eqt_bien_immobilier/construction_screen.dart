@@ -924,7 +924,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
                   ElevatedButton(
                     onPressed: enregistrerOuMettreAJour,
                     style: ElevatedButton.styleFrom(backgroundColor: Colors.green.shade100),
-                    child: const Text("Enregistrer", style: TextStyle(fontSize: 12, color: Colors.black)),
+                    child: const Text("Enregistrer", style: TextStyle(color: Colors.black)),
                   ),
                   OutlinedButton(
                     onPressed: posteDejaDeclare ? supprimerPoste : null,
