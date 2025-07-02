@@ -226,8 +226,7 @@ class _UsagesElectriciteScreenState extends State<UsagesElectriciteScreen> {
                 Text("Relevé de consommation", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 6),
 
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                Column(
                   children:
                       usages.map((u) {
                         return Padding(
@@ -251,7 +250,7 @@ class _UsagesElectriciteScreenState extends State<UsagesElectriciteScreen> {
                                 ),
                               ),
                               const SizedBox(width: 4),
-                              Text("Kwh/an", style: const TextStyle(fontSize: 10, color: Colors.grey)),
+                              const Text("kWh/an", style: TextStyle(fontSize: 10, color: Colors.grey)),
                             ],
                           ),
                         );
