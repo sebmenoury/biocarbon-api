@@ -19,6 +19,7 @@ import 'bien_renovation/renovation_screen.dart';
 import 'usage_logement/usages_electricite_screen.dart';
 import 'usage_logement/usages_gaz_fioul_screen.dart';
 import 'usage_logement/usages_dechets_eau_screen.dart';
+import 'usage_alimentation/alimentation_screen.dart';
 
 const List<String> usageLabels = [
   'Electricité',
@@ -173,32 +174,32 @@ class _PosteListScreenState extends State<PosteListScreen> {
               }
 
               return Column(
-                children:
-                    postesParSousCat.entries.map((entry) {
-                      final sousCat = entry.key;
-                      final postes = entry.value;
-                      final total = postes.fold<double>(0, (sum, p) => sum + (p.emissionCalculee ?? 0));
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 12.0),
+                    child: Text(
+                      "⚙️ Indiquez vos habitudes d'alimentation. Elles sont traduites en empreinte carbone après une transformation en poids par aliment consommé. \n",
+                      style: TextStyle(fontSize: 11),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  ...postesParSousCat.entries.map((entry) {
+                    final sousCat = entry.key;
+                    final postes = entry.value;
+                    final total = postes.fold<double>(0, (sum, p) => sum + (p.emissionCalculee ?? 0));
 
-                      postes.sort((a, b) => (b.emissionCalculee ?? 0).compareTo(a.emissionCalculee ?? 0));
+                    postes.sort((a, b) => (b.emissionCalculee ?? 0).compareTo(a.emissionCalculee ?? 0));
 
-                      return PostListSectionCard(
-                        sousCat: sousCat,
-                        postes: postes,
-                        total: total,
-                        onTap: () {
-                          print('🍽️ Sous-catégorie alimentation cliquée : "$sousCat"');
-
-                          final entry = getEcranEtTitre(widget.typeCategorie, widget.sousCategorie);
-                          final screen = entry?.builder();
-
-                          if (screen != null) {
-                            Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Aucun écran défini pour '${widget.sousCategorie}'")));
-                          }
-                        },
-                      );
-                    }).toList(),
+                    return PostListSectionCard(
+                      sousCat: sousCat,
+                      postes: postes,
+                      total: total,
+                      onTap: () {
+                        print('🍽️ Sous-catégorie alimentation cliquée : "$sousCat"');
+                      },
+                    );
+                  }).toList(),
+                ],
               );
             }
 
@@ -488,6 +489,8 @@ class _PosteListScreenState extends State<PosteListScreen> {
                                             ),
                                       ),
                                     );
+                                  } else if (widget.typeCategorie == "Alimentation") {
+                                    Navigator.push(context, MaterialPageRoute(builder: (_) => AlimentationScreen()));
                                   } else {
                                     final entry = getEcranEtTitre(widget.typeCategorie, widget.sousCategorie);
                                     if (entry != null && entry.builder != null) {
@@ -631,6 +634,8 @@ class _PosteListScreenState extends State<PosteListScreen> {
                                         ),
                                   ),
                                 );
+                              } else if (widget.typeCategorie == "Alimentation") {
+                                Navigator.push(context, MaterialPageRoute(builder: (_) => AlimentationScreen()));
                               } else {
                                 final entry = getEcranEtTitre(widget.typeCategorie, widget.sousCategorie);
                                 final screen = entry?.builder();

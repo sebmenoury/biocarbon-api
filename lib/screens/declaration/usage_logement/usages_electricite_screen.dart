@@ -129,7 +129,7 @@ class _UsagesElectriciteScreenState extends State<UsagesElectriciteScreen> {
           "Nom_Poste": u.nomUsage,
           "Nom_Logement": u.nomLogement,
           "Quantite": u.valeur,
-          "Unite": "Kwh/an",
+          "Unite": "kWh/an",
           "Frequence": "",
           "Facteur_Emission": u.facteurEmission,
           "Emission_Calculee": u.valeur * u.facteurEmission / u.nbHabitants,
