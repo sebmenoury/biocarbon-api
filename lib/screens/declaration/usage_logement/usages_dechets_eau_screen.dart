@@ -204,7 +204,7 @@ class _UsagesDechetsEauScreenState extends State<UsagesDechetsEauScreen> {
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 12.0),
             child: const Text(
-              "⚙️ Les valeurs proposéess sont basées sur des ordres de grandeur moyens constatés en France, appliquées au nombre d'habitants du logement, sachant que :\n\n"
+              "⚙️ Les valeurs proposées sont basées sur des ordres de grandeur moyens constatés en France, appliquées au nombre d'habitants du logement, sachant que :\n"
               "• Déchets : chaque personne génère en moyenne 590 kg de déchets ménagers par an.\n"
               "• Eau : la consommation domestique annuelle moyenne est d’environ 53 m³ par habitant.\n\n",
               style: TextStyle(fontSize: 11),
@@ -248,7 +248,7 @@ class _UsagesDechetsEauScreenState extends State<UsagesDechetsEauScreen> {
                         }
 
                         return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 6),
+                          padding: const EdgeInsets.symmetric(vertical: 4),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -258,6 +258,7 @@ class _UsagesDechetsEauScreenState extends State<UsagesDechetsEauScreen> {
                                   const SizedBox(width: 12),
                                   SizedBox(
                                     width: 80,
+                                    height: 34,
                                     child: TextFormField(
                                       initialValue: u.valeur.toString(),
                                       keyboardType: TextInputType.number,
@@ -268,9 +269,19 @@ class _UsagesDechetsEauScreenState extends State<UsagesDechetsEauScreen> {
                                           recalculerTotal();
                                         });
                                       },
+                                      style: const TextStyle(fontSize: 12),
+                                      textAlign: TextAlign.center,
+                                      decoration: InputDecoration(
+                                        contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                                        filled: true,
+                                        fillColor: Colors.grey.shade100,
+                                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: Colors.grey.shade400)),
+                                        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: Colors.grey.shade400)),
+                                        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: Colors.indigo.shade300, width: 1.2)),
+                                      ),
                                     ),
                                   ),
-                                  const SizedBox(width: 4),
+                                  const SizedBox(width: 6),
                                   Text(uniteAffichee, style: const TextStyle(fontSize: 10, color: Colors.grey)),
                                 ],
                               ),
