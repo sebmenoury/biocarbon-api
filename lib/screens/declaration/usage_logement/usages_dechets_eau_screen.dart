@@ -126,7 +126,7 @@ class _UsagesDechetsEauScreenState extends State<UsagesDechetsEauScreen> {
 
         // Choix de l’unité selon le nom de l’usage
         String uniteposte = "kg déchets/an";
-        if (u.nomUsage.toLowerCase().contains("Eau")) {
+        if (u.nomUsage.toLowerCase().contains("eau")) {
           uniteposte = "m³/an";
         }
 

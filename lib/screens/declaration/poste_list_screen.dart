@@ -196,6 +196,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                       total: total,
                       onTap: () {
                         print('🍽️ Sous-catégorie alimentation cliquée : "$sousCat"');
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => AlimentationScreen()));
                       },
                     );
                   }).toList(),
@@ -489,8 +490,6 @@ class _PosteListScreenState extends State<PosteListScreen> {
                                             ),
                                       ),
                                     );
-                                  } else if (widget.typeCategorie == "Alimentation") {
-                                    Navigator.push(context, MaterialPageRoute(builder: (_) => AlimentationScreen()));
                                   } else {
                                     final entry = getEcranEtTitre(widget.typeCategorie, widget.sousCategorie);
                                     if (entry != null && entry.builder != null) {
@@ -634,8 +633,6 @@ class _PosteListScreenState extends State<PosteListScreen> {
                                         ),
                                   ),
                                 );
-                              } else if (widget.typeCategorie == "Alimentation") {
-                                Navigator.push(context, MaterialPageRoute(builder: (_) => AlimentationScreen()));
                               } else {
                                 final entry = getEcranEtTitre(widget.typeCategorie, widget.sousCategorie);
                                 final screen = entry?.builder();
