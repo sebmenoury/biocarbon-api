@@ -45,6 +45,15 @@ class _AlimentationScreenState extends State<AlimentationScreen> {
     },
   };
 
+  double calculerTotalEmission() {
+    return aliments.fold(0.0, (total, aliment) {
+      if (aliment.frequence != null) {
+        return total + (aliment.portion * aliment.frequence! * 52 * aliment.facteur);
+      }
+      return total;
+    });
+  }
+
   final List<String> labels = ["jamais", "1/mois", "2/mois", "1/sem", "2/sem", "3/sem", "4/sem", "5/sem", "6/sem", "7/sem", "10/sem", "14/sem"];
   final List<double> values = [0, 0.25, 0.5, 1, 2, 3, 4, 5, 6, 7, 10, 14];
 
@@ -173,7 +182,7 @@ class _AlimentationScreenState extends State<AlimentationScreen> {
                     const Text("Empreinte totale", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
                   ],
                 ),
-                //Text("${totalEmission.toStringAsFixed(0)} kgCO₂", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                Text("${calculerTotalEmission().toStringAsFixed(0)} kgCO₂/an", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
               ],
             ),
           ),
