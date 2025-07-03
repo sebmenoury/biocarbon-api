@@ -133,6 +133,10 @@ class _AlimentationScreenState extends State<AlimentationScreen> {
   Widget build(BuildContext context) {
     final tousAliments = aliments.map((a) => a.nom).toList()..sort();
 
+    if (isLoading) {
+      return const BaseScreen(title: Text("Chargement…"), child: Center(child: CircularProgressIndicator()));
+    }
+
     return BaseScreen(
       title: Stack(
         alignment: Alignment.center,
