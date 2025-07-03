@@ -66,7 +66,7 @@ class _AlimentationScreenState extends State<AlimentationScreen> {
     return ref.map<PosteAlimentaire>((r) {
       final nom = r['Nom_Usage'];
 
-      return PosteAlimentaire(nom: nom, portion: (r['Portion'] as num).toDouble(), unite: r['Unite'], facteur: (r['Facteur_Emission'] as num).toDouble());
+      return PosteAlimentaire(nom: nom, portion: (r['Portion'] as num).toDouble(), unite: r['Unite'], facteur: (r['Valeur_Emission_Unitaire'] as num).toDouble());
     }).toList();
   }
 
@@ -139,12 +139,13 @@ class _AlimentationScreenState extends State<AlimentationScreen> {
   }
 
   @override
+  @override
   Widget build(BuildContext context) {
-    final tousAliments = aliments.map((a) => a.nom).toList()..sort();
-
     if (isLoading) {
       return const BaseScreen(title: Text("Chargement…"), child: Center(child: CircularProgressIndicator()));
     }
+
+    final tousAliments = aliments.map((a) => a.nom).toList()..sort();
 
     return BaseScreen(
       title: Stack(
