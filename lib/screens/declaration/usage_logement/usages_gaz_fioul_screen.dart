@@ -236,7 +236,7 @@ class _UsagesGazFioulScreenState extends State<UsagesGazFioulScreen> {
                         }
 
                         return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 6),
+                          padding: const EdgeInsets.symmetric(vertical: 4),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -244,11 +244,17 @@ class _UsagesGazFioulScreenState extends State<UsagesGazFioulScreen> {
                                 children: [
                                   Expanded(child: Padding(padding: const EdgeInsets.only(left: 12), child: Text(u.nomUsage, style: const TextStyle(fontSize: 12)))),
                                   const SizedBox(width: 12),
-                                  SizedBox(
+                                  Container(
                                     width: 80,
+                                    height: 24,
+                                    decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(8)),
+                                    alignment: Alignment.center,
                                     child: TextFormField(
                                       initialValue: u.valeur.toString(),
                                       keyboardType: TextInputType.number,
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(fontSize: 12),
+                                      decoration: const InputDecoration(isDense: true, contentPadding: EdgeInsets.zero, border: InputBorder.none),
                                       onChanged: (val) {
                                         final v = double.tryParse(val) ?? 0;
                                         setState(() {
@@ -258,8 +264,11 @@ class _UsagesGazFioulScreenState extends State<UsagesGazFioulScreen> {
                                       },
                                     ),
                                   ),
-                                  const SizedBox(width: 4),
-                                  Text(uniteAffichee, style: const TextStyle(fontSize: 10, color: Colors.grey)),
+                                  const SizedBox(width: 8),
+                                  SizedBox(
+                                    width: 70, // largeur fixe pour aligner les unités
+                                    child: Text(uniteAffichee, style: const TextStyle(fontSize: 10, color: Colors.grey)),
+                                  ),
                                 ],
                               ),
                             ],

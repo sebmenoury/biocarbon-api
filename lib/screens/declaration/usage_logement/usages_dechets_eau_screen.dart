@@ -258,7 +258,7 @@ class _UsagesDechetsEauScreenState extends State<UsagesDechetsEauScreen> {
                                   const SizedBox(width: 12),
                                   Container(
                                     width: 80,
-                                    height: 34,
+                                    height: 24,
                                     decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(8)),
                                     alignment: Alignment.center,
                                     child: TextFormField(
