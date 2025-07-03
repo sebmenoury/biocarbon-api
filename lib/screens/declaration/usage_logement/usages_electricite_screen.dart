@@ -195,7 +195,8 @@ class _UsagesElectriciteScreenState extends State<UsagesElectriciteScreen> {
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 12.0),
             child: Text(
-              "⚙️ Indiquez votre consommation annuelle en kWh, en séparant l’électricité réseau classique et l’électricité verte si vous êtes abonné à une offre dédiée ou produisez en local.",
+              "⚙️ Indiquez votre consommation annuelle en kWh, en séparant l’électricité réseau classique et l’électricité verte si vous êtes abonné à une offre dédiée ou produisez en local. \n"
+              "Les quantités déclarées sont celles du foyer, et sont divisées par le nombre d'habitants du logement pour obtenir l'empreinte individuelle.",
               style: TextStyle(fontSize: 11),
             ),
           ),
