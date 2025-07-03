@@ -48,7 +48,7 @@ class _AlimentationScreenState extends State<AlimentationScreen> {
   double calculerTotalEmission() {
     return aliments.fold(0.0, (total, aliment) {
       if (aliment.frequence != null) {
-        return total + (aliment.portion * aliment.frequence! * 52 * aliment.facteur);
+        return total + (aliment.portion * aliment.frequence! * 52 * aliment.facteur!);
       }
       return total;
     });
@@ -66,7 +66,7 @@ class _AlimentationScreenState extends State<AlimentationScreen> {
     return ref.map<PosteAlimentaire>((r) {
       final nom = r['Nom_Usage'];
 
-      return PosteAlimentaire(nom: nom, portion: (r['Portion'] as num).toDouble(), unite: r['Unite'], facteur: (r['Valeur_Emission_Unitaire'] as num).toDouble());
+      return PosteAlimentaire(nom: nom, portion: (r['Portion'] as num).toDouble(), unite: r['Unite'], sousCategorie: r['Sous_Categorie'], facteur: (r['Valeur_Emission_Unitaire'] as num).toDouble());
     }).toList();
   }
 
@@ -112,6 +112,41 @@ class _AlimentationScreenState extends State<AlimentationScreen> {
     });
   }
 
+  Widget buildGroupedCards() {
+    final grouped = <String, List<PosteAlimentaire>>{};
+    for (var a in aliments) {
+      grouped.putIfAbsent(a.sousCategorie ?? 'Autres', () => []).add(a);
+    }
+
+    return Column(
+      children:
+          grouped.entries.map((entry) {
+            final group = entry.key;
+            final alimentsGroupe = entry.value;
+
+            return CustomCard(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(group, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 8),
+                  ...alimentsGroupe.map(
+                    (a) => Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [SizedBox(width: 100, child: Text(a.nom, style: const TextStyle(fontSize: 11))), const SizedBox(width: 8), Expanded(child: buildBoutonsFrequence(a))],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }).toList(),
+    );
+  }
+
   Widget buildBoutonsFrequence(PosteAlimentaire aliment) {
     return Wrap(
       spacing: 4,
@@ -139,101 +174,109 @@ class _AlimentationScreenState extends State<AlimentationScreen> {
   }
 
   @override
-  @override
   Widget build(BuildContext context) {
+    final tousAliments = aliments.map((a) => a.nom).toList()..sort();
+
     if (isLoading) {
       return const BaseScreen(title: Text("Chargement…"), child: Center(child: CircularProgressIndicator()));
     }
 
-    final tousAliments = aliments.map((a) => a.nom).toList()..sort();
-
-    return BaseScreen(
-      title: Stack(
-        alignment: Alignment.center,
-        children: [
-          const Center(child: Text("Caractéristiques de votre alimentation", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold))),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: IconButton(icon: const Icon(Icons.arrow_back), iconSize: 18, onPressed: () => Navigator.pop(context), padding: EdgeInsets.zero, constraints: const BoxConstraints()),
-          ),
-        ],
+    return Scaffold(
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          widget.onSave();
+          Navigator.pop(context);
+        },
+        label: const Text("Enregistrer"),
+        icon: const Icon(Icons.save),
       ),
-
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 12.0),
-            child: const Text(
-              "⚙️ Vous pouvez soit choisir un régime alimentaire type pour initialiser les valeurs de fréquence, soit directement sélectionner les fréquences de consommation de ces aliments.",
-              style: TextStyle(fontSize: 11),
-              textAlign: TextAlign.justify,
-            ),
+      body: SafeArea(
+        child: BaseScreen(
+          title: Stack(
+            alignment: Alignment.center,
+            children: [
+              const Center(child: Text("Caractéristiques de votre alimentation", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold))),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: IconButton(icon: const Icon(Icons.arrow_back), iconSize: 18, onPressed: () => Navigator.pop(context), padding: EdgeInsets.zero, constraints: const BoxConstraints()),
+              ),
+            ],
           ),
-          const SizedBox(height: 8),
-          CustomCard(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.only(bottom: 100, top: 8), // marge pour FAB
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    const Icon(Icons.restaurant, size: 16, color: Colors.redAccent),
-                    const SizedBox(width: 8),
-                    const Text("Empreinte totale", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-                  ],
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 12.0),
+                  child: Text(
+                    "⚙️ Vous pouvez soit choisir un régime alimentaire type pour initialiser les valeurs de fréquence, soit directement sélectionner les fréquences de consommation de ces aliments.",
+                    style: TextStyle(fontSize: 11),
+                    textAlign: TextAlign.justify,
+                  ),
                 ),
-                Text("${calculerTotalEmission().toStringAsFixed(0)} kgCO₂/an", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 8),
+                CustomCard(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          const Icon(Icons.restaurant, size: 16, color: Colors.redAccent),
+                          const SizedBox(width: 8),
+                          const Text("Empreinte totale", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                        ],
+                      ),
+                      Text("${calculerTotalEmission().toStringAsFixed(0)} kgCO₂/an", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Padding(padding: const EdgeInsets.only(left: 12), child: Text("Quel est votre régime alimentaire ?", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold))),
+                const SizedBox(height: 4),
+                GridView.count(
+                  shrinkWrap: true,
+                  crossAxisCount: 2,
+                  physics: const NeverScrollableScrollPhysics(),
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
+                  childAspectRatio: 3,
+                  children:
+                      regimes.entries.map((entry) {
+                        final nom = entry.key;
+                        final info = entry.value;
+                        final selected = selectedRegime == nom;
+                        return GestureDetector(
+                          onTap: () => choisirRegime(nom),
+                          child: CustomCard(
+                            padding: const EdgeInsets.all(8),
+                            child: Row(
+                              children: [
+                                Text(info['emoji'], style: const TextStyle(fontSize: 24)),
+                                const SizedBox(width: 4),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [Text(nom, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)), Text(info['desc'], style: const TextStyle(fontSize: 10))],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                ),
+                const SizedBox(height: 16),
+                Padding(padding: const EdgeInsets.only(left: 12), child: Text("Indiquez la fréquence de consommation par aliment", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold))),
+                const SizedBox(height: 8),
+                buildGroupedCards(),
+                const SizedBox(height: 24),
               ],
             ),
           ),
-          const SizedBox(height: 8),
-          Padding(padding: const EdgeInsets.only(left: 12), child: Text("Quel est votre régime alimentaire ?", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold))),
-          const SizedBox(height: 4),
-          GridView.count(
-            shrinkWrap: true,
-            crossAxisCount: 2,
-            physics: const NeverScrollableScrollPhysics(),
-            crossAxisSpacing: 12,
-            mainAxisSpacing: 12,
-            childAspectRatio: 3,
-            children:
-                regimes.entries.map((entry) {
-                  final nom = entry.key;
-                  final info = entry.value;
-                  final selected = selectedRegime == nom;
-                  return GestureDetector(
-                    onTap: () => choisirRegime(nom),
-                    child: CustomCard(
-                      padding: const EdgeInsets.all(8),
-                      child: Row(
-                        children: [
-                          Text(info['emoji'], style: const TextStyle(fontSize: 24)),
-                          const SizedBox(width: 4),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [Text(nom, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)), Text(info['desc'], style: const TextStyle(fontSize: 10))],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                }).toList(),
-          ),
-          const SizedBox(height: 16),
-          Padding(padding: const EdgeInsets.only(left: 12), child: Text("Indiquez la fréquence de consommation par aliment", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold))),
-
-          const SizedBox(height: 8),
-          ...aliments.map((a) {
-            return CustomCard(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(a.nom, style: const TextStyle(fontSize: 11)), const SizedBox(height: 6), buildBoutonsFrequence(a)]),
-            );
-          }).toList(),
-        ],
+        ),
       ),
     );
   }
