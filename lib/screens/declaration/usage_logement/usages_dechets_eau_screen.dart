@@ -256,12 +256,17 @@ class _UsagesDechetsEauScreenState extends State<UsagesDechetsEauScreen> {
                                 children: [
                                   Expanded(child: Padding(padding: const EdgeInsets.only(left: 12), child: Text(u.nomUsage, style: const TextStyle(fontSize: 12)))),
                                   const SizedBox(width: 12),
-                                  SizedBox(
+                                  Container(
                                     width: 80,
                                     height: 34,
+                                    decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(8)),
+                                    alignment: Alignment.center,
                                     child: TextFormField(
                                       initialValue: u.valeur.toString(),
                                       keyboardType: TextInputType.number,
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(fontSize: 12),
+                                      decoration: const InputDecoration(isDense: true, contentPadding: EdgeInsets.zero, border: InputBorder.none),
                                       onChanged: (val) {
                                         final v = double.tryParse(val) ?? 0;
                                         setState(() {
@@ -269,20 +274,13 @@ class _UsagesDechetsEauScreenState extends State<UsagesDechetsEauScreen> {
                                           recalculerTotal();
                                         });
                                       },
-                                      style: const TextStyle(fontSize: 12),
-                                      textAlign: TextAlign.center,
-                                      decoration: InputDecoration(
-                                        contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                                        filled: true,
-                                        fillColor: Colors.grey.shade100,
-                                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: Colors.grey.shade400)),
-                                        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: Colors.grey.shade400)),
-                                        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: Colors.indigo.shade300, width: 1.2)),
-                                      ),
                                     ),
                                   ),
-                                  const SizedBox(width: 6),
-                                  Text(uniteAffichee, style: const TextStyle(fontSize: 10, color: Colors.grey)),
+                                  const SizedBox(width: 8),
+                                  SizedBox(
+                                    width: 70, // largeur fixe pour aligner les unités
+                                    child: Text(uniteAffichee, style: const TextStyle(fontSize: 10, color: Colors.grey)),
+                                  ),
                                 ],
                               ),
                             ],
