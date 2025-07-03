@@ -196,7 +196,10 @@ class _PosteListScreenState extends State<PosteListScreen> {
                       total: total,
                       onTap: () {
                         print('🍽️ Sous-catégorie alimentation cliquée : "$sousCat"');
-                        Navigator.push(context, MaterialPageRoute(builder: (_) => AlimentationScreen()));
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => AlimentationScreen(codeIndividu: widget.codeIndividu, valeurTemps: widget.valeurTemps, onSave: () => setState(() {}))),
+                        );
                       },
                     );
                   }).toList(),

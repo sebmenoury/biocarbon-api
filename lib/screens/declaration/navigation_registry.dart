@@ -16,7 +16,6 @@ class ScreenRegistryEntry {
 
 /// Map des écrans par Type_Categorie et Sous_Categorie
 final Map<String, Map<String, ScreenRegistryEntry>> screenRegistry = {
-  "Alimentation": {"Général": ScreenRegistryEntry(builder: () => const AlimentationScreen(), titre: "Déclaration de l'alimentation")},
   "Logement": {
     "Biens Immobiliers": ScreenRegistryEntry(
       builder: () => const BienDeclarationScreen(), // à adapter si besoin
