@@ -90,7 +90,7 @@ class _AlimentationScreenState extends State<AlimentationScreen> {
               width: 20,
               height: 20,
               decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: Colors.grey.shade400), color: actif ? Colors.green.shade500 : Colors.grey.shade200),
-              child: actif ? Center(child: Container(width: 8, height: 8, decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.white))) : null,
+              child: actif ? Center(child: Container(width: 7, height: 7, decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.white))) : null,
             ),
           ),
         );
@@ -113,7 +113,33 @@ class _AlimentationScreenState extends State<AlimentationScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text("Quel est votre régime alimentaire ?", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 12.0),
+            child: const Text(
+              "⚙️ Vous pouvez soit choiri un régime alimentaire type pour initialiser les valeurs de fréquence, soit directement sélectionner les fréquences de consommation de ces aliments.",
+              style: TextStyle(fontSize: 11),
+              textAlign: TextAlign.justify,
+            ),
+          ),
+          const SizedBox(height: 8),
+          CustomCard(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    const Icon(Icons.restaurant, size: 16, color: Colors.redAccent),
+                    const SizedBox(width: 8),
+                    const Text("Empreinte totale", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                  ],
+                ),
+                //Text("${totalEmission.toStringAsFixed(0)} kgCO₂", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+              ],
+            ),
+          ),
+          Expanded(child: Padding(padding: const EdgeInsets.only(left: 12), child: Text("Quel est votre régime alimentaire ?", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)))),
+
           const SizedBox(height: 8),
           GridView.count(
             shrinkWrap: true,
@@ -149,12 +175,13 @@ class _AlimentationScreenState extends State<AlimentationScreen> {
                 }).toList(),
           ),
           const SizedBox(height: 16),
-          const Text("Fréquence de consommation par aliment", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+          Expanded(child: Padding(padding: const EdgeInsets.only(left: 12), child: Text("Fréquence de consommation par aliment", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)))),
+
           const SizedBox(height: 8),
           ...tousAliments.map((a) {
             return CustomCard(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(a, style: const TextStyle(fontSize: 13)), const SizedBox(height: 6), buildBoutonsFrequence(a)]),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(a, style: const TextStyle(fontSize: 11)), const SizedBox(height: 6), buildBoutonsFrequence(a)]),
             );
           }).toList(),
         ],
