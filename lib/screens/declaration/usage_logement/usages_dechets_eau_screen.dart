@@ -124,6 +124,12 @@ class _UsagesDechetsEauScreenState extends State<UsagesDechetsEauScreen> {
         final timestamp = DateTime.now().millisecondsSinceEpoch;
         final idUsage = "TEMP-${timestamp}_${sousCategorie}_${u.nomUsage}_${valeurTemps}".replaceAll(' ', '_');
 
+        // Choix de l’unité selon le nom de l’usage
+        String uniteposte = "kg déchets/an";
+        if (u.nomUsage.toLowerCase().contains("fioul")) {
+          uniteposte = "m³/an";
+        }
+
         payloads.add({
           "ID_Usage": idUsage,
           "Code_Individu": codeIndividu,
@@ -138,7 +144,7 @@ class _UsagesDechetsEauScreenState extends State<UsagesDechetsEauScreen> {
           "Nom_Poste": u.nomUsage,
           "Nom_Logement": u.nomLogement,
           "Quantite": u.valeur,
-          "Unite": u.unite,
+          "Unite": uniteposte,
           "Frequence": "",
           "Facteur_Emission": u.facteurEmission,
           "Emission_Calculee": u.valeur * u.facteurEmission / u.nbHabitants,

@@ -115,6 +115,11 @@ class _UsagesGazFioulScreenState extends State<UsagesGazFioulScreen> {
         final timestamp = DateTime.now().millisecondsSinceEpoch;
         final idUsage = "TEMP-${timestamp}_${sousCategorie}_${u.nomUsage}_${valeurTemps}".replaceAll(' ', '_');
 
+        // Choix de l’unité selon le nom de l’usage
+        String uniteposte = "kWh/an";
+        if (u.nomUsage.toLowerCase().contains("fioul")) {
+          uniteposte = "litres/an";
+        }
         payloads.add({
           "ID_Usage": idUsage,
           "Code_Individu": codeIndividu,
@@ -129,7 +134,7 @@ class _UsagesGazFioulScreenState extends State<UsagesGazFioulScreen> {
           "Nom_Poste": u.nomUsage,
           "Nom_Logement": u.nomLogement,
           "Quantite": u.valeur,
-          "Unite": u.unite,
+          "Unite": uniteposte,
           "Frequence": "",
           "Facteur_Emission": u.facteurEmission,
           "Emission_Calculee": u.valeur * u.facteurEmission / u.nbHabitants,
@@ -195,7 +200,8 @@ class _UsagesGazFioulScreenState extends State<UsagesGazFioulScreen> {
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 12.0),
             child: Text(
-              "⚙️ Indiquez vos consommations annuelles de Gaz et Fioul pour le chauffage, la cuisson, ou le chauffe-eau. Les émissions sont calculées en fonction du nombre d'habitants.",
+              "⚙️ Indiquez vos consommations annuelles de Gaz et Fioul pour le chauffage, la cuisson, ou le chauffe-eau.\n"
+              " Les quantités déclarées sont celles du foyer, et sont divisées par le nombre d'habitants du logement pour obtenir l'empreinte individuelle.",
               style: TextStyle(fontSize: 11),
             ),
           ),
