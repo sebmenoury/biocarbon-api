@@ -3,6 +3,7 @@ import '../usage_logement/poste_usage.dart';
 import '../../../data/services/api_service.dart';
 import '../../../ui/layout/custom_card.dart';
 import '../../../ui/layout/base_screen.dart';
+import "poste_alimentaire.dart";
 
 class AlimentationScreen extends StatefulWidget {
   final String codeIndividu;
@@ -50,6 +51,30 @@ class _AlimentationScreenState extends State<AlimentationScreen> {
   String? selectedRegime;
   Map<String, double> frequencesAliments = {};
 
+  Future<List<PosteAlimentaire>> chargerAliments() async {
+    final ref = await ApiService.getRefAlimentation();
+
+    return ref.map<PosteAlimentaire>((r) {
+      final nom = r['Nom_Usage'];
+
+      return PosteAlimentaire(nom: nom, portion: (r['Portion'] as num).toDouble(), unite: r['Unite'], facteur: (r['Facteur_Emission'] as num).toDouble());
+    }).toList();
+  }
+
+  List<PosteAlimentaire> aliments = [];
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    chargerAliments().then((value) {
+      setState(() {
+        aliments = value;
+        isLoading = false;
+      });
+    });
+  }
+
   Future<void> choisirRegime(String nom) async {
     final shouldApply = await showDialog<bool>(
       context: context,
@@ -63,10 +88,14 @@ class _AlimentationScreenState extends State<AlimentationScreen> {
 
     if (shouldApply == true) {
       final Map<String, dynamic> map = Map<String, dynamic>.from(regimes[nom]!['frequences']);
-      frequencesAliments.clear();
-      map.forEach((aliment, freq) {
-        frequencesAliments[aliment] = (freq as num).toDouble();
-      });
+
+      for (final aliment in aliments) {
+        if (map.containsKey(aliment.nom)) {
+          aliment.frequence = (map[aliment.nom] as num).toDouble();
+        } else {
+          aliment.frequence = null; // ou null si tu préfères
+        }
+      }
     }
 
     setState(() {
@@ -74,21 +103,23 @@ class _AlimentationScreenState extends State<AlimentationScreen> {
     });
   }
 
-  Widget buildBoutonsFrequence(String aliment) {
+  Widget buildBoutonsFrequence(PosteAlimentaire aliment) {
     return Wrap(
-      spacing: 6,
-      runSpacing: 6,
+      spacing: 4,
+      runSpacing: 4,
       children: List.generate(values.length, (i) {
-        final actif = frequencesAliments[aliment] == values[i];
+        final actif = aliment.frequence == values[i];
         return Tooltip(
           message: labels[i],
           child: GestureDetector(
             onTap: () {
-              setState(() => frequencesAliments[aliment] = values[i]);
+              setState(() {
+                aliment.frequence = values[i];
+              });
             },
             child: Container(
-              width: 20,
-              height: 20,
+              width: 18,
+              height: 18,
               decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: Colors.grey.shade400), color: actif ? Colors.green.shade500 : Colors.grey.shade200),
               child: actif ? Center(child: Container(width: 7, height: 7, decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.white))) : null,
             ),
@@ -100,23 +131,27 @@ class _AlimentationScreenState extends State<AlimentationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final tousAliments = regimes.values.expand((r) => (r['frequences'] as Map<String, dynamic>).keys).toSet().toList()..sort();
+    final tousAliments = aliments.map((a) => a.nom).toList()..sort();
 
     return BaseScreen(
-      title: Row(
+      title: Stack(
+        alignment: Alignment.center,
         children: [
-          IconButton(icon: const Icon(Icons.arrow_back), iconSize: 18, onPressed: () => Navigator.pop(context), padding: EdgeInsets.zero, constraints: const BoxConstraints()),
-          const SizedBox(width: 8),
-          const Text("Caractéristiques de votre alimentation", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+          const Center(child: Text("Caractéristiques de votre alimentation", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold))),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: IconButton(icon: const Icon(Icons.arrow_back), iconSize: 18, onPressed: () => Navigator.pop(context), padding: EdgeInsets.zero, constraints: const BoxConstraints()),
+          ),
         ],
       ),
+
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 12.0),
             child: const Text(
-              "⚙️ Vous pouvez soit choiri un régime alimentaire type pour initialiser les valeurs de fréquence, soit directement sélectionner les fréquences de consommation de ces aliments.",
+              "⚙️ Vous pouvez soit choisir un régime alimentaire type pour initialiser les valeurs de fréquence, soit directement sélectionner les fréquences de consommation de ces aliments.",
               style: TextStyle(fontSize: 11),
               textAlign: TextAlign.justify,
             ),
@@ -138,9 +173,9 @@ class _AlimentationScreenState extends State<AlimentationScreen> {
               ],
             ),
           ),
-          Expanded(child: Padding(padding: const EdgeInsets.only(left: 12), child: Text("Quel est votre régime alimentaire ?", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)))),
-
           const SizedBox(height: 8),
+          Padding(padding: const EdgeInsets.only(left: 12), child: Text("Quel est votre régime alimentaire ?", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold))),
+          const SizedBox(height: 4),
           GridView.count(
             shrinkWrap: true,
             crossAxisCount: 2,
@@ -160,7 +195,7 @@ class _AlimentationScreenState extends State<AlimentationScreen> {
                       child: Row(
                         children: [
                           Text(info['emoji'], style: const TextStyle(fontSize: 24)),
-                          const SizedBox(width: 8),
+                          const SizedBox(width: 4),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -175,13 +210,13 @@ class _AlimentationScreenState extends State<AlimentationScreen> {
                 }).toList(),
           ),
           const SizedBox(height: 16),
-          Expanded(child: Padding(padding: const EdgeInsets.only(left: 12), child: Text("Fréquence de consommation par aliment", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)))),
+          Padding(padding: const EdgeInsets.only(left: 12), child: Text("Indiquez la fréquence de consommation par aliment", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold))),
 
           const SizedBox(height: 8),
-          ...tousAliments.map((a) {
+          ...aliments.map((a) {
             return CustomCard(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(a, style: const TextStyle(fontSize: 11)), const SizedBox(height: 6), buildBoutonsFrequence(a)]),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(a.nom, style: const TextStyle(fontSize: 11)), const SizedBox(height: 6), buildBoutonsFrequence(a)]),
             );
           }).toList(),
         ],
