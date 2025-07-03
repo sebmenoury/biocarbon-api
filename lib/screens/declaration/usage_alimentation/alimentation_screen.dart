@@ -90,7 +90,7 @@ class _AlimentationScreenState extends State<AlimentationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final tousAliments = regimes.values.map((r) => Map<String, dynamic>.from(r)).expand((r) => (r['frequences'] as Map<String, dynamic>).keys).toSet().toList();
+    final tousAliments = regimes.values.map((r) => Map<String, dynamic>.from(r['frequences'] as Map)).expand((freqMap) => freqMap.keys).toSet().toList();
     return Scaffold(
       appBar: AppBar(title: const Text("🥗 Alimentation")),
       body: SingleChildScrollView(
