@@ -35,12 +35,31 @@ class _AlimentationScreenState extends State<AlimentationScreen> {
 
   Future<List<PosteAlimentaire>> chargerAliments() async {
     final ref = await ApiService.getRefAlimentation();
+    final postes = await ApiService.getUCPostesFiltres(codeIndividu: widget.codeIndividu, valeurTemps: widget.valeurTemps, typeCategorie: "Alimentation");
 
-    return ref.map<PosteAlimentaire>((r) {
+    final Map<String, PosteAlimentaire> mapAliments = {};
+
+    // Étape 1 : on charge tous les aliments de la référence
+    for (final r in ref) {
       final nom = r['Nom_Usage'];
+      mapAliments[nom] = PosteAlimentaire(
+        nom: nom,
+        portion: (r['Portion'] as num).toDouble(),
+        unite: r['Unite'],
+        sousCategorie: r['Sous_Categorie'],
+        facteur: (r['Valeur_Emission_Unitaire'] as num).toDouble(),
+      );
+    }
 
-      return PosteAlimentaire(nom: nom, portion: (r['Portion'] as num).toDouble(), unite: r['Unite'], sousCategorie: r['Sous_Categorie'], facteur: (r['Valeur_Emission_Unitaire'] as num).toDouble());
-    }).toList();
+    // Étape 2 : on applique les fréquences déclarées existantes
+    for (final p in postes) {
+      final nom = p.nomPoste;
+      if (mapAliments.containsKey(nom)) {
+        mapAliments[nom]!.frequence = p.frequence != null ? double.tryParse(p.frequence.toString()) : null;
+      }
+    }
+
+    return mapAliments.values.toList()..sort((a, b) => a.nom.compareTo(b.nom)); // tri alpha
   }
 
   List<PosteAlimentaire> aliments = [];
