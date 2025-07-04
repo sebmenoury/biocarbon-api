@@ -43,6 +43,7 @@ class _AlimentationScreenState extends State<AlimentationScreen> {
     // Étape 1 : on charge tous les aliments de la référence
     for (final r in ref) {
       final nom = r['Nom_Usage'];
+      print('🟩 Chargement ref: $nom');
       mapAliments[nom] = PosteAlimentaire(
         nom: nom,
         portion: (r['Portion'] as num).toDouble(),
@@ -55,11 +56,16 @@ class _AlimentationScreenState extends State<AlimentationScreen> {
     // Étape 2 : on applique les fréquences déclarées existantes
     for (final p in postes) {
       final nomPoste = p.nomPoste?.toLowerCase().trim();
+      print('🔎 Recherche correspondance pour poste déclaré: "$nomPoste"');
+
       final matchingKey = mapAliments.keys.firstWhere((key) => key.toLowerCase().trim() == nomPoste, orElse: () => '');
 
       if (matchingKey.isNotEmpty) {
         final valeur = double.tryParse(p.frequence?.toString() ?? '');
+        print('✅ Match trouvé: "$matchingKey" → fréquence: ${valeur ?? 'null'}');
         mapAliments[matchingKey]!.frequence = valeur ?? 0;
+      } else {
+        print('❌ Aucun match trouvé pour: "$nomPoste"');
       }
     }
 
