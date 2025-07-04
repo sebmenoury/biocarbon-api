@@ -175,6 +175,15 @@ class _PosteListScreenState extends State<PosteListScreen> {
 
               final hasData = postesParSousCat.isNotEmpty;
 
+              final List<MapEntry<String, List<Poste>>> sortedEntries = postesParSousCat.entries.toList();
+
+              // Ajoute les totaux et trie par total décroissant
+              sortedEntries.sort((a, b) {
+                final totalA = a.value.fold<double>(0, (sum, p) => sum + (p.emissionCalculee ?? 0));
+                final totalB = b.value.fold<double>(0, (sum, p) => sum + (p.emissionCalculee ?? 0));
+                return totalB.compareTo(totalA);
+              });
+
               return Column(
                 children: [
                   const Padding(
@@ -200,7 +209,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                       },
                     ),
 
-                  ...postesParSousCat.entries.map((entry) {
+                  ...sortedEntries.map((entry) {
                     final sousCat = entry.key;
                     final postes = entry.value;
                     final total = postes.fold<double>(0, (sum, p) => sum + (p.emissionCalculee ?? 0));
@@ -212,7 +221,6 @@ class _PosteListScreenState extends State<PosteListScreen> {
                       postes: postes,
                       total: total,
                       onTap: () {
-                        print('🍽️ Sous-catégorie alimentation cliquée : "$sousCat"');
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (_) => AlimentationScreen(codeIndividu: widget.codeIndividu, valeurTemps: widget.valeurTemps, onSave: () => setState(() {}))),
