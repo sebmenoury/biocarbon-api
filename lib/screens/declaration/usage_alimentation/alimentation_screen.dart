@@ -54,9 +54,12 @@ class _AlimentationScreenState extends State<AlimentationScreen> {
 
     // Étape 2 : on applique les fréquences déclarées existantes
     for (final p in postes) {
-      final nom = p.nomPoste;
-      if (mapAliments.containsKey(nom)) {
-        mapAliments[nom]!.frequence = p.frequence != null ? double.tryParse(p.frequence.toString()) : null;
+      final nomPoste = p.nomPoste?.toLowerCase().trim();
+      final matchingKey = mapAliments.keys.firstWhere((key) => key.toLowerCase().trim() == nomPoste, orElse: () => '');
+
+      if (matchingKey.isNotEmpty) {
+        final valeur = double.tryParse(p.frequence?.toString() ?? '');
+        mapAliments[matchingKey]!.frequence = valeur ?? 0;
       }
     }
 
