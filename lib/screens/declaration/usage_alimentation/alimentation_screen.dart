@@ -144,7 +144,7 @@ class _AlimentationScreenState extends State<AlimentationScreen> {
               typeCategorie: "Alimentation",
               codeIndividu: codeIndividu,
               valeurTemps: valeurTemps,
-              sousCategorie: "_", // ou "_" si tu préfères une valeur neutre
+              sousCategorie: "Mon alimentation", // ou "_" si tu préfères une valeur neutre
             ),
       ),
     );
@@ -174,7 +174,7 @@ class _AlimentationScreenState extends State<AlimentationScreen> {
                 typeCategorie: "Alimentation",
                 codeIndividu: widget.codeIndividu,
                 valeurTemps: widget.valeurTemps,
-                sousCategorie: "_", // ou "_" si tu préfères une valeur neutre
+                sousCategorie: "Mon alimentation", // ou "_" si tu préfères une valeur neutre
               ),
         ),
       );

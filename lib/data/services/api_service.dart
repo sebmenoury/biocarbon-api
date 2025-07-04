@@ -205,7 +205,7 @@ class ApiService {
     final uri = Uri.parse(
       '$baseUrl/delete_all_sans_bien?Code_Individu=$codeIndividu'
       '&Valeur_Temps=$valeurTemps'
-      '&Sous_Categorie=$typeCategorie',
+      '&Type_Categorie=$typeCategorie',
     );
 
     final response = await http.delete(uri);
