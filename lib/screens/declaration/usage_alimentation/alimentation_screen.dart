@@ -118,8 +118,6 @@ class _AlimentationScreenState extends State<AlimentationScreen> {
       grouped.putIfAbsent(a.sousCategorie ?? 'Autres', () => []).add(a);
     }
 
-    final List<double> frequences = [0, 0.25, 0.5, 1, 2, 3, 4, 5, 6, 7, 10, 14];
-
     String formatFrequence(double f) {
       switch (f) {
         case 0:
@@ -140,27 +138,21 @@ class _AlimentationScreenState extends State<AlimentationScreen> {
             final alimentsGroupe = entry.value;
 
             return CustomCard(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8), // ← augmenté
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(group, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children:
-                              frequences.map((freq) {
-                                return SizedBox(width: 22, child: Text(formatFrequence(freq), textAlign: TextAlign.center, style: const TextStyle(fontSize: 10, color: Colors.grey)));
-                              }).toList(),
-                        ),
-                      ),
-                    ],
+                  Padding(
+                    padding: const EdgeInsets.only(left: 100), // ← décalage des labels pour les aligner aux ronds
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children:
+                          values.map((freq) {
+                            return SizedBox(width: 16, child: Text(formatFrequence(freq), textAlign: TextAlign.center, style: const TextStyle(fontSize: 10, color: Colors.grey)));
+                          }).toList(),
+                    ),
                   ),
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 4),
                   ...alimentsGroupe.map(
                     (a) => Padding(
                       padding: const EdgeInsets.symmetric(vertical: 4),
@@ -179,7 +171,7 @@ class _AlimentationScreenState extends State<AlimentationScreen> {
 
   Widget buildBoutonsFrequence(PosteAlimentaire aliment) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: List.generate(values.length, (i) {
         final actif = aliment.frequence == values[i];
         return Tooltip(
@@ -191,9 +183,8 @@ class _AlimentationScreenState extends State<AlimentationScreen> {
               });
             },
             child: Container(
-              width: 18,
-              height: 18,
-              margin: const EdgeInsets.symmetric(horizontal: 2),
+              width: 16,
+              height: 16,
               decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: Colors.grey.shade400), color: actif ? Colors.green.shade500 : Colors.grey.shade200),
               child: actif ? Center(child: Container(width: 7, height: 7, decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.white))) : null,
             ),
