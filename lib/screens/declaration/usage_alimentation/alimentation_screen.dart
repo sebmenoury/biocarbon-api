@@ -144,27 +144,23 @@ class _AlimentationScreenState extends State<AlimentationScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Text(group, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 6),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(group, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
-
-                      Row(
-                        children: [
-                          const SizedBox(width: 100), // pour aligner avec noms d'aliments
-                          Expanded(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children:
-                                  frequences.map((freq) {
-                                    return SizedBox(width: 20, child: Text(formatFrequence(freq), textAlign: TextAlign.center, style: const TextStyle(fontSize: 10, color: Colors.grey)));
-                                  }).toList(),
-                            ),
-                          ),
-                        ],
+                      const SizedBox(width: 100),
+                      Expanded(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children:
+                              frequences.map((freq) {
+                                return SizedBox(width: 20, child: Text(formatFrequence(freq), textAlign: TextAlign.center, style: const TextStyle(fontSize: 10, color: Colors.grey)));
+                              }).toList(),
+                        ),
                       ),
                     ],
                   ),
+                  const SizedBox(height: 6),
                   ...alimentsGroupe.map(
                     (a) => Padding(
                       padding: const EdgeInsets.symmetric(vertical: 4),
