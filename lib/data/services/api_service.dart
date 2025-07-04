@@ -202,14 +202,17 @@ class ApiService {
   }
 
   static Future<void> deleteAllPostesSansBien({required String codeIndividu, required String valeurTemps, required String sousCategorie}) async {
-    final response = await http.delete(
-      Uri.parse("$baseUrl/api/uc/postes/sans-bien"),
-      headers: {"Content-Type": "application/json"},
-      body: jsonEncode({"Code_Individu": codeIndividu, "Valeur_Temps": valeurTemps, "Sous_Categorie": sousCategorie}),
+    final uri = Uri.parse(
+      '$baseUrl/delete_all?Code_Individu=$codeIndividu'
+      '&Valeur_Temps=$valeurTemps'
+      '&Sous_Categorie=$sousCategorie',
     );
+    final response = await http.delete(uri);
 
     if (response.statusCode != 200) {
-      throw Exception("Erreur lors de la suppression des postes sans bien : ${response.body}");
+      throw Exception("Erreur suppression des postes: ${response.statusCode} - ${response.body}");
+    } else {
+      print('✅ Tous les postes $sousCategorie ont été supprimés.');
     }
   }
 
@@ -283,7 +286,7 @@ class ApiService {
       if (codeIndividu != null) 'Code_Individu': codeIndividu,
       if (annee != null) 'Valeur_Temps': annee,
       if (typeTemps != null) 'Type_Temps': typeTemps,
-      if (valeurTemps != null) 'Veleur_Temps': valeurTemps,
+      if (valeurTemps != null) 'Valeur_Temps': valeurTemps,
       if (idBien != null) 'ID_Bien': idBien,
       if (sousCategorie != null) 'Sous_Categorie': sousCategorie,
       if (typeCategorie != null) 'Type_Categorie': typeCategorie,
