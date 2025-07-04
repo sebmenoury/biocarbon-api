@@ -162,8 +162,8 @@ class _AlimentationScreenState extends State<AlimentationScreen> {
               });
             },
             child: Container(
-              width: 18,
-              height: 18,
+              width: 16,
+              height: 16,
               decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: Colors.grey.shade400), color: actif ? Colors.green.shade500 : Colors.grey.shade200),
               child: actif ? Center(child: Container(width: 7, height: 7, decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.white))) : null,
             ),
@@ -182,14 +182,6 @@ class _AlimentationScreenState extends State<AlimentationScreen> {
     }
 
     return Scaffold(
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          widget.onSave();
-          Navigator.pop(context);
-        },
-        label: const Text("Enregistrer"),
-        icon: const Icon(Icons.save),
-      ),
       body: SafeArea(
         child: BaseScreen(
           title: Stack(
