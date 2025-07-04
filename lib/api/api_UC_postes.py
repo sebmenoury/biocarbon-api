@@ -98,6 +98,7 @@ def get_poste_by_id(id_usage):
             return jsonify(row), 200
 
     return jsonify({"error": f"Poste {id_usage} non trouvé"}), 404
+
 @bp_uc_postes.route("/api/uc/postes/bulk", methods=["POST", "OPTIONS"])
 def save_postes_bulk():
     # ✅ Gérer la requête préflight CORS
@@ -226,8 +227,43 @@ def delete_all_postes():
 
     except Exception as e:
         return jsonify({"error": f"Erreur serveur : {str(e)}"}), 500
+    
 @bp_uc_postes.route('/delete_all_sans_bien', methods=['DELETE', 'OPTIONS'])
 def delete_all_postes_sans_bien():
+    if request.method == 'OPTIONS':
+        return '', 200
+
+    code_individu = request.args.get('Code_Individu')
+    valeur_temps = request.args.get('Valeur_Temps')
+    type_categorie = request.args.get('Type_Categorie')
+
+    if not all([code_individu, valeur_temps, type_categorie]):
+        return jsonify({"error": "Paramètres manquants"}), 400
+
+    try:
+        sheet = get_worksheet(SHEET_NAME, UC_POSTES_SHEET)
+        records = sheet.get_all_records()
+
+        rows_to_delete = []
+        for idx, row in enumerate(records, start=2):
+            if (
+                str(row.get('Code_Individu')) == str(code_individu) and
+                str(row.get('Valeur_Temps')) == str(valeur_temps) and
+                str(row.get('Sous_Categorie')) == str(type_categorie)
+            ):
+                rows_to_delete.append(idx)
+
+        for row_num in reversed(rows_to_delete):
+            sheet.delete_rows(row_num)
+
+        return jsonify({"message": f"{len(rows_to_delete)} postes supprimés ✅"}), 200
+
+    except Exception as e:
+        return jsonify({"error": f"Erreur serveur : {str(e)}"}), 500
+
+
+@bp_uc_postes.route('/delete_all_sans_bien', methods=['DELETE', 'OPTIONS'])
+def delete_all_postes_sans_bien_sous_category():
     if request.method == 'OPTIONS':
         return '', 200
 

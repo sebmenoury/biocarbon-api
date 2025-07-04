@@ -219,7 +219,7 @@ class ApiService {
 
   static Future<void> deleteAllPostesSansBiensousCategory({required String codeIndividu, required String valeurTemps, required String sousCategorie}) async {
     final uri = Uri.parse(
-      '$baseUrl/delete_all_sans_bien?Code_Individu=$codeIndividu'
+      '$baseUrl/delete_all_sans_bien_sous_category?Code_Individu=$codeIndividu'
       '&Valeur_Temps=$valeurTemps'
       '&Sous_Categorie=$sousCategorie',
     );
