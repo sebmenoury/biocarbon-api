@@ -249,7 +249,7 @@ def delete_all_postes_sans_bien():
             if (
                 str(row.get('Code_Individu')) == str(code_individu) and
                 str(row.get('Valeur_Temps')) == str(valeur_temps) and
-                str(row.get('Sous_Categorie')) == str(type_categorie)
+                str(row.get('Type_Categorie')) == str(type_categorie)
             ):
                 rows_to_delete.append(idx)
 
