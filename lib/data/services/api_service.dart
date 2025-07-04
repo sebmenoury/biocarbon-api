@@ -201,6 +201,18 @@ class ApiService {
     }
   }
 
+  static Future<void> deleteAllPostesSansBien({required String codeIndividu, required String valeurTemps, required String sousCategorie}) async {
+    final response = await http.delete(
+      Uri.parse("$baseUrl/api/uc/postes/sans-bien"),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode({"Code_Individu": codeIndividu, "Valeur_Temps": valeurTemps, "Sous_Categorie": sousCategorie}),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception("Erreur lors de la suppression des postes sans bien : ${response.body}");
+    }
+  }
+
   static Future<void> saveOrUpdatePoste(Map<String, dynamic> data) async {
     final id = data['ID_Usage'];
     final urlGet = Uri.parse('$baseUrl/api/uc/postes/$id');

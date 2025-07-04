@@ -4,6 +4,7 @@ import '../../../data/services/api_service.dart';
 import '../../../ui/layout/custom_card.dart';
 import '../../../ui/layout/base_screen.dart';
 import "poste_alimentaire.dart";
+import 'regime.dart';
 
 class AlimentationScreen extends StatefulWidget {
   final String codeIndividu;
@@ -17,34 +18,6 @@ class AlimentationScreen extends StatefulWidget {
 }
 
 class _AlimentationScreenState extends State<AlimentationScreen> {
-  final Map<String, Map<String, dynamic>> regimes = {
-    "Carnivore ++": {
-      "emoji": "🍖",
-      "desc": "Viande à chaque repas",
-      "frequences": {"Boeuf": 10, "Poulet": 4},
-    },
-    "Carnivore": {
-      "emoji": "🥩",
-      "desc": "Viande 1x/jour",
-      "frequences": {"Boeuf": 5, "Poulet": 3},
-    },
-    "Flexitarien": {
-      "emoji": "🍗",
-      "desc": "Viande 3–4×/semaine",
-      "frequences": {"Boeuf": 2, "Poisson": 2},
-    },
-    "Végétarien": {
-      "emoji": "🥚",
-      "desc": "Sans viande/poisson",
-      "frequences": {"Oeuf": 4, "Lait": 4},
-    },
-    "Végan": {
-      "emoji": "🌿",
-      "desc": "100% végétal",
-      "frequences": {"Légumes": 14},
-    },
-  };
-
   double calculerTotalEmission() {
     return aliments.fold(0.0, (total, aliment) {
       if (aliment.frequence != null) {
@@ -82,6 +55,75 @@ class _AlimentationScreenState extends State<AlimentationScreen> {
         isLoading = false;
       });
     });
+  }
+
+  Future<void> enregistrerOuMettreAJour() async {
+    final codeIndividu = widget.codeIndividu;
+    final valeurTemps = widget.valeurTemps;
+    const sousCategorie = "Alimentation";
+
+    await ApiService.deleteAllPostesSansBien(codeIndividu: codeIndividu, valeurTemps: valeurTemps, sousCategorie: sousCategorie);
+
+    final nowIso = DateTime.now().toIso8601String();
+    final List<Map<String, dynamic>> payloads = [];
+
+    for (final a in aliments) {
+      final freq = a.frequence;
+      if (freq == null || freq == 0) continue;
+
+      final timestamp = DateTime.now().millisecondsSinceEpoch;
+      final idUsage = "TEMP-${timestamp}_${a.nom}_${valeurTemps}".replaceAll(' ', '_');
+
+      final emission = a.portion * freq * 52 * (a.facteur ?? 0);
+
+      payloads.add({
+        "ID_Usage": idUsage,
+        "Code_Individu": codeIndividu,
+        "Type_Temps": "Réel",
+        "Valeur_Temps": valeurTemps,
+        "Date_enregistrement": nowIso,
+        "Type_Poste": "Usage",
+        "Type_Categorie": "Alimentation",
+        "Sous_Categorie": a.sousCategorie ?? "Autre",
+        "Nom_Poste": a.nom,
+        "Quantite": a.portion,
+        "Unite": a.unite,
+        "Frequence": freq,
+        "Facteur_Emission": a.facteur,
+        "Emission_Calculee": emission,
+        "Mode_Calcul": "Multiplicatif",
+      });
+    }
+
+    if (payloads.isNotEmpty) {
+      await ApiService.savePostesBulk(payloads);
+    }
+
+    widget.onSave();
+
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("✅ Déclaration alimentaire enregistrée")));
+    Navigator.pop(context); // ou autre navigation
+  }
+
+  Future<void> supprimerPoste() async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder:
+          (ctx) => AlertDialog(
+            title: const Text("Supprimer ?"),
+            content: const Text("Supprimer tous les postes alimentaires ?"),
+            actions: [TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text("Annuler")), TextButton(onPressed: () => Navigator.pop(ctx, true), child: const Text("Supprimer"))],
+          ),
+    );
+
+    if (confirm == true) {
+      await ApiService.deleteAllPostesSansBien(codeIndividu: widget.codeIndividu, valeurTemps: widget.valeurTemps, sousCategorie: "Alimentation");
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("✅ Déclaration supprimée")));
+      Navigator.pop(context);
+    }
   }
 
   Future<void> choisirRegime(String nom) async {
@@ -138,12 +180,15 @@ class _AlimentationScreenState extends State<AlimentationScreen> {
             final alimentsGroupe = entry.value;
 
             return CustomCard(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8), // ← augmenté
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // ✅ Titre du groupe (ex: Viande)
+                  Padding(padding: const EdgeInsets.only(bottom: 4), child: Text(group, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold))),
+                  // ✅ Ligne des labels de fréquence
                   Padding(
-                    padding: const EdgeInsets.only(left: 100), // ← décalage des labels pour les aligner aux ronds
+                    padding: const EdgeInsets.only(left: 100), // Aligné avec les ronds
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children:
@@ -153,6 +198,7 @@ class _AlimentationScreenState extends State<AlimentationScreen> {
                     ),
                   ),
                   const SizedBox(height: 4),
+                  // ✅ Liste des aliments avec boutons
                   ...alimentsGroupe.map(
                     (a) => Padding(
                       padding: const EdgeInsets.symmetric(vertical: 4),
@@ -296,6 +342,24 @@ class _AlimentationScreenState extends State<AlimentationScreen> {
                     ],
                   ),
                 ),
+              ),
+              const SizedBox(height: 24),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                    onPressed: enregistrerOuMettreAJour,
+                    style: ElevatedButton.styleFrom(backgroundColor: Colors.green.shade100),
+                    child: const Text("Enregistrer", style: TextStyle(color: Colors.black)),
+                  ),
+                  OutlinedButton(
+                    //
+                    //onPressed: hasPostesExistants ? supprimerPoste : null,
+                    onPressed: supprimerPoste,
+                    style: OutlinedButton.styleFrom(side: BorderSide(color: Colors.teal.shade200)),
+                    child: const Text("Supprimer la déclaration", style: TextStyle(fontSize: 12)),
+                  ),
+                ],
               ),
             ],
           ),
