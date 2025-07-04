@@ -41,7 +41,7 @@ class Poste {
       quantite: double.tryParse(json['Quantite'].toString()) ?? 0.0,
       unite: json['Unite'] ?? '',
       emissionCalculee: double.tryParse(json['Emission_Calculee'].toString()) ?? 0.0,
-      frequence: json['Facteur_Emission']?.toString(),
+      frequence: json['Frequence']?.toString(),
       anneeAchat: int.tryParse(json['Annee_Achat'].toString()),
       dureeAmortissement: int.tryParse(json['Duree_Amortissement'].toString()),
     );
