@@ -339,27 +339,27 @@ class _AlimentationScreenState extends State<AlimentationScreen> {
                       const SizedBox(height: 8),
                       buildGroupedCards(),
                       const SizedBox(height: 24),
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          ElevatedButton(
+                            onPressed: enregistrerOuMettreAJour,
+                            style: ElevatedButton.styleFrom(backgroundColor: Colors.green.shade100),
+                            child: const Text("Enregistrer", style: TextStyle(color: Colors.black)),
+                          ),
+                          OutlinedButton(
+                            //
+                            //onPressed: hasPostesExistants ? supprimerPoste : null,
+                            onPressed: supprimerPoste,
+                            style: OutlinedButton.styleFrom(side: BorderSide(color: Colors.teal.shade200)),
+                            child: const Text("Supprimer la déclaration", style: TextStyle(fontSize: 12)),
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                 ),
-              ),
-              const SizedBox(height: 24),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  ElevatedButton(
-                    onPressed: enregistrerOuMettreAJour,
-                    style: ElevatedButton.styleFrom(backgroundColor: Colors.green.shade100),
-                    child: const Text("Enregistrer", style: TextStyle(color: Colors.black)),
-                  ),
-                  OutlinedButton(
-                    //
-                    //onPressed: hasPostesExistants ? supprimerPoste : null,
-                    onPressed: supprimerPoste,
-                    style: OutlinedButton.styleFrom(side: BorderSide(color: Colors.teal.shade200)),
-                    child: const Text("Supprimer la déclaration", style: TextStyle(fontSize: 12)),
-                  ),
-                ],
               ),
             ],
           ),
