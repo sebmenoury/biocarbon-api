@@ -201,11 +201,11 @@ class ApiService {
     }
   }
 
-  static Future<void> deleteAllPostesSansBien({required String codeIndividu, required String valeurTemps, required String sousCategorie}) async {
+  static Future<void> deleteAllPostesSansBien({required String codeIndividu, required String valeurTemps, required String typeCategorie}) async {
     final uri = Uri.parse(
       '$baseUrl/delete_all_sans_bien?Code_Individu=$codeIndividu'
       '&Valeur_Temps=$valeurTemps'
-      '&Sous_Categorie=$sousCategorie',
+      '&Sous_Categorie=$typeCategorie',
     );
 
     final response = await http.delete(uri);
@@ -213,7 +213,7 @@ class ApiService {
     if (response.statusCode != 200) {
       throw Exception("Erreur suppression des postes: ${response.statusCode} - ${response.body}");
     } else {
-      print('✅ Tous les postes $sousCategorie ont été supprimés.');
+      print('✅ Tous les postes $typeCategorie ont été supprimés.');
     }
   }
 

@@ -38,13 +38,13 @@ const List<String> usageLabels = [
 
 class PosteListScreen extends StatefulWidget {
   final String typeCategorie;
-  final String sousCategorie;
+  final String? sousCategorie;
   final String codeIndividu;
   final String valeurTemps;
   final String? idBien;
   final VoidCallback? onAddPressed;
 
-  const PosteListScreen({super.key, required this.typeCategorie, required this.sousCategorie, required this.codeIndividu, required this.valeurTemps, this.idBien, this.onAddPressed});
+  const PosteListScreen({super.key, required this.typeCategorie, this.sousCategorie, required this.codeIndividu, required this.valeurTemps, this.idBien, this.onAddPressed});
 
   @override
   State<PosteListScreen> createState() => _PosteListScreenState();
@@ -128,7 +128,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
       title: Stack(
         alignment: Alignment.center,
         children: [
-          Center(child: Text(titreParSousCategorie[widget.sousCategorie] ?? widget.sousCategorie, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold), textAlign: TextAlign.center)),
+          Center(child: Text(titreParSousCategorie[widget.sousCategorie] ?? widget.sousCategorie!, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold), textAlign: TextAlign.center)),
           Align(
             alignment: Alignment.centerLeft,
             child: IconButton(
@@ -184,7 +184,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                       style: TextStyle(fontSize: 11),
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 6),
                   if (!hasData)
                     CustomCard(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -248,7 +248,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                 children: [
                   InkWell(
                     onTap: () {
-                      final entry = getEcranEtTitre(widget.typeCategorie, widget.sousCategorie);
+                      final entry = getEcranEtTitre(widget.typeCategorie, widget.sousCategorie!);
                       final screen = entry?.builder();
 
                       if (screen != null) {
@@ -266,7 +266,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(widget.sousCategorie, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                              Text(widget.sousCategorie!, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                               Row(
                                 children: [
                                   Text("${total.round()} kgCO₂", style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
@@ -439,7 +439,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                                             (_) => ConstructionScreen(
                                               codeIndividu: widget.codeIndividu,
                                               valeurTemps: widget.valeurTemps,
-                                              sousCategorie: widget.sousCategorie,
+                                              sousCategorie: widget.sousCategorie!,
                                               idBien: idBien,
                                               onSave: () => setState(() {}),
                                             ),
@@ -451,14 +451,14 @@ class _PosteListScreenState extends State<PosteListScreen> {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (_) => EquipementScreen(codeIndividu: widget.codeIndividu, idBien: idBien, sousCategorie: widget.sousCategorie, onSave: () => setState(() {})),
+                                        builder: (_) => EquipementScreen(codeIndividu: widget.codeIndividu, idBien: idBien, sousCategorie: widget.sousCategorie!, onSave: () => setState(() {})),
                                       ),
                                     );
                                   } else if (widget.sousCategorie == "Equipements Confort") {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (_) => EquipementConfortScreen(codeIndividu: widget.codeIndividu, idBien: idBien, sousCategorie: widget.sousCategorie, onSave: () => setState(() {})),
+                                        builder: (_) => EquipementConfortScreen(codeIndividu: widget.codeIndividu, idBien: idBien, sousCategorie: widget.sousCategorie!, onSave: () => setState(() {})),
                                       ),
                                     );
                                   } else if (widget.sousCategorie == "Rénovation") {
@@ -476,7 +476,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                                             (_) => UsagesElectriciteScreen(
                                               codeIndividu: widget.codeIndividu,
                                               idBien: idBien,
-                                              sousCategorie: widget.sousCategorie,
+                                              sousCategorie: widget.sousCategorie!,
                                               valeurTemps: widget.valeurTemps,
                                               onSave: () => setState(() {}),
                                             ),
@@ -490,7 +490,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                                             (_) => UsagesGazFioulScreen(
                                               codeIndividu: widget.codeIndividu,
                                               idBien: idBien,
-                                              sousCategorie: widget.sousCategorie,
+                                              sousCategorie: widget.sousCategorie!,
                                               valeurTemps: widget.valeurTemps,
                                               onSave: () => setState(() {}),
                                             ),
@@ -504,14 +504,14 @@ class _PosteListScreenState extends State<PosteListScreen> {
                                             (_) => UsagesDechetsEauScreen(
                                               codeIndividu: widget.codeIndividu,
                                               idBien: idBien,
-                                              sousCategorie: widget.sousCategorie,
+                                              sousCategorie: widget.sousCategorie!,
                                               valeurTemps: widget.valeurTemps,
                                               onSave: () => setState(() {}),
                                             ),
                                       ),
                                     );
                                   } else {
-                                    final entry = getEcranEtTitre(widget.typeCategorie, widget.sousCategorie);
+                                    final entry = getEcranEtTitre(widget.typeCategorie, widget.sousCategorie!);
                                     if (entry != null && entry.builder != null) {
                                       Navigator.push(context, MaterialPageRoute(builder: (_) => entry.builder!()));
                                     } else {
@@ -526,7 +526,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Text(widget.sousCategorie, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                                        Text(widget.sousCategorie!, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                                         Row(
                                           children: [
                                             Text("${total.round()} kgCO₂", style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
@@ -582,7 +582,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                                         (_) => ConstructionScreen(
                                           codeIndividu: widget.codeIndividu,
                                           valeurTemps: widget.valeurTemps,
-                                          sousCategorie: widget.sousCategorie,
+                                          sousCategorie: widget.sousCategorie!,
                                           idBien: idBien,
                                           onSave: () => setState(() {}),
                                         ),
@@ -594,14 +594,14 @@ class _PosteListScreenState extends State<PosteListScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (_) => EquipementScreen(codeIndividu: widget.codeIndividu, idBien: idBien, sousCategorie: widget.sousCategorie, onSave: () => setState(() {})),
+                                    builder: (_) => EquipementScreen(codeIndividu: widget.codeIndividu, idBien: idBien, sousCategorie: widget.sousCategorie!, onSave: () => setState(() {})),
                                   ),
                                 );
                               } else if (widget.sousCategorie == "Equipements Confort") {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (_) => EquipementConfortScreen(codeIndividu: widget.codeIndividu, idBien: idBien, sousCategorie: widget.sousCategorie, onSave: () => setState(() {})),
+                                    builder: (_) => EquipementConfortScreen(codeIndividu: widget.codeIndividu, idBien: idBien, sousCategorie: widget.sousCategorie!, onSave: () => setState(() {})),
                                   ),
                                 );
                               } else if (widget.sousCategorie == "Rénovation") {
@@ -619,7 +619,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                                         (_) => UsagesElectriciteScreen(
                                           codeIndividu: widget.codeIndividu,
                                           idBien: idBien,
-                                          sousCategorie: widget.sousCategorie,
+                                          sousCategorie: widget.sousCategorie!,
                                           valeurTemps: widget.valeurTemps,
                                           onSave: () => setState(() {}),
                                         ),
@@ -633,7 +633,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
                                         (_) => UsagesGazFioulScreen(
                                           codeIndividu: widget.codeIndividu,
                                           idBien: idBien,
-                                          sousCategorie: widget.sousCategorie,
+                                          sousCategorie: widget.sousCategorie!,
                                           valeurTemps: widget.valeurTemps,
                                           onSave: () => setState(() {}),
                                         ),
@@ -647,14 +647,14 @@ class _PosteListScreenState extends State<PosteListScreen> {
                                         (_) => UsagesDechetsEauScreen(
                                           codeIndividu: widget.codeIndividu,
                                           idBien: idBien,
-                                          sousCategorie: widget.sousCategorie,
+                                          sousCategorie: widget.sousCategorie!,
                                           valeurTemps: widget.valeurTemps,
                                           onSave: () => setState(() {}),
                                         ),
                                   ),
                                 );
                               } else {
-                                final entry = getEcranEtTitre(widget.typeCategorie, widget.sousCategorie);
+                                final entry = getEcranEtTitre(widget.typeCategorie, widget.sousCategorie!);
                                 final screen = entry?.builder();
 
                                 if (screen != null) {

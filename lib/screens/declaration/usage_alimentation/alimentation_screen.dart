@@ -5,6 +5,7 @@ import '../../../ui/layout/custom_card.dart';
 import '../../../ui/layout/base_screen.dart';
 import "poste_alimentaire.dart";
 import 'regime.dart';
+import '../poste_list_screen.dart';
 
 class AlimentationScreen extends StatefulWidget {
   final String codeIndividu;
@@ -79,9 +80,9 @@ class _AlimentationScreenState extends State<AlimentationScreen> {
   Future<void> enregistrerOuMettreAJour() async {
     final codeIndividu = widget.codeIndividu;
     final valeurTemps = widget.valeurTemps;
-    const sousCategorie = "Alimentation";
+    const typeCategorie = "Alimentation";
 
-    await ApiService.deleteAllPostesSansBien(codeIndividu: codeIndividu, valeurTemps: valeurTemps, sousCategorie: sousCategorie);
+    await ApiService.deleteAllPostesSansBien(codeIndividu: codeIndividu, valeurTemps: valeurTemps, typeCategorie: typeCategorie);
 
     final nowIso = DateTime.now().toIso8601String();
     final List<Map<String, dynamic>> payloads = [];
@@ -91,7 +92,7 @@ class _AlimentationScreenState extends State<AlimentationScreen> {
       if (freq == null || freq == 0) continue;
 
       final timestamp = DateTime.now().millisecondsSinceEpoch;
-      final idUsage = "TEMP-${timestamp}_${a.nom}_${valeurTemps}".replaceAll(' ', '_');
+      final idUsage = "TEMP-${timestamp}_${typeCategorie}_${a.nom}_${valeurTemps}".replaceAll(' ', '_');
 
       final emission = a.portion * freq * 52 * (a.facteur ?? 0);
 
@@ -113,7 +114,7 @@ class _AlimentationScreenState extends State<AlimentationScreen> {
         "Frequence": freq,
         "Facteur_Emission": a.facteur,
         "Emission_Calculee": emission,
-        "Mode_Calcul": "Multiplicatif",
+        "Mode_Calcul": "Muliplicatif",
         "Annee_Achat": null,
         "Duree_Amortissement": null,
       });
@@ -127,7 +128,7 @@ class _AlimentationScreenState extends State<AlimentationScreen> {
 
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("✅ Déclaration alimentaire enregistrée")));
-    Navigator.pop(context); // ou autre navigation
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => PosteListScreen(typeCategorie: "Alimentation", codeIndividu: codeIndividu, valeurTemps: valeurTemps)));
   }
 
   Future<void> supprimerPoste() async {
@@ -142,11 +143,11 @@ class _AlimentationScreenState extends State<AlimentationScreen> {
     );
 
     if (confirm == true) {
-      await ApiService.deleteAllPostesSansBien(codeIndividu: widget.codeIndividu, valeurTemps: widget.valeurTemps, sousCategorie: "Alimentation");
+      await ApiService.deleteAllPostesSansBien(codeIndividu: widget.codeIndividu, valeurTemps: widget.valeurTemps, typeCategorie: "Alimentation");
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("✅ Déclaration supprimée")));
-      Navigator.pop(context);
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => PosteListScreen(typeCategorie: "Alimentation", codeIndividu: widget.codeIndividu, valeurTemps: widget.valeurTemps)));
     }
   }
 
