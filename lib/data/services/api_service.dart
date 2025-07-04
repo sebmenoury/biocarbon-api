@@ -203,10 +203,11 @@ class ApiService {
 
   static Future<void> deleteAllPostesSansBien({required String codeIndividu, required String valeurTemps, required String sousCategorie}) async {
     final uri = Uri.parse(
-      '$baseUrl/delete_all?Code_Individu=$codeIndividu'
+      '$baseUrl/delete_all_sans_bien?Code_Individu=$codeIndividu'
       '&Valeur_Temps=$valeurTemps'
       '&Sous_Categorie=$sousCategorie',
     );
+
     final response = await http.delete(uri);
 
     if (response.statusCode != 200) {

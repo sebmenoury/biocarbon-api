@@ -226,10 +226,8 @@ def delete_all_postes():
 
     except Exception as e:
         return jsonify({"error": f"Erreur serveur : {str(e)}"}), 500
-
 @bp_uc_postes.route('/delete_all_sans_bien', methods=['DELETE', 'OPTIONS'])
 def delete_all_postes_sans_bien():
-    # ✅ Pré-requête OPTIONS
     if request.method == 'OPTIONS':
         return '', 200
 
@@ -245,7 +243,7 @@ def delete_all_postes_sans_bien():
         records = sheet.get_all_records()
 
         rows_to_delete = []
-        for idx, row in enumerate(records, start=2):  # start=2 pour ignorer l'en-tête
+        for idx, row in enumerate(records, start=2):
             if (
                 str(row.get('Code_Individu')) == str(code_individu) and
                 str(row.get('Valeur_Temps')) == str(valeur_temps) and
@@ -256,7 +254,7 @@ def delete_all_postes_sans_bien():
         for row_num in reversed(rows_to_delete):
             sheet.delete_rows(row_num)
 
-        return jsonify({"message": f"{len(rows_to_delete)} postes supprimés (sans ID_Bien) ✅"}), 200
+        return jsonify({"message": f"{len(rows_to_delete)} postes supprimés ✅"}), 200
 
     except Exception as e:
         return jsonify({"error": f"Erreur serveur : {str(e)}"}), 500
