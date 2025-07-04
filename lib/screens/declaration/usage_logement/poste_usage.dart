@@ -23,6 +23,11 @@ class PosteUsage {
     return e.isNaN ? 0 : e;
   }
 
+  double calculerEmissionLoisir() {
+    final e = (valeur * facteurEmission);
+    return e.isNaN ? 0 : e;
+  }
+
   /// Conversion pour envoi à l’API
   Map<String, dynamic> toMap({required String codeIndividu, required String typeTemps, required String valeurTemps, required String sousCategorie, required double nbHabitants}) {
     final now = DateTime.now().toIso8601String();
