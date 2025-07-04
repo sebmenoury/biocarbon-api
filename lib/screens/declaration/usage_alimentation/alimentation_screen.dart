@@ -193,7 +193,7 @@ class _AlimentationScreenState extends State<AlimentationScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children:
                           values.map((freq) {
-                            return SizedBox(width: 16, child: Text(formatFrequence(freq), textAlign: TextAlign.center, style: const TextStyle(fontSize: 10, color: Colors.grey)));
+                            return SizedBox(width: 15, child: Text(formatFrequence(freq), textAlign: TextAlign.center, style: const TextStyle(fontSize: 10, color: Colors.grey)));
                           }).toList(),
                     ),
                   ),
@@ -296,14 +296,17 @@ class _AlimentationScreenState extends State<AlimentationScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Padding(padding: EdgeInsets.only(left: 4), child: Text("Quel est votre régime alimentaire ?", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold))),
+                      const Padding(
+                        padding: EdgeInsets.only(left: 4),
+                        child: Text("Initialisez vos valeurs avec un régime alimentaire type", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                      ),
                       const SizedBox(height: 4),
                       GridView.count(
                         shrinkWrap: true,
                         crossAxisCount: 2,
                         physics: const NeverScrollableScrollPhysics(),
-                        crossAxisSpacing: 12,
-                        mainAxisSpacing: 12,
+                        crossAxisSpacing: 10,
+                        mainAxisSpacing: 6,
                         childAspectRatio: 2.6,
                         children:
                             regimes.entries.map((entry) {
