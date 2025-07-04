@@ -144,17 +144,17 @@ class _AlimentationScreenState extends State<AlimentationScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(group, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 6),
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      const SizedBox(width: 100),
+                      Text(group, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+                      const SizedBox(width: 12),
                       Expanded(
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children:
                               frequences.map((freq) {
-                                return SizedBox(width: 20, child: Text(formatFrequence(freq), textAlign: TextAlign.center, style: const TextStyle(fontSize: 10, color: Colors.grey)));
+                                return SizedBox(width: 22, child: Text(formatFrequence(freq), textAlign: TextAlign.center, style: const TextStyle(fontSize: 10, color: Colors.grey)));
                               }).toList(),
                         ),
                       ),
@@ -178,9 +178,8 @@ class _AlimentationScreenState extends State<AlimentationScreen> {
   }
 
   Widget buildBoutonsFrequence(PosteAlimentaire aliment) {
-    return Wrap(
-      spacing: 4,
-      runSpacing: 4,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: List.generate(values.length, (i) {
         final actif = aliment.frequence == values[i];
         return Tooltip(
@@ -192,8 +191,9 @@ class _AlimentationScreenState extends State<AlimentationScreen> {
               });
             },
             child: Container(
-              width: 16,
-              height: 16,
+              width: 18,
+              height: 18,
+              margin: const EdgeInsets.symmetric(horizontal: 2),
               decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: Colors.grey.shade400), color: actif ? Colors.green.shade500 : Colors.grey.shade200),
               child: actif ? Center(child: Container(width: 7, height: 7, decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.white))) : null,
             ),
@@ -267,7 +267,7 @@ class _AlimentationScreenState extends State<AlimentationScreen> {
                         physics: const NeverScrollableScrollPhysics(),
                         crossAxisSpacing: 12,
                         mainAxisSpacing: 12,
-                        childAspectRatio: 3,
+                        childAspectRatio: 2.6,
                         children:
                             regimes.entries.map((entry) {
                               final nom = entry.key;
