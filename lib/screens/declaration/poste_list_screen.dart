@@ -178,11 +178,16 @@ class _PosteListScreenState extends State<PosteListScreen> {
               final List<MapEntry<String, List<Poste>>> sortedEntries = postesParSousCat.entries.toList();
 
               // Ajoute les totaux et trie par total décroissant
-              sortedEntries.sort((a, b) {
-                final totalA = a.value.fold<double>(0, (sum, p) => sum + (p.emissionCalculee ?? 0));
-                final totalB = b.value.fold<double>(0, (sum, p) => sum + (p.emissionCalculee ?? 0));
-                return totalB.compareTo(totalA);
-              });
+              try {
+                sortedEntries.sort((a, b) {
+                  final totalA = a.value.fold<double>(0, (sum, p) => sum + (p.emissionCalculee ?? 0));
+                  final totalB = b.value.fold<double>(0, (sum, p) => sum + (p.emissionCalculee ?? 0));
+                  return totalB.compareTo(totalA);
+                });
+                print("✅ Tri effectué avec succès");
+              } catch (e) {
+                print("❌ Erreur pendant le tri : $e");
+              }
 
               return Column(
                 children: [
@@ -210,23 +215,28 @@ class _PosteListScreenState extends State<PosteListScreen> {
                     ),
 
                   ...sortedEntries.map((entry) {
-                    final sousCat = entry.key;
-                    final postes = entry.value;
-                    final total = postes.fold<double>(0, (sum, p) => sum + (p.emissionCalculee ?? 0));
+                    try {
+                      final sousCat = entry.key;
+                      final postes = entry.value;
+                      final total = postes.fold<double>(0, (sum, p) => sum + (p.emissionCalculee ?? 0));
 
-                    postes.sort((a, b) => (b.emissionCalculee ?? 0).compareTo(a.emissionCalculee ?? 0));
+                      postes.sort((a, b) => (b.emissionCalculee ?? 0).compareTo(a.emissionCalculee ?? 0));
 
-                    return PostListSectionCard(
-                      sousCat: sousCat,
-                      postes: postes,
-                      total: total,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => AlimentationScreen(codeIndividu: widget.codeIndividu, valeurTemps: widget.valeurTemps, onSave: () => setState(() {}))),
-                        );
-                      },
-                    );
+                      return PostListSectionCard(
+                        sousCat: sousCat,
+                        postes: postes,
+                        total: total,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => AlimentationScreen(codeIndividu: widget.codeIndividu, valeurTemps: widget.valeurTemps, onSave: () => setState(() {}))),
+                          );
+                        },
+                      );
+                    } catch (e) {
+                      print("❌ Erreur dans la génération d'une card alimentation : $e");
+                      return const SizedBox(); // Affiche rien si erreur
+                    }
                   }).toList(),
                 ],
               );
