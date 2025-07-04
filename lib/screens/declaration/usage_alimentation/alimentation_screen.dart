@@ -136,7 +136,18 @@ class _AlimentationScreenState extends State<AlimentationScreen> {
 
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("✅ Déclaration alimentaire enregistrée")));
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => PosteListScreen(typeCategorie: "Alimentation", codeIndividu: codeIndividu, valeurTemps: valeurTemps)));
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder:
+            (_) => PosteListScreen(
+              typeCategorie: "Alimentation",
+              codeIndividu: codeIndividu,
+              valeurTemps: valeurTemps,
+              sousCategorie: "_", // ou "_" si tu préfères une valeur neutre
+            ),
+      ),
+    );
   }
 
   Future<void> supprimerPoste() async {
@@ -155,7 +166,18 @@ class _AlimentationScreenState extends State<AlimentationScreen> {
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("✅ Déclaration supprimée")));
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => PosteListScreen(typeCategorie: "Alimentation", codeIndividu: widget.codeIndividu, valeurTemps: widget.valeurTemps)));
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder:
+              (_) => PosteListScreen(
+                typeCategorie: "Alimentation",
+                codeIndividu: widget.codeIndividu,
+                valeurTemps: widget.valeurTemps,
+                sousCategorie: "_", // ou "_" si tu préfères une valeur neutre
+              ),
+        ),
+      );
     }
   }
 

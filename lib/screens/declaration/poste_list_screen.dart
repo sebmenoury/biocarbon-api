@@ -38,13 +38,13 @@ const List<String> usageLabels = [
 
 class PosteListScreen extends StatefulWidget {
   final String typeCategorie;
-  final String? sousCategorie;
+  final String sousCategorie;
   final String codeIndividu;
   final String valeurTemps;
   final String? idBien;
   final VoidCallback? onAddPressed;
 
-  const PosteListScreen({super.key, required this.typeCategorie, this.sousCategorie, required this.codeIndividu, required this.valeurTemps, this.idBien, this.onAddPressed});
+  const PosteListScreen({super.key, required this.typeCategorie, required this.sousCategorie, required this.codeIndividu, required this.valeurTemps, this.idBien, this.onAddPressed});
 
   @override
   State<PosteListScreen> createState() => _PosteListScreenState();
