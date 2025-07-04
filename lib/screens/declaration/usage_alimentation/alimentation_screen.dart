@@ -207,12 +207,12 @@ class _AlimentationScreenState extends State<AlimentationScreen> {
                   Padding(padding: const EdgeInsets.only(bottom: 4), child: Text(group, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold))),
                   // ✅ Ligne des labels de fréquence
                   Padding(
-                    padding: const EdgeInsets.only(left: 100), // Aligné avec les ronds
+                    padding: const EdgeInsets.only(left: 105), // Aligné avec les ronds
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children:
                           values.map((freq) {
-                            return SizedBox(width: 15, child: Text(formatFrequence(freq), textAlign: TextAlign.center, style: const TextStyle(fontSize: 10, color: Colors.grey)));
+                            return SizedBox(width: 14, child: Text(formatFrequence(freq), textAlign: TextAlign.center, style: const TextStyle(fontSize: 10, color: Colors.grey)));
                           }).toList(),
                     ),
                   ),
