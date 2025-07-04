@@ -187,18 +187,19 @@ class _PosteListScreenState extends State<PosteListScreen> {
                   const SizedBox(height: 12),
                   if (!hasData)
                     CustomCard(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                      child: ListTile(
-                        title: const Text("Déclarer votre alimentation", style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
-                        trailing: const Icon(Icons.chevron_right),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (_) => AlimentationScreen(codeIndividu: widget.codeIndividu, valeurTemps: widget.valeurTemps, onSave: () => setState(() {}))),
-                          );
-                        },
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [Text("Déclarer votre alimentation", style: const TextStyle(fontSize: 12)), const Icon(Icons.chevron_right, size: 14)],
                       ),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => AlimentationScreen(codeIndividu: widget.codeIndividu, valeurTemps: widget.valeurTemps, onSave: () => setState(() {}))),
+                        );
+                      },
                     ),
+
                   ...postesParSousCat.entries.map((entry) {
                     final sousCat = entry.key;
                     final postes = entry.value;
