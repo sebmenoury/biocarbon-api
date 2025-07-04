@@ -101,16 +101,21 @@ class _AlimentationScreenState extends State<AlimentationScreen> {
         "Type_Temps": "Réel",
         "Valeur_Temps": valeurTemps,
         "Date_enregistrement": nowIso,
+        "ID_Bien": null,
+        "Type_Bien": null,
         "Type_Poste": "Usage",
         "Type_Categorie": "Alimentation",
         "Sous_Categorie": a.sousCategorie ?? "Autre",
         "Nom_Poste": a.nom,
+        "Nom_Logement": null,
         "Quantite": a.portion,
         "Unite": a.unite,
         "Frequence": freq,
         "Facteur_Emission": a.facteur,
         "Emission_Calculee": emission,
         "Mode_Calcul": "Multiplicatif",
+        "Annee_Achat": null,
+        "Duree_Amortissement": null,
       });
     }
 
