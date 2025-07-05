@@ -48,7 +48,7 @@ class Poste {
       idUsage: json['ID_Usage']?.toString() ?? '',
       codeIndividu: json['Code_Individu'] ?? '',
       typeTemps: json['Type_Temps'] ?? '',
-      valeurTemps: json['Valeur_Temps'] ?? '',
+      valeurTemps: (json['Valeur_Temps'] ?? '').toString(),
       dateEnregistrement: json['Date_enregistrement'] ?? '',
       typeCategorie: json['Type_Categorie'] ?? '',
       sousCategorie: json['Sous_Categorie'] ?? '',
