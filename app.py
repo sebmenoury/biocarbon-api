@@ -23,8 +23,9 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app,
      resources={r"/*": {"origins": "*"}},
+     supports_credentials=False,
      allow_headers="*",
-     supports_credentials=False)
+     methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
 
 @app.route("/")
 def home():

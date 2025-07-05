@@ -20,6 +20,7 @@ class AvionScreen extends StatefulWidget {
 
 class _AvionScreenState extends State<AvionScreen> {
   List<Poste> vols = [];
+  List<Map<String, dynamic>> tousLesAeroports = [];
   bool isLoading = false;
 
   String? selectedPaysDepart;
@@ -53,7 +54,8 @@ class _AvionScreenState extends State<AvionScreen> {
     setState(() => isLoading = true);
     try {
       await _chargerVols();
-      paysList = List<String>.from(await ApiService.getRefPays());
+      tousLesAeroports = await ApiService.getRefAeroportsFull();
+      paysList = tousLesAeroports.map((e) => e['Pays'] as String).toSet().toList();
     } catch (e) {
       showError(context, e.toString());
     } finally {
@@ -61,12 +63,9 @@ class _AvionScreenState extends State<AvionScreen> {
     }
   }
 
-  Future<void> _chargerVols() async {
-    vols = await ApiService.getUCPostesFiltres(codeIndividu: widget.codeIndividu, valeurTemps: widget.valeurTemps, sousCategorie: 'Déplacements Avion');
-  }
+  void _chargerVilles(bool isDepart, String pays) {
+    final villes = tousLesAeroports.where((a) => a['Pays'] == pays).map((e) => e['Ville'] as String).toSet().toList();
 
-  Future<void> _chargerVilles(bool isDepart, String pays) async {
-    final villes = List<String>.from(await ApiService.getRefVilles(pays));
     setState(() {
       if (isDepart) {
         villesDepartList = villes;
@@ -82,8 +81,9 @@ class _AvionScreenState extends State<AvionScreen> {
     });
   }
 
-  Future<void> _chargerAeroports(bool isDepart, String pays, String ville) async {
-    final aeroports = List<String>.from(await ApiService.getRefAeroports(pays, ville));
+  void _chargerAeroports(bool isDepart, String pays, String ville) {
+    final aeroports = tousLesAeroports.where((a) => a['Pays'] == pays && a['Ville'] == ville).map((e) => e['Nom_Aeroport'] as String).toSet().toList();
+
     setState(() {
       if (isDepart) {
         aeroportsDepartList = aeroports;
@@ -95,13 +95,19 @@ class _AvionScreenState extends State<AvionScreen> {
     });
   }
 
+  Future<void> _chargerVols() async {
+    vols = await ApiService.getUCPostesFiltres(codeIndividu: widget.codeIndividu, valeurTemps: widget.valeurTemps, sousCategorie: 'Déplacements Avion');
+  }
+
   Future<void> _ajouterVol() async {
-    if (selectedPaysDepart == null || selectedVilleDepart == null || selectedAeroportDepart == null || selectedPaysArrivee == null || selectedVilleArrivee == null || selectedAeroportArrivee == null)
+    if (selectedPaysDepart == null || selectedVilleDepart == null || selectedAeroportDepart == null || selectedPaysArrivee == null || selectedVilleArrivee == null || selectedAeroportArrivee == null) {
       return;
+    }
 
     try {
-      final d1 = await ApiService.getRefAeroportDetails(selectedPaysDepart!, selectedVilleDepart!, selectedAeroportDepart!);
-      final d2 = await ApiService.getRefAeroportDetails(selectedPaysArrivee!, selectedVilleArrivee!, selectedAeroportArrivee!);
+      final d1 = tousLesAeroports.firstWhere((a) => a['Pays'] == selectedPaysDepart && a['Ville'] == selectedVilleDepart && a['Nom_Aeroport'] == selectedAeroportDepart);
+
+      final d2 = tousLesAeroports.firstWhere((a) => a['Pays'] == selectedPaysArrivee && a['Ville'] == selectedVilleArrivee && a['Nom_Aeroport'] == selectedAeroportArrivee);
 
       final distance = Haversine.calculerDistanceKm(
         lat1: double.parse(d1['Latitude'].toString()),
@@ -134,7 +140,7 @@ class _AvionScreenState extends State<AvionScreen> {
         modeCalcul: 'Direct',
       );
 
-      //await ApiService.postPostes([poste]);
+      // await ApiService.postPostes([poste]);
       await _chargerVols();
       setState(() {});
     } catch (e) {
@@ -161,7 +167,7 @@ class _AvionScreenState extends State<AvionScreen> {
             value: selectedPays,
             hint: const Text("Choisissez un pays"),
             isExpanded: true,
-            items: paysList.map((p) => DropdownMenuItem(value: p, child: Text(p))).toList(),
+            items: paysList.map((p) => DropdownMenuItem(value: p, child: Text(p, style: const TextStyle(fontSize: 11)))).toList(),
             onChanged: (val) {
               onPaysChanged(val!);
               _chargerVilles(isDepart, val);
@@ -172,7 +178,7 @@ class _AvionScreenState extends State<AvionScreen> {
             value: selectedVille,
             hint: const Text("Choisissez une ville"),
             isExpanded: true,
-            items: villesList.map((v) => DropdownMenuItem(value: v, child: Text(v))).toList(),
+            items: villesList.map((v) => DropdownMenuItem(value: v, child: Text(v, style: const TextStyle(fontSize: 11)))).toList(),
             onChanged: (val) {
               onVilleChanged(val!);
               _chargerAeroports(isDepart, selectedPays!, val);
@@ -183,7 +189,7 @@ class _AvionScreenState extends State<AvionScreen> {
             value: selectedAeroport,
             hint: const Text("Choisissez un aéroport"),
             isExpanded: true,
-            items: aeroportsList.map((a) => DropdownMenuItem(value: a, child: Text(a))).toList(),
+            items: aeroportsList.map((a) => DropdownMenuItem(value: a, child: Text(a, style: const TextStyle(fontSize: 11)))).toList(),
             onChanged: (val) => onAeroportChanged(val!),
           ),
         ],

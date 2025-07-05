@@ -52,25 +52,17 @@ class ApiService {
   // REF - Aéroports
   // ---------------------------------------------------------------------------
 
-  static Future<List<dynamic>> getRefPays() async {
-    final response = await http.get(Uri.parse('$baseUrl/api/ref/aeroports/pays'));
-    return _handleResponse(response);
+  static Future<List<Map<String, dynamic>>> getRefAeroportsFull() async {
+    final response = await http.get(Uri.parse('$baseUrl/api/ref/aeroports'));
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body);
+      return data.cast<Map<String, dynamic>>();
+    } else {
+      throw Exception("Erreur lors du chargement des aéroports");
+    }
   }
 
-  static Future<List<dynamic>> getRefVilles(String pays) async {
-    final response = await http.get(Uri.parse('$baseUrl/api/ref/aeroports/villes?pays=$pays'));
-    return _handleResponse(response);
-  }
-
-  static Future<List<dynamic>> getRefAeroports(String pays, String ville) async {
-    final response = await http.get(Uri.parse('$baseUrl/api/ref/aeroports/noms?pays=$pays&ville=$ville'));
-    return _handleResponse(response);
-  }
-
-  static Future<Map<String, dynamic>> getRefAeroportDetails(String pays, String ville, String aeroport) async {
-    final response = await http.get(Uri.parse('$baseUrl/api/ref/aeroports/details?pays=$pays&ville=$ville&aeroport=$aeroport'));
-    return _handleResponse(response);
-  }
   // ---------------------------------------------------------------------------
   // 📦 UC - BIENS IMMOBILIERS
   // ---------------------------------------------------------------------------

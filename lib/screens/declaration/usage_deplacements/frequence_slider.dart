@@ -12,7 +12,7 @@ class FrequenceSlider extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text("Fréquence de ce trajet (par an)"),
-        Slider(value: selected.toDouble(), min: 1, max: 30, divisions: 29, label: "$selected / an", onChanged: (double value) => onChanged(value.toInt())),
+        Slider(value: selected.toDouble(), min: 1, max: 12, divisions: 11, label: "$selected / an", onChanged: (double value) => onChanged(value.toInt())),
       ],
     );
   }

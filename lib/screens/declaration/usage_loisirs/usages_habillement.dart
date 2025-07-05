@@ -158,7 +158,7 @@ class _UsagesHabillementScreenState extends State<UsagesHabillementScreen> {
       title: Stack(
         alignment: Alignment.center,
         children: [
-          const Text("Déclaration de vos dépenses habillements.", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+          const Text("Déclaration de vos dépenses habillements", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
           Align(
             alignment: Alignment.centerLeft,
             child: IconButton(icon: const Icon(Icons.arrow_back), iconSize: 18, padding: EdgeInsets.zero, constraints: const BoxConstraints(), onPressed: () => Navigator.pop(context)),
