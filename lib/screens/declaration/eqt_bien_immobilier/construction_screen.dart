@@ -122,7 +122,10 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
       widget.onSave();
       // ✅ Redirection vers la liste des postes mise à jour
       Future.delayed(const Duration(milliseconds: 300), () {
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => PosteListScreen(typeCategorie: "Logement", sousCategorie: "Construction", codeIndividu: "BASILE", valeurTemps: "2025")));
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => PosteListScreen(typeCategorie: "Logement", sousCategorie: "Construction", codeIndividu: "BASILE", valeurTemps: widget.valeurTemps)),
+        );
       });
     } catch (e) {
       // print('❌ Erreur enregistrement : $e');
@@ -177,7 +180,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
       debugPrint("✅ Bien trouvé : $nomLogement ($idBien)");
 
       // 🔹 2. Récupérer tous les postes de l'utilisateur pour l'année et filtrer les postes liés à ce bien
-      final postes = await ApiService.getUCPostesFiltres(codeIndividu: "BASILE", annee: "2025");
+      final postes = await ApiService.getUCPostesFiltres(codeIndividu: "BASILE", annee: '2025');
       final postesConstruction = postes.where((p) => (p.idBien?.toString() ?? '') == widget.idBien && p.sousCategorie == 'Construction').toList();
 
       PosteBienImmobilier poste = PosteBienImmobilier();

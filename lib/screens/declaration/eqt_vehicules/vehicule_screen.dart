@@ -139,7 +139,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
   Future<void> enregistrerOuMettreAJour() async {
     final idBien = vehiculesParCategorie.values.first.first.idBien;
     final codeIndividu = "BASILE";
-    final valeurTemps = "2025";
+    final valeurTemps = '2025';
     final sousCategorie = "Véhicules";
 
     try {
@@ -230,7 +230,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
       await ApiService.deleteAllPostes(
         codeIndividu: widget.codeIndividu,
         idBien: widget.idBien,
-        valeurTemps: "2025", // ou widget.valeurTemps si paramétrable
+        valeurTemps: '2025', // ou widget.valeurTemps si paramétrable
         sousCategorie: "Véhicules",
       );
 

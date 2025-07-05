@@ -15,7 +15,7 @@ class AnalyseScreen extends StatefulWidget {
 class _AnalyseScreenState extends State<AnalyseScreen> {
   String filtre = "Tous"; // "Tous", "Equipements", "Usages"
   final String codeIndividu = "BASILE";
-  final String valeurTemps = "2025";
+  final String valeurTemps = '2025';
 
   late Future<Map<String, Map<String, double>>> dataFuture;
 

@@ -102,7 +102,7 @@ class _UsagesElectriciteScreenState extends State<UsagesElectriciteScreen> {
 
   Future<void> enregistrer() async {
     final codeIndividu = widget.codeIndividu;
-    final valeurTemps = "2025";
+    final valeurTemps = widget.valeurTemps; // ex: "2025"
     final sousCategorie = widget.sousCategorie;
 
     await ApiService.deleteAllPostes(codeIndividu: widget.codeIndividu, idBien: widget.idBien, valeurTemps: valeurTemps, sousCategorie: sousCategorie);
@@ -169,7 +169,7 @@ class _UsagesElectriciteScreenState extends State<UsagesElectriciteScreen> {
 
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => PosteListScreen(typeCategorie: "Logement", sousCategorie: widget.sousCategorie, codeIndividu: widget.codeIndividu, valeurTemps: "2025")),
+        MaterialPageRoute(builder: (_) => PosteListScreen(typeCategorie: "Logement", sousCategorie: widget.sousCategorie, codeIndividu: widget.codeIndividu, valeurTemps: widget.valeurTemps)),
       );
     }
   }

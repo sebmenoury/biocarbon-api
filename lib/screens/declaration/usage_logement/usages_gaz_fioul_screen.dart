@@ -102,7 +102,7 @@ class _UsagesGazFioulScreenState extends State<UsagesGazFioulScreen> {
 
   Future<void> enregistrer() async {
     final codeIndividu = widget.codeIndividu;
-    final valeurTemps = "2025";
+    final valeurTemps = '2025';
     final sousCategorie = widget.sousCategorie;
 
     await ApiService.deleteAllPostes(codeIndividu: widget.codeIndividu, idBien: widget.idBien, valeurTemps: valeurTemps, sousCategorie: sousCategorie);
@@ -174,7 +174,7 @@ class _UsagesGazFioulScreenState extends State<UsagesGazFioulScreen> {
 
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => PosteListScreen(typeCategorie: "Logement", sousCategorie: widget.sousCategorie, codeIndividu: widget.codeIndividu, valeurTemps: "2025")),
+        MaterialPageRoute(builder: (_) => PosteListScreen(typeCategorie: "Logement", sousCategorie: widget.sousCategorie, codeIndividu: widget.codeIndividu, valeurTemps: widget.valeurTemps)),
       );
     }
   }

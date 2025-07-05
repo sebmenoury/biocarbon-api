@@ -107,7 +107,7 @@ class _EquipementScreenState extends State<EquipementScreen> {
 
   Future<void> enregistrer() async {
     final codeIndividu = widget.codeIndividu;
-    final valeurTemps = "2025";
+    final valeurTemps = '2025';
     final sousCategorie = widget.sousCategorie;
 
     await ApiService.deleteAllPostes(codeIndividu: codeIndividu, idBien: widget.idBien, valeurTemps: valeurTemps, sousCategorie: sousCategorie);
@@ -172,7 +172,7 @@ class _EquipementScreenState extends State<EquipementScreen> {
     );
 
     if (confirm == true) {
-      await ApiService.deleteAllPostes(codeIndividu: widget.codeIndividu, idBien: widget.idBien, valeurTemps: "2025", sousCategorie: widget.sousCategorie);
+      await ApiService.deleteAllPostes(codeIndividu: widget.codeIndividu, idBien: widget.idBien, valeurTemps: '2025', sousCategorie: widget.sousCategorie);
 
       if (!mounted) return;
 
@@ -180,7 +180,7 @@ class _EquipementScreenState extends State<EquipementScreen> {
 
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => PosteListScreen(typeCategorie: "Biens et services", sousCategorie: widget.sousCategorie, codeIndividu: widget.codeIndividu, valeurTemps: "2025")),
+        MaterialPageRoute(builder: (_) => PosteListScreen(typeCategorie: "Biens et services", sousCategorie: widget.sousCategorie, codeIndividu: widget.codeIndividu, valeurTemps: '2025')),
       );
     }
   }

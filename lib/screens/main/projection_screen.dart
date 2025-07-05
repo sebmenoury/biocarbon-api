@@ -16,7 +16,7 @@ class _ProjectionScreenState extends State<ProjectionScreen> {
   late Future<Map<String, Map<String, double>>> dataFuture;
   String filtre = "Tous"; // "Tous", "Equipements", "Usages"
   final String codeIndividu = "BASILE";
-  final String valeurTemps = "2025";
+  final String valeurTemps = '2025';
 
   @override
   void initState() {
@@ -72,7 +72,7 @@ class _ProjectionScreenState extends State<ProjectionScreen> {
                       typeCategories: typeCategories,
                       total: total,
                       codeIndividu: "BASILE", // ou ta variable
-                      valeurTemps: "2025", // ou ta variable
+                      valeurTemps: '2025', // ou ta variable
                     ),
                   ),
                 ],

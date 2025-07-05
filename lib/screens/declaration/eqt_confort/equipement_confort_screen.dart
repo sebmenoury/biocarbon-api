@@ -111,7 +111,7 @@ class _EquipementConfortScreenState extends State<EquipementConfortScreen> {
 
   Future<void> enregistrer() async {
     final codeIndividu = widget.codeIndividu;
-    final valeurTemps = "2025";
+    final valeurTemps = '2025'; // ex: "2025"
     final sousCategorie = widget.sousCategorie;
 
     await ApiService.deleteAllPostes(codeIndividu: codeIndividu, idBien: widget.idBien, valeurTemps: valeurTemps, sousCategorie: sousCategorie);
@@ -176,7 +176,7 @@ class _EquipementConfortScreenState extends State<EquipementConfortScreen> {
     );
 
     if (confirm == true) {
-      await ApiService.deleteAllPostes(codeIndividu: widget.codeIndividu, idBien: widget.idBien, valeurTemps: "2025", sousCategorie: widget.sousCategorie);
+      await ApiService.deleteAllPostes(codeIndividu: widget.codeIndividu, idBien: widget.idBien, valeurTemps: '2025', sousCategorie: widget.sousCategorie);
 
       if (!mounted) return;
 
@@ -184,7 +184,7 @@ class _EquipementConfortScreenState extends State<EquipementConfortScreen> {
 
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => PosteListScreen(typeCategorie: "Logement", sousCategorie: widget.sousCategorie, codeIndividu: widget.codeIndividu, valeurTemps: "2025")),
+        MaterialPageRoute(builder: (_) => PosteListScreen(typeCategorie: "Logement", sousCategorie: widget.sousCategorie, codeIndividu: widget.codeIndividu, valeurTemps: '2025')),
       );
     }
   }
