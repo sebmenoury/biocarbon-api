@@ -91,7 +91,7 @@ class _PosteListScreenState extends State<PosteListScreen> {
       postesFuture.then((postes) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (postes.isEmpty) {
-            if (widget.codeIndividu != null && widget.idBien != null) {
+            if (widget.idBien != null) {
               Navigator.push(
                 context,
                 MaterialPageRoute(
