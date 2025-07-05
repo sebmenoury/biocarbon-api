@@ -16,7 +16,7 @@ final Map<String, String> refTypeCategorie = {
   "Alimentation": "Alimentation",
   "Loisirs": "Biens et services",
   "Habillement": "Biens et services",
-  "Banque et Assurances": "Biens et services",
+  "Banques et Assurances": "Biens et services",
   "Déplacements Avion": "Déplacements",
   "Déplacements Voiture": "Déplacements",
   "Déplacements Train/Métro/Bus": "Déplacements",

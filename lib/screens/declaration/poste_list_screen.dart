@@ -28,7 +28,7 @@ const List<String> usageLabels = [
   'Alimentation',
   'Loisirs',
   'Habillement',
-  'Banque et Assurances',
+  'Banques et Assurances',
   'Déplacements Avion',
   'Déplacements Voiture',
   'Déplacements Train/Métro/Bus',
