@@ -248,9 +248,20 @@ class _PosteListScreenState extends State<PosteListScreen> {
 
             if (!avecBien) {
               if (postes.isEmpty) {
-                return CustomCard(
-                  padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-                  child: const Center(child: Text("Ajouter une déclaration", textAlign: TextAlign.center, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500))),
+                final entry = getEcranEtTitre(widget.typeCategorie, widget.sousCategorie);
+                return GestureDetector(
+                  onTap: () {
+                    if (entry != null) {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => entry.builder()));
+                    }
+                  },
+                  child: CustomCard(
+                    padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: const [Text("Ajouter une déclaration", style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500)), Icon(Icons.chevron_right, size: 18)],
+                    ),
+                  ),
                 );
               }
 

@@ -21,7 +21,7 @@ class ScreenRegistryEntry {
 /// Map des écrans par Type_Categorie et Sous_Categorie
 final Map<String, Map<String, ScreenRegistryEntry>> screenRegistry = {
   "Déplacements": {
-    "Avion": ScreenRegistryEntry(
+    "Déplacements Avion": ScreenRegistryEntry(
       builder:
           () => AvionScreen(
             codeIndividu: 'BASILE', // tu peux injecter dynamiquement si tu as un contexte global
