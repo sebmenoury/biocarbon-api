@@ -104,6 +104,12 @@ class _AvionScreenState extends State<AvionScreen> {
       return;
     }
 
+    double getFacteurEmission(double distance) {
+      if (distance > 5500) return 0.1520; // Long courrier
+      if (distance >= 500) return 0.1870; // Moyen courrier
+      return 0.2590; // Court courrier
+    }
+
     try {
       final d1 = tousLesAeroports.firstWhere((a) => a['Pays'] == selectedPaysDepart && a['Ville'] == selectedVilleDepart && a['Nom_Aeroport'] == selectedAeroportDepart);
 
@@ -116,7 +122,7 @@ class _AvionScreenState extends State<AvionScreen> {
         lon2: double.parse(d2['Longitude'].toString()),
       );
 
-      final facteur = double.parse(d1['Facteur_Emission'].toString());
+      final facteur = getFacteurEmission(distance);
       final multiplicateur = allerRetour ? 2 : 1;
       final emission = distance * facteur * multiplicateur * selectedFrequence;
       final timestamp = DateTime.now().millisecondsSinceEpoch;
@@ -165,7 +171,7 @@ class _AvionScreenState extends State<AvionScreen> {
         children: [
           DropdownButton<String>(
             value: selectedPays,
-            hint: const Text("Choisissez un pays"),
+            hint: const Text("Choisissez un pays", style: TextStyle(fontSize: 11)),
             isExpanded: true,
             items: paysList.map((p) => DropdownMenuItem(value: p, child: Text(p, style: const TextStyle(fontSize: 11)))).toList(),
             onChanged: (val) {
@@ -176,7 +182,7 @@ class _AvionScreenState extends State<AvionScreen> {
           const SizedBox(height: 8),
           DropdownButton<String>(
             value: selectedVille,
-            hint: const Text("Choisissez une ville"),
+            hint: const Text("Choisissez une ville", style: TextStyle(fontSize: 11)),
             isExpanded: true,
             items: villesList.map((v) => DropdownMenuItem(value: v, child: Text(v, style: const TextStyle(fontSize: 11)))).toList(),
             onChanged: (val) {
@@ -187,7 +193,7 @@ class _AvionScreenState extends State<AvionScreen> {
           const SizedBox(height: 8),
           DropdownButton<String>(
             value: selectedAeroport,
-            hint: const Text("Choisissez un aéroport"),
+            hint: const Text("Choisissez un aéroport", style: TextStyle(fontSize: 11)),
             isExpanded: true,
             items: aeroportsList.map((a) => DropdownMenuItem(value: a, child: Text(a, style: const TextStyle(fontSize: 11)))).toList(),
             onChanged: (val) => onAeroportChanged(val!),
