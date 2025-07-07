@@ -15,7 +15,7 @@ def add_poste():
     required_fields = [
         "ID_Usage", "Code_Individu", "Type_Temps", "Valeur_Temps", "Date_enregistrement",
         "ID_Bien", "Type_Bien", "Type_Poste", "Type_Categorie", "Sous_Categorie",
-        "Nom_Poste", "Nom_Logement", "Quantite", "Unite", "Frequence",
+        "Nom_Poste", "Nom_Logement", "Quantite", "Unite", "Frequence", "Nb_Personne",
         "Facteur_Emission", "Emission_Calculee", "Mode_Calcul", "Annee_Achat", "Duree_Amortissement"
     ]
 
@@ -45,6 +45,7 @@ def add_poste():
             data["Quantite"],
             data["Unite"],
             data["Frequence"],
+            data.get("Nb_Personne", 1),  # Valeur par défaut si non fourni
             data["Facteur_Emission"],
             data["Emission_Calculee"],
             data["Mode_Calcul"],
@@ -125,6 +126,7 @@ def save_postes_bulk():
                 poste["Quantite"],
                 poste.get("Unite", "unité"),
                 poste.get("Frequence", ""),
+                poste.get("Nb_Personne", 1),  # Valeur par défaut si non fourni
                 poste["Facteur_Emission"],
                 poste["Emission_Calculee"],
                 poste["Mode_Calcul"],
@@ -163,6 +165,7 @@ def update_poste(id_usage):
                     data["Quantite"],
                     data["Unite"],
                     data["Frequence"],
+                    data.get("Nb_Personne", 1),  # Valeur par défaut si non fourni
                     data["Facteur_Emission"],
                     data["Emission_Calculee"],
                     data["Mode_Calcul"],

@@ -80,6 +80,7 @@ class PosteVehicule {
       "Quantite": 1,
       "Unite": "unité",
       "Frequence": null, // Pas de fréquence pour les véhicules
+      "Nb_Personne": nbProprietaires.toDouble(), // Nombre de propriétaires
       "Facteur_Emission": facteurEmission,
       "Emission_Calculee": facteurEmission / dureeAmortissement,
       "Mode_Calcul": "Amorti",

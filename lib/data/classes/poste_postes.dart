@@ -19,6 +19,7 @@ class Poste {
   final int? anneeAchat;
   final int? dureeAmortissement;
   final String? modeCalcul;
+  double? nbPersonnes; // ajouter ceci dans la classe Poste
 
   Poste({
     required this.idUsage,
@@ -41,6 +42,7 @@ class Poste {
     this.anneeAchat,
     this.dureeAmortissement,
     this.modeCalcul,
+    this.nbPersonnes,
   });
 
   factory Poste.fromJson(Map<String, dynamic> json) {
@@ -62,6 +64,7 @@ class Poste {
       facteurEmission: double.tryParse(json['Facteur_Emission']?.toString() ?? ''),
       emissionCalculee: double.tryParse(json['Emission_Calculee'].toString()) ?? 0.0,
       frequence: json['Frequence']?.toString(),
+      nbPersonnes: double.tryParse(json['Nb_Personne']?.toString() ?? '1.0'), // valeur par défaut 1.0
       anneeAchat: int.tryParse(json['Annee_Achat']?.toString() ?? ''),
       dureeAmortissement: int.tryParse(json['Duree_Amortissement']?.toString() ?? ''),
       modeCalcul: json['Mode_Calcul'],
@@ -85,6 +88,7 @@ class Poste {
       'Quantite': quantite,
       'Unite': unite,
       'Frequence': frequence ?? '',
+      'Nb_Personne': nbPersonnes ?? 1.0, // valeur par défaut 1.0
       'Facteur_Emission': facteurEmission ?? 0.0,
       'Emission_Calculee': emissionCalculee,
       'Mode_Calcul': modeCalcul ?? '',

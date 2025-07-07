@@ -115,6 +115,7 @@ class _AlimentationScreenState extends State<AlimentationScreen> {
         "Quantite": a.portion,
         "Unite": a.unite,
         "Frequence": freq,
+        "Nb_Personne": 1.0, // Valeur par défaut, peut être ajustée si nécessaire
         "Facteur_Emission": a.facteur,
         "Emission_Calculee": emission,
         "Mode_Calcul": "Muliplicatif",

@@ -171,6 +171,7 @@ class _VehiculeScreenState extends State<VehiculeScreen> {
               "Quantite": poste.quantite,
               "Unite": "unité",
               "Frequence": "",
+              "Nb_Personne": poste.nbProprietaires.toDouble(), // Nombre de propriétaires
               "Facteur_Emission": poste.facteurEmission,
               "Emission_Calculee": emission,
               "Mode_Calcul": "Amorti",

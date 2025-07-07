@@ -109,6 +109,7 @@ class _UsagesHabillementScreenState extends State<UsagesHabillementScreen> {
           "Quantite": u.valeur,
           "Unite": "kWh/an",
           "Frequence": "",
+          "Nb_Personne": 1.0,
           "Facteur_Emission": u.facteurEmission,
           "Emission_Calculee": u.valeur * u.facteurEmission / u.nbHabitants,
           "Mode_Calcul": "Direct",

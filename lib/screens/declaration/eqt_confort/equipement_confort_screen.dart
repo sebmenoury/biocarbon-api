@@ -141,6 +141,7 @@ class _EquipementConfortScreenState extends State<EquipementConfortScreen> {
           "Quantite": e.quantite,
           "Unite": "unité",
           "Frequence": "",
+          "Nb_Personne": e.nbProprietaires ?? 1.0, // Nombre de propriétaires
           "Facteur_Emission": e.facteurEmission,
           "Emission_Calculee": calculerEmission(e),
           "Mode_Calcul": "Amorti",

@@ -49,6 +49,7 @@ class PosteUsage {
       "Quantite": valeur,
       "Unite": unite ?? "kWh",
       "Frequence": null,
+      "Nb_Personne": nbHabitants, // Nombre de personnes concernées
       "Facteur_Emission": facteurEmission,
       "Emission_Calculee": calculerEmission(nbHabitants),
       "Mode_Calcul": "Direct",

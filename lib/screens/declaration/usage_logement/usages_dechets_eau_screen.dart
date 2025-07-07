@@ -146,6 +146,7 @@ class _UsagesDechetsEauScreenState extends State<UsagesDechetsEauScreen> {
           "Quantite": u.valeur,
           "Unite": uniteposte,
           "Frequence": "",
+          "Nb_Personne": u.nbHabitants, // Nombre de personnes concernées
           "Facteur_Emission": u.facteurEmission,
           "Emission_Calculee": u.valeur * u.facteurEmission / u.nbHabitants,
           "Mode_Calcul": "Direct",

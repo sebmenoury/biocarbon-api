@@ -177,6 +177,7 @@ class _RenovationScreenState extends State<RenovationScreen> {
           "Quantite": e.quantite,
           "Unite": "m2",
           "Frequence": "",
+          "Nb_Personne": e.nbProprietaires ?? 1.0, // Nombre de propriétaires
           "Facteur_Emission": e.facteurEmission,
           "Emission_Calculee": (e.facteurEmission * e.quantite / e.dureeAmortissement),
           "Mode_Calcul": "Amorti",

@@ -66,6 +66,7 @@ class PosteEquipement {
       "Quantite": quantite,
       "Unite": "unité",
       "Frequence": null,
+      "Nb_Personne": nbProprietaires.toDouble(), // Nombre de propriétaires
       "Facteur_Emission": facteurEmission,
       "Emission_Calculee": (quantite * facteurEmission) / dureeAmortissement,
       "Mode_Calcul": "Amorti",
