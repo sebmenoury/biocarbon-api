@@ -133,9 +133,8 @@ class _AvionScreenState extends State<AvionScreen> {
               ? 0.1870
               : 0.2590;
 
-      final multiplicateur = allerRetour ? 2 : 1;
-      final emission = distance * facteur * multiplicateur * selectedFrequence;
-      emissionEstimee = null;
+      final multiplicateur = (allerRetour ? 2 : 1) * selectedFrequence;
+      final emission = distance * facteur * multiplicateur;
 
       setState(() => emissionEstimee = emission);
     } catch (_) {
@@ -147,12 +146,6 @@ class _AvionScreenState extends State<AvionScreen> {
     if (selectedPaysDepart == null || selectedVilleDepart == null || selectedAeroportDepart == null || selectedPaysArrivee == null || selectedVilleArrivee == null || selectedAeroportArrivee == null) {
       showError(context, "Merci de compléter tous les champs avant d'ajouter un vol.");
       return;
-    }
-
-    double getFacteurEmission(double distance) {
-      if (distance > 5500) return 0.1520; // Long courrier
-      if (distance >= 500) return 0.1870; // Moyen courrier
-      return 0.2590; // Court courrier
     }
 
     try {
@@ -167,9 +160,16 @@ class _AvionScreenState extends State<AvionScreen> {
         lon2: double.parse(d2['Longitude'].toString()),
       );
 
-      final facteur = getFacteurEmission(distance);
-      final multiplicateur = allerRetour ? 2 : 1;
-      final emission = distance * facteur * multiplicateur * selectedFrequence;
+      final facteur =
+          (distance > 5500)
+              ? 0.1520
+              : (distance >= 500)
+              ? 0.1870
+              : 0.2590;
+
+      final multiplicateur = (allerRetour ? 2 : 1) * selectedFrequence;
+      final emission = distance * facteur * multiplicateur;
+
       final timestamp = DateTime.now().millisecondsSinceEpoch;
       final idUsage = "TEMP-${timestamp}_${widget.sousCategorie}_${distance}_${widget.valeurTemps}".replaceAll(' ', '_');
 
@@ -193,7 +193,9 @@ class _AvionScreenState extends State<AvionScreen> {
 
       // await ApiService.postPostes([poste]);
       await _chargerVols();
-      setState(() {});
+      setState(() {
+        emissionEstimee = null;
+      });
     } catch (e) {
       showError(context, e.toString());
     }
@@ -222,6 +224,7 @@ class _AvionScreenState extends State<AvionScreen> {
             ),
             popupProps: PopupProps.menu(
               showSearchBox: true,
+              searchFieldProps: TextFieldProps(autofocus: true), // 👈 Autofocus ici
               itemBuilder: (context, item, isSelected) => Padding(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4), child: Text(item, style: const TextStyle(fontSize: 11))),
             ),
             dropdownBuilder: (context, selectedItem) => Text(selectedItem ?? "", style: const TextStyle(fontSize: 11)),
@@ -245,6 +248,7 @@ class _AvionScreenState extends State<AvionScreen> {
             ),
             popupProps: PopupProps.menu(
               showSearchBox: true,
+              searchFieldProps: TextFieldProps(autofocus: true), // 👈 Autofocus ici aussi
               itemBuilder: (context, item, isSelected) => Padding(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4), child: Text(item, style: const TextStyle(fontSize: 11))),
             ),
             dropdownBuilder: (context, selectedItem) => Text(selectedItem ?? "", style: const TextStyle(fontSize: 11)),
@@ -268,6 +272,7 @@ class _AvionScreenState extends State<AvionScreen> {
             ),
             popupProps: PopupProps.menu(
               showSearchBox: true,
+              searchFieldProps: TextFieldProps(autofocus: true), // 👈 Et encore ici
               itemBuilder: (context, item, isSelected) => Padding(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4), child: Text(item, style: const TextStyle(fontSize: 11))),
             ),
             dropdownBuilder: (context, selectedItem) => Text(selectedItem ?? "", style: const TextStyle(fontSize: 11)),
