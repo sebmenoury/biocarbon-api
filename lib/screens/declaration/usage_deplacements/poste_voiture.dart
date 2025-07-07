@@ -6,7 +6,6 @@ class PosteVoiture {
   double consoL100; // 🆕 consommation en L/100km
   double personnes; // 🆕 nombre de personnes à bord
   String? idUsageInitial;
-  int nbHabitants; // si encore utilisé ailleurs
 
   PosteVoiture({
     required this.nomUsage,
@@ -16,7 +15,6 @@ class PosteVoiture {
     this.idUsageInitial,
     this.consoL100 = 6.0, // valeur par défaut
     this.personnes = 1.0, // valeur par défaut
-    this.nbHabitants = 1, // valeur par défaut
   });
 
   double calculerEmissionVoiture() {

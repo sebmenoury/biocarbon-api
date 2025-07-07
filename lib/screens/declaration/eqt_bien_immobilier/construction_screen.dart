@@ -62,7 +62,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
     try {
       final maintenant = DateTime.now().toIso8601String();
       final codeIndividu = widget.codeIndividu;
-      const typeTemps = "Réel"; // ça peut rester constant si jamais
+      const typeTemps = "Réel";
       final valeurTemps = widget.valeurTemps;
       final sousCategorie = widget.sousCategorie;
       const typePoste = "Equipement";
@@ -76,7 +76,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
 
           final idUsage = "${bien.idBien}_${sousCategorie}_${nom}_${bien.nomLogement}".replaceAll(' ', '_');
 
-          final poste = {
+          postesAEnregistrer.add({
             "ID_Usage": idUsage,
             "Code_Individu": codeIndividu,
             "Type_Temps": typeTemps,
@@ -92,44 +92,42 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
             "Quantite": surface,
             "Unite": "m²",
             "Frequence": "",
-            "Nb_Personne": bien.nbProprietaires, // Nombre de propriétaires
+            "Nb_Personne": bien.nbProprietaires,
             "Facteur_Emission": facteursEmission[nom],
             "Emission_Calculee": emission,
             "Mode_Calcul": "Amorti",
             "Annee_Achat": annee,
             "Duree_Amortissement": dureesAmortissement[nom],
-          };
-
-          postesAEnregistrer.add(poste);
-        } else {}
+          });
+        }
       }
 
-      // Ajoute les postes selon les données remplies
+      // Ajoute les postes déclarés
       ajouterPoste(poste.typeConstruction, poste.surface, poste.anneeConstruction);
       ajouterPoste("Garage béton", poste.surfaceGarage, poste.anneeGarage);
       ajouterPoste(poste.typePiscine, poste.surfacePiscine, poste.anneePiscine);
       ajouterPoste("Abri de jardin bois", poste.surfaceAbriEtSerre, poste.anneeAbri);
 
-      // Enregistrement ou mise à jour
-      for (final p in postesAEnregistrer) {
-        // print("📤 Envoi API : ${p["ID_Usage"]} (${p["Nom_Poste"]})");
-        await ApiService.saveOrUpdatePoste(p);
+      // Supprimer tous les postes existants pour cette combinaison
+      await ApiService.deleteAllPostes(codeIndividu: codeIndividu, idBien: bien.idBien, valeurTemps: valeurTemps, sousCategorie: sousCategorie);
+
+      // Enregistrement en masse
+      if (postesAEnregistrer.isNotEmpty) {
+        await ApiService.savePostesBulk(postesAEnregistrer);
       }
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("✅ Enregistrement effectué")));
 
-      // Rafraîchissement liste
       widget.onSave();
-      // ✅ Redirection vers la liste des postes mise à jour
+
       Future.delayed(const Duration(milliseconds: 300), () {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => PosteListScreen(typeCategorie: "Logement", sousCategorie: "Construction", codeIndividu: "BASILE", valeurTemps: widget.valeurTemps)),
+          MaterialPageRoute(builder: (_) => PosteListScreen(typeCategorie: "Logement", sousCategorie: "Construction", codeIndividu: codeIndividu, valeurTemps: valeurTemps)),
         );
       });
     } catch (e) {
-      // print('❌ Erreur enregistrement : $e');
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("❌ Erreur lors de l'enregistrement")));
     }
@@ -141,7 +139,7 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
       builder:
           (context) => AlertDialog(
             title: const Text("Confirmer la suppression"),
-            content: const Text("Souhaitez-vous vraiment supprimer ce poste ?"),
+            content: const Text("Souhaitez-vous supprimer tous les postes de ce bien immobilier pour cette catégorie ?"),
             actions: [
               TextButton(onPressed: () => Navigator.pop(context, false), child: const Text("Annuler")),
               TextButton(onPressed: () => Navigator.pop(context, true), child: const Text("Supprimer")),
@@ -149,16 +147,23 @@ class _ConstructionScreenState extends State<ConstructionScreen> {
           ),
     );
 
-    if (confirm == true && poste.id != null) {
+    if (confirm == true) {
       try {
-        await ApiService.deleteUCPoste(poste.id!);
+        await ApiService.deleteAllPostes(codeIndividu: widget.codeIndividu, idBien: bien.idBien, valeurTemps: widget.valeurTemps, sousCategorie: widget.sousCategorie);
+
         if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("✅ Poste supprimé")));
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("✅ Déclaration supprimée")));
+
         widget.onSave();
-        Navigator.of(context).pop();
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => PosteListScreen(typeCategorie: "Logement", sousCategorie: "Construction", codeIndividu: widget.codeIndividu, valeurTemps: widget.valeurTemps)),
+        );
       } catch (e) {
         print('❌ Erreur suppression : $e');
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("❌ Erreur lors de la suppression du poste")));
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("❌ Erreur lors de la suppression")));
       }
     }
   }
