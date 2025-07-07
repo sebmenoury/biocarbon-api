@@ -50,7 +50,7 @@ class _AvionScreenState extends State<AvionScreen> {
   @override
   void initState() {
     super.initState();
-    _chargerBase();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _chargerBase());
   }
 
   Future<void> _chargerBase() async {
@@ -224,7 +224,7 @@ class _AvionScreenState extends State<AvionScreen> {
             ),
             popupProps: PopupProps.menu(
               showSearchBox: true,
-              searchFieldProps: TextFieldProps(autofocus: true), // 👈 Autofocus ici
+              searchFieldProps: TextFieldProps(autofocus: true, style: const TextStyle(fontSize: 11)), // 👈 Autofocus ici
               itemBuilder: (context, item, isSelected) => Padding(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4), child: Text(item, style: const TextStyle(fontSize: 11))),
             ),
             dropdownBuilder: (context, selectedItem) => Text(selectedItem ?? "", style: const TextStyle(fontSize: 11)),
@@ -248,7 +248,7 @@ class _AvionScreenState extends State<AvionScreen> {
             ),
             popupProps: PopupProps.menu(
               showSearchBox: true,
-              searchFieldProps: TextFieldProps(autofocus: true), // 👈 Autofocus ici aussi
+              searchFieldProps: TextFieldProps(autofocus: true, style: const TextStyle(fontSize: 11)), // 👈 Autofocus ici aussi
               itemBuilder: (context, item, isSelected) => Padding(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4), child: Text(item, style: const TextStyle(fontSize: 11))),
             ),
             dropdownBuilder: (context, selectedItem) => Text(selectedItem ?? "", style: const TextStyle(fontSize: 11)),
@@ -272,7 +272,7 @@ class _AvionScreenState extends State<AvionScreen> {
             ),
             popupProps: PopupProps.menu(
               showSearchBox: true,
-              searchFieldProps: TextFieldProps(autofocus: true), // 👈 Et encore ici
+              searchFieldProps: TextFieldProps(autofocus: true, style: const TextStyle(fontSize: 11)), // 👈 Et encore ici
               itemBuilder: (context, item, isSelected) => Padding(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4), child: Text(item, style: const TextStyle(fontSize: 11))),
             ),
             dropdownBuilder: (context, selectedItem) => Text(selectedItem ?? "", style: const TextStyle(fontSize: 11)),
@@ -344,13 +344,33 @@ class _AvionScreenState extends State<AvionScreen> {
                   Row(
                     children: [
                       const Text("Type de trajet : "),
-                      Radio<bool>(value: false, groupValue: allerRetour, onChanged: (v) => setState(() => allerRetour = v!)),
+                      Radio<bool>(
+                        value: false,
+                        groupValue: allerRetour,
+                        onChanged: (v) {
+                          setState(() => allerRetour = v!);
+                          _calculerEmissionEstimee();
+                        },
+                      ),
                       const Text("Aller simple"),
-                      Radio<bool>(value: true, groupValue: allerRetour, onChanged: (v) => setState(() => allerRetour = v!)),
+                      Radio<bool>(
+                        value: true,
+                        groupValue: allerRetour,
+                        onChanged: (v) {
+                          setState(() => allerRetour = v!);
+                          _calculerEmissionEstimee();
+                        },
+                      ),
                       const Text("Aller-retour"),
                     ],
                   ),
-                  FrequenceSlider(selected: selectedFrequence, onChanged: (val) => setState(() => selectedFrequence = val)),
+                  FrequenceSlider(
+                    selected: selectedFrequence,
+                    onChanged: (val) {
+                      setState(() => selectedFrequence = val);
+                      _calculerEmissionEstimee();
+                    },
+                  ),
                   const SizedBox(height: 12),
                   if (emissionEstimee != null)
                     Padding(

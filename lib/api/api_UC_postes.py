@@ -262,8 +262,8 @@ def delete_all_postes_sans_bien():
         return jsonify({"error": f"Erreur serveur : {str(e)}"}), 500
 
 
-@bp_uc_postes.route('/delete_all_sans_bien', methods=['DELETE', 'OPTIONS'])
-def delete_all_postes_sans_bien_sous_category():
+@bp_uc_postes.route('/delete_all_sans_bien_sc', methods=['DELETE', 'OPTIONS'])
+def delete_all_postes_sans_bien_sc():
     if request.method == 'OPTIONS':
         return '', 200
 
