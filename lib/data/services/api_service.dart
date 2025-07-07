@@ -167,6 +167,21 @@ class ApiService {
     }
   }
 
+  static Future<void> postPostes(List<Poste> postes) async {
+    if (postes.isEmpty) return;
+
+    final uri = Uri.parse('$baseUrl/post_postes');
+    final body = postes.map((p) => p.toJson()).toList();
+
+    final response = await http.post(uri, headers: {'Content-Type': 'application/json'}, body: jsonEncode(body));
+
+    if (response.statusCode != 200) {
+      throw Exception("Erreur lors de l'enregistrement des postes : ${response.statusCode} - ${response.body}");
+    } else {
+      print("✅ ${postes.length} postes enregistrés avec succès");
+    }
+  }
+
   // ❌ Supprimer un poste
   static Future<Map<String, dynamic>> deleteUCPoste(String id) async {
     final response = await http.delete(Uri.parse('$baseUrl/api/uc/postes/$id'));

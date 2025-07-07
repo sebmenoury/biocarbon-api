@@ -158,7 +158,7 @@ class _UsagesBanqueScreenState extends State<UsagesBanqueScreen> {
       title: Stack(
         alignment: Alignment.center,
         children: [
-          const Text("Déclaration de vos comptes Banques et Assurances.", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+          const Text("Déclaration de vos comptes Banques et Assurances", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
           Align(
             alignment: Alignment.centerLeft,
             child: IconButton(icon: const Icon(Icons.arrow_back), iconSize: 18, padding: EdgeInsets.zero, constraints: const BoxConstraints(), onPressed: () => Navigator.pop(context)),

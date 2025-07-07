@@ -21,6 +21,8 @@ class AvionScreen extends StatefulWidget {
 
 class _AvionScreenState extends State<AvionScreen> {
   List<Poste> vols = [];
+  List<Poste> volsSimules = [];
+  Set<String> idsVolsASupprimer = {};
   List<Map<String, dynamic>> tousLesAeroports = [];
   bool isLoading = false;
 
@@ -191,9 +193,10 @@ class _AvionScreenState extends State<AvionScreen> {
         modeCalcul: 'Direct',
       );
 
-      // await ApiService.postPostes([poste]);
+      //await ApiService.postPostes([poste]);
       await _chargerVols();
       setState(() {
+        volsSimules.add(poste);
         emissionEstimee = null;
       });
     } catch (e) {
@@ -391,10 +394,12 @@ class _AvionScreenState extends State<AvionScreen> {
             const SizedBox(height: 12),
             Expanded(
               child: ListView.separated(
-                itemCount: vols.length,
+                itemCount: vols.length + volsSimules.length,
                 separatorBuilder: (_, __) => const SizedBox(height: 8),
                 itemBuilder: (context, index) {
-                  final vol = vols[index];
+                  final isSimule = index >= vols.length;
+                  final vol = isSimule ? volsSimules[index - vols.length] : vols[index];
+
                   return CustomCard(
                     padding: const EdgeInsets.all(12),
                     child: Row(
@@ -402,13 +407,60 @@ class _AvionScreenState extends State<AvionScreen> {
                       children: [
                         Expanded(child: Text(vol.nomPoste ?? "Vol #$index", style: const TextStyle(fontSize: 13))),
                         Text("${vol.emissionCalculee.toStringAsFixed(1)} kgCO₂", style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
-                        const Icon(Icons.chevron_right, size: 16),
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              if (isSimule) {
+                                volsSimules.removeAt(index - vols.length);
+                              } else {
+                                idsVolsASupprimer.add(vol.idUsage ?? '');
+                                vols.removeAt(index);
+                              }
+                            });
+                          },
+                          child: const Icon(Icons.close, size: 16, color: Colors.red),
+                        ),
                       ],
                     ),
                   );
                 },
               ),
             ),
+
+            if (volsSimules.isNotEmpty || idsVolsASupprimer.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 12),
+                child: ElevatedButton.icon(
+                  icon: const Icon(Icons.save),
+                  label: const Text("Enregistrer ces vols"),
+                  onPressed: () async {
+                    try {
+                      setState(() => isLoading = true);
+
+                      // Supprimer les anciens vols (si ID précisé)
+                      for (final id in idsVolsASupprimer) {
+                        await ApiService.deleteUCPoste(id);
+                      }
+
+                      // Poster les nouveaux
+                      if (volsSimules.isNotEmpty) {
+                        await ApiService.postPostes(volsSimules);
+                      }
+
+                      // Réinitialiser l’état
+                      idsVolsASupprimer.clear();
+                      volsSimules.clear();
+
+                      await _chargerVols();
+                      showError(context, "✅ Vols mis à jour avec succès !");
+                    } catch (e) {
+                      showError(context, "Erreur : $e");
+                    } finally {
+                      setState(() => isLoading = false);
+                    }
+                  },
+                ),
+              ),
           ],
         ),
       ),
