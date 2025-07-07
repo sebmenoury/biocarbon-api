@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:dropdown_search/dropdown_search.dart';
 import 'poste_avion.dart';
 import '../../../data/classes/poste_postes.dart';
 import '../../../data/services/api_service.dart';
@@ -22,6 +23,8 @@ class _AvionScreenState extends State<AvionScreen> {
   List<Poste> vols = [];
   List<Map<String, dynamic>> tousLesAeroports = [];
   bool isLoading = false;
+
+  double? emissionEstimee;
 
   String? selectedPaysDepart;
   String? selectedVilleDepart;
@@ -55,7 +58,9 @@ class _AvionScreenState extends State<AvionScreen> {
     try {
       await _chargerVols();
       tousLesAeroports = await ApiService.getRefAeroportsFull();
-      paysList = tousLesAeroports.map((e) => e['Pays'] as String).toSet().toList();
+
+      // Extraire les pays distincts, supprimer les nuls, et trier par ordre alphabétique
+      paysList = tousLesAeroports.map((e) => e['Pays']?.toString() ?? '').where((p) => p.isNotEmpty).toSet().toList()..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
     } catch (e) {
       showError(context, e.toString());
     } finally {
@@ -64,7 +69,9 @@ class _AvionScreenState extends State<AvionScreen> {
   }
 
   void _chargerVilles(bool isDepart, String pays) {
-    final villes = tousLesAeroports.where((a) => a['Pays'] == pays).map((e) => e['Ville'] as String).toSet().toList();
+    final villes =
+        tousLesAeroports.where((a) => a['Pays'] == pays).map((e) => e['Ville']?.toString() ?? '').where((v) => v.isNotEmpty).toSet().toList()
+          ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
 
     setState(() {
       if (isDepart) {
@@ -82,7 +89,9 @@ class _AvionScreenState extends State<AvionScreen> {
   }
 
   void _chargerAeroports(bool isDepart, String pays, String ville) {
-    final aeroports = tousLesAeroports.where((a) => a['Pays'] == pays && a['Ville'] == ville).map((e) => e['Nom_Aeroport'] as String).toSet().toList();
+    final aeroports =
+        tousLesAeroports.where((a) => a['Pays'] == pays && a['Ville'] == ville).map((e) => e['Nom_Aeroport']?.toString() ?? '').where((a) => a.isNotEmpty).toSet().toList()
+          ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
 
     setState(() {
       if (isDepart) {
@@ -99,8 +108,44 @@ class _AvionScreenState extends State<AvionScreen> {
     vols = await ApiService.getUCPostesFiltres(codeIndividu: widget.codeIndividu, valeurTemps: widget.valeurTemps, sousCategorie: 'Déplacements Avion');
   }
 
+  Future<void> _calculerEmissionEstimee() async {
+    if (selectedPaysDepart == null || selectedVilleDepart == null || selectedAeroportDepart == null || selectedPaysArrivee == null || selectedVilleArrivee == null || selectedAeroportArrivee == null) {
+      setState(() => emissionEstimee = null);
+      return;
+    }
+
+    try {
+      final d1 = tousLesAeroports.firstWhere((a) => a['Pays'] == selectedPaysDepart && a['Ville'] == selectedVilleDepart && a['Nom_Aeroport'] == selectedAeroportDepart);
+
+      final d2 = tousLesAeroports.firstWhere((a) => a['Pays'] == selectedPaysArrivee && a['Ville'] == selectedVilleArrivee && a['Nom_Aeroport'] == selectedAeroportArrivee);
+
+      final distance = Haversine.calculerDistanceKm(
+        lat1: double.parse(d1['Latitude'].toString()),
+        lon1: double.parse(d1['Longitude'].toString()),
+        lat2: double.parse(d2['Latitude'].toString()),
+        lon2: double.parse(d2['Longitude'].toString()),
+      );
+
+      final facteur =
+          (distance > 5500)
+              ? 0.1520
+              : (distance >= 500)
+              ? 0.1870
+              : 0.2590;
+
+      final multiplicateur = allerRetour ? 2 : 1;
+      final emission = distance * facteur * multiplicateur * selectedFrequence;
+      emissionEstimee = null;
+
+      setState(() => emissionEstimee = emission);
+    } catch (_) {
+      setState(() => emissionEstimee = null);
+    }
+  }
+
   Future<void> _ajouterVol() async {
     if (selectedPaysDepart == null || selectedVilleDepart == null || selectedAeroportDepart == null || selectedPaysArrivee == null || selectedVilleArrivee == null || selectedAeroportArrivee == null) {
+      showError(context, "Merci de compléter tous les champs avant d'ajouter un vol.");
       return;
     }
 
@@ -169,34 +214,69 @@ class _AvionScreenState extends State<AvionScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          DropdownButton<String>(
-            value: selectedPays,
-            hint: const Text("Choisissez un pays", style: TextStyle(fontSize: 11)),
-            isExpanded: true,
-            items: paysList.map((p) => DropdownMenuItem(value: p, child: Text(p, style: const TextStyle(fontSize: 11)))).toList(),
+          DropdownSearch<String>(
+            items: [...paysList]..sort(),
+            selectedItem: selectedPays,
+            dropdownDecoratorProps: DropDownDecoratorProps(
+              dropdownSearchDecoration: const InputDecoration(labelText: "Choisissez un pays", labelStyle: TextStyle(fontSize: 11), contentPadding: EdgeInsets.symmetric(vertical: 6, horizontal: 12)),
+            ),
+            popupProps: PopupProps.menu(
+              showSearchBox: true,
+              itemBuilder: (context, item, isSelected) => Padding(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4), child: Text(item, style: const TextStyle(fontSize: 11))),
+            ),
+            dropdownBuilder: (context, selectedItem) => Text(selectedItem ?? "", style: const TextStyle(fontSize: 11)),
             onChanged: (val) {
-              onPaysChanged(val!);
-              _chargerVilles(isDepart, val);
+              if (val != null) {
+                onPaysChanged(val);
+                _chargerVilles(isDepart, val);
+              }
             },
           ),
           const SizedBox(height: 8),
-          DropdownButton<String>(
-            value: selectedVille,
-            hint: const Text("Choisissez une ville", style: TextStyle(fontSize: 11)),
-            isExpanded: true,
-            items: villesList.map((v) => DropdownMenuItem(value: v, child: Text(v, style: const TextStyle(fontSize: 11)))).toList(),
+          DropdownSearch<String>(
+            items: [...villesList]..sort(),
+            selectedItem: selectedVille,
+            dropdownDecoratorProps: DropDownDecoratorProps(
+              dropdownSearchDecoration: const InputDecoration(
+                labelText: "Choisissez une ville",
+                labelStyle: TextStyle(fontSize: 11),
+                contentPadding: EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+              ),
+            ),
+            popupProps: PopupProps.menu(
+              showSearchBox: true,
+              itemBuilder: (context, item, isSelected) => Padding(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4), child: Text(item, style: const TextStyle(fontSize: 11))),
+            ),
+            dropdownBuilder: (context, selectedItem) => Text(selectedItem ?? "", style: const TextStyle(fontSize: 11)),
             onChanged: (val) {
-              onVilleChanged(val!);
-              _chargerAeroports(isDepart, selectedPays!, val);
+              if (val != null && selectedPays != null) {
+                onVilleChanged(val);
+                _chargerAeroports(isDepart, selectedPays, val);
+              }
             },
           ),
           const SizedBox(height: 8),
-          DropdownButton<String>(
-            value: selectedAeroport,
-            hint: const Text("Choisissez un aéroport", style: TextStyle(fontSize: 11)),
-            isExpanded: true,
-            items: aeroportsList.map((a) => DropdownMenuItem(value: a, child: Text(a, style: const TextStyle(fontSize: 11)))).toList(),
-            onChanged: (val) => onAeroportChanged(val!),
+          DropdownSearch<String>(
+            items: [...aeroportsList]..sort(),
+            selectedItem: selectedAeroport,
+            dropdownDecoratorProps: DropDownDecoratorProps(
+              dropdownSearchDecoration: const InputDecoration(
+                labelText: "Choisissez un aéroport",
+                labelStyle: TextStyle(fontSize: 11),
+                contentPadding: EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+              ),
+            ),
+            popupProps: PopupProps.menu(
+              showSearchBox: true,
+              itemBuilder: (context, item, isSelected) => Padding(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4), child: Text(item, style: const TextStyle(fontSize: 11))),
+            ),
+            dropdownBuilder: (context, selectedItem) => Text(selectedItem ?? "", style: const TextStyle(fontSize: 11)),
+            onChanged: (val) {
+              if (val != null) {
+                onAeroportChanged(val);
+                _calculerEmissionEstimee();
+              }
+            },
           ),
         ],
       ),
@@ -267,6 +347,18 @@ class _AvionScreenState extends State<AvionScreen> {
                   ),
                   FrequenceSlider(selected: selectedFrequence, onChanged: (val) => setState(() => selectedFrequence = val)),
                   const SizedBox(height: 12),
+                  if (emissionEstimee != null)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          const Text("Émission estimée : ", style: TextStyle(fontSize: 12)),
+                          Text("${emissionEstimee!.toStringAsFixed(1)} kgCO₂", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                        ],
+                      ),
+                    ),
+
                   Align(alignment: Alignment.centerRight, child: ElevatedButton.icon(icon: const Icon(Icons.flight_takeoff, size: 16), onPressed: _ajouterVol, label: const Text("Ajouter ce vol"))),
                 ],
               ),
