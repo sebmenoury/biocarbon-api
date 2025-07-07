@@ -71,12 +71,8 @@ class _DeplacementVoitureScreenState extends State<DeplacementVoitureScreen> {
     });
   }
 
-  double calculerEmissionVoiture() {
-    return (valeur * consoL100 / 100 * facteurEmission) / (personnes > 0 ? personnes : 1);
-  }
-
   void recalculerTotal() {
-    totalEmission = usages.fold(0.0, (s, u) => s + u.calculerEmissionVoiture());
+    totalEmission = usages.fold(0.0, (sum, u) => sum + u.calculerEmissionVoiture());
   }
 
   Future<void> enregistrer() async {
