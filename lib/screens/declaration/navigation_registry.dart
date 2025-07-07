@@ -27,6 +27,7 @@ final Map<String, Map<String, ScreenRegistryEntry>> screenRegistry = {
             codeIndividu: 'BASILE', // tu peux injecter dynamiquement si tu as un contexte global
             valeurTemps: '2025', // ou une variable `selectedYear`
             sousCategorie: 'Déplacements Avion',
+            onSave: () {}, // à adapter
           ),
       titre: "Mes déplacements en avion",
     ),

@@ -11,7 +11,7 @@ class FrequenceSlider extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text("Fréquence de ce trajet (par an)"),
+        const Text("Fréquence de ce trajet (par an)", style: TextStyle(fontSize: 12)),
         Slider(value: selected.toDouble(), min: 1, max: 12, divisions: 11, label: "$selected / an", onChanged: (double value) => onChanged(value.toInt())),
       ],
     );

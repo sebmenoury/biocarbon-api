@@ -7,13 +7,15 @@ import 'haversine.dart';
 import '../../../ui/layout/base_screen.dart';
 import '../../../ui/layout/custom_card.dart';
 import 'frequence_slider.dart';
+import '../poste_list_screen.dart';
 
 class AvionScreen extends StatefulWidget {
   final String codeIndividu;
   final String valeurTemps;
   final String sousCategorie;
+  final VoidCallback onSave;
 
-  const AvionScreen({super.key, required this.codeIndividu, required this.valeurTemps, required this.sousCategorie});
+  const AvionScreen({super.key, required this.codeIndividu, required this.valeurTemps, required this.sousCategorie, required this.onSave});
 
   @override
   State<AvionScreen> createState() => _AvionScreenState();
@@ -25,6 +27,8 @@ class _AvionScreenState extends State<AvionScreen> {
   Set<String> idsVolsASupprimer = {};
   List<Map<String, dynamic>> tousLesAeroports = [];
   bool isLoading = false;
+
+  late Future<void> _chargementInitial;
 
   double? emissionEstimee;
 
@@ -52,7 +56,12 @@ class _AvionScreenState extends State<AvionScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _chargerBase());
+    _chargementInitial = _initialiserChargement();
+  }
+
+  Future<void> _initialiserChargement() async {
+    await _chargerBase(); // charge tousLesAeroports + paysList
+    await _chargerVols(); // charge vols depuis UC-Poste
   }
 
   Future<void> _chargerBase() async {
@@ -204,6 +213,57 @@ class _AvionScreenState extends State<AvionScreen> {
     }
   }
 
+  Future<void> enregistrer() async {
+    final codeIndividu = widget.codeIndividu;
+    final valeurTemps = widget.valeurTemps;
+    final sousCategorie = widget.sousCategorie;
+
+    await ApiService.deleteAllPostesSansBiensousCategory(codeIndividu: codeIndividu, valeurTemps: valeurTemps, sousCategorie: sousCategorie);
+
+    final nowIso = DateTime.now().toIso8601String();
+    final List<Map<String, dynamic>> payloads = [];
+
+    for (final vol in vols.where((v) => v.emissionCalculee > 0)) {
+      final idUsage = "TEMP-${nowIso}_${sousCategorie}_${vol.nomPoste}".replaceAll(' ', '_');
+
+      payloads.add({
+        "ID_Usage": vol.idUsage,
+        "Code_Individu": codeIndividu,
+        "Type_Temps": vol.typeTemps,
+        "Valeur_Temps": valeurTemps,
+        "Date_enregistrement": nowIso,
+        "ID_Bien": "", // Pas de bien associé ici
+        "Type_Bien": "",
+        "Type_Poste": "Usage",
+        "Type_Categorie": "Déplacements",
+        "Sous_Categorie": sousCategorie,
+        "Nom_Poste": vol.nomPoste,
+        "Nom_Logement": "",
+        "Quantite": vol.quantite,
+        "Unite": vol.unite,
+        "Frequence": vol.frequence ?? "",
+        "Facteur_Emission": vol.facteurEmission,
+        "Emission_Calculee": vol.emissionCalculee,
+        "Mode_Calcul": vol.modeCalcul,
+        "Annee_Achat": "",
+        "Duree_Amortissement": "",
+      });
+    }
+
+    if (payloads.isNotEmpty) {
+      await ApiService.savePostesBulk(payloads);
+    }
+
+    widget.onSave();
+
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("✈️ Vols enregistrés avec succès")));
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => PosteListScreen(typeCategorie: "Déplacements", sousCategorie: sousCategorie, codeIndividu: codeIndividu, valeurTemps: valeurTemps)),
+    );
+  }
+
   Widget _buildDropdownBloc({
     required bool isDepart,
     required String? selectedPays,
@@ -293,177 +353,182 @@ class _AvionScreenState extends State<AvionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BaseScreen(
-      title: Stack(
-        alignment: Alignment.center,
-        children: [
-          const Text("Déclaration de vos déplacements avion", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: IconButton(icon: const Icon(Icons.arrow_back), iconSize: 18, padding: EdgeInsets.zero, constraints: const BoxConstraints(), onPressed: () => Navigator.pop(context)),
-          ),
-        ],
-      ),
+    return FutureBuilder<void>(
+      future: _chargementInitial,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState != ConnectionState.done) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          children: [
-            CustomCard(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text("Sélection du trajet", style: TextStyle(fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 8),
-                  Row(
+        return BaseScreen(
+          title: Stack(
+            alignment: Alignment.center,
+            children: [
+              const Text("Déclaration de vos déplacements avion", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: IconButton(icon: const Icon(Icons.arrow_back), iconSize: 18, padding: EdgeInsets.zero, constraints: const BoxConstraints(), onPressed: () => Navigator.pop(context)),
+              ),
+            ],
+          ),
+
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              children: [
+                CustomCard(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildDropdownBloc(
-                        isDepart: true,
-                        selectedPays: selectedPaysDepart,
-                        selectedVille: selectedVilleDepart,
-                        selectedAeroport: selectedAeroportDepart,
-                        villesList: villesDepartList,
-                        aeroportsList: aeroportsDepartList,
-                        onPaysChanged: (val) => setState(() => selectedPaysDepart = val),
-                        onVilleChanged: (val) => setState(() => selectedVilleDepart = val),
-                        onAeroportChanged: (val) => setState(() => selectedAeroportDepart = val),
-                      ),
-                      const SizedBox(width: 12),
-                      _buildDropdownBloc(
-                        isDepart: false,
-                        selectedPays: selectedPaysArrivee,
-                        selectedVille: selectedVilleArrivee,
-                        selectedAeroport: selectedAeroportArrivee,
-                        villesList: villesArriveeList,
-                        aeroportsList: aeroportsArriveeList,
-                        onPaysChanged: (val) => setState(() => selectedPaysArrivee = val),
-                        onVilleChanged: (val) => setState(() => selectedVilleArrivee = val),
-                        onAeroportChanged: (val) => setState(() => selectedAeroportArrivee = val),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      const Text("Type de trajet : "),
-                      Radio<bool>(
-                        value: false,
-                        groupValue: allerRetour,
-                        onChanged: (v) {
-                          setState(() => allerRetour = v!);
-                          _calculerEmissionEstimee();
-                        },
-                      ),
-                      const Text("Aller simple"),
-                      Radio<bool>(
-                        value: true,
-                        groupValue: allerRetour,
-                        onChanged: (v) {
-                          setState(() => allerRetour = v!);
-                          _calculerEmissionEstimee();
-                        },
-                      ),
-                      const Text("Aller-retour"),
-                    ],
-                  ),
-                  FrequenceSlider(
-                    selected: selectedFrequence,
-                    onChanged: (val) {
-                      setState(() => selectedFrequence = val);
-                      _calculerEmissionEstimee();
-                    },
-                  ),
-                  const SizedBox(height: 12),
-                  if (emissionEstimee != null)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
+                      const Text("Sélection du trajet", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 8),
+                      Row(
                         children: [
-                          const Text("Émission estimée : ", style: TextStyle(fontSize: 12)),
-                          Text("${emissionEstimee!.toStringAsFixed(1)} kgCO₂", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                          _buildDropdownBloc(
+                            isDepart: true,
+                            selectedPays: selectedPaysDepart,
+                            selectedVille: selectedVilleDepart,
+                            selectedAeroport: selectedAeroportDepart,
+                            villesList: villesDepartList,
+                            aeroportsList: aeroportsDepartList,
+                            onPaysChanged: (val) => setState(() => selectedPaysDepart = val),
+                            onVilleChanged: (val) => setState(() => selectedVilleDepart = val),
+                            onAeroportChanged: (val) => setState(() => selectedAeroportDepart = val),
+                          ),
+                          const SizedBox(width: 12),
+                          _buildDropdownBloc(
+                            isDepart: false,
+                            selectedPays: selectedPaysArrivee,
+                            selectedVille: selectedVilleArrivee,
+                            selectedAeroport: selectedAeroportArrivee,
+                            villesList: villesArriveeList,
+                            aeroportsList: aeroportsArriveeList,
+                            onPaysChanged: (val) => setState(() => selectedPaysArrivee = val),
+                            onVilleChanged: (val) => setState(() => selectedVilleArrivee = val),
+                            onAeroportChanged: (val) => setState(() => selectedAeroportArrivee = val),
+                          ),
                         ],
                       ),
-                    ),
-
-                  Align(alignment: Alignment.centerRight, child: ElevatedButton.icon(icon: const Icon(Icons.flight_takeoff, size: 16), onPressed: _ajouterVol, label: const Text("Ajouter ce vol"))),
-                ],
-              ),
-            ),
-            const SizedBox(height: 12),
-            Expanded(
-              child: ListView.separated(
-                itemCount: vols.length + volsSimules.length,
-                separatorBuilder: (_, __) => const SizedBox(height: 8),
-                itemBuilder: (context, index) {
-                  final isSimule = index >= vols.length;
-                  final vol = isSimule ? volsSimules[index - vols.length] : vols[index];
-
-                  return CustomCard(
-                    padding: const EdgeInsets.all(12),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(child: Text(vol.nomPoste ?? "Vol #$index", style: const TextStyle(fontSize: 13))),
-                        Text("${vol.emissionCalculee.toStringAsFixed(1)} kgCO₂", style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
-                        GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              if (isSimule) {
-                                volsSimules.removeAt(index - vols.length);
-                              } else {
-                                idsVolsASupprimer.add(vol.idUsage ?? '');
-                                vols.removeAt(index);
-                              }
-                            });
-                          },
-                          child: const Icon(Icons.close, size: 16, color: Colors.red),
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          const Text("Type de trajet : ", style: TextStyle(fontSize: 12)),
+                          Radio<bool>(
+                            value: false,
+                            groupValue: allerRetour,
+                            onChanged: (v) {
+                              setState(() => allerRetour = v!);
+                              _calculerEmissionEstimee();
+                            },
+                          ),
+                          const Text("Aller simple", style: TextStyle(fontSize: 12)),
+                          Radio<bool>(
+                            value: true,
+                            groupValue: allerRetour,
+                            onChanged: (v) {
+                              setState(() => allerRetour = v!);
+                              _calculerEmissionEstimee();
+                            },
+                          ),
+                          const Text("Aller-retour", style: TextStyle(fontSize: 12)),
+                        ],
+                      ),
+                      FrequenceSlider(
+                        selected: selectedFrequence,
+                        onChanged: (val) {
+                          setState(() => selectedFrequence = val);
+                          _calculerEmissionEstimee();
+                        },
+                      ),
+                      const SizedBox(height: 12),
+                      if (emissionEstimee != null)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              const Text("Émission estimée : ", style: TextStyle(fontSize: 12)),
+                              Text("${emissionEstimee!.toStringAsFixed(1)} kgCO₂", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                            ],
+                          ),
                         ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ),
 
-            if (volsSimules.isNotEmpty || idsVolsASupprimer.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(top: 12),
-                child: ElevatedButton.icon(
-                  icon: const Icon(Icons.save),
-                  label: const Text("Enregistrer ces vols"),
-                  onPressed: () async {
-                    try {
-                      setState(() => isLoading = true);
-
-                      // Supprimer les anciens vols (si ID précisé)
-                      for (final id in idsVolsASupprimer) {
-                        await ApiService.deleteUCPoste(id);
-                      }
-
-                      // Poster les nouveaux
-                      if (volsSimules.isNotEmpty) {
-                        await ApiService.postPostes(volsSimules);
-                      }
-
-                      // Réinitialiser l’état
-                      idsVolsASupprimer.clear();
-                      volsSimules.clear();
-
-                      await _chargerVols();
-                      showError(context, "✅ Vols mis à jour avec succès !");
-                    } catch (e) {
-                      showError(context, "Erreur : $e");
-                    } finally {
-                      setState(() => isLoading = false);
-                    }
-                  },
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: ElevatedButton.icon(icon: const Icon(Icons.flight_takeoff, size: 16), onPressed: _ajouterVol, label: const Text("Ajouter ce vol")),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-          ],
-        ),
-      ),
+                const SizedBox(height: 12),
+                Expanded(
+                  child: ListView.separated(
+                    itemCount: vols.length + volsSimules.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 8),
+                    itemBuilder: (context, index) {
+                      final isSimule = index >= vols.length;
+                      final vol = isSimule ? volsSimules[index - vols.length] : vols[index];
+
+                      return CustomCard(
+                        padding: const EdgeInsets.all(12),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(child: Text(vol.nomPoste ?? "Vol #$index", style: const TextStyle(fontSize: 12))),
+                            Text("${vol.emissionCalculee.toStringAsFixed(1)} kgCO₂", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  if (isSimule) {
+                                    volsSimules.removeAt(index - vols.length);
+                                  } else {
+                                    idsVolsASupprimer.add(vol.idUsage ?? '');
+                                    vols.removeAt(index);
+                                  }
+                                });
+                              },
+                              child: const Icon(Icons.close, size: 12, color: Colors.red),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+
+                if (volsSimules.isNotEmpty || idsVolsASupprimer.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 12),
+                    child: ElevatedButton.icon(
+                      icon: const Icon(Icons.save),
+                      label: const Text("Enregistrer ces vols"),
+                      onPressed: () async {
+                        try {
+                          setState(() => isLoading = true);
+
+                          // Fusion des vols simulés restants + vols chargés non supprimés
+                          vols = [...vols.where((v) => !idsVolsASupprimer.contains(v.idUsage)), ...volsSimules];
+
+                          // Nettoyage des marqueurs locaux
+                          volsSimules.clear();
+                          idsVolsASupprimer.clear();
+
+                          // Appel de la méthode centralisée
+                          await enregistrer();
+                        } catch (e) {
+                          showError(context, "Erreur : $e");
+                        } finally {
+                          setState(() => isLoading = false);
+                        }
+                      },
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }
