@@ -193,7 +193,7 @@ class _AvionScreenState extends State<AvionScreen> {
         typeCategorie: 'Déplacements',
         sousCategorie: 'Déplacements Avion',
         typePoste: 'Usage',
-        nomPoste: "$selectedAeroportDepart → $selectedAeroportArrivee" + (allerRetour ? " (AR)" : ""),
+        nomPoste: "$selectedPaysDepart → $selectedPaysArrivee" + (allerRetour ? " (AR)" : ""),
         quantite: distance,
         unite: 'km',
         facteurEmission: facteur,
@@ -456,7 +456,7 @@ class _AvionScreenState extends State<AvionScreen> {
 
                       Align(
                         alignment: Alignment.centerRight,
-                        child: ElevatedButton.icon(icon: const Icon(Icons.flight_takeoff, size: 16), onPressed: _ajouterVol, label: const Text("Ajouter ce vol")),
+                        child: ElevatedButton.icon(icon: const Icon(Icons.flight_takeoff, size: 16), onPressed: _ajouterVol, label: const Text("Ajouter ce vol à ma liste")),
                       ),
                     ],
                   ),
@@ -465,7 +465,7 @@ class _AvionScreenState extends State<AvionScreen> {
                 Expanded(
                   child: ListView.separated(
                     itemCount: vols.length + volsSimules.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: 8),
+                    separatorBuilder: (_, __) => const SizedBox(height: 2),
                     itemBuilder: (context, index) {
                       final isSimule = index >= vols.length;
                       final vol = isSimule ? volsSimules[index - vols.length] : vols[index];
@@ -476,7 +476,9 @@ class _AvionScreenState extends State<AvionScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Expanded(child: Text(vol.nomPoste ?? "Vol #$index", style: const TextStyle(fontSize: 12))),
+                            const SizedBox(width: 12),
                             Text("${vol.emissionCalculee.toStringAsFixed(1)} kgCO₂", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                            const SizedBox(width: 12),
                             GestureDetector(
                               onTap: () {
                                 setState(() {
